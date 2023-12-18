@@ -60,8 +60,8 @@ soupsieve==2.5
 
 urllib3==2.1.0
 
-In general you can install these requirements (except of wkhtmltopdf, which need to be downloaded and installed manually) using pip and requirements.txt file which you can find in this repository.
-
 useragent==0.1.1
 
 whois==0.9.27
+
+In general you can install these requirements (except of wkhtmltopdf, which need to be downloaded and installed manually) using pip and requirements.txt file which you can find in this repository.
