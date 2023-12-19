@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/f7d560fa-ce29-4795-b9f8-527916e3bbbe">
+  <img src="https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/b90522d8-6804-45c9-9ce8-52ff5cd09fc2">
 </p>
 
 # DPULSE - Domain Public Data Collection Service 
