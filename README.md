@@ -28,7 +28,8 @@ All these results are compiled into an easy-to-read PDF report by category. Spec
 
 Before you start working with DPULSE, you need to install all dependencies and required packages according to the instructions below. After preliminary setup, everything will be ready for getting started.
 
-You can start DPULSE using your terminal where you write only one command: python dpulse.py -sd <url> -ra <n>
+You can start DPULSE using your terminal where you write only one command: python dpulse.py -sd "url" -ra "n"
+
 <url> is a short form of domain link, ex: stackoverflow.com, google.com, facebook.com and so on
 <n> is a digit which specifies amount of Google Dorking results which will be printed in PDF report.
 
