@@ -30,9 +30,9 @@ Before you start working with DPULSE, you need to install all dependencies and r
 
 You can start DPULSE using your terminal where you write only one command: python dpulse.py -sd <url> -ra <n>
 
-"url" is a short form of domain link, ex: stackoverflow.com, google.com, facebook.com and so on
+- url is a short form of domain link, ex: stackoverflow.com, google.com, facebook.com and so on
 
-"n" is a digit which specifies amount of Google Dorking results which will be printed in PDF report.
+- n is a digit which specifies amount of Google Dorking results which will be printed in PDF report.
 
 ## Project's requirements 
 
