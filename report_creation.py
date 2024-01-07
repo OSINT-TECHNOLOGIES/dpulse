@@ -13,7 +13,9 @@ from datetime import datetime
 import jinja2
 import pdfkit
 import os
+import sys
 import crawl_processor as cp
+from colorama import Fore, Style
 
 def find_wkhtmltopdf():
     """
@@ -25,6 +27,15 @@ def find_wkhtmltopdf():
         if filename in files:
             return os.path.join(root, filename)
     return None
+
+try:
+    current_script = os.path.realpath(__file__)
+    current_directory = os.path.dirname(current_script)
+    file_path = os.path.join(current_directory, find_wkhtmltopdf())
+    print(Fore.GREEN + 'WKHTMLTOPDF was found at {}'.format(file_path))
+except TypeError:
+    print(Fore.RED + 'WKHTMLTOPDF was not found in DPULSE root directory. Download and install it in your DPULSE folder and retry scan' + Style.RESET_ALL)
+    sys.exit()
 
 short_domain = ''
 def report_encoding_config():
@@ -42,11 +53,19 @@ def create_report(short_domain, url, n):
     Functions which calls all the functions from crawl_processor module and compiles them into PDF report.
     PDF report will be saved in main script directory
     """
+    print(Fore.GREEN + 'Processing WHOIS scanning' + Style.RESET_ALL)
     res = cp.whois_gather(short_domain)
-    subdomains = cp.subdomains_gather(url, short_domain)
+    print(Fore.GREEN + 'Processing subdomain gathering' + Style.RESET_ALL)
+    subdomains, subdomains_amount = cp.subdomains_gather(url, short_domain)
+    print(Fore.GREEN + 'Processing social medias gathering' + Style.RESET_ALL)
     social_medias = cp.sm_gather(url)
+    print(Fore.GREEN + 'Processing subdomain analysis' + Style.RESET_ALL)
     subdomain_mails, sd_socials, subdomain_ip = cp.domains_reverse_research(subdomains)
-    exp_docs, linkedin, related_pages, dinfo = cp.dorking_processing(short_domain, num_results=n, lang="en", sleep_interval=0, timeout=5)
+    if n > 0:
+        print(Fore.GREEN + 'Processing Google Dorking' + Style.RESET_ALL)
+    elif n == 0:
+        print(Fore.RED + 'DPULSE will skip Google Dorking because user set the amount of resulst as 0' + Style.RESET_ALL)
+    exp_docs, linkedin, related_pages = cp.dorking_processing(short_domain, num_results=n, lang="en", sleep_interval=0, timeout=5)
 
     ctime = datetime.now().strftime('%Y-%m-%d, %Hh%Mm%Ss')
     casename = short_domain.replace(".", "") + '~' + ctime + '.pdf'
@@ -63,21 +82,15 @@ def create_report(short_domain, url, n):
                         'tg_links': ', '.join(social_medias['Telegram']), 'tt_links': ', '.join(social_medias['TikTok']),
                         'li_links': ', '.join(social_medias['LinkedIn']), 'vk_links': ', '.join(social_medias['VKontakte']),
                         'yt_links': ', '.join(social_medias['YouTube']), 'exp_docs': exp_docs, 'linkedin': linkedin, 'related_pages': related_pages,
-                        'dinfo': dinfo, 'ctime': ctime}
+                         'ctime': ctime, 'a_tsf': subdomains_amount, 'a_gdr': n}
 
-    print('Processing report for {} case...'.format(short_domain))
+    print(Fore.GREEN + 'Processing report for {} case...'.format(short_domain) + Style.RESET_ALL)
 
     template_loader = jinja2.FileSystemLoader('./')
     template_env = jinja2.Environment(loader=template_loader)
 
     template = template_env.get_template('report_template.html')
     output_text = template.render(context)
-
-    current_script = os.path.realpath(__file__)
-    current_directory = os.path.dirname(current_script)
-    print(current_directory)
-    file_path = os.path.join(current_directory, find_wkhtmltopdf())
     config = pdfkit.configuration(wkhtmltopdf=file_path)
     pdfkit.from_string(output_text, casename, configuration=config, options=report_encoding_config())
-    msg = "Report for {} case was created at {}".format(''.join(short_domain), ctime)
-    print(msg)
+    print(Fore.GREEN + "Report for {} case was created at {}".format(''.join(short_domain), ctime) + Style.RESET_ALL)
