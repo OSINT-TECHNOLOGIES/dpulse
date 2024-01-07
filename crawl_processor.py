@@ -14,18 +14,17 @@ import whois
 import re
 import requests
 import urllib.parse
+from colorama import Fore, Style
 from urllib.parse import urlparse
 from collections import defaultdict
 from bs4 import BeautifulSoup
 from time import sleep
 from requests import get
 from fake_useragent import UserAgent
-
 def ip_gather(short_domain):
     """
     Function for getting IP address of website
     """
-    print('Processing IP gathering from {}'.format(short_domain))
     ip_address = socket.gethostbyname(short_domain)
     return ip_address
 
@@ -53,7 +52,6 @@ def subdomains_gather(url, short_domain):
     """
     Function for subdomain search
     """
-    print('Processing subdomain gathering from {}'.format(url))
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     linked_domains = set()
@@ -65,13 +63,13 @@ def subdomains_gather(url, short_domain):
 
     finder = short_domain
     subdomains = [urllib.parse.unquote(i) for i in linked_domains if finder in i]
-    return subdomains
+    subdomains_amount = len(subdomains)
+    return subdomains, subdomains_amount
 
 def sm_gather(url):
     """
     Function for getting some basic social networks links from website elements
     """
-    print('Processing social medias gathering from {}'.format(url))
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     links = [a['href'] for a in soup.find_all('a', href=True)]
@@ -96,6 +94,7 @@ def sm_gather(url):
             categorized_links['VKontakte'].append(urllib.parse.unquote(link))
         elif 'youtube.com' in link:
             categorized_links['YouTube'].append(urllib.parse.unquote(link))
+
     return categorized_links
 
 def domains_reverse_research(subdomains):
@@ -112,7 +111,7 @@ def domains_reverse_research(subdomains):
             subdomain_url = "http://" + subdomain + "/"
             subdomain_urls.append(subdomain_url)
     except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError):
-        print('URL unreachable')
+        print(Fore.RED + 'Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error will not be included in the report' + Style.RESET_ALL)
         pass
 
     try:
@@ -121,7 +120,7 @@ def domains_reverse_research(subdomains):
             subdomain_ip.append(subdomains_ip)
             subdomain_ip = list(set(subdomain_ip))
     except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError):
-        print('URL unreachable')
+        print(Fore.RED + 'Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error will not be included in the report' + Style.RESET_ALL)
         pass
 
     try:
@@ -131,7 +130,7 @@ def domains_reverse_research(subdomains):
             subdomain_social = sm_gather(subdomain_url)
             subdomain_socials.append(subdomain_social)
     except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError):
-        print('URL unreachable')
+        print(Fore.RED + 'Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error will not be included in the report' + Style.RESET_ALL)
         pass
 
     subdomain_ip = ''.join(subdomain_ip)
@@ -199,11 +198,10 @@ def dorking_processing(short_domain, num_results, lang="en", sleep_interval=0, t
     """
     Google Dorking automatization function
     """
-    print('Processing Google Dorking')
     search_queries = ['"{}" filetype:pdf OR filetype:xlsx OR filetype:docx OR filetype:PPT'.format(short_domain),
                       '{} site:linkedin.com/in/'.format(short_domain),
                       'related: {}'.format(short_domain),
-                      'info: {}'.format(short_domain)]
+                      ]
     all_results = []
     for search_query in search_queries:
         start = 0
@@ -226,9 +224,7 @@ def dorking_processing(short_domain, num_results, lang="en", sleep_interval=0, t
                     if link and title and description:
                         start += 1
                         results.append(urllib.parse.unquote(link["href"]))
-
             sleep(sleep_interval)
         all_results.append(results)
 
-    return (''.join(f'</p>{item}</p>' for item in all_results[0]), ''.join(f'{item}</p>' for item in all_results[1]), ''.join(f'{item}</p>' for item in all_results[2]),
-            ''.join(f'{item}</p>' for item in all_results[3]))
+    return (''.join(f'</p>{item}</p>' for item in all_results[0]), ''.join(f'{item}</p>' for item in all_results[1]), ''.join(f'{item}</p>' for item in all_results[2]))
