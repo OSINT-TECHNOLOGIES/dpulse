@@ -4,13 +4,14 @@
 
 # DPULSE - Domain Public Data Collection Service 
 
-DPULSE - Domain Public Data Collection Service 
-
-Current version: 0.1b (Codename: Heartbeat)
-
-[!] This program solution is not final and some details are potentially to be changed [!]
+**Current version: 0.2b (Codename: Heartbeat)**
 
 **If you want to contact the developer about DPULSE - write here:** osint.technologies@gmail.com
+
+> [!CAUTION]
+> DPULSE was created as a research tool, and it is not intended for criminal activities. Use DPULSE only on allowed domains and for legal purposes!
+
+[!] This program solution is not final and some details are potentially to be changed [!]
 
 ## What is DPULSE and how can I use it?
 
@@ -24,15 +25,31 @@ DPULSE is a software solution for conducting OSINT research in relation to a cer
 
 All these results are compiled into an easy-to-read PDF report by category. Specified Google Dorking automatization is also on board!
 
+## Program examples
+**Programm menu**
+
+![example](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/7adc438e-9f67-4919-b307-c9923e556498)
+
+**Scanning and PDF creation report process**
+
+![example1](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/da3d3710-e4a5-420d-bcdc-bb43a70c92c5)
+
+
 ## How to start DPULSE and get some results 
 
-Before you start working with DPULSE, you need to install all dependencies and required packages according to the instructions below. After preliminary setup, everything will be ready for getting started.
+Before you start working with DPULSE, you need to install all dependencies and required packages according to the instructions below. There are two ways how to install them:
+> Using **pip install -r requirements.txt** command in CLI.
 
-You can start DPULSE using your terminal where you write only one command: python dpulse.py -sd "url" -ra "n"
+> Using **python setup.py install** command in CLI
 
-- url is a short form of domain link, ex: stackoverflow.com, google.com, facebook.com and so on
+Moreover, you need to manually install WKHTMLTOPDF package in DPULSE directory. This package is necessary for creating PDF reports and programm won't start unless WKHTMLTOPDF is not installed. You can find WKHTMLTOPDF download link in the project requirements paragraph down below
 
-- n is a digit which specifies amount of Google Dorking results which will be printed in PDF report.
+After preliminary setup, everything will be ready for getting started.
+
+Then you can start DPULSE using your terminal where you write only one command:
+> python dpulse.py
+
+This will open DPULSE menu when you can select 1st point and follow the steps required by the program. After the program finishes, a PDF report with the domain name that you entered before starting will be created in the program's root folder.
 
 ## Project's requirements 
 
@@ -69,5 +86,3 @@ urllib3==2.1.0
 useragent==0.1.1
 
 whois==0.9.27
-
-In general you can install these requirements (except of wkhtmltopdf, which need to be downloaded and installed manually) using pip and requirements.txt file which you can find in this repository.
