@@ -1,0 +1,10 @@
+[DORKING SETTINGS]
+
+sleep-interval: 0
+timeout: 4
+
+[DORKING QUERIES]
+
+"{}" filetype:pdf OR filetype:xlsx OR filetype:docx OR filetype:PPT
+{} site:linkedin.com/in/
+related: {}
