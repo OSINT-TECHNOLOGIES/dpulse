@@ -4,7 +4,7 @@
 
 # DPULSE - Domain Public Data Collection Service 
 
-**Current version: 0.2b (Codename: Heartbeat)**
+**Current version: 0.3b (Codename: Heartbeat)**
 
 **If you want to contact the developer about DPULSE - write here:** osint.technologies@gmail.com
 
