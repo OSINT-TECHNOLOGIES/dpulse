@@ -9,18 +9,23 @@ short_domain: website address which you enter in console
 url: http://short_domain/
 """
 
-import socket
-import whois
-import re
-import requests
-import urllib.parse
-from colorama import Fore, Style
-from urllib.parse import urlparse
-from collections import defaultdict
-from bs4 import BeautifulSoup
-from time import sleep
-from requests import get
-from fake_useragent import UserAgent
+try:
+    import socket
+    import whois
+    import re
+    import requests
+    import urllib.parse
+    from colorama import Fore, Style
+    from urllib.parse import urlparse
+    from collections import defaultdict
+    from bs4 import BeautifulSoup
+    from time import sleep
+    from requests import get
+    from fake_useragent import UserAgent
+    import sys
+except ImportError:
+    print(Fore.RED + "Can't import some requirements that are necessary to start DPULSE. Please check that all necessary requirements are installed!" + Style.RESET_ALL)
+    sys.exit()
 def ip_gather(short_domain):
     """
     Function for getting IP address of website
@@ -171,7 +176,6 @@ def domains_reverse_research(subdomains):
 
     return subdomain_mails, sd_socials, subdomain_ip
 
-
 def preset(search_query, results, lang, start, timeout):
     """
     Preset function for Google Dorking
@@ -198,10 +202,13 @@ def dorking_processing(short_domain, num_results, lang="en", sleep_interval=0, t
     """
     Google Dorking automatization function
     """
-    search_queries = ['"{}" filetype:pdf OR filetype:xlsx OR filetype:docx OR filetype:PPT'.format(short_domain),
-                      '{} site:linkedin.com/in/'.format(short_domain),
-                      'related: {}'.format(short_domain),
-                      ]
+
+    with open('config.txt', 'r') as cfg_file:
+        lines = cfg_file.readlines()
+        index = lines.index('[DORKING QUERIES]\n')
+        lines_after = lines[index + 2:]
+
+    search_queries = [line.format(short_domain) for line in lines_after]
     all_results = []
     for search_query in search_queries:
         start = 0
