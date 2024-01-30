@@ -4,6 +4,9 @@
 
 # DPULSE - Domain Public Data Collection Service 
 
+<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/OSINT-TECHNOLOGIES/dpulse?label=Repository%20size"> <img alt="GitHub License" src="https://img.shields.io/github/license/OSINT-TECHNOLOGIES/dpulse?label=Licensed%20with&color=blue">
+
+
 **Current version: 0.3b (Codename: Heartbeat)**
 
 **If you want to contact the developer about DPULSE - write here:** osint.technologies@gmail.com
