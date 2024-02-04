@@ -6,15 +6,18 @@
 
 <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/OSINT-TECHNOLOGIES/dpulse?label=Repository%20size"> <img alt="GitHub License" src="https://img.shields.io/github/license/OSINT-TECHNOLOGIES/dpulse?label=Licensed%20with&color=blue">
 
-
-**Current version: 0.3b (Codename: Heartbeat)**
-
-**If you want to contact the developer about DPULSE - write here:** osint.technologies@gmail.com
-
 > [!CAUTION]
 > DPULSE was created as a research tool, and it is not intended for criminal activities. Use DPULSE only on allowed domains and for legal purposes!
 
-[!] This program solution is not final and some details are potentially to be changed [!]
+> [!TIP]
+> You can visit [DPULSE wiki](https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki) in order to get more technical information about this project
+> 
+> You can also contact the developer via e-mail: osint.technologies@gmail.com
+
+> [!NOTE]  
+> This program solution is not final and some details are potentially to be changed!
+> 
+> Current version: 0.3b (Codename: Heartbeat)
 
 ## What is DPULSE and how can I use it?
 
