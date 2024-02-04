@@ -4,14 +4,11 @@ report_creation module
 Contains the function to collect all the outputs from crawl_processor functions and compile them into PDF report
 
 Arguments:
-short_domain: website address which you enter in console
+short_domain: domain name of certain website
 url: http://short_domain/
-n: TODO
 """
-import socket
 
 import requests.exceptions
-
 import crawl_processor as cp
 
 try:
@@ -21,6 +18,7 @@ try:
     import os
     import sys
     from colorama import Fore, Style
+    import webbrowser
 except ImportError:
     print(Fore.RED + "Can't import some requirements that are necessary to start DPULSE. Please check that all necessary requirements are installed!" + Style.RESET_ALL)
     sys.exit()
@@ -36,11 +34,14 @@ def find_files(filename):
     return None
 
 def read_config(cfg_string_name):
+    """
+    Function which reads config parameters using separator
+    """
     with open("config.txt", 'r') as file:
         for line in file:
             if line.startswith(cfg_string_name):
-                sleep_interval = int(line.split(':')[1].strip())
-                return sleep_interval
+                cfg_parameter = int(line.split(':')[1].strip())
+                return cfg_parameter
 
 try:
     current_script = os.path.realpath(__file__)
@@ -49,7 +50,15 @@ try:
     print(Fore.GREEN + 'WKHTMLTOPDF was found at {}'.format(file_path))
 except TypeError:
     print(Fore.RED + 'WKHTMLTOPDF was not found in DPULSE root directory. Download and install it in your DPULSE folder and retry scan' + Style.RESET_ALL)
-    sys.exit()
+    ask_whktmltopdf_install = input(Fore.YELLOW + "Would you like to open WKHTMLTOPDF page and download it? [Y/N] >> ")
+    if ask_whktmltopdf_install == 'Y':
+        print(Fore.GREEN + 'Opening WKHTMLTOPDF page in your browser. DPULSE will be closed' + Style.RESET_ALL)
+        webbrowser.open('https://wkhtmltopdf.org/downloads.html')
+        print(Fore.RED + 'Exiting the program...' + Style.RESET_ALL)
+        sys.exit()
+    elif ask_whktmltopdf_install == 'N':
+        print(Fore.RED + 'Exiting the program...' + Style.RESET_ALL)
+        sys.exit()
 
 try:
     current_script = os.path.realpath(__file__)
@@ -108,11 +117,13 @@ def create_report(short_domain, url, n):
                             'subdomain_ip': subdomain_ip, 'fb_links_s': ', '.join(sd_socials['Facebook']), 'inst_links_s': ', '.join(sd_socials['Instagram']), 'tw_links_s': ', '.join(sd_socials['Twitter']),
                             'tg_links_s': ', '.join(sd_socials['Telegram']), 'tt_links_s': ', '.join(sd_socials['TikTok']),
                             'li_links_s': ', '.join(sd_socials['LinkedIn']), 'vk_links_s': ', '.join(sd_socials['VKontakte']), 'yt_links_s': ', '.join(sd_socials['YouTube']),
+                            'wc_links_s': ', '.join(sd_socials['WeChat']), 'ok_links_s': ', '.join(sd_socials['Odnoklassniki']),
                             'subdomains': ', '.join(subdomains), 'fb_links': ', '.join(social_medias['Facebook']),
                             'tw_links': ', '.join(social_medias['Twitter']), 'inst_links': ', '.join(social_medias['Instagram']),
                             'tg_links': ', '.join(social_medias['Telegram']), 'tt_links': ', '.join(social_medias['TikTok']),
                             'li_links': ', '.join(social_medias['LinkedIn']), 'vk_links': ', '.join(social_medias['VKontakte']),
-                            'yt_links': ', '.join(social_medias['YouTube']), 'exp_docs': exp_docs, 'linkedin': linkedin, 'related_pages': related_pages,
+                            'yt_links': ', '.join(social_medias['YouTube']), 'wc_links': ', '.join(social_medias['WeChat']), 'ok_links': ', '.join(social_medias['Odnoklassniki']),
+                            'exp_docs': exp_docs, 'linkedin': linkedin, 'related_pages': related_pages,
                              'ctime': ctime, 'a_tsf': subdomains_amount, 'a_gdr': n}
 
         print(Fore.GREEN + 'Processing report for {} case...'.format(short_domain) + Style.RESET_ALL)
