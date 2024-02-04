@@ -5,7 +5,7 @@ Contains the functions to process search of open-sourced information connected w
 Search results are returned to report_creation module in order to create .pdf report
 
 Arguments:
-short_domain: website address which you enter in console
+short_domain: domain name of certain website
 url: http://short_domain/
 """
 
@@ -80,7 +80,7 @@ def sm_gather(url):
     links = [a['href'] for a in soup.find_all('a', href=True)]
     categorized_links = {'Facebook': [], 'Twitter': [], 'Instagram': [],
                          'Telegram': [], 'TikTok': [], 'LinkedIn': [],
-                         'VKontakte': [], 'YouTube': []}
+                         'VKontakte': [], 'YouTube': [], 'Odnoklassniki': [], 'WeChat': []}
 
     for link in links:
         if 'facebook.com' in link:
@@ -99,6 +99,10 @@ def sm_gather(url):
             categorized_links['VKontakte'].append(urllib.parse.unquote(link))
         elif 'youtube.com' in link:
             categorized_links['YouTube'].append(urllib.parse.unquote(link))
+        elif 'wechat.com' in link:
+            categorized_links['WeChat'].append(urllib.parse.unquote(link))
+        elif 'ok.ru' in link:
+            categorized_links['Odnoklassniki'].append(urllib.parse.unquote(link))
 
     return categorized_links
 
@@ -153,7 +157,7 @@ def domains_reverse_research(subdomains):
     subdomain_socials_grouped = list(dict(subdomain_socials_grouped).values())
 
     sd_socials = {'Facebook': [], 'Twitter': [], 'Instagram': [], 'Telegram': [], 'TikTok': [], 'LinkedIn': [],
-                  'VKontakte': [], 'YouTube': []}
+                  'VKontakte': [], 'YouTube': [], 'Odnoklassniki': [], 'WeChat': []}
 
     for inner_list in subdomain_socials_grouped:
         for link in inner_list:
@@ -173,6 +177,10 @@ def domains_reverse_research(subdomains):
                 sd_socials['VKontakte'].append(urllib.parse.unquote(link))
             elif 'youtube.com' in link:
                 sd_socials['YouTube'].append(urllib.parse.unquote(link))
+            elif 'wechat.com' in link:
+                sd_socials['WeChat'].append(urllib.parse.unquote(link))
+            elif 'ok.ru' in link:
+                sd_socials['Odnoklassniki'].append(urllib.parse.unquote(link))
 
     return subdomain_mails, sd_socials, subdomain_ip
 
