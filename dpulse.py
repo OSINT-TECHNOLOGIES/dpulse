@@ -14,6 +14,7 @@ try:
     from pyfiglet import Figlet
     from rich.console import Console
     import sys
+    import webbrowser
 except ImportError:
     print(Fore.RED + "Can't import some requirements that are necessary to start DPULSE. Please check that all necessary requirements are installed!" + Style.RESET_ALL)
     sys.exit()
@@ -32,7 +33,7 @@ class ProgressBar(threading.Thread):
 console = Console()
 fig = Figlet(font='univers')
 console.print(fig.renderText('DPULSE'), style="bold blue")
-print(Fore.BLUE + Back.WHITE + 'HEARTBEAT // version: 0.3b' + Style.RESET_ALL)
+print(Fore.BLUE + Back.WHITE + 'HEARTBEAT // version: 0.4b' + Style.RESET_ALL)
 print(Fore.BLUE + Back.WHITE + 'Developed by: OSINT-TECHNOLOGIES (https://github.com/OSINT-TECHNOLOGIES)' + Style.RESET_ALL + '\n\n')
 
 def print_main_menu():
@@ -40,7 +41,8 @@ def print_main_menu():
     print(Fore.BLUE + '[MAIN MENU]')
     print(Fore.GREEN + "1. Determine target and start scan")
     print(Fore.GREEN + "2. Settings")
-    print(Fore.RED + "3. Exit DPULSE" + Style.RESET_ALL)
+    print(Fore.GREEN + "3. Help")
+    print(Fore.RED + "4. Exit DPULSE" + Style.RESET_ALL + '\n')
 
 def print_settings_menu():
     print('\n')
@@ -54,7 +56,15 @@ def print_cfg_edit_menu():
     print(Fore.GREEN + "1. Change sleep-interval")
     print(Fore.GREEN + "2. Change timeout")
     print(Fore.GREEN + "3. Add Dorking query to the list")
-    print(Fore.GREEN + "4. Remove Dorking query from the list" + Style.RESET_ALL + '\n')
+    print(Fore.GREEN + "4. Remove Dorking query from the list")
+    print(Fore.RED + "5. Return to main menu" + Style.RESET_ALL + '\n')
+
+def print_help_menu():
+    print(Fore.BLUE + '[HELP MENU]')
+    print(Fore.BLUE + 'Choosing any of points below will open your web browser!')
+    print(Fore.GREEN + "1. How to correctly input your targets URL in DPULSE")
+    print(Fore.GREEN + "2. DPULSE config parameters and their meanings")
+    print(Fore.RED + "3. Return to main menu" + Style.RESET_ALL + '\n')
 
 def change_setting(filename):
     cfg_context = open(filename).read()
@@ -79,8 +89,9 @@ def change_setting(filename):
 while True:
     print_main_menu()
     choice = input(Fore.YELLOW + "Enter your choice >> ")
+    print('\n')
     if choice == "1":
-        short_domain = str(input(Fore.YELLOW + "Enter target's short domain >> "))
+        short_domain = str(input(Fore.YELLOW + "Enter target's domain name >> "))
         url = "http://" + short_domain + "/"
         dorking_results_amount = int(input(Fore.YELLOW + 'Enter amount of printed Google Dorking results >> '))
         print(Fore.GREEN + 'Determined target >> {}\nShow {} Google Dorking result'.format(short_domain, dorking_results_amount) + Style.RESET_ALL)
@@ -107,6 +118,15 @@ while True:
             continue
         break
     elif choice == "3":
+        print_help_menu()
+        choice_help = input(Fore.YELLOW + "Enter your choice >> ")
+        if choice_help == '1':
+            webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/How-to-correctly-input-your-targets-address-in-DPULSE')
+        elif choice_help == '2':
+            webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-config-parameters-and-their-meanings')
+        elif choice_help == '3':
+            continue
+    elif choice == "4":
         print(Fore.RED + "Exiting the program." + Style.RESET_ALL)
         break
     else:
