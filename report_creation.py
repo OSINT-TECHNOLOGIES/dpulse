@@ -19,9 +19,35 @@ try:
     import sys
     from colorama import Fore, Style
     import webbrowser
+    import sqlite3
 except ImportError:
     print(Fore.RED + "Can't import some requirements that are necessary to start DPULSE. Please check that all necessary requirements are installed!" + Style.RESET_ALL)
     sys.exit()
+
+def insert_pdf(file):
+    with open(file, 'rb') as pdf_file:
+        blob_data = pdf_file.read()
+        return blob_data
+def insert_blob(pdf_blob, db_casename, creation_date, case_comment):
+    try:
+        sqlite_connection = sqlite3.connect('report_storage.db')
+        cursor = sqlite_connection.cursor()
+        print(Fore.GREEN + "Connected to report storage database")
+
+        sqlite_insert_blob_query = """INSERT INTO report_storage
+                                  (report_content, creation_date, target, comment) VALUES (?, ?, ?, ?)"""
+
+        data_tuple = (pdf_blob, creation_date, db_casename, case_comment)
+        cursor.execute(sqlite_insert_blob_query, data_tuple)
+        sqlite_connection.commit()
+        print(Fore.GREEN + "Scanning results are successfully saved in report storage database")
+        cursor.close()
+    except sqlite3.Error as error:
+        print(Fore.RED + "Failed to insert scanning results in report storage database", error)
+    finally:
+        if sqlite_connection:
+            sqlite_connection.close()
+            print(Fore.RED + "Database connection is closed")
 
 def find_files(filename):
     """
@@ -80,7 +106,7 @@ def report_encoding_config():
     }
 
 search_query = []
-def create_report(short_domain, url, n):
+def create_report(short_domain, url, n, case_comment):
     """
     Functions which calls all the functions from crawl_processor module and compiles them into PDF report.
     PDF report will be saved in main script directory
@@ -108,6 +134,9 @@ def create_report(short_domain, url, n):
 
     ctime = datetime.now().strftime('%Y-%m-%d, %Hh%Mm%Ss')
     casename = short_domain.replace(".", "") + '~' + ctime + '.pdf'
+    db_casename = short_domain.replace(".", "")
+    now = datetime.now()
+    db_creation_date = str(now.year) + str(now.month) + str(now.day)
 
     try:
         context = {'sh_domain': short_domain, 'full_url': url, 'ip_address': cp.ip_gather(short_domain),'registrar': res['registrar'],
@@ -136,5 +165,6 @@ def create_report(short_domain, url, n):
         config = pdfkit.configuration(wkhtmltopdf=file_path)
         pdfkit.from_string(output_text, casename, configuration=config, options=report_encoding_config())
         print(Fore.GREEN + "Report for {} case was created at {}".format(''.join(short_domain), ctime) + Style.RESET_ALL)
+        insert_blob(insert_pdf(casename), db_casename, db_creation_date, case_comment)
     except:
         print(Fore.RED + 'Unable to create PDF report. Closing scan...')
