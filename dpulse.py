@@ -15,6 +15,8 @@ try:
     from rich.console import Console
     import sys
     import webbrowser
+    import sqlite3
+    import os
 except ImportError:
     print(Fore.RED + "Can't import some requirements that are necessary to start DPULSE. Please check that all necessary requirements are installed!" + Style.RESET_ALL)
     sys.exit()
@@ -33,7 +35,7 @@ class ProgressBar(threading.Thread):
 console = Console()
 fig = Figlet(font='univers')
 console.print(fig.renderText('DPULSE'), style="bold blue")
-print(Fore.BLUE + Back.WHITE + 'HEARTBEAT // version: 0.4b' + Style.RESET_ALL)
+print(Fore.BLUE + Back.WHITE + 'HEARTBEAT // version: 0.5b' + Style.RESET_ALL)
 print(Fore.BLUE + Back.WHITE + 'Developed by: OSINT-TECHNOLOGIES (https://github.com/OSINT-TECHNOLOGIES)' + Style.RESET_ALL + '\n\n')
 
 def print_main_menu():
@@ -42,8 +44,8 @@ def print_main_menu():
     print(Fore.GREEN + "1. Determine target and start scan")
     print(Fore.GREEN + "2. Settings")
     print(Fore.GREEN + "3. Help")
-    print(Fore.RED + "4. Exit DPULSE" + Style.RESET_ALL + '\n')
-
+    print(Fore.GREEN + "4. Manage report storage database")
+    print(Fore.RED + "5. Exit DPULSE" + Style.RESET_ALL + '\n')
 def print_settings_menu():
     print('\n')
     print(Fore.BLUE + '[SETTINGS MENU]')
@@ -65,6 +67,13 @@ def print_help_menu():
     print(Fore.GREEN + "1. How to correctly input your targets URL in DPULSE")
     print(Fore.GREEN + "2. DPULSE config parameters and their meanings")
     print(Fore.RED + "3. Return to main menu" + Style.RESET_ALL + '\n')
+
+def print_db_menu():
+    print(Fore.BLUE + '[DATABASE MENU]')
+    print(Fore.GREEN + "1. Show database information")
+    print(Fore.GREEN + "2. Show database content")
+    print(Fore.GREEN + "3. Recreate report from database")
+    print(Fore.RED + "4. Return to main menu" + Style.RESET_ALL + '\n')
 
 def change_setting(filename):
     cfg_context = open(filename).read()
@@ -94,11 +103,12 @@ while True:
         short_domain = str(input(Fore.YELLOW + "Enter target's domain name >> "))
         url = "http://" + short_domain + "/"
         dorking_results_amount = int(input(Fore.YELLOW + 'Enter amount of printed Google Dorking results >> '))
+        case_comment = str(input(Fore.YELLOW + "Enter case comment (or enter - if you don't need comment to the case) >> "))
         print(Fore.GREEN + 'Determined target >> {}\nShow {} Google Dorking result'.format(short_domain, dorking_results_amount) + Style.RESET_ALL)
         spinner_thread = ProgressBar()
         spinner_thread.start()
         try:
-            rc.create_report(short_domain, url, dorking_results_amount)
+            rc.create_report(short_domain, url, dorking_results_amount, case_comment)
         finally:
             spinner_thread.do_run = False
             spinner_thread.join()
@@ -126,7 +136,84 @@ while True:
             webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-config-parameters-and-their-meanings')
         elif choice_help == '3':
             continue
+
     elif choice == "4":
+        print_db_menu()
+        db_path = "report_storage.db"
+        if not os.path.exists(db_path):
+            print(Fore.RED + "Report storage database was not found. DPULSE will create it in a second")
+            sqlite_connection = sqlite3.connect('report_storage.db')
+            cursor = sqlite_connection.cursor()
+            create_table_sql = """
+            CREATE TABLE "report_storage" (
+                "id" INTEGER NOT NULL UNIQUE,
+                "report_content" BLOB NOT NULL,
+                "comment" TEXT NOT NULL,
+                "target" TEXT NOT NULL,
+                "creation_date" INTEGER NOT NULL,
+                PRIMARY KEY("id" AUTOINCREMENT)
+            );
+            """
+            cursor.execute(create_table_sql)
+            sqlite_connection.commit()
+            sqlite_connection.close()
+            print(Fore.GREEN + "Successfully created report storage database")
+        else:
+            print(Fore.GREEN + "Report storage database exists")
+
+        sqlite_connection = sqlite3.connect('report_storage.db')
+        cursor = sqlite_connection.cursor()
+        print(Fore.GREEN + "Connected to report storage database")
+        choice_db = input(Fore.YELLOW + "Enter your choice >> ")
+        if choice_db == '1':
+            try:
+                cursor.execute("PRAGMA table_info(report_storage);")
+                info = cursor.fetchall()
+                print(Fore.YELLOW + "\n~ DATABASE'S COLUMNS ~" + Style.RESET_ALL)
+                for column in info:
+                    print(column)
+                cursor.close()
+            except sqlite3.Error as error:
+                print(Fore.RED + "Failed to see storage database's details", error)
+        elif choice_db == '2':
+            try:
+                select_query = "SELECT creation_date, target, id, comment FROM report_storage;"
+                cursor.execute(select_query)
+                records = cursor.fetchall()
+                print(Fore.YELLOW + "\n~ DATABASE'S CONTENT ~" + Style.RESET_ALL)
+                for row in records:
+                    date = row[0]
+                    name = row[1]
+                    id = row[2]
+                    comment = row[3]
+                    print(Fore.BLUE + f"Case ID: {id} | Case creation date: {date} | Case name: {name} | Case comment: {comment}" + Style.RESET_ALL)
+            except sqlite3.Error as error:
+                print(Fore.RED + "Failed to see storage database's content", error)
+        elif choice_db == "3":
+            print(Fore.YELLOW + "\n~ DATABASE'S CONTENT ~" + Style.RESET_ALL)
+            select_query = "SELECT creation_date, target, id, comment FROM report_storage;"
+            cursor.execute(select_query)
+            records = cursor.fetchall()
+            for row in records:
+                date = row[0]
+                name = row[1]
+                id = row[2]
+                comment = row[3]
+                print(Fore.BLUE + f"Case ID: {id} | Case creation date: {date} | Case name: {name} | Case comment: {comment}" + Style.RESET_ALL)
+            id_to_extract = int(input(Fore.YELLOW + "Enter ID which report you want to extract >> "))
+            cursor.execute("SELECT report_content FROM report_storage WHERE id=?", (id_to_extract,))
+            result = cursor.fetchone()
+            if result is not None:
+                blob_data = result[0]
+                with open('report_extracted.pdf', 'wb') as file:
+                    file.write(blob_data)
+            print(Fore.GREEN + "Report was successfully recreated from report storage database as report_extracted.pdf")
+        elif choice_db == "4":
+            if sqlite_connection:
+                sqlite_connection.close()
+                print(Fore.RED + "Database connection is closed")
+            continue
+    elif choice == "5":
         print(Fore.RED + "Exiting the program." + Style.RESET_ALL)
         break
     else:
