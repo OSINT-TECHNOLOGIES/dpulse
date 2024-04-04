@@ -1,7 +1,7 @@
 """
 Program start point
 
-You can call this script from yours system terminal: python dpulse.py
+You can call this script from your system terminal: python dpulse.py
 """
 
 import report_creation as rc
@@ -35,55 +35,55 @@ class ProgressBar(threading.Thread):
 console = Console()
 fig = Figlet(font='univers')
 console.print(fig.renderText('DPULSE'), style="bold blue")
-print(Fore.BLUE + Back.WHITE + 'HEARTBEAT // version: 0.5b' + Style.RESET_ALL)
+print(Fore.BLUE + Back.WHITE + 'HEARTBEAT // version: 0.6b' + Style.RESET_ALL)
 print(Fore.BLUE + Back.WHITE + 'Developed by: OSINT-TECHNOLOGIES (https://github.com/OSINT-TECHNOLOGIES)' + Style.RESET_ALL + '\n\n')
 
 def print_main_menu():
     print('\n')
-    print(Fore.BLUE + '[MAIN MENU]')
-    print(Fore.GREEN + "1. Determine target and start scan")
-    print(Fore.GREEN + "2. Settings")
-    print(Fore.GREEN + "3. Help")
-    print(Fore.GREEN + "4. Manage report storage database")
-    print(Fore.RED + "5. Exit DPULSE" + Style.RESET_ALL + '\n')
+    print(Fore.MAGENTA + Back.WHITE + '[MAIN MENU]' + Style.RESET_ALL)
+    print(Fore.CYAN + "1. Determine target and start scan")
+    print(Fore.CYAN + "2. Settings")
+    print(Fore.CYAN + "3. Help")
+    print(Fore.CYAN + "4. Manage report storage database")
+    print(Fore.LIGHTRED_EX + "5. Exit DPULSE" + Style.RESET_ALL + '\n')
 def print_settings_menu():
     print('\n')
-    print(Fore.BLUE + '[SETTINGS MENU]')
-    print(Fore.GREEN + "1. Show current config")
-    print(Fore.GREEN + "2. Edit config parameters")
-    print(Fore.RED + "3. Return to main menu" + Style.RESET_ALL + '\n')
+    print(Fore.MAGENTA + Back.WHITE + '[SETTINGS MENU]' + Style.RESET_ALL)
+    print(Fore.CYAN + "1. Show current config")
+    print(Fore.CYAN + "2. Edit config parameters")
+    print(Fore.LIGHTRED_EX + "3. Return to main menu" + Style.RESET_ALL + '\n')
 
 def print_cfg_edit_menu():
-    print(Fore.BLUE + '[SETTINGS EDITING]')
-    print(Fore.GREEN + "1. Change sleep-interval")
-    print(Fore.GREEN + "2. Change timeout")
-    print(Fore.GREEN + "3. Add Dorking query to the list")
-    print(Fore.GREEN + "4. Remove Dorking query from the list")
-    print(Fore.RED + "5. Return to main menu" + Style.RESET_ALL + '\n')
+    print(Fore.MAGENTA + Back.WHITE + '[SETTINGS EDITING]' + Style.RESET_ALL)
+    print(Fore.CYAN + "1. Change sleep-interval")
+    print(Fore.CYAN + "2. Change timeout")
+    print(Fore.CYAN + "3. Add Dorking query to the list")
+    print(Fore.CYAN + "4. Remove Dorking query from the list")
+    print(Fore.LIGHTRED_EX + "5. Return to main menu" + Style.RESET_ALL + '\n')
 
 def print_help_menu():
-    print(Fore.BLUE + '[HELP MENU]')
-    print(Fore.BLUE + 'Choosing any of points below will open your web browser!')
-    print(Fore.GREEN + "1. How to correctly input your targets URL in DPULSE")
-    print(Fore.GREEN + "2. DPULSE config parameters and their meanings")
-    print(Fore.RED + "3. Return to main menu" + Style.RESET_ALL + '\n')
+    print(Fore.MAGENTA + Back.WHITE + '[HELP MENU]' + Style.RESET_ALL)
+    print(Fore.BLACK + Back.WHITE + 'Be advised that choosing any of points below will open your web browser!' + Style.RESET_ALL)
+    print(Fore.CYAN + "1. How to correctly input your targets URL in DPULSE")
+    print(Fore.CYAN + "2. DPULSE config parameters and their meanings")
+    print(Fore.CYAN + "3. DPULSE CLI colors and their meanings")
+    print(Fore.CYAN + "4. DPULSE config parameters and their meanings")
+    print(Fore.LIGHTRED_EX + "5. Return to main menu" + Style.RESET_ALL + '\n')
 
 def print_db_menu():
-    print(Fore.BLUE + '[DATABASE MENU]')
-    print(Fore.GREEN + "1. Show database information")
-    print(Fore.GREEN + "2. Show database content")
-    print(Fore.GREEN + "3. Recreate report from database")
-    print(Fore.RED + "4. Return to main menu" + Style.RESET_ALL + '\n')
+    print(Fore.MAGENTA + Back.WHITE + '[DATABASE MENU]' + Style.RESET_ALL)
+    print(Fore.CYAN + "1. Show database information")
+    print(Fore.CYAN + "2. Show database content")
+    print(Fore.CYAN + "3. Recreate report from database")
+    print(Fore.LIGHTRED_EX + "4. Return to main menu" + Style.RESET_ALL + '\n')
 
 def change_setting(filename):
     cfg_context = open(filename).read()
-
-    print('\n~ START OF CONFIG FILE ~')
+    print(Fore.LIGHTMAGENTA_EX + '\n[START OF CONFIG FILE]' + Style.RESET_ALL)
     print('\n' + Fore.BLUE + cfg_context + Style.RESET_ALL)
-    print(Fore.YELLOW + '\n~ END OF CONFIG FILE ~\n')
-
-    setting = input('Enter setting to change >> ')
-    new_value = input('Enter new value >> ')
+    print(Fore.LIGHTMAGENTA_EX + '\n[END OF CONFIG FILE]\n' + Style.RESET_ALL)
+    setting = input(Fore.YELLOW + 'Enter setting to change >> ' + Style.RESET_ALL)
+    new_value = input(Fore.YELLOW + 'Enter new value >> ' + Style.RESET_ALL)
 
     with open(filename, 'r+') as file:
         lines = file.readlines()
@@ -95,6 +95,11 @@ def change_setting(filename):
         print('\n')
         print(Fore.GREEN + 'Setting {} successfully changed to {}'.format(setting, new_value))
 
+def db_connect():
+    sqlite_connection = sqlite3.connect('report_storage.db')
+    cursor = sqlite_connection.cursor()
+    return cursor, sqlite_connection
+
 while True:
     print_main_menu()
     choice = input(Fore.YELLOW + "Enter your choice >> ")
@@ -104,7 +109,7 @@ while True:
         url = "http://" + short_domain + "/"
         dorking_results_amount = int(input(Fore.YELLOW + 'Enter amount of printed Google Dorking results >> '))
         case_comment = str(input(Fore.YELLOW + "Enter case comment (or enter - if you don't need comment to the case) >> "))
-        print(Fore.GREEN + 'Determined target >> {}\nShow {} Google Dorking result'.format(short_domain, dorking_results_amount) + Style.RESET_ALL)
+        print(Fore.GREEN + 'Determined target: {}. {} Google Dorking result will be shown. Case comment: {}'.format(short_domain, dorking_results_amount, case_comment) + Style.RESET_ALL)
         spinner_thread = ProgressBar()
         spinner_thread.start()
         try:
@@ -117,9 +122,9 @@ while True:
         choice_settings = input(Fore.YELLOW + "Enter your choice >> ")
         if choice_settings == '1':
             with open('config.txt', 'r') as cfg_file:
-                print('\n~ START OF CONFIG FILE ~')
-                print('\n' + Fore.BLUE + cfg_file.read() + Style.RESET_ALL)
-                print(Fore.YELLOW + '\n~ END OF CONFIG FILE ~\n')
+                print(Fore.LIGHTMAGENTA_EX + '\n[START OF CONFIG FILE]' + Style.RESET_ALL)
+                print('\n' + Fore.LIGHTBLUE_EX + cfg_file.read() + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + '\n[END OF CONFIG FILE]\n' + Style.RESET_ALL)
                 continue
         elif choice_settings == '2':
             change_setting('config.txt')
@@ -135,6 +140,10 @@ while True:
         elif choice_help == '2':
             webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-config-parameters-and-their-meanings')
         elif choice_help == '3':
+            webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-interface-colors-meaning')
+        elif choice_help == '4':
+            webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-report-storage-database')
+        elif choice_help == '5':
             continue
 
     elif choice == "4":
@@ -142,8 +151,7 @@ while True:
         db_path = "report_storage.db"
         if not os.path.exists(db_path):
             print(Fore.RED + "Report storage database was not found. DPULSE will create it in a second")
-            sqlite_connection = sqlite3.connect('report_storage.db')
-            cursor = sqlite_connection.cursor()
+            cursor, sqlite_connection = db_connect()
             create_table_sql = """
             CREATE TABLE "report_storage" (
                 "id" INTEGER NOT NULL UNIQUE,
@@ -161,8 +169,7 @@ while True:
         else:
             print(Fore.GREEN + "Report storage database exists")
 
-        sqlite_connection = sqlite3.connect('report_storage.db')
-        cursor = sqlite_connection.cursor()
+        cursor, sqlite_connection = db_connect()
         print(Fore.GREEN + "Connected to report storage database")
         choice_db = input(Fore.YELLOW + "Enter your choice >> ")
         if choice_db == '1':
@@ -180,27 +187,19 @@ while True:
                 select_query = "SELECT creation_date, target, id, comment FROM report_storage;"
                 cursor.execute(select_query)
                 records = cursor.fetchall()
-                print(Fore.YELLOW + "\n~ DATABASE'S CONTENT ~" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + "\n[DATABASE'S CONTENT]" + Style.RESET_ALL)
                 for row in records:
-                    date = row[0]
-                    name = row[1]
-                    id = row[2]
-                    comment = row[3]
-                    print(Fore.BLUE + f"Case ID: {id} | Case creation date: {date} | Case name: {name} | Case comment: {comment}" + Style.RESET_ALL)
+                    print(Fore.LIGHTBLUE_EX + f"Case ID: {row[2]} | Case creation date: {row[0]} | Case name: {row[1]} | Case comment: {row[3]}" + Style.RESET_ALL)
             except sqlite3.Error as error:
                 print(Fore.RED + "Failed to see storage database's content", error)
         elif choice_db == "3":
-            print(Fore.YELLOW + "\n~ DATABASE'S CONTENT ~" + Style.RESET_ALL)
+            print(Fore.LIGHTMAGENTA_EX + "\n[DATABASE'S CONTENT]" + Style.RESET_ALL)
             select_query = "SELECT creation_date, target, id, comment FROM report_storage;"
             cursor.execute(select_query)
             records = cursor.fetchall()
             for row in records:
-                date = row[0]
-                name = row[1]
-                id = row[2]
-                comment = row[3]
-                print(Fore.BLUE + f"Case ID: {id} | Case creation date: {date} | Case name: {name} | Case comment: {comment}" + Style.RESET_ALL)
-            id_to_extract = int(input(Fore.YELLOW + "Enter ID which report you want to extract >> "))
+                print(Fore.LIGHTBLUE_EX + f"Case ID: {row[2]} | Case creation date: {row[0]} | Case name: {row[1]} | Case comment: {row[3]}" + Style.RESET_ALL)
+            id_to_extract = int(input(Fore.YELLOW + "Enter report ID you want to extract >> "))
             cursor.execute("SELECT report_content FROM report_storage WHERE id=?", (id_to_extract,))
             result = cursor.fetchone()
             if result is not None:
@@ -211,7 +210,7 @@ while True:
         elif choice_db == "4":
             if sqlite_connection:
                 sqlite_connection.close()
-                print(Fore.RED + "Database connection is closed")
+                print(Fore.GREEN + "Database connection is successfully closed")
             continue
     elif choice == "5":
         print(Fore.RED + "Exiting the program." + Style.RESET_ALL)
