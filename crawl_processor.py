@@ -142,7 +142,7 @@ def domains_reverse_research(subdomains):
         print(Fore.RED + 'Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error will not be included in the report' + Style.RESET_ALL)
         pass
 
-    subdomain_ip = ''.join(subdomain_ip)
+    subdomain_ip = ', '.join(subdomain_ip)
     subdomain_mails = [sublist for sublist in subdomain_mails if sublist]
     subdomain_mails = [sublist for sublist in subdomain_mails if sublist != [None]]
     subdomain_mails = ', '.join([', '.join(map(str, sublist)) for sublist in subdomain_mails])
@@ -206,14 +206,13 @@ def preset(search_query, results, lang, start, timeout):
     resp.raise_for_status()
     return resp
 
-def dorking_processing(short_domain, num_results, lang="en", sleep_interval=0, timeout=5):
+def dorking_processing(short_domain, num_results, lang="en", sleep_interval=None, timeout=None):
     """
     Google Dorking automatization function
     """
-
     with open('config.txt', 'r') as cfg_file:
         lines = cfg_file.readlines()
-        index = lines.index('[DORKING QUERIES]\n')
+        index = lines.index('[SOLID DORKS]\n')
         lines_after = lines[index + 2:]
 
     search_queries = [line.format(short_domain) for line in lines_after]
@@ -242,4 +241,4 @@ def dorking_processing(short_domain, num_results, lang="en", sleep_interval=0, t
             sleep(sleep_interval)
         all_results.append(results)
 
-    return (''.join(f'</p>{item}</p>' for item in all_results[0]), ''.join(f'{item}</p>' for item in all_results[1]), ''.join(f'{item}</p>' for item in all_results[2]))
+    return (''.join(f'</p>{item}</p>' for item in all_results[0]), ''.join(f'{item}</p>' for item in all_results[1]), ''.join(f'{item}</p>' for item in all_results[2]), ''.join(f'</p>{item}</p>' for item in all_results[3]))
