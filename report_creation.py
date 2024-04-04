@@ -8,7 +8,6 @@ short_domain: domain name of certain website
 url: http://short_domain/
 """
 
-import requests.exceptions
 import crawl_processor as cp
 
 try:
@@ -23,7 +22,6 @@ try:
 except ImportError:
     print(Fore.RED + "Can't import some requirements that are necessary to start DPULSE. Please check that all necessary requirements are installed!" + Style.RESET_ALL)
     sys.exit()
-
 def insert_pdf(file):
     with open(file, 'rb') as pdf_file:
         blob_data = pdf_file.read()
@@ -47,7 +45,7 @@ def insert_blob(pdf_blob, db_casename, creation_date, case_comment):
     finally:
         if sqlite_connection:
             sqlite_connection.close()
-            print(Fore.RED + "Database connection is closed")
+            print(Fore.GREEN + "Database connection is successfully closed")
 
 def find_files(filename):
     """
@@ -125,11 +123,10 @@ def create_report(short_domain, url, n, case_comment):
         subdomain_mails, sd_socials, subdomain_ip = cp.domains_reverse_research(subdomains)
         if n > 0:
             print(Fore.GREEN + 'Processing Google Dorking' + Style.RESET_ALL)
+            exp_docs, linkedin, databases, related_pages = cp.dorking_processing(short_domain, num_results=n, lang="en", sleep_interval=sleep_interval, timeout=timeout)
         elif n == 0:
             print(Fore.RED + 'DPULSE will skip Google Dorking because user set the amount of results as 0' + Style.RESET_ALL)
-
-        exp_docs, linkedin, related_pages = cp.dorking_processing(short_domain, num_results=n, lang="en", sleep_interval=sleep_interval, timeout=timeout)
-    except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout):
+    except:
         print(Fore.RED + 'Resource is invalid or unreachable. Closing scan...')
 
     ctime = datetime.now().strftime('%Y-%m-%d, %Hh%Mm%Ss')
@@ -153,7 +150,7 @@ def create_report(short_domain, url, n, case_comment):
                             'li_links': ', '.join(social_medias['LinkedIn']), 'vk_links': ', '.join(social_medias['VKontakte']),
                             'yt_links': ', '.join(social_medias['YouTube']), 'wc_links': ', '.join(social_medias['WeChat']), 'ok_links': ', '.join(social_medias['Odnoklassniki']),
                             'exp_docs': exp_docs, 'linkedin': linkedin, 'related_pages': related_pages,
-                             'ctime': ctime, 'a_tsf': subdomains_amount, 'a_gdr': n}
+                             'ctime': ctime, 'a_tsf': subdomains_amount, 'a_gdr': n, 'exp_db': databases}
 
         print(Fore.GREEN + 'Processing report for {} case...'.format(short_domain) + Style.RESET_ALL)
 
