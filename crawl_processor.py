@@ -19,13 +19,14 @@ try:
     from urllib.parse import urlparse
     from collections import defaultdict
     from bs4 import BeautifulSoup
-    from time import sleep
-    from requests import get
-    from fake_useragent import UserAgent
     import sys
+    import random
+    import asyncio
+    import nest_asyncio
 except ImportError:
-    print(Fore.RED + "Can't import some requirements that are necessary to start DPULSE. Please check that all necessary requirements are installed!" + Style.RESET_ALL)
+    print(Fore.RED + "[Error #001 - Import error] Can't import some requirements that are necessary to start DPULSE. Please check that all necessary requirements are installed!" + Style.RESET_ALL)
     sys.exit()
+
 def ip_gather(short_domain):
     """
     Function for getting IP address of website
@@ -182,63 +183,6 @@ def domains_reverse_research(subdomains):
             elif 'ok.ru' in link:
                 sd_socials['Odnoklassniki'].append(urllib.parse.unquote(link))
 
+    sd_socials = {k: list(set(v)) for k, v in sd_socials.items()}
+
     return subdomain_mails, sd_socials, subdomain_ip
-
-def preset(search_query, results, lang, start, timeout):
-    """
-    Preset function for Google Dorking
-    """
-    ua = UserAgent()
-    resp = get(
-        url="https://www.google.com/search",
-        headers={
-            "User-Agent": ua.random
-        },
-        params={
-            "q": search_query,
-            "num": results + 2,
-            "hl": lang,
-            "start": start,
-        },
-        timeout=timeout,
-    )
-
-    resp.raise_for_status()
-    return resp
-
-def dorking_processing(short_domain, num_results, lang="en", sleep_interval=None, timeout=None):
-    """
-    Google Dorking automatization function
-    """
-    with open('config.txt', 'r') as cfg_file:
-        lines = cfg_file.readlines()
-        index = lines.index('[SOLID DORKS]\n')
-        lines_after = lines[index + 2:]
-
-    search_queries = [line.format(short_domain) for line in lines_after]
-    all_results = []
-    for search_query in search_queries:
-        start = 0
-        results = []
-        while start < num_results:
-            resp = preset(search_query, num_results - start,
-                        lang, start, timeout)
-
-            soup = BeautifulSoup(resp.text, "html.parser")
-            result_block = soup.find_all("div", attrs={"class": "g"})
-            if len(result_block) == 0:
-                start += 1
-            for result in result_block:
-                link = result.find("a", href=True)
-                title = result.find("h3")
-                description_box = result.find(
-                    "div", {"style": "-webkit-line-clamp:2"})
-                if description_box:
-                    description = description_box.text
-                    if link and title and description:
-                        start += 1
-                        results.append(urllib.parse.unquote(link["href"]))
-            sleep(sleep_interval)
-        all_results.append(results)
-
-    return (''.join(f'</p>{item}</p>' for item in all_results[0]), ''.join(f'{item}</p>' for item in all_results[1]), ''.join(f'{item}</p>' for item in all_results[2]), ''.join(f'</p>{item}</p>' for item in all_results[3]))
