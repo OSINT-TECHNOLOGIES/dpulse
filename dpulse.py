@@ -4,86 +4,34 @@ Program start point
 You can call this script from your system terminal: python dpulse.py
 """
 
+import sys
+sys.path.append('modules')
+
 import report_creation as rc
+import cli_init
 
 try:
-    import itertools
     import time
-    import threading
     from colorama import Fore, Style, Back
-    from pyfiglet import Figlet
-    from rich.console import Console
-    import sys
     import webbrowser
     import sqlite3
     import os
 except ImportError:
-    print(Fore.RED + "Can't import some requirements that are necessary to start DPULSE. Please check that all necessary requirements are installed!" + Style.RESET_ALL)
+    print(Fore.RED + "[Error #001 - Import error] Can't import some requirements that are necessary to start DPULSE. Please check that all necessary requirements are installed!" + Style.RESET_ALL)
     sys.exit()
-class ProgressBar(threading.Thread):
-    def __init__(self):
-        super(ProgressBar, self).__init__()
-        self.do_run = True
 
-    def run(self):
-        for char in itertools.cycle('|/-\\'):
-            if not self.do_run:
-                break
-            print(Fore.LIGHTMAGENTA_EX + Back.WHITE + char + Style.RESET_ALL, end='\r')
-            time.sleep(0.1)
+cli = cli_init.Menu()
+progress_bar = cli_init.ProgressBar()
 
-console = Console()
-fig = Figlet(font='univers')
-console.print(fig.renderText('DPULSE'), style="bold blue")
-print(Fore.BLUE + Back.WHITE + 'HEARTBEAT // version: 0.6b' + Style.RESET_ALL)
-print(Fore.BLUE + Back.WHITE + 'Developed by: OSINT-TECHNOLOGIES (https://github.com/OSINT-TECHNOLOGIES)' + Style.RESET_ALL + '\n\n')
-
-def print_main_menu():
-    print('\n')
-    print(Fore.MAGENTA + Back.WHITE + '[MAIN MENU]' + Style.RESET_ALL)
-    print(Fore.CYAN + "1. Determine target and start scan")
-    print(Fore.CYAN + "2. Settings")
-    print(Fore.CYAN + "3. Help")
-    print(Fore.CYAN + "4. Manage report storage database")
-    print(Fore.LIGHTRED_EX + "5. Exit DPULSE" + Style.RESET_ALL + '\n')
-def print_settings_menu():
-    print('\n')
-    print(Fore.MAGENTA + Back.WHITE + '[SETTINGS MENU]' + Style.RESET_ALL)
-    print(Fore.CYAN + "1. Show current config")
-    print(Fore.CYAN + "2. Edit config parameters")
-    print(Fore.LIGHTRED_EX + "3. Return to main menu" + Style.RESET_ALL + '\n')
-
-def print_cfg_edit_menu():
-    print(Fore.MAGENTA + Back.WHITE + '[SETTINGS EDITING]' + Style.RESET_ALL)
-    print(Fore.CYAN + "1. Change sleep-interval")
-    print(Fore.CYAN + "2. Change timeout")
-    print(Fore.CYAN + "3. Add Dorking query to the list")
-    print(Fore.CYAN + "4. Remove Dorking query from the list")
-    print(Fore.LIGHTRED_EX + "5. Return to main menu" + Style.RESET_ALL + '\n')
-
-def print_help_menu():
-    print(Fore.MAGENTA + Back.WHITE + '[HELP MENU]' + Style.RESET_ALL)
-    print(Fore.BLACK + Back.WHITE + 'Be advised that choosing any of points below will open your web browser!' + Style.RESET_ALL)
-    print(Fore.CYAN + "1. How to correctly input your targets URL in DPULSE")
-    print(Fore.CYAN + "2. DPULSE config parameters and their meanings")
-    print(Fore.CYAN + "3. DPULSE CLI colors and their meanings")
-    print(Fore.CYAN + "4. DPULSE config parameters and their meanings")
-    print(Fore.LIGHTRED_EX + "5. Return to main menu" + Style.RESET_ALL + '\n')
-
-def print_db_menu():
-    print(Fore.MAGENTA + Back.WHITE + '[DATABASE MENU]' + Style.RESET_ALL)
-    print(Fore.CYAN + "1. Show database information")
-    print(Fore.CYAN + "2. Show database content")
-    print(Fore.CYAN + "3. Recreate report from database")
-    print(Fore.LIGHTRED_EX + "4. Return to main menu" + Style.RESET_ALL + '\n')
+cli.welcome_menu()
 
 def change_setting(filename):
     cfg_context = open(filename).read()
     print(Fore.LIGHTMAGENTA_EX + '\n[START OF CONFIG FILE]' + Style.RESET_ALL)
-    print('\n' + Fore.BLUE + cfg_context + Style.RESET_ALL)
-    print(Fore.LIGHTMAGENTA_EX + '\n[END OF CONFIG FILE]\n' + Style.RESET_ALL)
-    setting = input(Fore.YELLOW + 'Enter setting to change >> ' + Style.RESET_ALL)
-    new_value = input(Fore.YELLOW + 'Enter new value >> ' + Style.RESET_ALL)
+    print('\n' + Fore.LIGHTBLUE_EX + cfg_context + Style.RESET_ALL)
+    print(Fore.LIGHTMAGENTA_EX + '[END OF CONFIG FILE]\n' + Style.RESET_ALL)
+    setting = input(Fore.YELLOW + 'Enter setting to change >> ')
+    new_value = input(Fore.YELLOW + 'Enter new value >> ')
 
     with open(filename, 'r+') as file:
         lines = file.readlines()
@@ -101,7 +49,7 @@ def db_connect():
     return cursor, sqlite_connection
 
 while True:
-    print_main_menu()
+    cli.print_main_menu()
     choice = input(Fore.YELLOW + "Enter your choice >> ")
     print('\n')
     if choice == "1":
@@ -109,16 +57,19 @@ while True:
         url = "http://" + short_domain + "/"
         dorking_results_amount = int(input(Fore.YELLOW + 'Enter amount of printed Google Dorking results >> '))
         case_comment = str(input(Fore.YELLOW + "Enter case comment (or enter - if you don't need comment to the case) >> "))
-        print(Fore.GREEN + 'Determined target: {}. {} Google Dorking result will be shown. Case comment: {}'.format(short_domain, dorking_results_amount, case_comment) + Style.RESET_ALL)
-        spinner_thread = ProgressBar()
+        print(Fore.LIGHTMAGENTA_EX + "\n/// SUMMARY ///\n" + Style.RESET_ALL)
+        print(Fore.GREEN + "Determined target: {}\nDetermined amount of Google Dorking results: {}\nCase comment: {}\n".format(short_domain, dorking_results_amount, case_comment) + Style.RESET_ALL)
+        print(Fore.LIGHTMAGENTA_EX + "/// SCANNING PROCESS ///\n" + Style.RESET_ALL)
+        spinner_thread = progress_bar
         spinner_thread.start()
         try:
             rc.create_report(short_domain, url, dorking_results_amount, case_comment)
         finally:
             spinner_thread.do_run = False
             spinner_thread.join()
+        print(Fore.LIGHTMAGENTA_EX + "\n/// SCANNING PROCESS END ///\n" + Style.RESET_ALL)
     elif choice == "2":
-        print_settings_menu()
+        cli.print_settings_menu()
         choice_settings = input(Fore.YELLOW + "Enter your choice >> ")
         if choice_settings == '1':
             with open('config.txt', 'r') as cfg_file:
@@ -133,7 +84,7 @@ while True:
             continue
         break
     elif choice == "3":
-        print_help_menu()
+        cli.print_help_menu()
         choice_help = input(Fore.YELLOW + "Enter your choice >> ")
         if choice_help == '1':
             webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/How-to-correctly-input-your-targets-address-in-DPULSE')
@@ -147,7 +98,7 @@ while True:
             continue
 
     elif choice == "4":
-        print_db_menu()
+        cli.print_db_menu()
         db_path = "report_storage.db"
         if not os.path.exists(db_path):
             print(Fore.RED + "Report storage database was not found. DPULSE will create it in a second")
@@ -181,7 +132,7 @@ while True:
                     print(column)
                 cursor.close()
             except sqlite3.Error as error:
-                print(Fore.RED + "Failed to see storage database's details", error)
+                print(Fore.RED + "[Error #002 - Sqlite3 error] Failed to see storage database's details", error)
         elif choice_db == '2':
             try:
                 select_query = "SELECT creation_date, target, id, comment FROM report_storage;"
@@ -191,7 +142,7 @@ while True:
                 for row in records:
                     print(Fore.LIGHTBLUE_EX + f"Case ID: {row[2]} | Case creation date: {row[0]} | Case name: {row[1]} | Case comment: {row[3]}" + Style.RESET_ALL)
             except sqlite3.Error as error:
-                print(Fore.RED + "Failed to see storage database's content", error)
+                print(Fore.RED + "[Error #002 - Sqlite3 error] Failed to see storage database's content", error)
         elif choice_db == "3":
             print(Fore.LIGHTMAGENTA_EX + "\n[DATABASE'S CONTENT]" + Style.RESET_ALL)
             select_query = "SELECT creation_date, target, id, comment FROM report_storage;"
