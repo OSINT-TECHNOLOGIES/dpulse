@@ -1,0 +1,15 @@
+[DORKING SETTINGS]
+
+sleep-interval: 3
+timeout: 5
+
+[SOLID DORKS]
+
+"{}" filetype:pdf OR filetype:xlsx OR filetype:docx OR filetype:ppt OR filetype:doc OR filetype:pptx 
+{} site:linkedin.com/in/
+"{}" filetype:db OR filetype:accdb OR filetype:nsf OR filetype:fp7 OR filetype:mdf OR filetype:sqlitedb 
+
+[ADDITIONAL DORKS]
+
+use: no
+
