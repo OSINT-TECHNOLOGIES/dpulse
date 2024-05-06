@@ -21,8 +21,6 @@ try:
     from bs4 import BeautifulSoup
     import sys
     import random
-    import asyncio
-    import nest_asyncio
 except ImportError:
     print(Fore.RED + "[Error #001 - Import error] Can't import some requirements that are necessary to start DPULSE. Please check that all necessary requirements are installed!" + Style.RESET_ALL)
     sys.exit()
@@ -143,10 +141,10 @@ def domains_reverse_research(subdomains):
         print(Fore.RED + 'Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error will not be included in the report' + Style.RESET_ALL)
         pass
 
-    subdomain_ip = ', '.join(subdomain_ip)
+    subdomain_ip = ' // '.join(subdomain_ip)
     subdomain_mails = [sublist for sublist in subdomain_mails if sublist]
     subdomain_mails = [sublist for sublist in subdomain_mails if sublist != [None]]
-    subdomain_mails = ', '.join([', '.join(map(str, sublist)) for sublist in subdomain_mails])
+    subdomain_mails = ' // '.join([', '.join(map(str, sublist)) for sublist in subdomain_mails])
     subdomain_socials = [{k: v for k, v in d.items() if v} for d in subdomain_socials]
     subdomain_socials = [d for d in subdomain_socials if d]
     subdomain_socials_grouped = defaultdict(list)
