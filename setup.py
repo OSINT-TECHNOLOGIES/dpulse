@@ -25,6 +25,7 @@ setup(
         'rich == 13.5.2',
         'MechanicalSoup == 1.3.0',
         'builtwith == 1.3.4',
-        'dnspython == 2.4.2'
+        'dnspython == 2.4.2',
+        'lxml == 5.2.1'
     ],
 )
