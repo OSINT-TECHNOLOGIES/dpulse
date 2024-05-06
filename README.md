@@ -81,3 +81,6 @@ wkhtmltopdf is required for DPULSE in order to create PDF report just right in P
 | urllib3 | ==2.1.0 |
 | useragent | ==0.1.1 |
 | whois | ==0.9.27 |
+| dnspython | ==2.4.2 |
+| builtwith | ==1.3.4 |
+| MechanicalSoup | ==1.3.0 |
