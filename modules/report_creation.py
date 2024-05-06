@@ -10,6 +10,7 @@ url: http://short_domain/
 
 import crawl_processor as cp
 import dorking_processor as dp
+import networking_processor as np
 
 try:
     import requests
@@ -66,7 +67,7 @@ def read_config(cfg_string_name):
     with open("config.txt", 'r') as file:
         for line in file:
             if line.startswith(cfg_string_name):
-                cfg_parameter = int(line.split(':')[1].strip())
+                cfg_parameter = str(line.split(':')[1].strip())
                 return cfg_parameter
 
 try:
@@ -106,14 +107,23 @@ def report_encoding_config():
     }
 
 search_query = []
-def create_report(short_domain, url, dorking_result_amount, case_comment):
+def create_report(short_domain, url, case_comment):
     """
     Functions which calls all the functions from crawl_processor module and compiles them into PDF report.
     PDF report will be saved in main script directory
     """
     try:
-        sleep_interval = read_config('sleep-interval:')
-        timeout = read_config('timeout:')
+        ctime = datetime.now().strftime('%Y-%m-%d_%Hh%Mm%Ss')
+        casename = short_domain.replace(".", "") + '_' + ctime + '.pdf'
+        foldername = short_domain.replace(".", "") + '_' + ctime
+        db_casename = short_domain.replace(".", "")
+        now = datetime.now()
+        db_creation_date = str(now.year) + str(now.month) + str(now.day)
+        report_folder = "report_{}".format(foldername)
+        os.makedirs(report_folder, exist_ok=True)
+
+        print(Fore.GREEN + "Getting domain IP address" + Style.RESET_ALL)
+        ip = cp.ip_gather(short_domain)
         print(Fore.GREEN + 'Processing WHOIS scanning' + Style.RESET_ALL)
         res = cp.whois_gather(short_domain)
         print(Fore.GREEN + 'Processing subdomain gathering' + Style.RESET_ALL)
@@ -122,45 +132,50 @@ def create_report(short_domain, url, dorking_result_amount, case_comment):
         social_medias = cp.sm_gather(url)
         print(Fore.GREEN + 'Processing subdomain analysis' + Style.RESET_ALL)
         subdomain_mails, sd_socials, subdomain_ip = cp.domains_reverse_research(subdomains)
-        if dorking_result_amount > 0:
-            print(Fore.GREEN + 'Processing Google Dorking' + Style.RESET_ALL)
-            exp_docs, linkedin, databases = dp.solid_google_dorking(short_domain, sleep_interval, dorking_result_amount)
-        elif dorking_result_amount == 0:
-            print(Fore.RED + 'DPULSE will skip Google Dorking because user set the amount of results as 0' + Style.RESET_ALL)
-            exp_docs = linkedin = databases = "Skipped because user set Google Dorking results amount to 0"
-
-        ctime = datetime.now().strftime('%Y-%m-%d, %Hh%Mm%Ss')
-        casename = short_domain.replace(".", "") + '~' + ctime + '.pdf'
-        db_casename = short_domain.replace(".", "")
-        now = datetime.now()
-        db_creation_date = str(now.year) + str(now.month) + str(now.day)
+        print(Fore.GREEN + 'Processing SSL certificate gathering' + Style.RESET_ALL)
+        issuer, subject, notBefore, notAfter, commonName, serialNumber = np.get_ssl_certificate(short_domain)
+        print(Fore.GREEN + 'Processing MX records gathering' + Style.RESET_ALL)
+        mx_records = np.get_dns_info(short_domain)
+        print(Fore.GREEN + 'Extracting robots.txt and sitemap.xml' + Style.RESET_ALL)
+        robots_txt_result = np.get_robots_txt(short_domain, report_folder)
+        sitemap_xml_result = np.get_sitemap_xml(short_domain, report_folder)
+        sitemap_links_status = np.extract_links_from_sitemap(report_folder)
+        print(Fore.GREEN + 'Gathering info about website technologies' + Style.RESET_ALL)
+        web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks = np.get_technologies(url)
+        print(Fore.GREEN + 'Processing Shodan InternetDB search')
+        ports, hostnames, cpes, tags, vulns = np.query_internetdb(ip)
+        print(Fore.GREEN + 'Processing Google Dorking' + Style.RESET_ALL)
+        dorking_status = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain))
 
         context = {'sh_domain': short_domain, 'full_url': url, 'ip_address': cp.ip_gather(short_domain),'registrar': res['registrar'],
                                 'creation_date': res['creation_date'],'expiration_date': res['expiration_date'],
                                 'name_servers': ', '.join(res['name_servers']),'org': res['org'],
                                 'mails': cp.mail_gather(url), 'subdomain_mails': subdomain_mails, 'subdomain_socials': social_medias,
-                                'subdomain_ip': subdomain_ip, 'fb_links_s': ', '.join(sd_socials['Facebook']), 'inst_links_s': ', '.join(sd_socials['Instagram']), 'tw_links_s': ', '.join(sd_socials['Twitter']),
-                                'tg_links_s': ', '.join(sd_socials['Telegram']), 'tt_links_s': ', '.join(sd_socials['TikTok']),
-                                'li_links_s': ', '.join(sd_socials['LinkedIn']), 'vk_links_s': ', '.join(sd_socials['VKontakte']), 'yt_links_s': ', '.join(sd_socials['YouTube']),
-                                'wc_links_s': ', '.join(sd_socials['WeChat']), 'ok_links_s': ', '.join(sd_socials['Odnoklassniki']),
-                                'subdomains': ', '.join(subdomains), 'fb_links': ', '.join(social_medias['Facebook']),
-                                'tw_links': ', '.join(social_medias['Twitter']), 'inst_links': ', '.join(social_medias['Instagram']),
-                                'tg_links': ', '.join(social_medias['Telegram']), 'tt_links': ', '.join(social_medias['TikTok']),
-                                'li_links': ', '.join(social_medias['LinkedIn']), 'vk_links': ', '.join(social_medias['VKontakte']),
-                                'yt_links': ', '.join(social_medias['YouTube']), 'wc_links': ', '.join(social_medias['WeChat']),
-                                'ok_links': ', '.join(social_medias['Odnoklassniki']), 'exp_docs': exp_docs, 'linkedin': linkedin,
-                                'exp_db': databases, 'ctime': ctime, 'a_tsf': subdomains_amount, 'a_gdr': dorking_result_amount}
+                                'subdomain_ip': subdomain_ip, 'fb_links_s': '  '.join(sd_socials['Facebook']), 'inst_links_s': '  '.join(sd_socials['Instagram']), 'tw_links_s': '  '.join(sd_socials['Twitter']),
+                                'tg_links_s': '  '.join(sd_socials['Telegram']), 'tt_links_s': '  '.join(sd_socials['TikTok']),
+                                'li_links_s': '  '.join(sd_socials['LinkedIn']), 'vk_links_s': '  '.join(sd_socials['VKontakte']), 'yt_links_s': '  '.join(sd_socials['YouTube']),
+                                'wc_links_s': '  '.join(sd_socials['WeChat']), 'ok_links_s': '  '.join(sd_socials['Odnoklassniki']),
+                                'subdomains': ' // '.join(subdomains), 'fb_links': '   '.join(social_medias['Facebook']),
+                                'tw_links': '  '.join(social_medias['Twitter']), 'inst_links': '  '.join(social_medias['Instagram']),
+                                'tg_links': '  '.join(social_medias['Telegram']), 'tt_links': '  '.join(social_medias['TikTok']),
+                                'li_links': '  '.join(social_medias['LinkedIn']), 'vk_links': '  '.join(social_medias['VKontakte']),
+                                'yt_links': '  '.join(social_medias['YouTube']), 'wc_links': '  '.join(social_medias['WeChat']),
+                                'ok_links': '  '.join(social_medias['Odnoklassniki']), 'robots_txt_result': robots_txt_result, 'sitemap_xml_result': sitemap_xml_result, 'dorking_status': dorking_status,
+                                'sitemap_links': sitemap_links_status, 'web_servers': web_servers, 'cms': cms, 'programming_languages': programming_languages, 'web_frameworks': web_frameworks, 'analytics': analytics,
+                                'javascript_frameworks': javascript_frameworks,
+                                 'ctime': ctime, 'a_tsf': subdomains_amount, 'mx_records': mx_records, 'issuer': issuer, 'subject': subject, 'notBefore': notBefore, 'notAfter': notAfter,
+                                'commonName': commonName, 'serialNumber': serialNumber, 'ports': ports, 'hostnames': hostnames, 'cpes': cpes,
+                                'tags': tags, 'vulns': vulns}
 
         print(Fore.GREEN + 'Processing report for {} case...'.format(short_domain) + Style.RESET_ALL)
-
         template_loader = jinja2.FileSystemLoader('./')
         template_env = jinja2.Environment(loader=template_loader)
-
         template = template_env.get_template('report_template.html')
         output_text = template.render(context)
         config = pdfkit.configuration(wkhtmltopdf=file_path)
-        pdfkit.from_string(output_text, casename, configuration=config, options=report_encoding_config())
+        report_file = report_folder + "//" + casename
+        pdfkit.from_string(output_text, report_file, configuration=config, options=report_encoding_config())
         print(Fore.GREEN + "Report for {} case was created at {}".format(''.join(short_domain), ctime) + Style.RESET_ALL)
-        insert_blob(insert_pdf(casename), db_casename, db_creation_date, case_comment)
-    except:
-        print(Fore.RED + '[Error #005 - Report creation error] Unable to create PDF report. Closing scan...')
+        insert_blob(insert_pdf(report_file), db_casename, db_creation_date, case_comment)
+    except Exception as e:
+        print(Fore.RED + '[Error #005 - Report creation error] Unable to create PDF report. Reason: {}'.format(e))
