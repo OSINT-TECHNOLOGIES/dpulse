@@ -6,6 +6,10 @@
 
 <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/OSINT-TECHNOLOGIES/dpulse?label=Repository%20size"> <img alt="GitHub License" src="https://img.shields.io/github/license/OSINT-TECHNOLOGIES/dpulse?label=Licensed%20with&color=blue">
 
+**We are happy to announce that DPULSE is getting closer to its v1.0 release!**
+
+**We will publish a few more release candidates, where all existing bugs will be fixed and we will focus on improving the existing components of the program during release candidates phase!**
+
 > [!CAUTION]
 > DPULSE was created as a research tool, and it is not intended for criminal activities. Use DPULSE only on allowed domains and for legal purposes!
 
