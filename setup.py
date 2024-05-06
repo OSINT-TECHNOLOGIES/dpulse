@@ -22,6 +22,9 @@ setup(
         'whois == 0.9.27',
         'colorama == 0.4.6',
         'pyfiglet == 1.0.2',
-        'rich == 13.5.2'
+        'rich == 13.5.2',
+        'MechanicalSoup == 1.3.0',
+        'builtwith == 1.3.4',
+        'dnspython == 2.4.2'
     ],
 )
