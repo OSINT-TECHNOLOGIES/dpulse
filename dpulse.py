@@ -16,14 +16,27 @@ try:
     import webbrowser
     import sqlite3
     import os
-except ImportError:
-    print(Fore.RED + "[Error #001 - Import error] Can't import some requirements that are necessary to start DPULSE. Please check that all necessary requirements are installed!" + Style.RESET_ALL)
+    import itertools
+    import threading
+    from time import sleep
+except ImportError as e:
+    print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
 
 cli = cli_init.Menu()
-progress_bar = cli_init.ProgressBar()
-
 cli.welcome_menu()
+
+class ProgressBar(threading.Thread):
+    def __init__(self):
+        super(ProgressBar, self).__init__()
+        self.do_run = True
+
+    def run(self):
+        for char in itertools.cycle('|/-\\'):
+            if not self.do_run:
+                break
+            print(Fore.LIGHTMAGENTA_EX + Back.WHITE + char + Style.RESET_ALL, end='\r')
+            sleep(0.1)
 def db_connect():
     sqlite_connection = sqlite3.connect('report_storage.db')
     cursor = sqlite_connection.cursor()
@@ -47,10 +60,8 @@ def db_interaction(db_path):
         sqlite_connection.commit()
         sqlite_connection.close()
         print(Fore.GREEN + "Successfully created report storage database" + Style.RESET_ALL)
-        print('\n')
     else:
         print(Fore.GREEN + "Report storage database exists" + Style.RESET_ALL)
-        print('\n')
 
 while True:
     cli.print_main_menu()
@@ -59,20 +70,20 @@ while True:
     if choice == "1":
         db_path = "report_storage.db"
         db_interaction(db_path)
-        short_domain = str(input(Fore.YELLOW + "Enter target's domain name >> "))
+        short_domain = str(input(Fore.YELLOW + "\nEnter target's domain name >> "))
         url = "http://" + short_domain + "/"
         case_comment = str(input(Fore.YELLOW + "Enter case comment (or enter - if you don't need comment to the case) >> "))
-        print(Fore.LIGHTMAGENTA_EX + "\n/// SUMMARY ///\n" + Style.RESET_ALL)
+        print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
         print(Fore.GREEN + "Determined target: {}\nCase comment: {}\n".format(short_domain, case_comment) + Style.RESET_ALL)
-        print(Fore.LIGHTMAGENTA_EX + "/// SCANNING PROCESS ///\n" + Style.RESET_ALL)
-        spinner_thread = progress_bar
+        print(Fore.LIGHTMAGENTA_EX + "[SCANNING PROCESS]\n" + Style.RESET_ALL)
+        spinner_thread = ProgressBar()
         spinner_thread.start()
         try:
             rc.create_report(short_domain, url, case_comment)
         finally:
             spinner_thread.do_run = False
             spinner_thread.join()
-        print(Fore.LIGHTMAGENTA_EX + "\n/// SCANNING PROCESS END ///\n" + Style.RESET_ALL)
+        print(Fore.LIGHTMAGENTA_EX + "\n[SCANNING PROCESS END]\n" + Style.RESET_ALL)
     elif choice == "2":
         cli.print_settings_menu()
         choice_settings = input(Fore.YELLOW + "Enter your choice >> ")
@@ -83,6 +94,16 @@ while True:
                 print(Fore.LIGHTMAGENTA_EX + '\n[END OF CONFIG FILE]\n' + Style.RESET_ALL)
                 continue
         elif choice_settings == '2':
+            with open('config.txt', 'a+') as cfg_file:
+                print(Fore.LIGHTMAGENTA_EX + '\n[START OF CONFIG FILE]' + Style.RESET_ALL)
+                cfg_file.seek(0)
+                print('\n' + Fore.LIGHTBLUE_EX + cfg_file.read() + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + '\n[END OF CONFIG FILE]\n' + Style.RESET_ALL)
+                new_line = str(input(Fore.YELLOW + "Input new dork >> ") + Style.RESET_ALL)
+                print(Fore.GREEN + "New dork successfully added to config.txt" + Style.RESET_ALL)
+                cfg_file.write(new_line + '\n')
+                continue
+        elif choice_settings == '3':
             continue
         break
     elif choice == "3":
@@ -103,7 +124,7 @@ while True:
         db_path = "report_storage.db"
         db_interaction(db_path)
         cursor, sqlite_connection = db_connect()
-        print(Fore.GREEN + "Connected to report storage database")
+        print(Fore.GREEN + "Connected to report storage database\n")
         choice_db = input(Fore.YELLOW + "Enter your choice >> ")
         if choice_db == '1':
             try:
@@ -113,8 +134,8 @@ while True:
                 print(Fore.LIGHTMAGENTA_EX + "\n[DATABASE'S CONTENT]" + Style.RESET_ALL)
                 for row in records:
                     print(Fore.LIGHTBLUE_EX + f"Case ID: {row[2]} | Case creation date: {row[0]} | Case name: {row[1]} | Case comment: {row[3]}" + Style.RESET_ALL)
-            except sqlite3.Error as error:
-                print(Fore.RED + "[Error #002 - Sqlite3 error] Failed to see storage database's content", error)
+            except sqlite3.Error as e:
+                print(Fore.RED + "Failed to see storage database's content. Reason: {}".format(e))
         elif choice_db == "2":
             print(Fore.LIGHTMAGENTA_EX + "\n[DATABASE'S CONTENT]" + Style.RESET_ALL)
             select_query = "SELECT creation_date, target, id, comment FROM report_storage;"
