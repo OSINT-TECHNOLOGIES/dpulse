@@ -1,21 +1,12 @@
-from colorama import Fore, Back, Style
-from pyfiglet import Figlet
-from rich.console import Console
-from time import sleep
-import itertools
-import threading
+import sys
 
-class ProgressBar(threading.Thread):
-    def __init__(self):
-        super(ProgressBar, self).__init__()
-        self.do_run = True
-
-    def run(self):
-        for char in itertools.cycle('|/-\\'):
-            if not self.do_run:
-                break
-            print(Fore.LIGHTMAGENTA_EX + Back.WHITE + char + Style.RESET_ALL, end='\r')
-            sleep(0.1)
+try:
+    from colorama import Fore, Back, Style
+    from pyfiglet import Figlet
+    from rich.console import Console
+except ImportError as e:
+    print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
+    sys.exit()
 
 class Menu:
     def __init__(self):
@@ -24,9 +15,9 @@ class Menu:
     def welcome_menu(self):
         fig = Figlet(font='univers')
         self.console.print(fig.renderText('DPULSE'), style="bold blue")
-        print(Fore.BLUE + Back.WHITE + 'HEARTBEAT // version: 0.8b\n' + Style.RESET_ALL)
-        print(Fore.BLUE + Back.WHITE + 'Developed by OSINT-TECHNOLOGIES\n' + Style.RESET_ALL)
-        print(Fore.BLUE + Back.WHITE + 'Visit our pages:\nhttps://github.com/OSINT-TECHNOLOGIES)' + Style.RESET_ALL + '\n\n')
+        print(Fore.CYAN + Style.BRIGHT + 'HEARTBEAT // version: 0.9rc1\n' + Style.RESET_ALL)
+        print(Fore.CYAN + Style.BRIGHT + 'Developed by OSINT-TECHNOLOGIES\n' + Style.RESET_ALL)
+        print(Fore.CYAN + Style.BRIGHT + 'Visit our pages:\nhttps://github.com/OSINT-TECHNOLOGIES' + Style.RESET_ALL)
 
     def print_main_menu(self):
         print('\n')
@@ -41,7 +32,8 @@ class Menu:
         print('\n')
         print(Fore.MAGENTA + Back.WHITE + '[SETTINGS MENU]' + Style.RESET_ALL)
         print(Fore.CYAN + "1. Show current config")
-        print(Fore.LIGHTRED_EX + "2. Return to main menu" + Style.RESET_ALL + '\n')
+        print(Fore.CYAN + "2. Add Google Dork to config file")
+        print(Fore.LIGHTRED_EX + "3. Return to main menu" + Style.RESET_ALL + '\n')
 
     def print_help_menu(self):
         print(Fore.MAGENTA + Back.WHITE + '[HELP MENU]' + Style.RESET_ALL)
