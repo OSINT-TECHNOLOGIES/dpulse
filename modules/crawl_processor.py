@@ -21,8 +21,8 @@ try:
     from bs4 import BeautifulSoup
     import sys
     import random
-except ImportError:
-    print(Fore.RED + "[Error #001 - Import error] Can't import some requirements that are necessary to start DPULSE. Please check that all necessary requirements are installed!" + Style.RESET_ALL)
+except ImportError as e:
+    print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
 
 def ip_gather(short_domain):
@@ -118,8 +118,8 @@ def domains_reverse_research(subdomains):
         for subdomain in subdomains:
             subdomain_url = "http://" + subdomain + "/"
             subdomain_urls.append(subdomain_url)
-    except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError):
-        print(Fore.RED + 'Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error will not be included in the report' + Style.RESET_ALL)
+    except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError) as e:
+        print(Fore.RED + 'Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error will not be included in the report. Reason: {}'.format(e) + Style.RESET_ALL)
         pass
 
     try:
@@ -127,8 +127,8 @@ def domains_reverse_research(subdomains):
             subdomains_ip = ip_gather(subdomain)
             subdomain_ip.append(subdomains_ip)
             subdomain_ip = list(set(subdomain_ip))
-    except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError):
-        print(Fore.RED + 'Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error will not be included in the report' + Style.RESET_ALL)
+    except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError) as e:
+        print(Fore.RED + 'Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error will not be included in the report. Reason: {}'.format(e) + Style.RESET_ALL)
         pass
 
     try:
@@ -137,8 +137,8 @@ def domains_reverse_research(subdomains):
             subdomain_mails.append(subdomain_mail)
             subdomain_social = sm_gather(subdomain_url)
             subdomain_socials.append(subdomain_social)
-    except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError):
-        print(Fore.RED + 'Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error will not be included in the report' + Style.RESET_ALL)
+    except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError) as e:
+        print(Fore.RED + 'Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error will not be included in the report. Reason: {}'.format(e) + Style.RESET_ALL)
         pass
 
     subdomain_ip = ' // '.join(subdomain_ip)
