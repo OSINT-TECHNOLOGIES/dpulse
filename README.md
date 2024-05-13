@@ -21,7 +21,7 @@
 > [!NOTE]  
 > This program solution is not final and some details are potentially to be changed!
 > 
-> Current version: 0.8b-hotfix-1 (Codename: Heartbeat)
+> Current version: 0.9rc1 (Codename: Heartbeat)
 
 ## What is DPULSE and how can I use it?
 
