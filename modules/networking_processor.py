@@ -1,10 +1,16 @@
-import dns.resolver
-import ssl
-import socket
-from colorama import Fore, Style
-import requests
-import xml.etree.ElementTree as ET
-import builtwith
+import sys
+
+try:
+    import dns.resolver
+    import ssl
+    import socket
+    from colorama import Fore, Style
+    import requests
+    import xml.etree.ElementTree as ET
+    import builtwith
+except ImportError as e:
+    print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
+    sys.exit()
 
 def get_dns_info(short_domain):
     resolver = dns.resolver.Resolver()
@@ -29,7 +35,6 @@ def query_internetdb(ip):
     response = requests.get(url)
 
     if response.status_code == 200:
-        print(Fore.GREEN + "Found some information on InternetDB" + Style.RESET_ALL)
         data = response.json()
         ports = data.get("ports", [])
         hostnames = data.get("hostnames", [])
@@ -79,7 +84,8 @@ def extract_links_from_sitemap(report_folder):
             for link in links:
                 f.write(f"=> {link}\n")
         return 'Links from "sitemap.txt" were successfully parsed'
-    except ET.ParseError:
+    except ET.ParseError as e:
+        print(Fore.RED + "Links from sitemap.txt were not parsed. Reason: {}".format(e))
         return 'Links from "sitemap.txt" were not parsed'
 
 def get_technologies(url):
