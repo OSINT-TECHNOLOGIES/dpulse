@@ -1,8 +1,14 @@
-import requests.exceptions
-from colorama import Fore, Style
-import mechanicalsoup
-import re
-import requests
+import sys
+
+try:
+    import requests.exceptions
+    from colorama import Fore, Style
+    import mechanicalsoup
+    import re
+    import requests
+except ImportError as e:
+    print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
+    sys.exit()
 
 def get_dorking_query(short_domain):
     print(Fore.GREEN + "Getting dorking query from config file")
@@ -34,8 +40,9 @@ def solid_google_dorking(query, pages=10):
                 break
         del result_query[-2:]
         return result_query
-    except requests.exceptions.ConnectionError:
-        print(Fore.RED + "Error while establishing connection with domain. No results will appear" + Style.RESET_ALL)
+    except requests.exceptions.ConnectionError as e:
+        print(Fore.RED + "Error while establishing connection with domain. No results will appear. Reason: {}".format(e) + Style.RESET_ALL)
+        return "Google Dorking results file was not created"
 
 def save_results_to_txt(folderpath, queries, pages=10):
     txt_writepath = folderpath + '//04-dorking_results.txt'
@@ -51,4 +58,3 @@ def save_results_to_txt(folderpath, queries, pages=10):
             f.write("\n")
     print(Fore.GREEN + "Google Dorking results successfully saved in TXT file" + Style.RESET_ALL)
     return "File with gathered links was successfully created"
-
