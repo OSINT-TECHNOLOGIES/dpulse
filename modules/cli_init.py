@@ -13,9 +13,10 @@ class Menu:
         self.console = Console()
 
     def welcome_menu(self):
-        fig = Figlet(font='univers')
+        fig = Figlet(font='slant')
+        print('\n')
         self.console.print(fig.renderText('DPULSE'), style="bold blue")
-        print(Fore.CYAN + Style.BRIGHT + 'HEARTBEAT // version: 0.9rc1\n' + Style.RESET_ALL)
+        print(Fore.CYAN + Style.BRIGHT + 'HEARTBEAT // version: 0.9rc2\n' + Style.RESET_ALL)
         print(Fore.CYAN + Style.BRIGHT + 'Developed by OSINT-TECHNOLOGIES\n' + Style.RESET_ALL)
         print(Fore.CYAN + Style.BRIGHT + 'Visit our pages:\nhttps://github.com/OSINT-TECHNOLOGIES' + Style.RESET_ALL)
 
@@ -39,10 +40,8 @@ class Menu:
         print(Fore.MAGENTA + Back.WHITE + '[HELP MENU]' + Style.RESET_ALL)
         print(Fore.BLACK + Back.WHITE + 'Be advised that choosing any of points below will open your web browser!' + Style.RESET_ALL)
         print(Fore.CYAN + "1. How to correctly input your targets URL in DPULSE")
-        print(Fore.CYAN + "2. DPULSE config parameters and their meanings")
-        print(Fore.CYAN + "3. DPULSE CLI colors and their meanings")
-        print(Fore.CYAN + "4. DPULSE config parameters and their meanings")
-        print(Fore.LIGHTRED_EX + "5. Return to main menu" + Style.RESET_ALL + '\n')
+        print(Fore.CYAN + "2. DPULSE CLI colors and their meanings")
+        print(Fore.LIGHTRED_EX + "3. Return to main menu" + Style.RESET_ALL + '\n')
 
     def print_db_menu(self):
         print(Fore.MAGENTA + Back.WHITE + '[DATABASE MENU]' + Style.RESET_ALL)
