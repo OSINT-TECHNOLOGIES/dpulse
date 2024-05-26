@@ -30,16 +30,16 @@ def insert_pdf(file):
     with open(file, 'rb') as pdf_file:
         blob_data = pdf_file.read()
         return blob_data
-def insert_blob(pdf_blob, db_casename, creation_date, case_comment):
+def insert_blob(pdf_blob, db_casename, creation_date, case_comment, robots, sitemap_xml, sitemap_links, dorking_results):
     try:
         sqlite_connection = sqlite3.connect('report_storage.db')
         cursor = sqlite_connection.cursor()
         print(Fore.GREEN + "Connected to report storage database")
 
         sqlite_insert_blob_query = """INSERT INTO report_storage
-                                  (report_content, creation_date, target, comment) VALUES (?, ?, ?, ?)"""
+                                  (report_content, creation_date, target, comment, dorks_results, robots_text, sitemap_text, sitemap_file) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
 
-        data_tuple = (pdf_blob, creation_date, db_casename, case_comment)
+        data_tuple = (pdf_blob, creation_date, db_casename, case_comment, dorking_results, robots, sitemap_links, sitemap_xml)
         cursor.execute(sqlite_insert_blob_query, data_tuple)
         sqlite_connection.commit()
         print(Fore.GREEN + "Scanning results are successfully saved in report storage database")
@@ -181,6 +181,30 @@ def create_report(short_domain, url, case_comment):
         report_file = report_folder + "//" + casename
         pdfkit.from_string(output_text, report_file, configuration=config, options=report_encoding_config())
         print(Fore.GREEN + "Report for {} case was created at {}".format(''.join(short_domain), ctime) + Style.RESET_ALL)
-        insert_blob(insert_pdf(report_file), db_casename, db_creation_date, case_comment)
+        try:
+            with open(report_folder + "//" + '01-robots.txt', 'r') as robots_file:
+                robots_content = robots_file.read()
+        except:
+            robots_content = 0
+            pass
+        try:
+            with open(report_folder + "//" + '02-sitemap.txt', 'r') as sitemap_xml:
+                sitemap_content = sitemap_xml.read()
+        except:
+            sitemap_content = 0
+            pass
+        try:
+            with open(report_folder + "//" + '03-sitemap_links.txt', 'r') as sitemap_links:
+                sitemap_links_content = sitemap_links.read()
+        except:
+            sitemap_links_content = 0
+            pass
+        try:
+            with open(report_folder + "//" + '04-dorking_results.txt', 'r') as dorking_file:
+                dorking_content = dorking_file.read()
+        except:
+            dorking_content = 0
+            pass
+        insert_blob(insert_pdf(report_file), db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content) # BLOB
     except Exception as e:
         print(Fore.RED + 'Unable to create PDF report. Reason: {}'.format(e))
