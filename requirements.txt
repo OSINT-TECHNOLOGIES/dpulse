@@ -9,7 +9,7 @@ pdfkit==1.0.0
 requests==2.31.0
 soupsieve==2.5
 urllib3==2.1.0
-whois==0.9.27
+python-whois==0.9.4
 colorama==0.4.6
 pyfiglet==1.0.2
 rich==13.5.2
