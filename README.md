@@ -21,7 +21,7 @@
 > [!NOTE]  
 > This program solution is not final and some details are potentially to be changed!
 > 
-> Current version: 0.9rc1 (Codename: Heartbeat)
+> Current version: 0.9rc2 (Codename: Heartbeat)
 
 ## What is DPULSE and how can I use it?
 
@@ -82,8 +82,9 @@ wkhtmltopdf is required for DPULSE in order to create PDF report just right in P
 | requests | ==2.31.0 |
 | soupsieve | ==2.5 |
 | urllib3 | ==2.1.0 |
-| whois | ==0.9.27 |
+| python-whois | ==0.9.4 |
 | dnspython | ==2.4.2 |
 | builtwith | ==1.3.4 |
 | MechanicalSoup | ==1.3.0 |
 | lxml | ==5.2.1 |
+| colorama | ==0.4.6 |
