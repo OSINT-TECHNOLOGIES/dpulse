@@ -7,7 +7,7 @@ You can call this script from your system terminal: python dpulse.py
 import sys
 sys.path.append('modules')
 
-import report_creation as rc
+import pdf_report_creation as pdf_rc
 import cli_init
 
 try:
@@ -53,6 +53,10 @@ def db_interaction(db_path):
             "comment" TEXT NOT NULL,
             "target" TEXT NOT NULL,
             "creation_date" INTEGER NOT NULL,
+            "dorks_results" TEXT,
+            "robots_text" TEXT,
+            "sitemap_text" TEXT,
+            "sitemap_file" TEXT,
             PRIMARY KEY("id" AUTOINCREMENT)
         );
         """
@@ -79,11 +83,12 @@ while True:
         spinner_thread = ProgressBar()
         spinner_thread.start()
         try:
-            rc.create_report(short_domain, url, case_comment)
+            pdf_rc.create_report(short_domain, url, case_comment)
         finally:
             spinner_thread.do_run = False
             spinner_thread.join()
         print(Fore.LIGHTMAGENTA_EX + "\n[SCANNING PROCESS END]\n" + Style.RESET_ALL)
+
     elif choice == "2":
         cli.print_settings_menu()
         choice_settings = input(Fore.YELLOW + "Enter your choice >> ")
@@ -112,12 +117,8 @@ while True:
         if choice_help == '1':
             webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/How-to-correctly-input-your-targets-address-in-DPULSE')
         elif choice_help == '2':
-            webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-config-parameters-and-their-meanings')
-        elif choice_help == '3':
             webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-interface-colors-meaning')
-        elif choice_help == '4':
-            webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-report-storage-database')
-        elif choice_help == '5':
+        elif choice_help == '3':
             continue
     elif choice == "4":
         cli.print_db_menu()
@@ -128,29 +129,60 @@ while True:
         choice_db = input(Fore.YELLOW + "Enter your choice >> ")
         if choice_db == '1':
             try:
-                select_query = "SELECT creation_date, target, id, comment FROM report_storage;"
+                select_query = "SELECT creation_date, target, id, comment, dorks_results, robots_text, sitemap_text, sitemap_file FROM report_storage;"
                 cursor.execute(select_query)
                 records = cursor.fetchall()
-                print(Fore.LIGHTMAGENTA_EX + "\n[DATABASE'S CONTENT]" + Style.RESET_ALL)
                 for row in records:
-                    print(Fore.LIGHTBLUE_EX + f"Case ID: {row[2]} | Case creation date: {row[0]} | Case name: {row[1]} | Case comment: {row[3]}" + Style.RESET_ALL)
+                    dorks_presence = robots_presence = sitemap_presence = "None"
+                    if len(row[4]) > 1:
+                        dorks_presence = "In DB"
+                    if len(row[5]) > 1:
+                        robots_presence = "In DB"
+                    if len(row[6]) > 1:
+                        sitemap_presence = "In DB"
+                    print(Fore.LIGHTBLUE_EX + f"Case ID: {row[2]} | Case comment: {row[3]} | Case creation date: {row[0]} | Case name: {row[1]} | Dorks: {dorks_presence} | robots.txt: {robots_presence} | sitemap.xml: {sitemap_presence}" + Style.RESET_ALL)
             except sqlite3.Error as e:
                 print(Fore.RED + "Failed to see storage database's content. Reason: {}".format(e))
         elif choice_db == "2":
             print(Fore.LIGHTMAGENTA_EX + "\n[DATABASE'S CONTENT]" + Style.RESET_ALL)
-            select_query = "SELECT creation_date, target, id, comment FROM report_storage;"
+            select_query = "SELECT creation_date, target, id, comment, dorks_results, robots_text, sitemap_text, sitemap_file FROM report_storage;"
             cursor.execute(select_query)
             records = cursor.fetchall()
             for row in records:
-                print(Fore.LIGHTBLUE_EX + f"Case ID: {row[2]} | Case creation date: {row[0]} | Case name: {row[1]} | Case comment: {row[3]}" + Style.RESET_ALL)
+                dorks_presence = robots_presence = sitemap_presence = "None"
+                if len(row[4]) > 1:
+                    dorks_presence = "In DB"
+                if len(row[5]) > 1:
+                    robots_presence = "In DB"
+                if len(row[6]) > 1:
+                    sitemap_presence = "In DB"
+                print(Fore.LIGHTBLUE_EX + f"Case ID: {row[2]} | Case comment: {row[3]} | Case creation date: {row[0]} | Case name: {row[1]} | Dorks: {dorks_presence} | robots.txt: {robots_presence} | sitemap.xml: {sitemap_presence}" + Style.RESET_ALL)
             id_to_extract = int(input(Fore.YELLOW + "Enter report ID you want to extract >> "))
+            extracted_folder_name = 'report_recreated_ID#{}'.format(id_to_extract)
+            os.makedirs(extracted_folder_name)
             cursor.execute("SELECT report_content FROM report_storage WHERE id=?", (id_to_extract,))
-            result = cursor.fetchone()
-            if result is not None:
-                blob_data = result[0]
-                with open('report_extracted.pdf', 'wb') as file:
+            pdf_blob = cursor.fetchone()
+            if pdf_blob is not None:
+                blob_data = pdf_blob[0]
+                with open(extracted_folder_name + '//report_extracted.pdf', 'wb') as file:
                     file.write(blob_data)
-            print(Fore.GREEN + "Report was successfully recreated from report storage database as report_extracted.pdf")
+            cursor.execute("SELECT dorks_results FROM report_storage WHERE id=?", (id_to_extract,))
+            dorks_results = (cursor.fetchone())[0]
+            with open(extracted_folder_name + '//dorks_extracted.txt', 'w') as file:
+                file.write(dorks_results)
+            cursor.execute("SELECT robots_text FROM report_storage WHERE id=?", (id_to_extract,))
+            robots_results = (cursor.fetchone())[0]
+            with open(extracted_folder_name + '//robots_extracted.txt', 'w') as file:
+                file.write(robots_results)
+            cursor.execute("SELECT sitemap_file FROM report_storage WHERE id=?", (id_to_extract,))
+            sitemap_results = (cursor.fetchone())[0]
+            with open(extracted_folder_name + '//sitemap_extracted.txt', 'w') as file:
+                file.write(sitemap_results)
+            cursor.execute("SELECT sitemap_text FROM report_storage WHERE id=?", (id_to_extract,))
+            sitemap_links_results = (cursor.fetchone())[0]
+            with open(extracted_folder_name + '//sitemap_links_extracted.txt', 'w') as file:
+                file.write(sitemap_links_results)
+            print(Fore.GREEN + "Report was successfully recreated from report storage database and saved in {} folder".format(extracted_folder_name))
         elif choice_db == "3":
             if sqlite_connection:
                 sqlite_connection.close()
