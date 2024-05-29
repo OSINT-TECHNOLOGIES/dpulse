@@ -16,9 +16,9 @@ class Menu:
         fig = Figlet(font='slant')
         print('\n')
         self.console.print(fig.renderText('DPULSE'), style="bold blue")
-        print(Fore.CYAN + Style.BRIGHT + 'HEARTBEAT // version: 0.9rc2\n' + Style.RESET_ALL)
+        print(Fore.CYAN + Style.BRIGHT + 'HEARTBEAT // version: 0.9rc3\n' + Style.RESET_ALL)
         print(Fore.CYAN + Style.BRIGHT + 'Developed by OSINT-TECHNOLOGIES\n' + Style.RESET_ALL)
-        print(Fore.CYAN + Style.BRIGHT + 'Visit our pages:\nhttps://github.com/OSINT-TECHNOLOGIES' + Style.RESET_ALL)
+        print(Fore.CYAN + Style.BRIGHT + 'Visit our pages:\nhttps://github.com/OSINT-TECHNOLOGIES' + Style.RESET_ALL + '\n')
 
     def print_main_menu(self):
         print('\n')
@@ -44,7 +44,8 @@ class Menu:
         print(Fore.LIGHTRED_EX + "3. Return to main menu" + Style.RESET_ALL + '\n')
 
     def print_db_menu(self):
+        print('\n')
         print(Fore.MAGENTA + Back.WHITE + '[DATABASE MENU]' + Style.RESET_ALL)
         print(Fore.CYAN + "1. Show database content")
         print(Fore.CYAN + "2. Recreate report from database")
-        print(Fore.LIGHTRED_EX + "3. Return to main menu" + Style.RESET_ALL + '\n')
+        print(Fore.LIGHTRED_EX + "3. Return to main menu" + Style.RESET_ALL)
