@@ -8,9 +8,14 @@ short_domain: domain name of certain website
 url: http://short_domain/
 """
 
+import sys
+sys.path.append('service')
+
 import crawl_processor as cp
 import dorking_processor as dp
 import networking_processor as np
+import db_processing as db
+import files_processing as fp
 
 try:
     import requests
@@ -18,7 +23,6 @@ try:
     import jinja2
     import pdfkit
     import os
-    import sys
     from colorama import Fore, Style
     import webbrowser
     import sqlite3
@@ -26,55 +30,10 @@ except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
 
-def insert_pdf(file):
-    with open(file, 'rb') as pdf_file:
-        blob_data = pdf_file.read()
-        return blob_data
-def insert_blob(pdf_blob, db_casename, creation_date, case_comment, robots, sitemap_xml, sitemap_links, dorking_results):
-    try:
-        sqlite_connection = sqlite3.connect('report_storage.db')
-        cursor = sqlite_connection.cursor()
-        print(Fore.GREEN + "Connected to report storage database")
-
-        sqlite_insert_blob_query = """INSERT INTO report_storage
-                                  (report_content, creation_date, target, comment, dorks_results, robots_text, sitemap_text, sitemap_file) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
-
-        data_tuple = (pdf_blob, creation_date, db_casename, case_comment, dorking_results, robots, sitemap_links, sitemap_xml)
-        cursor.execute(sqlite_insert_blob_query, data_tuple)
-        sqlite_connection.commit()
-        print(Fore.GREEN + "Scanning results are successfully saved in report storage database")
-        cursor.close()
-    except sqlite3.Error as e:
-        print(Fore.RED + "Failed to insert scanning results in report storage database. Reason: {}".format(e))
-    finally:
-        if sqlite_connection:
-            sqlite_connection.close()
-            print(Fore.GREEN + "Database connection is successfully closed")
-
-def find_files(filename):
-    """
-    Function which will find wkhtmltopdf executable file
-    """
-    root_directory = os.getcwd()
-    for root, dirs, files in os.walk(root_directory):
-        if filename in files:
-            return os.path.join(root, filename)
-    return None
-
-def read_config(cfg_string_name):
-    """
-    Function which reads config parameters using separator
-    """
-    with open("config.txt", 'r') as file:
-        for line in file:
-            if line.startswith(cfg_string_name):
-                cfg_parameter = str(line.split(':')[1].strip())
-                return cfg_parameter
-
 try:
     current_script = os.path.realpath(__file__)
     current_directory = os.path.dirname(current_script)
-    file_path = os.path.join(current_directory, find_files('wkhtmltopdf.exe'))
+    file_path = os.path.join(current_directory, fp.find_files('wkhtmltopdf.exe'))
     print(Fore.GREEN + 'WKHTMLTOPDF was found at {}'.format(file_path))
 except TypeError:
     print(Fore.RED + 'WKHTMLTOPDF was not found in DPULSE root directory. Download and install it in your DPULSE folder and retry scan' + Style.RESET_ALL)
@@ -91,7 +50,7 @@ except TypeError:
 try:
     current_script = os.path.realpath(__file__)
     current_directory = os.path.dirname(current_script)
-    cfg_file_path = os.path.join(current_directory, find_files('config.txt'))
+    cfg_file_path = os.path.join(current_directory, fp.find_files('config.txt'))
     print(Fore.GREEN + 'Main config file was found at {}'.format(cfg_file_path))
 except TypeError as e:
     print(Fore.RED + 'Main config file was not found in DPULSE root directory. Reason: {}'.format(e) + Style.RESET_ALL)
@@ -181,30 +140,8 @@ def create_report(short_domain, url, case_comment):
         report_file = report_folder + "//" + casename
         pdfkit.from_string(output_text, report_file, configuration=config, options=report_encoding_config())
         print(Fore.GREEN + "Report for {} case was created at {}".format(''.join(short_domain), ctime) + Style.RESET_ALL)
-        try:
-            with open(report_folder + "//" + '01-robots.txt', 'r') as robots_file:
-                robots_content = robots_file.read()
-        except:
-            robots_content = 0
-            pass
-        try:
-            with open(report_folder + "//" + '02-sitemap.txt', 'r') as sitemap_xml:
-                sitemap_content = sitemap_xml.read()
-        except:
-            sitemap_content = 0
-            pass
-        try:
-            with open(report_folder + "//" + '03-sitemap_links.txt', 'r') as sitemap_links:
-                sitemap_links_content = sitemap_links.read()
-        except:
-            sitemap_links_content = 0
-            pass
-        try:
-            with open(report_folder + "//" + '04-dorking_results.txt', 'r') as dorking_file:
-                dorking_content = dorking_file.read()
-        except:
-            dorking_content = 0
-            pass
-        insert_blob(insert_pdf(report_file), db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content) # BLOB
+        robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
+        pdf_blob = fp.get_pdf_blob(report_file)
+        db.insert_blob(pdf_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content)
     except Exception as e:
         print(Fore.RED + 'Unable to create PDF report. Reason: {}'.format(e))
