@@ -1,10 +1,16 @@
-<p align="center">
-  <img src="https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/b90522d8-6804-45c9-9ce8-52ff5cd09fc2">
-</p>
-
 # DPULSE - Domain Public Data Collection Service 
 
-<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/OSINT-TECHNOLOGIES/dpulse?label=Repository%20size"> <img alt="GitHub License" src="https://img.shields.io/github/license/OSINT-TECHNOLOGIES/dpulse?label=Licensed%20with&color=blue">
+<p align="center">
+  <img src="https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/fed8d368-7309-4aaa-a82e-2f0b277122de">
+</p>
+
+
+<p align="center">
+<img alt="GitHub License" src="https://img.shields.io/github/license/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/t/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&label=total%20commits&color=red"> <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red">
+</p>
+
+
+
 
 **We are happy to announce that DPULSE is getting closer to its v1.0 release!**
 
