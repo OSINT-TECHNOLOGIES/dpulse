@@ -9,6 +9,9 @@
 </p>
 
 <p align="center">
+<img alt="Static Badge" src="https://img.shields.io/badge/OSINT-CATEGORY?style=for-the-badge&label=TOOL%20CATEGORY&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/CLI-CATEGORY?style=for-the-badge&label=interface%20type&color=red">
+</p>
+<p align="center">
 <img alt="GitHub License" src="https://img.shields.io/github/license/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/t/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&label=total%20commits&color=red"> <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red">
 </p>
 
