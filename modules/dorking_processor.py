@@ -12,14 +12,14 @@ except ImportError as e:
 
 def get_dorking_query(short_domain):
     print(Fore.GREEN + "Getting dorking query from config file")
-    with open('config.txt', 'r') as cfg_file:
+    with open('dorkslist.txt', 'r') as cfg_file:
         lines = cfg_file.readlines()
         index = lines.index('[SOLID DORKS]\n')
         lines_after = lines[index + 2:]
         search_query = [line.format(short_domain) for line in lines_after]
         return search_query
 
-def solid_google_dorking(query, pages=10):
+def solid_google_dorking(query, pages=100):
     try:
         browser = mechanicalsoup.StatefulBrowser()
         browser.open("https://www.google.com/")
