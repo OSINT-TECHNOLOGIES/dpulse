@@ -35,7 +35,7 @@ DPULSE is a software solution for conducting OSINT research in relation to a cer
 6. Domain-related Google queries
 7. InternetDB search results (possible vulnerabilities, open ports and so on)
 8. Used web-technologies
-9. Sitemap, robots.txt files
+9. Sitemap, robots.txt files, SSL certificate info
     
 All these results are compiled into an easy-to-read PDF report by category.
 
