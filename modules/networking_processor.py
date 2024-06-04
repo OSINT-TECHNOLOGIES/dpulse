@@ -13,27 +13,37 @@ except ImportError as e:
     sys.exit()
 
 def get_dns_info(short_domain):
-    resolver = dns.resolver.Resolver()
-    mx_records = str(resolver.resolve(short_domain, 'MX'))
-    return mx_records
+    try:
+        resolver = dns.resolver.Resolver()
+        mx_records = str(resolver.resolve(short_domain, 'MX'))
+        return mx_records
+    except dns.resolver.NoAnswer as error_noans:
+        print(Fore.RED + "No answer from domain about MX records. Reason: {}".format(error_noans))
+        return 'No information about MX records was gathered'
+    except dns.resolver.Timeout as error_timeout:
+        print(Fore.RED + "Timeout while getting MX records. Reason: {}".format(error_timeout))
+        return 'No information about MX records was gathered'
 
 def get_ssl_certificate(short_domain, port=443):
-    context = ssl.create_default_context()
-    conn = socket.create_connection((short_domain, port))
-    sock = context.wrap_socket(conn, server_hostname=short_domain)
-    cert = sock.getpeercert()
-    issuer = cert['issuer'][0][0][1]
-    subject = cert['subject'][0][0][1]
-    notBefore = cert['notBefore']
-    notAfter = cert['notAfter']
-    commonName = str(cert['issuer'][2][0][1]) + ', ' + 'version: ' + str(cert['version'])
-    serialNumber = cert['serialNumber']
-    return issuer, subject, notBefore, notAfter, commonName, serialNumber
+    try:
+        context = ssl.create_default_context()
+        conn = socket.create_connection((short_domain, port))
+        sock = context.wrap_socket(conn, server_hostname=short_domain)
+        cert = sock.getpeercert()
+        issuer = cert['issuer'][0][0][1]
+        subject = cert['subject'][0][0][1]
+        notBefore = cert['notBefore']
+        notAfter = cert['notAfter']
+        commonName = str(cert['issuer'][2][0][1]) + ', version: ' + str(cert['version'])
+        serialNumber = cert['serialNumber']
+        return issuer, subject, notBefore, notAfter, commonName, serialNumber
+    except (ssl.CertificateError, ssl.SSLError, socket.gaierror) as e:
+        print(Fore.RED + "Error while gathering info about SSL certificate. Reason: {}".format(e))
+        return "No information about SSL certificate was gathered"
 
 def query_internetdb(ip):
     url = f"https://internetdb.shodan.io/{ip}"
     response = requests.get(url)
-
     if response.status_code == 200:
         data = response.json()
         ports = data.get("ports", [])
