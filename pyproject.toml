@@ -9,7 +9,7 @@ description = "Convenient,fast and user-friendly collector of domain information
 authors = ["OSINT-TECHNOLOGIES <osint.technologies@gmail.com>"]
 readme = "README.md"
 license = "MIT License"
-homepage = "https://test.pypi.org/manage/projects/dpulse"
+homepage = "https://pypi.org/manage/projects/dpulse"
 repository = "https://github.com/OSINT-TECHNOLOGIES/dpulse"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
