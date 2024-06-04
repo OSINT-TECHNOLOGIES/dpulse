@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-<img alt="Static Badge" src="https://img.shields.io/badge/OSINT-CATEGORY?style=for-the-badge&label=TOOL%20CATEGORY&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/CLI-CATEGORY?style=for-the-badge&label=interface%20type&color=red">
+<img alt="Static Badge" src="https://img.shields.io/badge/DOMAIN_OSINT-CATEGORY?style=for-the-badge&label=TOOL%20CATEGORY&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/CLI-CATEGORY?style=for-the-badge&label=interface%20type&color=red">
 </p>
 <p align="center">
 <img alt="GitHub License" src="https://img.shields.io/github/license/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/t/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&label=total%20commits&color=red"> <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red">
@@ -17,13 +17,6 @@
 
 
 
-
-
-
-
-**We are happy to announce that DPULSE is getting closer to its v1.0 release!**
-
-**We will publish a few more release candidates, where all existing bugs will be fixed and we will focus on improving the existing components of the program during release candidates phase!**
 
 > [!CAUTION]
 > DPULSE was created as a research tool, and it is not intended for criminal activities. Use DPULSE only on allowed domains and for legal purposes!
@@ -33,73 +26,65 @@
 > 
 > You can also contact the developer via e-mail: osint.technologies@gmail.com
 
-> [!NOTE]  
-> This program solution is not final and some details are potentially to be changed!
-> 
-> Current version: 0.9rc3 (Codename: Heartbeat)
 
-## What is DPULSE and how can I use it?
+## About DPULSE
 
 DPULSE is a software solution for conducting OSINT research in relation to a certain domain. Using this software you can extract useful information such as:
-1) WHOIS information about domain
-2) List of subdomains
-3) Mentions of the domain's owner organization in some social networks, as well as organization profiles in social networks.
-4) IP addresses
-5) Public documents
-6) Domain-related Google queries
-
-All these results are compiled into an easy-to-read PDF report by category. Specified Google Dorking automatization is also on board!
-
-## Program examples
-**Programm menu**
-
-![example](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/7adc438e-9f67-4919-b307-c9923e556498)
-
-**Scanning and PDF creation report process**
-
-![example1](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/da3d3710-e4a5-420d-bcdc-bb43a70c92c5)
+1. WHOIS information 
+2. Subdomains
+3. Mentions of the domain's owner organization in some social networks, as well as organization profiles in social networks.
+4. IP addresses
+5. Public documents
+6. Domain-related Google queries
+7. InternetDB search results (possible vulnerabilities, open ports and so on)
+8. Used web-technologies
+9. Sitemap, robots.txt files
+    
+All these results are compiled into an easy-to-read PDF report by category.
 
 
-## How to start DPULSE and get some results 
+## How to install DPULSE
 
-Before you start working with DPULSE, you need to install all dependencies and required packages according to the instructions below. There are two ways how to install them:
-> Using **pip install -r requirements.txt** command in CLI.
 
-> Using **python setup.py install** command in CLI
+> [!NOTE]
+> Be advised: before you start working with DPULSE, you should manually install WKHTMLTOPDF software inside DPULSE root folder
+> 
+> You can download it from here: https://wkhtmltopdf.org/
 
-Moreover, you need to manually install WKHTMLTOPDF package in DPULSE directory. This package is necessary for creating PDF reports and programm won't start unless WKHTMLTOPDF is not installed. You can find WKHTMLTOPDF download link in the project requirements paragraph down below
 
-After preliminary setup, everything will be ready for getting started.
 
-Then you can start DPULSE using your terminal where you write only one command:
-> python dpulse.py
+### First way
 
-This will open DPULSE menu when you can select 1st point and follow the steps required by the program. After the program finishes, a PDF report with the domain name that you entered before starting will be created in the program's root folder.
+Simply download zip archive from assets in releases bookmark, just right here:
 
-## Project's requirements 
+![изображение](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/bd2ebf09-a31c-4e27-a674-5b602808a667)
 
-**Additional programs:**
+Then you just unpack the archive, open terminal in DPULSE root folder and use `pip install -r requirements.txt` to install requirements. After that you must install wkhtmltopdf in DPULSE root folder
 
-wkhtmltopdf is required for DPULSE in order to create PDF report just right in Python. You can download it here (https://wkhtmltopdf.org/downloads.html) and you need to install it in DPULSE root directory
+### Second way
 
-**Python libraries:**
+Cloning GitHub repository and requirements, you can do it using 3 simple commands:
+   
+  ```
+  git clone https://github.com/OSINT-TECHNOLOGIES/dpulse
+  cd dpulse
+  pip install -r requirements.txt
+  ```
+  After that you must install wkhtmltopdf in DPULSE root folder
 
-| Library  | Version | 
-| ---------- | ------------- | 
-| Jinja2  | ==3.1.2 | 
-| MarkupSafe | ==2.1.3 |
-| beautifulsoup4 | ==4.12.2 |
-| bs4 | ==0.0.1 |
-| certifi | ==2023.11.17 |
-| charset-normalizer | ==3.3.2 |
-| idna | ==3.6 |
-| pdfkit | ==1.0.0 |
-| requests | ==2.31.0 |
-| soupsieve | ==2.5 |
-| urllib3 | ==2.1.0 |
-| python-whois | ==0.9.4 |
-| dnspython | ==2.4.2 |
-| builtwith | ==1.3.4 |
-| MechanicalSoup | ==1.3.0 |
-| lxml | ==5.2.1 |
-| colorama | ==0.4.6 |
+### Third way
+
+Install using pip manager using this command: `pip install dpulse`. After that you must install wkhtmltopdf in DPULSE root folder
+
+
+## DPULSE demos
+
+### You can start DPULSE and see the main menu on the screen using `python dpulse.py` command in DPULSE root folder
+
+![dpulse_start](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/b1ae1054-c04d-414f-ab46-308fd52ba6f4)
+
+
+## DPULSE mentions in social medias
+
+### [DPULSE first mention on X.com](https://x.com/DarkWebInformer/status/1787583156775759915?t=Ak1W9ddUPpDvLAkVyQG8fQ&s=19)
+
