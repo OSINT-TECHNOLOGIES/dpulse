@@ -1,0 +1,19 @@
+[SOLID DORKS]
+
+site:{} filetype:pdf 
+site:{} filetype:xlsx 
+site:{} filetype:docx
+site:{} filetype:ppt 
+site:{} filetype:doc
+site:{} filetype:pptx 
+site:{} filetype:db
+site:{} filetype:accdb
+site:{} filetype:nsf 
+site:{} filetype:fp7
+site:{} filetype:mdf 
+site:{} filetype:sqlitedb 
+{} site:linkedin.com/in/
+site:{} inurl:login | inurl:logon | inurl:sign-in | inurl:signin | inurl:portal
+site:{} inurl:/signup.aspx
+site:{} intitle:"index of" ".ssh" OR "ssh_config" OR "ssh_known_hosts" OR "authorized_keys" OR "id_rsa" OR "id_dsa"
+site:{} intitle:"index of" "nginx.conf"
