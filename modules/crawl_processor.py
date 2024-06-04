@@ -1,14 +1,3 @@
-"""
-crawl_processor module
-
-Contains the functions to process search of open-sourced information connected with specified domain
-Search results are returned to report_creation module in order to create .pdf report
-
-Arguments:
-short_domain: domain name of certain website
-url: http://short_domain/
-"""
-
 try:
     import socket
     import whois
@@ -26,54 +15,47 @@ except ImportError as e:
     sys.exit()
 
 def ip_gather(short_domain):
-    """
-    Function for getting IP address of website
-    """
     ip_address = socket.gethostbyname(short_domain)
     return ip_address
 
+
 def whois_gather(short_domain):
-    """
-    Function for getting WHOIS information of website
-    """
-    w = whois.whois(short_domain)
-    return w
+    try:
+        w = whois.whois(short_domain)
+        return w
+    except whois.parser.PywhoisError as e:
+        print(Fore.RED + "Error while gathering WHOIS information. Reason: {}".format(e))
+        pass
 
 def mail_gather(url):
-    """
-    Function for getting emails from website elements
-    """
-    r = requests.get(url)
-    data = r.text
-    soup = BeautifulSoup(data, "html.parser")
-    mails = []
-    for i in soup.find_all(href=re.compile("mailto")):
-        i.encode().decode()
-        mails.append(i.string)
-    return mails
+    try:
+        r = requests.get(url)
+        data = r.text
+        soup = BeautifulSoup(data, "html.parser")
+        mails = []
+        for i in soup.find_all(href=re.compile("mailto")):
+            i.encode().decode()
+            mails.append(i.string)
+        return mails
+    except requests.RequestException as e:
+        print(Fore.RED + "Error while gathering e-mails. Reason: {}".format(e))
+        pass
 
 def subdomains_gather(url, short_domain):
-    """
-    Function for subdomain search
-    """
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     linked_domains = set()
-
     for link in soup.find_all('a', href=True):
         domain = urlparse(link['href']).netloc
         if domain and domain != urlparse(url).netloc:
             linked_domains.add(domain)
-
     finder = short_domain
     subdomains = [urllib.parse.unquote(i) for i in linked_domains if finder in i]
     subdomains_amount = len(subdomains)
     return subdomains, subdomains_amount
 
+
 def sm_gather(url):
-    """
-    Function for getting some basic social networks links from website elements
-    """
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     links = [a['href'] for a in soup.find_all('a', href=True)]
@@ -102,13 +84,9 @@ def sm_gather(url):
             categorized_links['WeChat'].append(urllib.parse.unquote(link))
         elif 'ok.ru' in link:
             categorized_links['Odnoklassniki'].append(urllib.parse.unquote(link))
-
     return categorized_links
 
 def domains_reverse_research(subdomains):
-    """
-    Subdomain reverse search function which extracts social networks, emails and IP addresses
-    """
     subdomain_urls = []
     subdomain_mails = []
     subdomain_socials = []
