@@ -79,6 +79,10 @@ Install using pip manager using this command: `pip install dpulse`. After that y
 
 ![dpulse_start](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/b1ae1054-c04d-414f-ab46-308fd52ba6f4)
 
+## Tasks to complete before new release
+- [ ] Create CSV report processing function
+- [ ] Bugfixes
+- [ ] Find an opportunity to get rid of the manual installation of wkhtmltopdf
 
 ## DPULSE mentions in social medias
 
