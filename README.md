@@ -17,11 +17,8 @@
 
 
 
-
-> [!CAUTION]
 > DPULSE was created as a research tool, and it is not intended for criminal activities. Use DPULSE only on allowed domains and for legal purposes!
 
-> [!TIP]
 > You can visit [DPULSE wiki](https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki) in order to get more technical information about this project
 > 
 > You can also contact the developer via e-mail: osint.technologies@gmail.com
@@ -46,7 +43,6 @@ All these results are compiled into an easy-to-read PDF report by category.
 ## How to install DPULSE
 
 
-> [!NOTE]
 > Be advised: before you start working with DPULSE, you should manually install WKHTMLTOPDF software inside DPULSE root folder
 > 
 > You can download it from here: https://wkhtmltopdf.org/
