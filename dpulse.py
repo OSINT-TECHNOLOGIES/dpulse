@@ -1,11 +1,5 @@
-"""
-Program start point
-
-You can call this script from your system terminal: python dpulse.py
-"""
-
 import sys
-sys.path.append('modules')
+sys.path.append('datagather_modules')
 sys.path.append('service')
 
 import pdf_report_creation as pdf_rc
@@ -47,38 +41,42 @@ while True:
     choice = input(Fore.YELLOW + "Enter your choice >> ")
     if choice == "1":
         print('\n')
-        short_domain = str(input(Fore.YELLOW + "\nEnter target's domain name >> "))
-        url = "http://" + short_domain + "/"
-        case_comment = str(input(Fore.YELLOW + "Enter case comment (or enter - if you don't need comment to the case) >> "))
-        print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
-        print(Fore.GREEN + "Determined target: {}\nCase comment: {}\n".format(short_domain, case_comment) + Style.RESET_ALL)
-        print(Fore.LIGHTMAGENTA_EX + "[SCANNING PROCESS]\n" + Style.RESET_ALL)
-        spinner_thread = ProgressBar()
-        spinner_thread.start()
-        try:
-            pdf_rc.create_report(short_domain, url, case_comment)
-        finally:
-            spinner_thread.do_run = False
-            spinner_thread.join()
-        print(Fore.LIGHTMAGENTA_EX + "\n[SCANNING PROCESS END]" + Style.RESET_ALL)
+        while True:
+            short_domain = input(Fore.YELLOW + "\nEnter target's domain name (or 'back' to return to the menu) >> ")
+            if short_domain.lower() == "back":
+                print(Fore.RED + "\nReturned to main menu")
+                break
+            else:
+                url = "http://" + short_domain + "/"
+                case_comment = input(Fore.YELLOW + "Enter case comment (or enter '-' if you don't need comment to the case) >> ")
+                print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
+                print(Fore.GREEN + "Determined target: {}\nCase comment: {}\n".format(short_domain, case_comment) + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + "[SCANNING PROCESS]\n" + Style.RESET_ALL)
+                spinner_thread = ProgressBar()
+                spinner_thread.start()
+                try:
+                    pdf_rc.create_report(short_domain, url, case_comment)
+                finally:
+                    spinner_thread.do_run = False
+                    spinner_thread.join()
 
     elif choice == "2":
         cli.print_settings_menu()
         choice_settings = input(Fore.YELLOW + "Enter your choice >> ")
         if choice_settings == '1':
-            with open('config.txt', 'r') as cfg_file:
+            with open('dorkslist.txt', 'r') as cfg_file:
                 print(Fore.LIGHTMAGENTA_EX + '\n[START OF CONFIG FILE]' + Style.RESET_ALL)
                 print('\n' + Fore.LIGHTBLUE_EX + cfg_file.read() + Style.RESET_ALL)
                 print(Fore.LIGHTMAGENTA_EX + '\n[END OF CONFIG FILE]\n' + Style.RESET_ALL)
                 continue
         elif choice_settings == '2':
-            with open('config.txt', 'a+') as cfg_file:
+            with open('dorkslist.txt', 'a+') as cfg_file:
                 print(Fore.LIGHTMAGENTA_EX + '\n[START OF CONFIG FILE]' + Style.RESET_ALL)
                 cfg_file.seek(0)
                 print('\n' + Fore.LIGHTBLUE_EX + cfg_file.read() + Style.RESET_ALL)
                 print(Fore.LIGHTMAGENTA_EX + '\n[END OF CONFIG FILE]\n' + Style.RESET_ALL)
                 new_line = str(input(Fore.YELLOW + "Input new dork >> ") + Style.RESET_ALL)
-                print(Fore.GREEN + "New dork successfully added to config.txt" + Style.RESET_ALL)
+                print(Fore.GREEN + "New dork successfully added to dorks list" + Style.RESET_ALL)
                 cfg_file.write(new_line + '\n')
                 continue
         elif choice_settings == '3':
