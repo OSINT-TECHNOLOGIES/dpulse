@@ -54,11 +54,9 @@ while True:
                 print(Fore.LIGHTMAGENTA_EX + "[SCANNING PROCESS]\n" + Style.RESET_ALL)
                 spinner_thread = ProgressBar()
                 spinner_thread.start()
-                try:
-                    pdf_rc.create_report(short_domain, url, case_comment)
-                finally:
-                    spinner_thread.do_run = False
-                    spinner_thread.join()
+                pdf_rc.create_report(short_domain, url, case_comment)
+                spinner_thread.do_run = False
+                spinner_thread.join()
 
     elif choice == "2":
         cli.print_settings_menu()
