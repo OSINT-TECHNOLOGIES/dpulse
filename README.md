@@ -79,9 +79,13 @@ Install using pip manager using this command: `pip install dpulse`. After that y
 
 ![dpulse_start](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/2ac7f332-5482-45e4-a0c9-0cc20e0e0ac7)
 
-### After choosing first menu point, you will be able to enter target's URL and case comment, and, finally, then you will see scanning progress
+### After choosing first menu point, you will be able to enter target's URL and case comment, and then you will see scanning progress
 
 ![dpulse_running](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/27a64244-03f6-4360-b872-64661e68ffb5)
+
+### Finally, DPULSE will create report folder which contains case name (basically URL of target), date and time of scan. All report folders are contained in DPULSE root folder
+
+![изображение](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/7de73250-c9b6-4373-b21e-16bbb7a63882)
 
 
 ## Tasks to complete before new release
