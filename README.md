@@ -75,9 +75,14 @@ Install using pip manager using this command: `pip install dpulse`. After that y
 
 ## DPULSE demos
 
-### You can start DPULSE and see the main menu on the screen using `python dpulse.py` command in DPULSE root folder
+### You can start DPULSE and see the main menu on the screen using `python dpulse.py` command in DPULSE root folder. 
 
-![dpulse_start](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/b1ae1054-c04d-414f-ab46-308fd52ba6f4)
+![dpulse_start](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/2ac7f332-5482-45e4-a0c9-0cc20e0e0ac7)
+
+### After choosing first menu point, you will be able to enter target's URL and case comment, and, finally, then you will see scanning progress
+
+![dpulse_running](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/27a64244-03f6-4360-b872-64661e68ffb5)
+
 
 ## Tasks to complete before new release
 - [ ] Create CSV report processing function
