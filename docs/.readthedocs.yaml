@@ -1,0 +1,13 @@
+version: 1.0.1
+
+build:
+  tools:
+    python: "3.10+"
+
+sphinx:
+  configuration: docs/source/conf.py
+  builder: html
+
+python:
+  install:
+  - requirements: requirements.txt
