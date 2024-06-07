@@ -1,13 +1,6 @@
 version: 2
-
-build:
-  tools:
-    python: "3.10"
-
-sphinx:
-  configuration: docs/source/conf.py
-  builder: html
-
 python:
+  version: 3.10
   install:
-  - requirements: requirements.txt
+    - requirements: requirements.txt
+formats: all
