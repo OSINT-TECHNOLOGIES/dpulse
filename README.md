@@ -20,7 +20,9 @@
 > DPULSE was created as a research tool, and it is not intended for criminal activities. Use DPULSE only on allowed domains and for legal purposes!
 
 > You can visit [DPULSE wiki](https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki) in order to get more technical information about this project
-> 
+
+> You can visit [DPULSE roadmap](https://github.com/users/OSINT-TECHNOLOGIES/projects/1) to get more information about development process
+
 > You can also contact the developer via e-mail: osint.technologies@gmail.com
 
 
