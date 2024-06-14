@@ -1,8 +1,8 @@
 import os
 
-def get_pdf_blob(file):
-    with open(file, 'rb') as pdf_file:
-        blob_data = pdf_file.read()
+def get_blob(file):
+    with open(file, 'rb') as report_file:
+        blob_data = report_file.read()
     return blob_data
 
 def find_files(filename):
