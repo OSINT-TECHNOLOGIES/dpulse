@@ -41,7 +41,7 @@ def get_ssl_certificate(short_domain, port=443):
         print(Fore.RED + "Error while gathering info about SSL certificate. Reason: {}".format(e))
         return "No information about SSL certificate was gathered"
 
-def query_internetdb(ip):
+def query_internetdb(ip, report_file_extension):
     url = f"https://internetdb.shodan.io/{ip}"
     response = requests.get(url)
     if response.status_code == 200:
@@ -51,49 +51,64 @@ def query_internetdb(ip):
         cpes = data.get("cpes", [])
         tags = data.get("tags", [])
         vulns = data.get("vulns", [])
-        return ports, ' // '.join(hostnames), ' // '.join(cpes), ' // '.join(tags), ' // '.join(vulns)
+        if report_file_extension == 'pdf':
+            return ports, ' // '.join(hostnames), ' // '.join(cpes), ' // '.join(tags), ' // '.join(vulns)
+        elif report_file_extension == 'xlsx':
+            return ports, ' // '.join(hostnames), ' // '.join(cpes), ' // '.join(tags), vulns
     else:
         print(Fore.RED + "No information was found on InternetDB" + Style.RESET_ALL)
         ports = hostnames = cpes = tags = vulns = "No info about this web resource on InternetDB"
         return ports, hostnames, cpes, tags, vulns
 
-def get_robots_txt(url, report_folder):
-    filepath = report_folder + '//01-robots.txt'
+def get_robots_txt(url, robots_path):
     if not url.startswith('http'):
         url = 'http://' + url
     robots_url = url + '/robots.txt'
     response = requests.get(robots_url)
     if response.status_code == 200:
-        with open(filepath, 'w') as f:
+        with open(robots_path, 'w') as f:
             f.write(response.text)
         return 'File "robots.txt" was extracted to text file in report folder'
     else:
         return 'File "robots.txt" was not found'
 
-def get_sitemap_xml(url, report_folder):
-    filepath = report_folder + '//02-sitemap.txt'
-    if not url.startswith('http'):
-        url = 'http://' + url
-    sitemap_url = url + '/sitemap.xml'
-    response = requests.get(sitemap_url)
-    if response.status_code == 200:
-        with open(filepath, 'w') as f:
-            f.write(response.text)
-        return 'File "sitemap.xml" was extracted to text file in report folder'
-    else:
-        return 'File "sitemap.xml" was not found'
-
-def extract_links_from_sitemap(report_folder):
-    file_name = report_folder + '//02-sitemap.txt'
-    links_file = report_folder + '//03-sitemap_links.txt'
+def get_sitemap_xml(url, sitemap_path):
     try:
-        tree = ET.parse(file_name)
+        if not url.startswith('http'):
+            url = 'http://' + url
+        sitemap_url = url + '/sitemap.xml'
+        response = requests.get(sitemap_url)
+        if len(response.text) > 0:
+            if response.status_code == 200:
+                with open(sitemap_path, 'w') as f:
+                    f.write(response.text)
+                return 'File "sitemap.xml" was extracted to text file in report folder'
+            else:
+                return 'File "sitemap.xml" was not found'
+        else:
+            with open(sitemap_path, 'w') as f:
+                f.write('0')
+            print(Fore.RED + "Error while gathering sitemap.xml. Probably it's unreachable")
+            return 'File "sitemap.xml" was not found'
+    except Exception as e:
+        print(Fore.RED + "Error while gathering sitemap.xml. Reason: {}".format(e))
+        return 'Error occured during sitemap.xml gathering'
+
+def extract_links_from_sitemap(sitemap_links_path, sitemap_path, report_file_type):
+    try:
+        tree = ET.parse(sitemap_path)
         root = tree.getroot()
         links = [elem.text for elem in root.iter('{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
-        with open(links_file, 'w') as f:
+        if report_file_type == 'pdf':
+            with open(sitemap_links_path, 'w') as f:
+                for link in links:
+                    f.write(f"=> {link}\n")
+            return 'Links from "sitemap.txt" were successfully parsed'
+        elif report_file_type == 'xlsx':
+            parsed_links = []
             for link in links:
-                f.write(f"=> {link}\n")
-        return 'Links from "sitemap.txt" were successfully parsed'
+                parsed_links.append(link)
+            return 'Links from "sitemap.txt" were successfully parsed', parsed_links
     except ET.ParseError as e:
         print(Fore.RED + "Links from sitemap.txt were not parsed. Reason: {}".format(e))
         return 'Links from "sitemap.txt" were not parsed'
