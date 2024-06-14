@@ -91,7 +91,7 @@ Install using pip manager using this command: `pip install dpulse`. After that y
 
 
 ## Tasks to complete before new release
-- [ ] Create CSV report processing function
+- [x] Create CSV report processing function
 - [ ] Bugfixes
 - [ ] Find an opportunity to get rid of the manual installation of wkhtmltopdf
 - [ ] IntelliSearch function to search useful strings in documents, SMs and so on
