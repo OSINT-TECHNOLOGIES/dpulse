@@ -18,7 +18,7 @@ class Menu:
         self.console.print(fig.renderText('DPULSE'), style="red")
         print(Fore.CYAN + Style.BRIGHT + 'DPULSE-CLI // version: 1.0.1\n' + Style.RESET_ALL)
         print(Fore.CYAN + Style.BRIGHT + 'Developed by OSINT-TECHNOLOGIES\n' + Style.RESET_ALL)
-        print(Fore.CYAN + Style.BRIGHT + 'Visit our pages:\nhttps://github.com/OSINT-TECHNOLOGIES' + Style.RESET_ALL + '\n')
+        print(Fore.CYAN + Style.BRIGHT + 'Visit our pages:\nhttps://github.com/OSINT-TECHNOLOGIES\nhttps://pypi.org/project/dpulse/' + Style.RESET_ALL + '\n')
 
     def print_main_menu(self):
         print('\n')
