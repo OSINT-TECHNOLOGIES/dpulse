@@ -39,7 +39,7 @@ DPULSE is a software solution for conducting OSINT research in relation to a cer
 8. Used web-technologies
 9. Sitemap, robots.txt files, SSL certificate info
     
-All these results are compiled into an easy-to-read PDF report by category.
+All these results are compiled into an easy-to-read PDF or XLSX report by category.
 
 
 ## How to install DPULSE
