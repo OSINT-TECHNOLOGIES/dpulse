@@ -5,6 +5,7 @@ sys.path.append('service')
 import pdf_report_creation as pdf_rc
 import cli_init
 import db_processing as db
+import xlsx_report_creation as xlsx_rc
 
 try:
     import time
@@ -49,14 +50,29 @@ while True:
             else:
                 url = "http://" + short_domain + "/"
                 case_comment = input(Fore.YELLOW + "Enter case comment (or enter '-' if you don't need comment to the case) >> ")
-                print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
-                print(Fore.GREEN + "Determined target: {}\nCase comment: {}\n".format(short_domain, case_comment) + Style.RESET_ALL)
-                print(Fore.LIGHTMAGENTA_EX + "[SCANNING PROCESS]\n" + Style.RESET_ALL)
-                spinner_thread = ProgressBar()
-                spinner_thread.start()
-                pdf_rc.create_report(short_domain, url, case_comment)
-                spinner_thread.do_run = False
-                spinner_thread.join()
+                report_filetype = input(Fore.YELLOW + "Enter report file extension [xlsx/pdf] >> ")
+                report_filetype_lowered = report_filetype.lower()
+                if report_filetype_lowered == 'pdf' or report_filetype_lowered == 'xlsx':
+                    print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
+                    print(Fore.GREEN + "Determined target: {}\nCase comment: {}\nReport file extension: {}\n".format(short_domain, case_comment, report_filetype_lowered) + Style.RESET_ALL)
+                    print(Fore.LIGHTMAGENTA_EX + "[SCANNING PROCESS]\n" + Style.RESET_ALL)
+                    spinner_thread = ProgressBar()
+                    spinner_thread.start()
+                    if report_filetype_lowered == 'pdf':
+                        try:
+                            pdf_rc.create_report(short_domain, url, case_comment, report_filetype_lowered)
+                        finally:
+                            spinner_thread.do_run = False
+                            spinner_thread.join()
+                    elif report_filetype_lowered == 'xlsx':
+                        try:
+                            xlsx_rc.create_report(short_domain, url, case_comment, report_filetype_lowered)
+                        finally:
+                            spinner_thread.do_run = False
+                            spinner_thread.join()
+                else:
+                    print(Fore.RED + "Unsupported report file extension. Please choose between xlsx or pdf.")
+
 
     elif choice == "2":
         cli.print_settings_menu()
