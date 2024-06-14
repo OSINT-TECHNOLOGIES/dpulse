@@ -41,9 +41,9 @@ try:
     current_script = os.path.realpath(__file__)
     current_directory = os.path.dirname(current_script)
     cfg_file_path = os.path.join(current_directory, fp.find_files('dorkslist.txt'))
-    print(Fore.GREEN + 'Main config file was found at {}'.format(cfg_file_path))
+    print(Fore.GREEN + 'Dorks list was found at {}'.format(cfg_file_path))
 except TypeError as e:
-    print(Fore.RED + 'Main config file was not found in DPULSE root directory. Reason: {}'.format(e) + Style.RESET_ALL)
+    print(Fore.RED + 'Dorks list was not found in DPULSE root directory. Reason: {}'.format(e) + Style.RESET_ALL)
     sys.exit()
 
 short_domain = ''
@@ -54,7 +54,7 @@ def report_encoding_config():
     }
 
 search_query = []
-def create_report(short_domain, url, case_comment):
+def create_report(short_domain, url, case_comment, report_file_type):
     try:
         ctime = datetime.now().strftime('%Y-%m-%d_%Hh%Mm%Ss')
         casename = short_domain.replace(".", "") + '_' + ctime + '.pdf'
@@ -63,6 +63,9 @@ def create_report(short_domain, url, case_comment):
         now = datetime.now()
         db_creation_date = str(now.year) + str(now.month) + str(now.day)
         report_folder = "report_{}".format(foldername)
+        robots_filepath = report_folder + '//01-robots.txt'
+        sitemap_filepath = report_folder + '//02-sitemap.txt'
+        sitemap_links_filepath = report_folder + '//03-sitemap_links.txt'
         os.makedirs(report_folder, exist_ok=True)
         print(Fore.GREEN + "Started scanning domain" + Style.RESET_ALL)
         print(Fore.GREEN + "Getting domain IP address" + Style.RESET_ALL)
@@ -76,19 +79,19 @@ def create_report(short_domain, url, case_comment):
         print(Fore.GREEN + 'Processing social medias gathering' + Style.RESET_ALL)
         social_medias = cp.sm_gather(url)
         print(Fore.GREEN + 'Processing subdomain analysis' + Style.RESET_ALL)
-        subdomain_mails, sd_socials, subdomain_ip = cp.domains_reverse_research(subdomains)
+        subdomain_mails, sd_socials, subdomain_ip = cp.domains_reverse_research(subdomains, report_file_type)
         print(Fore.GREEN + 'Processing SSL certificate gathering' + Style.RESET_ALL)
         issuer, subject, notBefore, notAfter, commonName, serialNumber = np.get_ssl_certificate(short_domain)
         print(Fore.GREEN + 'Processing MX records gathering' + Style.RESET_ALL)
         mx_records = np.get_dns_info(short_domain)
         print(Fore.GREEN + 'Extracting robots.txt and sitemap.xml' + Style.RESET_ALL)
-        robots_txt_result = np.get_robots_txt(short_domain, report_folder)
-        sitemap_xml_result = np.get_sitemap_xml(short_domain, report_folder)
-        sitemap_links_status = np.extract_links_from_sitemap(report_folder)
+        robots_txt_result = np.get_robots_txt(short_domain, robots_filepath)
+        sitemap_xml_result = np.get_sitemap_xml(short_domain, sitemap_filepath)
+        sitemap_links_status = np.extract_links_from_sitemap(sitemap_links_filepath, sitemap_filepath, 'pdf')
         print(Fore.GREEN + 'Gathering info about website technologies' + Style.RESET_ALL)
         web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks = np.get_technologies(url)
         print(Fore.GREEN + 'Processing Shodan InternetDB search' + Style.RESET_ALL)
-        ports, hostnames, cpes, tags, vulns = np.query_internetdb(ip)
+        ports, hostnames, cpes, tags, vulns = np.query_internetdb(ip, report_file_type)
         print(Fore.GREEN + 'Processing Google Dorking' + Style.RESET_ALL)
         dorking_status = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain))
 
@@ -115,7 +118,7 @@ def create_report(short_domain, url, case_comment):
                                     'commonName': commonName, 'serialNumber': serialNumber, 'ports': ports, 'hostnames': hostnames, 'cpes': cpes,
                                     'tags': tags, 'vulns': vulns, 'a_tsm': total_socials}
 
-        print(Fore.GREEN + 'Processing report for {} case...'.format(short_domain) + Style.RESET_ALL)
+        print(Fore.GREEN + 'Processing PDF report for {} case...'.format(short_domain) + Style.RESET_ALL)
         template_loader = jinja2.FileSystemLoader('./')
         template_env = jinja2.Environment(loader=template_loader)
         template = template_env.get_template('report_template.html')
@@ -125,7 +128,7 @@ def create_report(short_domain, url, case_comment):
         pdfkit.from_string(output_text, report_file, configuration=config, options=report_encoding_config())
         print(Fore.GREEN + "Report for {} case was created at {}".format(''.join(short_domain), ctime) + Style.RESET_ALL)
         robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
-        pdf_blob = fp.get_pdf_blob(report_file)
-        db.insert_blob(pdf_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content)
+        pdf_blob = fp.get_blob(report_file)
+        db.insert_blob('PDF', pdf_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content)
     except Exception as e:
         print(Fore.RED + 'Unable to create PDF report. Reason: {}'.format(e))
