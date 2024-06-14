@@ -86,7 +86,7 @@ def sm_gather(url):
             categorized_links['Odnoklassniki'].append(urllib.parse.unquote(link))
     return categorized_links
 
-def domains_reverse_research(subdomains):
+def domains_reverse_research(subdomains, report_file_type):
     subdomain_urls = []
     subdomain_mails = []
     subdomain_socials = []
@@ -119,10 +119,10 @@ def domains_reverse_research(subdomains):
         print(Fore.RED + 'Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error will not be included in the report. Reason: {}'.format(e) + Style.RESET_ALL)
         pass
 
-    subdomain_ip = ' // '.join(subdomain_ip)
+    subdomain_ip_pdf = ' // '.join(subdomain_ip)
     subdomain_mails = [sublist for sublist in subdomain_mails if sublist]
     subdomain_mails = [sublist for sublist in subdomain_mails if sublist != [None]]
-    subdomain_mails = ' // '.join([', '.join(map(str, sublist)) for sublist in subdomain_mails])
+    subdomain_mails_pdf = ' // '.join([', '.join(map(str, sublist)) for sublist in subdomain_mails])
     subdomain_socials = [{k: v for k, v in d.items() if v} for d in subdomain_socials]
     subdomain_socials = [d for d in subdomain_socials if d]
     subdomain_socials_grouped = defaultdict(list)
@@ -161,4 +161,7 @@ def domains_reverse_research(subdomains):
 
     sd_socials = {k: list(set(v)) for k, v in sd_socials.items()}
 
-    return subdomain_mails, sd_socials, subdomain_ip
+    if report_file_type == 'pdf':
+        return subdomain_mails_pdf, sd_socials, subdomain_ip_pdf
+    elif report_file_type == 'xlsx':
+        return subdomain_urls, subdomain_mails, subdomain_ip, sd_socials
