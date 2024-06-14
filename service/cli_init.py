@@ -32,7 +32,7 @@ class Menu:
     def print_settings_menu(self):
         print('\n')
         print(Fore.MAGENTA + Back.WHITE + '[SETTINGS MENU]' + Style.RESET_ALL)
-        print(Fore.CYAN + "1. Show current config")
+        print(Fore.CYAN + "1. Show current dorks list")
         print(Fore.CYAN + "2. Add Google Dork to config file")
         print(Fore.LIGHTRED_EX + "3. Return to main menu" + Style.RESET_ALL + '\n')
 
