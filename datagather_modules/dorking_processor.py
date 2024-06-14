@@ -58,3 +58,17 @@ def save_results_to_txt(folderpath, queries, pages=10):
             f.write("\n")
     print(Fore.GREEN + "Google Dorking results successfully saved in TXT file" + Style.RESET_ALL)
     return "File with gathered links was successfully created"
+
+def transfer_results_to_xlsx(queries, pages=10):
+    dorking_return_list = []
+    for i, query in enumerate(queries, start=1):
+        dorking_return_list.append(f"QUERY #{i}: {query}\n")
+        results = solid_google_dorking(query, pages)
+        if not results:
+            dorking_return_list.append("NO RESULT FOUND\n")
+        else:
+            for result in results:
+                dorking_return_list.append(f"{result}\n")
+        dorking_return_list.append("\n")
+    print(Fore.GREEN + "Google Dorking results successfully saved in TXT file" + Style.RESET_ALL)
+    return "File with gathered links was successfully created", dorking_return_list
