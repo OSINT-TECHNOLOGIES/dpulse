@@ -13,25 +13,53 @@ except ImportError as e:
 
 sys.path.append('service')
 
-import crawl_processor as cp
-import dorking_processor as dp
-import networking_processor as np
 import db_processing as db
 import files_processing as fp
 
-def create_report(short_domain, url, case_comment, report_file_type):
+def create_report(short_domain, url, case_comment, data_array, report_info_array):
     try:
-        ctime = datetime.now().strftime('%Y-%m-%d_%Hh%Mm%Ss')
-        casename = short_domain.replace(".", "") + '_' + ctime + '.xlsx'
-        foldername = short_domain.replace(".", "") + '_' + ctime
-        db_casename = short_domain.replace(".", "")
-        now = datetime.now()
-        db_creation_date = str(now.year) + str(now.month) + str(now.day)
-        report_folder = "report_{}".format(foldername)
+        ip = data_array[0]
+        res = data_array[1]
+        subdomains_amount = data_array[4]
+        subdomain_mails = data_array[6]
+        subdomain_ip = data_array[8]
+        issuer = data_array[9]
+        subject = data_array[10]
+        notBefore = data_array[11]
+        notAfter = data_array[12]
+        commonName = data_array[13]
+        serialNumber = data_array[14]
+        mx_records = data_array[15]
+        robots_txt_result = data_array[16]
+        sitemap_xml_result = data_array[17]
+        sitemap_links_status = data_array[18]
+        web_servers = data_array[19]
+        cms = data_array[20]
+        programming_languages = data_array[21]
+        web_frameworks = data_array[22]
+        analytics = data_array[23]
+        javascript_frameworks = data_array[24]
+        ports = data_array[25]
+        hostnames = data_array[26]
+        cpes = data_array[27]
+        tags = data_array[28]
+        vulns = data_array[29]
+        common_socials = data_array[31]
+        total_socials = data_array[32]
+        casename = report_info_array[0]
+        db_casename = report_info_array[1]
+        db_creation_date = report_info_array[2]
+        report_folder = report_info_array[3]
+        ctime = report_info_array[4]
+        dorking_status = data_array[30]
+        dorking_results = data_array[35]
+        parsed_links = data_array[33]
+        subdomain_urls = data_array[34]
+
         robots_filepath = report_folder + '//01-robots.txt'
         sitemap_filepath = report_folder + '//02-sitemap.txt'
-        sitemap_links_filepath = report_folder + '//03-sitemap_links.txt'
         os.makedirs(report_folder, exist_ok=True)
+
         wb = openpyxl.Workbook()
         sheet_names = [
             "GENERAL INFO",
@@ -50,39 +78,6 @@ def create_report(short_domain, url, case_comment, report_file_type):
         for name in sheet_names[1:]:
             wb.create_sheet(title=name)
         bold_font = Font(bold=True)
-
-        print(Fore.GREEN + "Started scanning domain" + Style.RESET_ALL)
-        print(Fore.GREEN + "Getting domain IP address" + Style.RESET_ALL)
-        ip = cp.ip_gather(short_domain)
-        print(Fore.GREEN + 'Gathering WHOIS information' + Style.RESET_ALL)
-        res = cp.whois_gather(short_domain)
-        print(Fore.GREEN + 'Processing e-mails gathering' + Style.RESET_ALL)
-        mails = cp.mail_gather(url)
-        print(Fore.GREEN + 'Processing subdomain gathering' + Style.RESET_ALL)
-        subdomains, subdomains_amount = cp.subdomains_gather(url, short_domain)
-        print(Fore.GREEN + 'Processing social medias gathering' + Style.RESET_ALL)
-        social_medias = cp.sm_gather(url)
-        print(Fore.GREEN + 'Processing subdomain analysis' + Style.RESET_ALL)
-        subdomain_urls, subdomain_mails, subdomain_ip, sd_socials = cp.domains_reverse_research(subdomains, report_file_type)
-        print(Fore.GREEN + 'Processing SSL certificate gathering' + Style.RESET_ALL)
-        issuer, subject, notBefore, notAfter, commonName, serialNumber = np.get_ssl_certificate(short_domain)
-        print(Fore.GREEN + 'Processing MX records gathering' + Style.RESET_ALL)
-        mx_records = np.get_dns_info(short_domain)
-        print(Fore.GREEN + 'Extracting robots.txt and sitemap.xml' + Style.RESET_ALL)
-        robots_txt_result = np.get_robots_txt(short_domain, robots_filepath)
-        sitemap_xml_result = np.get_sitemap_xml(short_domain, sitemap_filepath)
-        sitemap_links_status, parsed_links = np.extract_links_from_sitemap(sitemap_links_filepath, sitemap_filepath, 'xlsx')
-        print(Fore.GREEN + 'Gathering info about website technologies' + Style.RESET_ALL)
-        web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks = np.get_technologies(url)
-        print(Fore.GREEN + 'Processing Shodan InternetDB search' + Style.RESET_ALL)
-        ports, hostnames, cpes, tags, vulns = np.query_internetdb(ip, report_file_type)
-        print(Fore.GREEN + 'Processing Google Dorking' + Style.RESET_ALL)
-        dorking_status, dorking_results = dp.transfer_results_to_xlsx(dp.get_dorking_query(short_domain))
-        print(Fore.GREEN + 'Processing XLSX report for {} case...'.format(short_domain) + Style.RESET_ALL)
-        common_socials = {key: social_medias.get(key, []) + sd_socials.get(key, []) for key in set(social_medias) | set(sd_socials)}
-        for key in common_socials:
-            common_socials[key] = list(set(common_socials[key]))
-        total_socials = sum(len(values) for values in common_socials.values())
 
         ws = wb['GENERAL INFO']
         for col in ['1', '2', '3', '4', '5', '6', '7']:
