@@ -52,7 +52,7 @@ def query_internetdb(ip, report_file_extension):
         tags = data.get("tags", [])
         vulns = data.get("vulns", [])
         if report_file_extension == 'pdf':
-            return ports, ' // '.join(hostnames), ' // '.join(cpes), ' // '.join(tags), ' // '.join(vulns)
+            return ports, hostnames, cpes, tags, vulns
         elif report_file_extension == 'xlsx':
             return ports, ' // '.join(hostnames), ' // '.join(cpes), ' // '.join(tags), vulns
     else:
@@ -116,14 +116,13 @@ def extract_links_from_sitemap(sitemap_links_path, sitemap_path, report_file_typ
 def get_technologies(url):
     try:
         tech = builtwith.parse(url)
-        web_servers = ', '.join(tech.get('web-servers', []))
-        cms = ', '.join(tech.get('cms', []))
-        programming_languages = ', '.join(tech.get('programming-languages', []))
-        web_frameworks = ', '.join(tech.get('web-frameworks', []))
-        analytics = ', '.join(tech.get('analytics', []))
-        javascript_frameworks = ', '.join(tech.get('javascript-frameworks', []))
+        web_servers = tech.get('web-servers', [])
+        cms = tech.get('cms', [])
+        programming_languages = tech.get('programming-languages', [])
+        web_frameworks = tech.get('web-frameworks', [])
+        analytics = tech.get('analytics', [])
+        javascript_frameworks = tech.get('javascript-frameworks', [])
         return web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks
     except:
         web_servers = cms = programming_languages = web_frameworks = analytics = javascript_frameworks = 'Found nothing related to web-technologies'
         return web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks
-
