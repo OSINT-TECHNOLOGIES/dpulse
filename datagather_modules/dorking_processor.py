@@ -70,5 +70,4 @@ def transfer_results_to_xlsx(queries, pages=10):
             for result in results:
                 dorking_return_list.append(f"{result}\n")
         dorking_return_list.append("\n")
-    print(Fore.GREEN + "Google Dorking results successfully saved in TXT file" + Style.RESET_ALL)
     return "File with gathered links was successfully created", dorking_return_list
