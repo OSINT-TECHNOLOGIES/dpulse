@@ -15,7 +15,7 @@
 <img alt="GitHub License" src="https://img.shields.io/github/license/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/t/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&label=total%20commits&color=red"> <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red">
 </p>
 
-
+> **Attention every DPULSE user! You DON'T NEED TO INSTALL WKHTMLTOPDF ANYWHERE if you cloned repository with last updates from June 18, 2024! When v1.0.3 will be released, we strongly recommend you to update!**
 
 > DPULSE was created as a research tool, and it is not intended for criminal activities. Use DPULSE only on allowed domains and for legal purposes!
 
@@ -45,10 +45,7 @@ All these results are compiled into an easy-to-read PDF or XLSX report by catego
 ## How to install DPULSE
 
 
-> Be advised: before you start working with DPULSE, you should manually install WKHTMLTOPDF software inside DPULSE root folder
-> 
-> You can download it from here: https://wkhtmltopdf.org/
-
+> **Attention every DPULSE user! You DON'T NEED TO INSTALL WKHTMLTOPDF ANYWHERE if you cloned repository with last updates from June 18, 2024! When v1.0.3 will be released, we strongly recommend you to update!**
 
 
 ### First way
@@ -57,7 +54,7 @@ Simply download zip archive from assets in releases bookmark, just right here:
 
 ![изображение](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/bd2ebf09-a31c-4e27-a674-5b602808a667)
 
-Then you just unpack the archive, open terminal in DPULSE root folder and use `pip install -r requirements.txt` to install requirements. After that you must install wkhtmltopdf in DPULSE root folder
+Then you just unpack the archive, open terminal in DPULSE root folder and use `pip install -r requirements.txt` to install requirements. 
 
 ### Second way
 
@@ -68,12 +65,10 @@ Cloning GitHub repository and requirements, you can do it using 3 simple command
   cd dpulse
   pip install -r requirements.txt
   ```
-  After that you must install wkhtmltopdf in DPULSE root folder
 
 ### Third way
 
-Install using pip manager using this command: `pip install dpulse`. After that you must install wkhtmltopdf in DPULSE root folder
-
+Install using pip manager using this command: `pip install dpulse`
 
 ## DPULSE demos
 
@@ -93,7 +88,7 @@ Install using pip manager using this command: `pip install dpulse`. After that y
 ## Tasks to complete before new release
 - [x] Create CSV report processing function
 - [ ] Bugfixes
-- [ ] Find an opportunity to get rid of the manual installation of wkhtmltopdf
+- [x] Find an opportunity to get rid of the manual installation of wkhtmltopdf
 - [ ] IntelliSearch function to search useful strings in documents, SMs and so on
       
 ## DPULSE mentions in social medias
