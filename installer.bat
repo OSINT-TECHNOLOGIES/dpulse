@@ -45,6 +45,7 @@ goto End
 :CloneAndInstall
 echo Cloning repository and installing requirements...
 git clone https://github.com/OSINT-TECHNOLOGIES/dpulse
+cd dpulse
 pip install -r requirements.txt
 
 echo.
