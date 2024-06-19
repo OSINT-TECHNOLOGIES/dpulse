@@ -9,7 +9,6 @@ try:
     from datetime import datetime
     from jinja2 import Environment, FileSystemLoader
     from xhtml2pdf import pisa
-    import pdfkit
     import os
     from colorama import Fore, Style
     import webbrowser
