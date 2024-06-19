@@ -26,7 +26,7 @@
 > You can also contact the developer via e-mail: osint.technologies@gmail.com
 
 
-## About DPULSE
+# About DPULSE
 
 DPULSE is a software solution for conducting OSINT research in relation to a certain domain. Using this software you can extract useful information such as:
 1. WHOIS information 
@@ -42,37 +42,44 @@ DPULSE is a software solution for conducting OSINT research in relation to a cer
 All these results are compiled into an easy-to-read PDF or XLSX report by category.
 
 
-## How to install DPULSE
-
+# How to install and run DPULSE
 
 > **Attention every DPULSE user! You DON'T NEED TO INSTALL WKHTMLTOPDF ANYWHERE if you cloned repository with last updates from June 18, 2024! Also don't forget to install new requirements! When v1.0.3 will be released, we strongly recommend you to update!**
 
+## _Recommended ways_
 
-### First way
+Since DPULSE repository is using Poetry to manage dependencies, it is higly recommended to install and start DPULSE using Poetry, especially on Linux systems where a lot of Python packages which DPULSE requires are preinstalled.
+
+### First way (recommended on every OS, using Poetry)
+
+Use this set of commands to get guaranteed start on Windows and Linux systems:
+
+  ```
+  git clone https://github.com/OSINT-TECHNOLOGIES/dpulse
+  cd dpulse
+  poetry install
+  poetry run python dpulse.py
+  ```
+### Second way (recommended on Windows systems, without using Poetry)
 
 Simply download zip archive from assets in releases bookmark, just right here:
 
 ![изображение](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/bd2ebf09-a31c-4e27-a674-5b602808a667)
 
-Then you just unpack the archive, open terminal in DPULSE root folder and use `pip install -r requirements.txt` to install requirements. 
+Then you just unpack the archive, open terminal in DPULSE root folder and use `pip install -r requirements.txt` command to install requirements. Then type `python dpulse.py` in terminal, and that's where program starts.
 
-### Second way
+You also can use this way with some different approach using this set of commands:
 
-Cloning GitHub repository and requirements, you can do it using 3 simple commands:
-   
   ```
   git clone https://github.com/OSINT-TECHNOLOGIES/dpulse
   cd dpulse
   pip install -r requirements.txt
+  python dpulse.py
   ```
 
-### Third way
+# DPULSE demos
 
-Install using pip manager using this command: `pip install dpulse`
-
-## DPULSE demos
-
-### You can start DPULSE and see the main menu on the screen using `python dpulse.py` command in DPULSE root folder. 
+### You can start DPULSE and see the main menu on the screen using `python dpulse.py` command in DPULSE root folder. Don't forget to install all requirements before starting DPULSE
 
 ![dpulse_start](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/2ac7f332-5482-45e4-a0c9-0cc20e0e0ac7)
 
@@ -85,13 +92,13 @@ Install using pip manager using this command: `pip install dpulse`
 ![изображение](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/7de73250-c9b6-4373-b21e-16bbb7a63882)
 
 
-## Tasks to complete before new release
+# Tasks to complete before new release
 - [x] Create CSV report processing function
 - [ ] Bugfixes
 - [x] Find an opportunity to get rid of the manual installation of wkhtmltopdf
 - [ ] IntelliSearch function to search useful strings in documents, SMs and so on
       
-## DPULSE mentions in social medias
+# DPULSE mentions in social medias
 
 ### [DPULSE first mention on X.com](https://x.com/DarkWebInformer/status/1787583156775759915?t=Ak1W9ddUPpDvLAkVyQG8fQ&s=19)
 
