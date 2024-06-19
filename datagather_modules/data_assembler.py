@@ -10,7 +10,6 @@ try:
     import requests
     from datetime import datetime
     import jinja2
-    import pdfkit
     import os
     from colorama import Fore, Style
     import webbrowser
