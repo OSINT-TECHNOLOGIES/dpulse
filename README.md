@@ -48,7 +48,9 @@ All these results are compiled into an easy-to-read PDF or XLSX report by catego
 
 ## _Recommended ways_
 
-Since DPULSE repository is using Poetry to manage dependencies, it is higly recommended to install and start DPULSE using Poetry, especially on Linux systems where a lot of Python packages which DPULSE requires are preinstalled.
+Since DPULSE repository is using Poetry* to manage dependencies, it is higly recommended to install and start DPULSE using Poetry, especially on Linux systems where a lot of Python packages which DPULSE requires are preinstalled.
+
+_* Poetry is a tool for dependency management and packaging in Python. It can be simply installed everywhere using `pip install poetry` command, but more instructions you can find on [Poetry official documentation page](https://python-poetry.org/docs/#ci-recommendations)_
 
 ### First way (recommended on every OS, using Poetry)
 
