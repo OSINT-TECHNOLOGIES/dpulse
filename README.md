@@ -54,14 +54,15 @@ _* Poetry is a tool for dependency management and packaging in Python. It can be
 
 ### First way (recommended on every OS, using Poetry)
 
-Use this set of commands to get guaranteed start on Windows and Linux systems:
+Use this set of commands to use recommended way of DPULSE installation:
 
   ```
   git clone https://github.com/OSINT-TECHNOLOGIES/dpulse
   cd dpulse
   poetry install
-  poetry run python dpulse.py
   ```
+Then you simply start DPULSE using `poetry run python dpulse.py`
+
 ### Second way (recommended on Windows systems, without using Poetry)
 
 Simply download zip archive from assets in releases bookmark, just right here:
@@ -70,18 +71,39 @@ Simply download zip archive from assets in releases bookmark, just right here:
 
 Then you just unpack the archive, open terminal in DPULSE root folder and use `pip install -r requirements.txt` command to install requirements. Then type `python dpulse.py` in terminal, and that's where program starts.
 
-You also can use this way with some different approach using this set of commands:
+You also can use this installation way with some different approach using this set of commands:
 
   ```
   git clone https://github.com/OSINT-TECHNOLOGIES/dpulse
   cd dpulse
   pip install -r requirements.txt
-  python dpulse.py
   ```
+
+## _Installers usage_
+
+DPULSE has two pre-written installation scripts, both for Windows (installer.bat) and for Linux (installer.sh). You can use them to clone repository and install dependencies or only for dependencies installation. Keep in mind that installer.bat (Windows installer) requires installed Git to clone repository.
+
+### Windows installer usage
+
+You can start installer.bat from terminal by typing `./installer.bat` in terminal. Then you choose menu item which you want to start.
+
+If you have problems with starting installer.bat, you should try to start it in admin terminal.
+
+### Linux installer usage
+
+To start installer.sh in Linux you should follow these steps in your terminal:
+
+  ```
+  sudo chmod +x installer.sh
+  sudo bash installer.sh
+  ```
+Then you choose menu item which you want to start.
+
+If you have problems with starting installer.bat, you should try to use `dos2unix installer.sh` or `sed -i 's/\r//' installer.sh` commands.
 
 # DPULSE demos
 
-### You can start DPULSE and see the main menu on the screen using `python dpulse.py` command in DPULSE root folder. Don't forget to install all requirements before starting DPULSE
+### You can start DPULSE and see the main menu on the screen using one of the recommended commands in DPULSE root folder. Don't forget to install all requirements before starting DPULSE
 
 ![dpulse_start](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/2ac7f332-5482-45e4-a0c9-0cc20e0e0ac7)
 
