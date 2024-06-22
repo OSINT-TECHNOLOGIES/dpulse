@@ -79,6 +79,12 @@ You also can use this installation way with some different approach using this s
   pip install -r requirements.txt
   ```
 
+## _Other ways_
+
+### Third way (using pip)
+
+You also can install DPULSE using pip manager. It'll install DPULSE and necessery dependencies in one command: `pip install dpulse`. Then you just locate DPULSE root folder and type `python dpulse.py` to start program.
+
 ## _Installers usage_
 
 DPULSE has two pre-written installation scripts, both for Windows (installer.bat) and for Linux (installer.sh). You can use them to clone repository and install dependencies or only for dependencies installation. Keep in mind that installer.bat (Windows installer) requires installed Git to clone repository.
