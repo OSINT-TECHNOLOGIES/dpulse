@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "dpulse"
-version = "1.0.2"
+version = "1.0.3"
 description = "Convenient,fast and user-friendly collector of domain information from Open-Sources"
 authors = ["OSINT-TECHNOLOGIES <osint.technologies@gmail.com>"]
 readme = "README.md"
@@ -44,4 +44,4 @@ xhtml2pdf = "0.2.16"
 
 
 [tool.poetry.scripts]
-dpulse = "dpulse.dpulse:run"
+dpulse = 'dpulse.dpulse:run'
