@@ -1,6 +1,7 @@
 import sys
 sys.path.append('datagather_modules')
 sys.path.append('service')
+sys.path.append('reporting_modules')
 
 import pdf_report_creation as pdf_rc
 import cli_init
