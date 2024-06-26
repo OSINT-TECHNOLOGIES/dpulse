@@ -130,8 +130,10 @@ If you have problems with starting installer.bat, you should try to use `dos2uni
       
 # DPULSE mentions in social medias
 
-### [DPULSE first mention on X.com (by @DarkWebInformer)](https://x.com/DarkWebInformer/status/1787583156775759915?t=Ak1W9ddUPpDvLAkVyQG8fQ&s=19)
+### [First mention on X.com (by @DarkWebInformer)](https://x.com/DarkWebInformer/status/1787583156775759915?t=Ak1W9ddUPpDvLAkVyQG8fQ&s=19)
 
 ### [Second mention on X.com (by @0xtechrock)](https://x.com/0xtechrock/status/1804470459741978974?t=us1EVJEECNZdSmSe5CQjQA&s=19)
+
+### [First mention on Facebook (by Inteligência Cibernética)](https://www.facebook.com/osintbrasil/posts/pfbid037ibycZcBWe2MjtV4HiWvRWxyKei8TJ5Ycfxai4TDNHXuwrYkDGuyjDsPow8WUNbyl)
 
 
