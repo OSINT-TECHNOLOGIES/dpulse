@@ -1,10 +1,12 @@
 from colorama import Fore, Style
 import sys
 sys.path.append('service')
+sys.path.append('pagesearch')
 
 import crawl_processor as cp
 import dorking_processor as dp
 import networking_processor as np
+from pagesearch_main import normal_search
 
 try:
     import requests
@@ -37,7 +39,7 @@ class DataProcessing():
         os.makedirs(report_folder, exist_ok=True)
         return casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, ctime
 
-    def data_gathering(self, short_domain, url, report_file_type):
+    def data_gathering(self, short_domain, url, report_file_type, pagesearch_flag):
         casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, ctime = self.report_preprocessing(short_domain, report_file_type)
         print(Fore.GREEN + "Started scanning domain" + Style.RESET_ALL)
         print(Fore.GREEN + "Getting domain IP address" + Style.RESET_ALL)
@@ -83,22 +85,35 @@ class DataProcessing():
         for key in common_socials:
             common_socials[key] = list(set(common_socials[key]))
         total_socials = sum(len(values) for values in common_socials.values())
-
         if report_file_type == 'pdf':
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
                           robots_txt_result, sitemap_xml_result, sitemap_links_status,
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
                           hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials]
+            if pagesearch_flag.lower() == 'y':
+                to_search_array = [subdomains, social_medias, sd_socials]
+                print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS START]\n" + Style.RESET_ALL)
+                normal_search(to_search_array, report_folder)
+                print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
+                #to_search_array = [subdomains, social_medias, sd_socials, sitemap_links_filepath] WIP
+            elif pagesearch_flag.lower() == 'n':
+                pass
         elif report_file_type == 'xlsx':
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
                           robots_txt_result, sitemap_xml_result, sitemap_links_status,
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
                           hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, parsed_links, subdomain_urls, dorking_results]
+            if pagesearch_flag.lower() == 'y':
+                to_search_array = [subdomains, social_medias, sd_socials]
+                print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS START]\n" + Style.RESET_ALL)
+                normal_search(to_search_array, report_folder)
+                print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
+                #to_search_array = [subdomains, social_medias, sd_socials, sitemap_links_filepath] WIP
+            elif pagesearch_flag.lower() == 'n':
+                pass
 
         report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type]
 
         return data_array, report_info_array
-
-
