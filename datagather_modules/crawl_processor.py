@@ -18,7 +18,6 @@ def ip_gather(short_domain):
     ip_address = socket.gethostbyname(short_domain)
     return ip_address
 
-
 def whois_gather(short_domain):
     try:
         w = whois.whois(short_domain)
@@ -53,7 +52,6 @@ def subdomains_gather(url, short_domain):
     subdomains = [urllib.parse.unquote(i) for i in linked_domains if finder in i]
     subdomains_amount = len(subdomains)
     return subdomains, subdomains_amount
-
 
 def sm_gather(url):
     response = requests.get(url)
