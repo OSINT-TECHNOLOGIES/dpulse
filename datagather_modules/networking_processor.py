@@ -16,6 +16,8 @@ def get_dns_info(short_domain):
     try:
         resolver = dns.resolver.Resolver()
         mx_records = str(resolver.resolve(short_domain, 'MX'))
+        if len(mx_records) == 0:
+            mx_records = ['MX records were not gathered']
         return mx_records
     except dns.resolver.NoAnswer as error_noans:
         print(Fore.RED + "No answer from domain about MX records. Reason: {}".format(error_noans))
@@ -51,6 +53,16 @@ def query_internetdb(ip, report_file_extension):
         cpes = data.get("cpes", [])
         tags = data.get("tags", [])
         vulns = data.get("vulns", [])
+        if not ports:
+            ports = ['Open ports were not found']
+        if not hostnames:
+            hostnames = ['Hostnames were not found']
+        if not cpes:
+            cpes = ['CPEs were not found']
+        if not tags:
+            tags = ['Tags were not found']
+        if not vulns:
+            vulns = ['Vulnerabilities were not found ']
         if report_file_extension == 'pdf':
             return ports, hostnames, cpes, tags, vulns
         elif report_file_extension == 'xlsx':
@@ -122,7 +134,19 @@ def get_technologies(url):
         web_frameworks = tech.get('web-frameworks', [])
         analytics = tech.get('analytics', [])
         javascript_frameworks = tech.get('javascript-frameworks', [])
+        if not web_servers:
+            web_servers = ['Web-servers were not found']
+        if not cms:
+            cms = ['CMS were not found']
+        if not programming_languages:
+            programming_languages = ['Used programming languages were not determined']
+        if not web_frameworks:
+            web_frameworks = ['Used web frameworks were not determined']
+        if not analytics:
+            analytics = ['Used analytics services were not determined']
+        if not javascript_frameworks:
+            javascript_frameworks = ['Used JS frameworks were not determined']
         return web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks
     except:
-        web_servers = cms = programming_languages = web_frameworks = analytics = javascript_frameworks = 'Found nothing related to web-technologies'
+        web_servers = cms = programming_languages = web_frameworks = analytics = javascript_frameworks = ['Found nothing related to web-technologies due to some error']
         return web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks
