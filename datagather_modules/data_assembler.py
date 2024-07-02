@@ -7,6 +7,7 @@ import crawl_processor as cp
 import dorking_processor as dp
 import networking_processor as np
 from pagesearch_main import normal_search
+from pagesearch_keywords import search_keywords_in_folder
 
 try:
     import requests
@@ -39,7 +40,7 @@ class DataProcessing():
         os.makedirs(report_folder, exist_ok=True)
         return casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, ctime
 
-    def data_gathering(self, short_domain, url, report_file_type, pagesearch_flag):
+    def data_gathering(self, short_domain, url, report_file_type, pagesearch_flag, keywords):
         casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, ctime = self.report_preprocessing(short_domain, report_file_type)
         print(Fore.GREEN + "Started scanning domain" + Style.RESET_ALL)
         print(Fore.GREEN + "Getting domain IP address" + Style.RESET_ALL)
@@ -95,6 +96,7 @@ class DataProcessing():
                 to_search_array = [subdomains, social_medias, sd_socials]
                 print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS START]\n" + Style.RESET_ALL)
                 normal_search(to_search_array, report_folder)
+                #search_keywords_in_folder(report_folder + '//ps_documents', keywords) WIP
                 print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
                 #to_search_array = [subdomains, social_medias, sd_socials, sitemap_links_filepath] WIP
             elif pagesearch_flag.lower() == 'n':
@@ -109,6 +111,7 @@ class DataProcessing():
                 to_search_array = [subdomains, social_medias, sd_socials]
                 print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS START]\n" + Style.RESET_ALL)
                 normal_search(to_search_array, report_folder)
+                #search_keywords_in_folder(report_folder + '//ps_documents', keywords) WIP
                 print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
                 #to_search_array = [subdomains, social_medias, sd_socials, sitemap_links_filepath] WIP
             elif pagesearch_flag.lower() == 'n':
