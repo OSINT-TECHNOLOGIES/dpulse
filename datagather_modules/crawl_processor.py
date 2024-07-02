@@ -82,6 +82,28 @@ def sm_gather(url):
             categorized_links['WeChat'].append(urllib.parse.unquote(link))
         elif 'ok.ru' in link:
             categorized_links['Odnoklassniki'].append(urllib.parse.unquote(link))
+
+    if not categorized_links['Odnoklassniki']:
+        categorized_links['Odnoklassniki'].append('Odnoklassniki links were not found')
+    if not categorized_links['WeChat']:
+        categorized_links['WeChat'].append('WeChat links were not found')
+    if not categorized_links['YouTube']:
+        categorized_links['YouTube'].append('YouTube links were not found')
+    if not categorized_links['LinkedIn']:
+        categorized_links['LinkedIn'].append('LinkedIn links were not found')
+    if not categorized_links['VKontakte']:
+        categorized_links['VKontakte'].append('VKontakte links were not found')
+    if not categorized_links['TikTok']:
+        categorized_links['TikTok'].append('TikTok links were not found')
+    if not categorized_links['Telegram']:
+        categorized_links['Telegram'].append('Telegram links were not found')
+    if not categorized_links['Instagram']:
+        categorized_links['Instagram'].append('Instagram links were not found')
+    if not categorized_links['Twitter']:
+        categorized_links['Twitter'].append('Twitter links were not found')
+    if not categorized_links['Facebook']:
+        categorized_links['Facebook'].append('Facebook links were not found')
+
     return categorized_links
 
 def domains_reverse_research(subdomains, report_file_type):
