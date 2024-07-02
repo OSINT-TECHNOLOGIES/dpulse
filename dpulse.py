@@ -56,6 +56,9 @@ def run():
                     case_comment = input(Fore.YELLOW + "Enter case comment (or enter '-' if you don't need comment to the case) >> ")
                     report_filetype = input(Fore.YELLOW + "Enter report file extension [xlsx/pdf] >> ")
                     pagesearch_flag = input(Fore.YELLOW + "Would you like to use PageSearch [BETA] function? [Y/N] >> ")
+                    if pagesearch_flag == 'Y':
+                        keywords_input = input(Fore.YELLOW + "Enter keywords to search in files during PageSearch process >> ")
+                        keywords_list = [keyword.strip() for keyword in keywords_input.split(',')]
                     report_filetype_lowered = report_filetype.lower()
                     if report_filetype_lowered == 'pdf' or report_filetype_lowered == 'xlsx':
                         if pagesearch_flag == 'Y' or pagesearch_flag == 'N':
@@ -66,20 +69,26 @@ def run():
                             spinner_thread.start()
                             if report_filetype_lowered == 'pdf':
                                 try:
-                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower())
+                                    if pagesearch_flag == 'Y':
+                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), keywords_list)
+                                    else:
+                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), '')
                                     pdf_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array)
                                 finally:
                                     spinner_thread.do_run = False
                                     spinner_thread.join()
                             elif report_filetype_lowered == 'xlsx':
                                 try:
-                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower())
+                                    if pagesearch_flag == 'Y':
+                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), keywords_list)
+                                    else:
+                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), '')
                                     xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array)
                                 finally:
                                     spinner_thread.do_run = False
                                     spinner_thread.join()
                         else:
-                            print(Fore.RED + "Unsupported IntelliSearch mode. Please choose between Y, N")
+                            print(Fore.RED + "Unsupported PageSearch mode. Please choose between Y, N")
                     else:
                         print(Fore.RED + "Unsupported report file extension. Please choose between xlsx or pdf.")
 
