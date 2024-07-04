@@ -48,7 +48,7 @@ class DataProcessing():
         print(Fore.GREEN + 'Gathering WHOIS information' + Style.RESET_ALL)
         res = cp.whois_gather(short_domain)
         print(Fore.GREEN + 'Processing e-mails gathering' + Style.RESET_ALL)
-        mails = cp.mail_gather(url)
+        mails = cp.contact_mail_gather(url)
         print(Fore.GREEN + 'Processing subdomain gathering' + Style.RESET_ALL)
         subdomains, subdomains_amount = cp.subdomains_gather(url, short_domain)
         print(Fore.GREEN + 'Processing social medias gathering' + Style.RESET_ALL)
