@@ -26,7 +26,24 @@ def whois_gather(short_domain):
         print(Fore.RED + "Error while gathering WHOIS information. Reason: {}".format(e))
         pass
 
-def mail_gather(url):
+def contact_mail_gather(url):
+    try:
+        r = requests.get(url)
+        data = r.text
+        soup = BeautifulSoup(data, "html.parser")
+        mails = []
+        for i in soup.find_all(href=re.compile("mailto")):
+            i.encode().decode()
+            mails.append(i.string)
+        if (not mails) or (mails is None):
+            return 'No contact e-mails were found'
+        else:
+            return mails
+    except requests.RequestException as e:
+        print(Fore.RED + "Error while gathering e-mails. Reason: {}".format(e))
+        pass
+
+def subdomains_mail_gather(url):
     try:
         r = requests.get(url)
         data = r.text
@@ -131,7 +148,7 @@ def domains_reverse_research(subdomains, report_file_type):
 
     try:
         for subdomain_url in subdomain_urls:
-            subdomain_mail = mail_gather(subdomain_url)
+            subdomain_mail = subdomains_mail_gather(subdomain_url)
             subdomain_mails.append(subdomain_mail)
             subdomain_social = sm_gather(subdomain_url)
             subdomain_socials.append(subdomain_social)
