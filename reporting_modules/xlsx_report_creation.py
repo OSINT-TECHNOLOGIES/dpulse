@@ -232,7 +232,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['A4'] = 'CPEs'
         ws['I1'] = 'POTENTIAL VULNERABILITIES'
         ws['B1'] = str(ports)
-        ws['B2'] = str(hostnames)
+        #ws['B2'] = str(hostnames)
         ws['B3'] = str(tags)
         ws['B4'] = str(cpes)
         for i in range(len(vulns)):
