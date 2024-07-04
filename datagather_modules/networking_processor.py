@@ -14,11 +14,13 @@ except ImportError as e:
 
 def get_dns_info(short_domain):
     try:
-        resolver = dns.resolver.Resolver()
-        mx_records = str(resolver.resolve(short_domain, 'MX'))
-        if len(mx_records) == 0:
-            mx_records = ['MX records were not gathered']
-        return mx_records
+        mx_list = []
+        mx_records = dns.resolver.resolve(short_domain, 'MX')
+        for record in mx_records:
+            mx_list.append(record.exchange)
+        if not mx_list:
+            mx_list.append('MX records were not gathered')
+        return mx_list
     except dns.resolver.NoAnswer as error_noans:
         print(Fore.RED + "No answer from domain about MX records. Reason: {}".format(error_noans))
         return 'No information about MX records was gathered'
@@ -39,9 +41,10 @@ def get_ssl_certificate(short_domain, port=443):
         commonName = str(cert['issuer'][2][0][1]) + ', version: ' + str(cert['version'])
         serialNumber = cert['serialNumber']
         return issuer, subject, notBefore, notAfter, commonName, serialNumber
-    except (ssl.CertificateError, ssl.SSLError, socket.gaierror) as e:
+    except (ssl.CertificateError, ssl.SSLError, socket.gaierror, ConnectionRefusedError) as e:
         print(Fore.RED + "Error while gathering info about SSL certificate. Reason: {}".format(e))
-        return "No information about SSL certificate was gathered"
+        issuer = subject = notBefore = notAfter = commonName = serialNumber = ["No information about SSL certificate was gathered"]
+        return issuer, subject, notBefore, notAfter, commonName, serialNumber
 
 def query_internetdb(ip, report_file_extension):
     url = f"https://internetdb.shodan.io/{ip}"
@@ -121,7 +124,7 @@ def extract_links_from_sitemap(sitemap_links_path, sitemap_path, report_file_typ
             for link in links:
                 parsed_links.append(link)
             return 'Links from "sitemap.txt" were successfully parsed', parsed_links
-    except ET.ParseError as e:
+    except (ET.ParseError, FileNotFoundError) as e:
         print(Fore.RED + "Links from sitemap.txt were not parsed. Reason: {}".format(e))
         return 'Links from "sitemap.txt" were not parsed'
 
