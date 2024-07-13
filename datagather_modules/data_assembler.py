@@ -61,7 +61,7 @@ class DataProcessing():
         print(Fore.GREEN + 'Processing SSL certificate gathering' + Style.RESET_ALL)
         issuer, subject, notBefore, notAfter, commonName, serialNumber = np.get_ssl_certificate(short_domain)
         print(Fore.GREEN + 'Processing MX records gathering' + Style.RESET_ALL)
-        mx_records = np.get_dns_info(short_domain)
+        mx_records = np.get_dns_info(short_domain, report_file_type)
         print(Fore.GREEN + 'Extracting robots.txt and sitemap.xml' + Style.RESET_ALL)
         robots_txt_result = np.get_robots_txt(short_domain, robots_filepath)
         sitemap_xml_result = np.get_sitemap_xml(short_domain, sitemap_filepath)
