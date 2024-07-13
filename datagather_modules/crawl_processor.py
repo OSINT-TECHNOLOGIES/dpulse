@@ -35,10 +35,11 @@ def contact_mail_gather(url):
         for i in soup.find_all(href=re.compile("mailto")):
             i.encode().decode()
             mails.append(i.string)
+        mails = [mail for mail in mails if mail is not None]
         if (not mails) or (mails is None):
             return 'No contact e-mails were found'
         else:
-            return mails
+            return ', '.join(map(str, mails))
     except requests.RequestException as e:
         print(Fore.RED + "Error while gathering e-mails. Reason: {}".format(e))
         pass
