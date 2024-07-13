@@ -12,7 +12,7 @@ except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
 
-def get_dns_info(short_domain):
+def get_dns_info(short_domain, report_file_extension):
     try:
         mx_list = []
         mx_records = dns.resolver.resolve(short_domain, 'MX')
@@ -20,7 +20,10 @@ def get_dns_info(short_domain):
             mx_list.append(record.exchange)
         if not mx_list:
             mx_list.append('MX records were not gathered')
-        return mx_list
+        if report_file_extension == 'xlsx':
+            return ', '.join(map(str, mx_list))
+        elif report_file_extension == 'pdf':
+            return mx_list
     except dns.resolver.NoAnswer as error_noans:
         print(Fore.RED + "No answer from domain about MX records. Reason: {}".format(error_noans))
         return 'No information about MX records was gathered'
