@@ -69,6 +69,8 @@ def subdomains_gather(url, short_domain):
     finder = short_domain
     subdomains = [urllib.parse.unquote(i) for i in linked_domains if finder in i]
     subdomains_amount = len(subdomains)
+    if not subdomains:
+        subdomains = ['No subdomains were found']
     return subdomains, subdomains_amount
 
 def sm_gather(url):
@@ -196,6 +198,11 @@ def domains_reverse_research(subdomains, report_file_type):
                 sd_socials['Odnoklassniki'].append(urllib.parse.unquote(link))
 
     sd_socials = {k: list(set(v)) for k, v in sd_socials.items()}
+
+    if not subdomain_mails:
+        subdomain_mails = ['No subdomains mails were found']
+    if not subdomain_ip:
+        subdomain_ip = ["No subdomains IP's were found"]
 
     if report_file_type == 'pdf':
         return subdomain_mails, sd_socials, subdomain_ip
