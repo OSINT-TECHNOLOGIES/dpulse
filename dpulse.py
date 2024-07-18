@@ -57,8 +57,13 @@ def run():
                     report_filetype = input(Fore.YELLOW + "Enter report file extension [xlsx/pdf] >> ")
                     pagesearch_flag = input(Fore.YELLOW + "Would you like to use PageSearch [BETA] function? [Y/N] >> ")
                     if pagesearch_flag == 'Y':
-                        keywords_input = input(Fore.YELLOW + "Enter keywords to search in files during PageSearch process >> ")
-                        keywords_list = [keyword.strip() for keyword in keywords_input.split(',')]
+                        keywords_input = input(Fore.YELLOW + "Enter keywords to search in files during PageSearch process (or write None if you don't need it) >> ")
+                        if keywords_input.lower() != "none":
+                            keywords_list = [keyword.strip() for keyword in keywords_input.split(',')]
+                            keywords_flag = 1
+                        elif keywords_input.lower() == "none":
+                            keywords_list = None
+                            keywords_flag = 0
                     report_filetype_lowered = report_filetype.lower()
                     if report_filetype_lowered == 'pdf' or report_filetype_lowered == 'xlsx':
                         if pagesearch_flag == 'Y' or pagesearch_flag == 'N':
@@ -70,7 +75,7 @@ def run():
                             if report_filetype_lowered == 'pdf':
                                 try:
                                     if pagesearch_flag == 'Y':
-                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), keywords_list)
+                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), keywords_list, keywords_flag)
                                     else:
                                         data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), '')
                                     pdf_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array)
@@ -80,7 +85,7 @@ def run():
                             elif report_filetype_lowered == 'xlsx':
                                 try:
                                     if pagesearch_flag == 'Y':
-                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), keywords_list)
+                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), keywords_list, keywords_flag)
                                     else:
                                         data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), '')
                                     xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array)
