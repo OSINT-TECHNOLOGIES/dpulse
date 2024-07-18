@@ -67,8 +67,14 @@ def run():
                     report_filetype_lowered = report_filetype.lower()
                     if report_filetype_lowered == 'pdf' or report_filetype_lowered == 'xlsx':
                         if pagesearch_flag == 'Y' or pagesearch_flag == 'N':
+                            if pagesearch_flag == "N":
+                                pagesearch_ui_mark = 'No'
+                            elif pagesearch_flag == 'Y' and keywords_flag == 1:
+                                pagesearch_ui_mark = f'Yes, with {keywords_list} keywords search'
+                            else:
+                                pagesearch_ui_mark = 'Yes, without keywords search'
                             print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
-                            print(Fore.GREEN + "Determined target: {}\nCase comment: {}\nReport file extension: {}\nPageSearch: {}\n".format(short_domain, case_comment, report_filetype_lowered, pagesearch_flag) + Style.RESET_ALL)
+                            print(Fore.GREEN + "Determined target: {}\nCase comment: {}\nReport file extension: {}\nPageSearch: {}\n".format(short_domain, case_comment, report_filetype_lowered, pagesearch_ui_mark) + Style.RESET_ALL)
                             print(Fore.LIGHTMAGENTA_EX + "[SCANNING PROCESS]\n" + Style.RESET_ALL)
                             spinner_thread = ProgressBar()
                             spinner_thread.start()
