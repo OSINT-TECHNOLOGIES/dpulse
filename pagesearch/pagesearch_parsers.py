@@ -3,7 +3,37 @@ from bs4 import BeautifulSoup
 import re
 from colorama import Fore, Style
 import os
-def subdomains_parser(subdomains_list, report_folder):
+import fitz
+
+def extract_text_from_pdf(filename: str) -> str:
+    try:
+        doc = fitz.open(filename=filename)
+        text = ""
+        for page in doc:
+            text += page.get_text()
+        return text
+    except Exception as e:
+        print(Fore.RED + f"Can't open some PDF file. Reason: {e}" + Style.RESET_ALL)
+        pass
+
+def find_keywords_in_pdfs(ps_docs_path, keywords: list) -> dict:
+    try:
+        pdf_files = [f for f in os.listdir(ps_docs_path) if f.lower().endswith(".pdf")]
+        results = {}
+        for pdf_file in pdf_files:
+            pdf_path = os.path.join(ps_docs_path, pdf_file)
+            extracted_text = extract_text_from_pdf(pdf_path)
+            for keyword in keywords:
+                if keyword.lower() in extracted_text.lower():
+                    if pdf_file not in results:
+                        results[pdf_file] = []
+                    results[pdf_file].append(keyword)
+        return results
+    except Exception as e:
+        print(Fore.RED + f"Can't find keywords. Reason: {e}")
+        pass
+
+def subdomains_parser(subdomains_list, report_folder, keywords):
     ps_docs_path = report_folder + '//ps_documents'
     if not os.path.exists(ps_docs_path):
         os.makedirs(ps_docs_path)
@@ -88,3 +118,10 @@ def subdomains_parser(subdomains_list, report_folder):
             print(Fore.RED + "File extraction failed. Reason: {}".format(e) + Style.RESET_ALL)
             print(Fore.LIGHTGREEN_EX + "-------------------------------------------------")
             pass
+    try:
+        pdf_results = find_keywords_in_pdfs(ps_docs_path, keywords)
+        for pdf_file, found_keywords in pdf_results.items():
+            print(Fore.GREEN + f"Keywords " + Fore.RESET + f"{', '.join(found_keywords)}" + Fore.GREEN + f" found in '{pdf_file}'")
+    except Exception as e:
+        print(Fore.RED + f"Can't find keywords. Reason: {e}")
+    print(Fore.LIGHTGREEN_EX + "-------------------------------------------------")
