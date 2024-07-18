@@ -33,7 +33,7 @@ def find_keywords_in_pdfs(ps_docs_path, keywords: list) -> dict:
         print(Fore.RED + f"Can't find keywords. Reason: {e}")
         pass
 
-def subdomains_parser(subdomains_list, report_folder, keywords):
+def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
     ps_docs_path = report_folder + '//ps_documents'
     if not os.path.exists(ps_docs_path):
         os.makedirs(ps_docs_path)
@@ -118,10 +118,14 @@ def subdomains_parser(subdomains_list, report_folder, keywords):
             print(Fore.RED + "File extraction failed. Reason: {}".format(e) + Style.RESET_ALL)
             print(Fore.LIGHTGREEN_EX + "-------------------------------------------------")
             pass
-    try:
-        pdf_results = find_keywords_in_pdfs(ps_docs_path, keywords)
-        for pdf_file, found_keywords in pdf_results.items():
-            print(Fore.GREEN + f"Keywords " + Fore.RESET + f"{', '.join(found_keywords)}" + Fore.GREEN + f" found in '{pdf_file}'")
-    except Exception as e:
-        print(Fore.RED + f"Can't find keywords. Reason: {e}")
+    if keywords_flag == 1:
+        print(Fore.GREEN + "Starting keywords searching..." + Style.RESET_ALL)
+        try:
+            pdf_results = find_keywords_in_pdfs(ps_docs_path, keywords)
+            for pdf_file, found_keywords in pdf_results.items():
+                print(Fore.GREEN + f"Keywords " + Fore.RESET + f"{', '.join(found_keywords)}" + Fore.GREEN + f" found in '{pdf_file}'")
+        except Exception as e:
+            print(Fore.RED + f"Can't find keywords. Reason: {e}")
+    elif keywords_flag == 0:
+        print(Fore.RED + "Keywords gathering won't start because of None user input" + Style.RESET_ALL)
     print(Fore.LIGHTGREEN_EX + "-------------------------------------------------")
