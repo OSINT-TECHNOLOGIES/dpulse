@@ -29,17 +29,17 @@
 # About DPULSE
 
 DPULSE is a software solution for conducting OSINT research in relation to a certain domain. Using this software you can extract useful information such as:
-1. WHOIS information 
-2. Subdomains
-3. Mentions of the domain's owner organization in some social networks, as well as organization profiles in social networks.
-4. IP addresses
-5. Public documents
-6. Domain-related Google queries
+1. PageSearch function [BETA] which gives opportunity to extract public documents, find keywords (temporarily only in PDF files) and more
+2. WHOIS information 
+3. Subdomains
+4. Mentions of the domain's owner organization in some social networks, as well as organization profiles in social networks.
+5. IP addresses
+6. Automated Google Dorking related to domain
 7. InternetDB search results (possible vulnerabilities, open ports and so on)
 8. Used web-technologies
 9. Sitemap, robots.txt files, SSL certificate info
-    
-All these results are compiled into an easy-to-read PDF or XLSX report by category.
+  
+All this data is compiled into an easy-to-read PDF or XLSX report by category.
 
 
 # How to install and run DPULSE
