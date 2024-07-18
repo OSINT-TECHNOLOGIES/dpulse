@@ -95,7 +95,7 @@ class DataProcessing():
             if pagesearch_flag.lower() == 'y':
                 to_search_array = [subdomains, social_medias, sd_socials]
                 print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS START]\n" + Style.RESET_ALL)
-                normal_search(to_search_array, report_folder)
+                normal_search(to_search_array, report_folder, keywords)
                 #search_keywords_in_folder(report_folder + '//ps_documents', keywords) WIP
                 print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
                 #to_search_array = [subdomains, social_medias, sd_socials, sitemap_links_filepath] WIP
@@ -110,7 +110,7 @@ class DataProcessing():
             if pagesearch_flag.lower() == 'y':
                 to_search_array = [subdomains, social_medias, sd_socials]
                 print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS START]\n" + Style.RESET_ALL)
-                normal_search(to_search_array, report_folder)
+                normal_search(to_search_array, report_folder, keywords)
                 #search_keywords_in_folder(report_folder + '//ps_documents', keywords) WIP
                 print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
                 #to_search_array = [subdomains, social_medias, sd_socials, sitemap_links_filepath] WIP
