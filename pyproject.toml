@@ -41,7 +41,7 @@ dnspython = "2.6.1"
 lxml = "5.2.2"
 openpyxl = "3.1.2"
 xhtml2pdf = "0.2.16"
-
+PyMuPDF = "1.24.7"
 
 [tool.poetry.scripts]
 dpulse = 'dpulse.dpulse:run'
