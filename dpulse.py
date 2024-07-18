@@ -64,6 +64,8 @@ def run():
                         elif keywords_input.lower() == "none":
                             keywords_list = None
                             keywords_flag = 0
+                    elif pagesearch_flag == 'N':
+                        keywords_flag = 0
                     report_filetype_lowered = report_filetype.lower()
                     if report_filetype_lowered == 'pdf' or report_filetype_lowered == 'xlsx':
                         if pagesearch_flag == 'Y' or pagesearch_flag == 'N':
@@ -74,7 +76,10 @@ def run():
                             else:
                                 pagesearch_ui_mark = 'Yes, without keywords search'
                             print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
-                            print(Fore.GREEN + "Determined target: {}\nCase comment: {}\nReport file extension: {}\nPageSearch: {}\n".format(short_domain, case_comment, report_filetype_lowered, pagesearch_ui_mark) + Style.RESET_ALL)
+                            print(Fore.GREEN + "Determined target: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + short_domain + Style.RESET_ALL)
+                            print(Fore.GREEN + "Report type: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + report_filetype_lowered + Style.RESET_ALL)
+                            print(Fore.GREEN + "PageSearch conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + pagesearch_ui_mark + Style.RESET_ALL)
+                            print(Fore.GREEN + "Case comment: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + case_comment + Style.RESET_ALL + "\n")
                             print(Fore.LIGHTMAGENTA_EX + "[SCANNING PROCESS]\n" + Style.RESET_ALL)
                             spinner_thread = ProgressBar()
                             spinner_thread.start()
@@ -83,7 +88,7 @@ def run():
                                     if pagesearch_flag == 'Y':
                                         data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), keywords_list, keywords_flag)
                                     else:
-                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), '')
+                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), '', keywords_flag)
                                     pdf_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array)
                                 finally:
                                     spinner_thread.do_run = False
@@ -93,7 +98,7 @@ def run():
                                     if pagesearch_flag == 'Y':
                                         data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), keywords_list, keywords_flag)
                                     else:
-                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), '')
+                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), '', keywords_flag)
                                     xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array)
                                 finally:
                                     spinner_thread.do_run = False
