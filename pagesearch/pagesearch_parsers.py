@@ -46,9 +46,9 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
             emails = re.findall(email_pattern, soup.text)
             if not emails:
                 emails = ['None']
-            print(Fore.GREEN + "Page URL: " + Fore.RESET + f"{url}" + Style.RESET_ALL)
-            print(Fore.GREEN + "Page title: " + Fore.RESET + f"{title}" + Style.RESET_ALL)
-            print(Fore.GREEN + "Founded e-mails: " + Fore.RESET + f"{', '.join(emails)}" + Style.RESET_ALL)
+            print(Fore.GREEN + "Page URL: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{url}" + Style.RESET_ALL)
+            print(Fore.GREEN + "Page title: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{title}" + Style.RESET_ALL)
+            print(Fore.GREEN + "Founded e-mails: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{', '.join(emails)}" + Style.RESET_ALL)
             links = soup.find_all('a')
             for link in links:
                 href = link.get('href')
@@ -56,7 +56,7 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
                     #print(f"Found link: {href}")  # Debugging line
                     if href.lower().endswith(('.docx', '.xlsx', '.csv', '.pdf', '.pptx', '.doc', '.ppt', '.xls', '.rtf')):
                         document_url = 'http://' + url + href
-                        print(Fore.GREEN + "Found document: " + Fore.RESET + f"{document_url}" + Style.RESET_ALL)
+                        print(Fore.GREEN + "Found document: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{document_url}" + Style.RESET_ALL)
                         response = requests.get(document_url)
                         if response.status_code == 200:
                             if href and href.lower().endswith(('.docx')):
@@ -123,7 +123,7 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
         try:
             pdf_results = find_keywords_in_pdfs(ps_docs_path, keywords)
             for pdf_file, found_keywords in pdf_results.items():
-                print(Fore.GREEN + f"Keywords " + Fore.RESET + f"{', '.join(found_keywords)}" + Fore.GREEN + f" found in '{pdf_file}'")
+                print(Fore.GREEN + f"Keywords " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{', '.join(found_keywords)}" + Style.RESET_ALL + Fore.GREEN + f" found in '{pdf_file}'")
         except Exception as e:
             print(Fore.RED + f"Can't find keywords. Reason: {e}")
     elif keywords_flag == 0:
