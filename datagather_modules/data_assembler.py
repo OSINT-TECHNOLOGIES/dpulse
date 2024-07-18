@@ -7,7 +7,6 @@ import crawl_processor as cp
 import dorking_processor as dp
 import networking_processor as np
 from pagesearch_main import normal_search
-#from pagesearch_keywords import search_keywords_in_folder WIP
 
 try:
     import requests
@@ -96,9 +95,7 @@ class DataProcessing():
                 to_search_array = [subdomains, social_medias, sd_socials]
                 print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS START]\n" + Style.RESET_ALL)
                 normal_search(to_search_array, report_folder, keywords, keywords_flag)
-                #search_keywords_in_folder(report_folder + '//ps_documents', keywords) WIP
                 print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
-                #to_search_array = [subdomains, social_medias, sd_socials, sitemap_links_filepath] WIP
             elif pagesearch_flag.lower() == 'n':
                 pass
         elif report_file_type == 'xlsx':
@@ -111,9 +108,7 @@ class DataProcessing():
                 to_search_array = [subdomains, social_medias, sd_socials]
                 print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS START]\n" + Style.RESET_ALL)
                 normal_search(to_search_array, report_folder, keywords, keywords_flag)
-                #search_keywords_in_folder(report_folder + '//ps_documents', keywords) WIP
                 print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
-                #to_search_array = [subdomains, social_medias, sd_socials, sitemap_links_filepath] WIP
             elif pagesearch_flag.lower() == 'n':
                 pass
 
