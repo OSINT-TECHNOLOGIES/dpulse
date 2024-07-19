@@ -33,6 +33,23 @@ def find_keywords_in_pdfs(ps_docs_path, keywords: list) -> dict:
         print(Fore.RED + f"Can't find keywords. Reason: {e}")
         pass
 
+def clean_bad_pdfs(ps_docs_path):
+    pdf_files = [f for f in os.listdir(ps_docs_path) if f.lower().endswith(".pdf")]
+    bad_pdfs = []
+    for pdf_file in pdf_files:
+        try:
+            full_path = os.path.join(ps_docs_path, pdf_file)
+            fitz.open(filename=full_path)
+        except Exception:
+            bad_pdfs.append(pdf_file)
+            pass
+    if len(bad_pdfs) > 0:
+        print(Fore.GREEN + f"Found {len(bad_pdfs)} corrupted PDF files. Deleting..." + Style.RESET_ALL)
+        for pdfs in bad_pdfs:
+            os.remove(os.path.join(ps_docs_path, pdfs))
+    else:
+        print(Fore.GREEN + "Corrupted PDF files were not found" + Style.RESET_ALL)
+
 def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
     ps_docs_path = report_folder + '//ps_documents'
     if not os.path.exists(ps_docs_path):
@@ -113,19 +130,26 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
                                 with open(extracted_path, 'wb') as file:
                                     file.write(response.content)
                                 print(Fore.GREEN + "File was successfully saved")
+                            elif href and href.lower().endswith(('.txt')):
+                                filename = os.path.basename(href)
+                                extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.txt")
+                                with open(extracted_path, 'wb') as file:
+                                    file.write(response.content)
+                                print(Fore.GREEN + "File was successfully saved")
             print(Fore.LIGHTGREEN_EX + "-------------------------------------------------")
         except Exception as e:
             print(Fore.RED + "File extraction failed. Reason: {}".format(e) + Style.RESET_ALL)
-            print(Fore.LIGHTGREEN_EX + "-------------------------------------------------")
+            print(Fore.LIGHTGREEN_EX + "-------------------------------------------------" + Style.RESET_ALL)
             pass
+    clean_bad_pdfs(ps_docs_path)
     if keywords_flag == 1:
-        print(Fore.GREEN + "Starting keywords searching..." + Style.RESET_ALL)
+        print(Fore.GREEN + "Starting keywords searching in PDF files" + Style.RESET_ALL)
         try:
             pdf_results = find_keywords_in_pdfs(ps_docs_path, keywords)
             for pdf_file, found_keywords in pdf_results.items():
-                print(Fore.GREEN + f"Keywords " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{', '.join(found_keywords)}" + Style.RESET_ALL + Fore.GREEN + f" found in '{pdf_file}'")
+                print(Fore.GREEN + f"Keywords " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{', '.join(found_keywords)}" + Style.RESET_ALL + Fore.GREEN + f" found in '{pdf_file}'" + Style.RESET_ALL)
         except Exception as e:
             print(Fore.RED + f"Can't find keywords. Reason: {e}")
     elif keywords_flag == 0:
         print(Fore.RED + "Keywords gathering won't start because of None user input" + Style.RESET_ALL)
-    print(Fore.LIGHTGREEN_EX + "-------------------------------------------------")
+    print(Fore.LIGHTGREEN_EX + "-------------------------------------------------" + Style.RESET_ALL)
