@@ -75,6 +75,7 @@ def subdomains_gather(url, short_domain):
         return subdomains, subdomains_amount
     except Exception as e:
         print(Fore.RED + f"Cannot gather subdomains due to error. Reason: {e}" + Style.RESET_ALL)
+        pass
 
 def sm_gather(url):
     response = requests.get(url)
