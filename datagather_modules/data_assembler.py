@@ -22,8 +22,9 @@ except ImportError as e:
 
 class DataProcessing():
     def report_preprocessing(self, short_domain, report_file_type):
-        ctime = datetime.now().strftime('%Y-%m-%d_%Hh%Mm%Ss')
-        files_body = short_domain.replace(".", "") + '_' + ctime
+        report_ctime = datetime.now().strftime('%d-%m-%Y, %H:%M:%S')
+        files_ctime = datetime.now().strftime('(%d-%m-%Y, %Hh%Mm%Ss)')
+        files_body = short_domain.replace(".", "") + '_' + files_ctime
         if report_file_type == 'pdf':
             casename = files_body + '.pdf'
         elif report_file_type == 'xlsx':
@@ -37,7 +38,7 @@ class DataProcessing():
         sitemap_filepath = report_folder + '//02-sitemap.txt'
         sitemap_links_filepath = report_folder + '//03-sitemap_links.txt'
         os.makedirs(report_folder, exist_ok=True)
-        return casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, ctime
+        return casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, report_ctime
 
     def data_gathering(self, short_domain, url, report_file_type, pagesearch_flag, keywords, keywords_flag):
         casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, ctime = self.report_preprocessing(short_domain, report_file_type)
