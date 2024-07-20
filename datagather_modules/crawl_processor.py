@@ -59,19 +59,22 @@ def subdomains_mail_gather(url):
         pass
 
 def subdomains_gather(url, short_domain):
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    linked_domains = set()
-    for link in soup.find_all('a', href=True):
-        domain = urlparse(link['href']).netloc
-        if domain and domain != urlparse(url).netloc:
-            linked_domains.add(domain)
-    finder = short_domain
-    subdomains = [urllib.parse.unquote(i) for i in linked_domains if finder in i]
-    subdomains_amount = len(subdomains)
-    if not subdomains:
-        subdomains = ['No subdomains were found']
-    return subdomains, subdomains_amount
+    try:
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        linked_domains = set()
+        for link in soup.find_all('a', href=True):
+            domain = urlparse(link['href']).netloc
+            if domain and domain != urlparse(url).netloc:
+                linked_domains.add(domain)
+        finder = short_domain
+        subdomains = [urllib.parse.unquote(i) for i in linked_domains if finder in i]
+        subdomains_amount = len(subdomains)
+        if not subdomains:
+            subdomains = ['No subdomains were found']
+        return subdomains, subdomains_amount
+    except Exception as e:
+        print(Fore.RED + f"Cannot gather subdomains due to error. Reason: {e}" + Style.RESET_ALL)
 
 def sm_gather(url):
     response = requests.get(url)
