@@ -51,6 +51,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         db_creation_date = report_info_array[2]
         report_folder = report_info_array[3]
         ctime = report_info_array[4]
+        report_ctime = report_info_array[6]
         dorking_status = data_array[30]
         dorking_results = data_array[35]
         parsed_links = data_array[33]
@@ -98,7 +99,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['B4'] = sitemap_xml_result
         ws['B5'] = sitemap_links_status
         ws['B6'] = dorking_status
-        ws['B7'] = ctime
+        ws['B7'] = report_ctime
 
         ws = wb['WHOIS']
         for col in ['1', '2', '3', '4', '5', '6', '7', '8']:
@@ -269,7 +270,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
 
         report_file = report_folder + "//" + casename
         wb.save(report_file)
-        print(Fore.GREEN + "Report for {} case was created at {}".format(''.join(short_domain), ctime) + Style.RESET_ALL)
+        print(Fore.GREEN + "Report for {} case was created at {}".format(''.join(short_domain), report_ctime) + Style.RESET_ALL)
         robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
         xlsx_blob = fp.get_blob(report_file)
         db.insert_blob('XLSX', xlsx_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content)
