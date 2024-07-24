@@ -38,10 +38,10 @@ class DataProcessing():
         sitemap_filepath = report_folder + '//02-sitemap.txt'
         sitemap_links_filepath = report_folder + '//03-sitemap_links.txt'
         os.makedirs(report_folder, exist_ok=True)
-        return casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, report_ctime
+        return casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, files_ctime, report_ctime
 
     def data_gathering(self, short_domain, url, report_file_type, pagesearch_flag, keywords, keywords_flag):
-        casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, ctime = self.report_preprocessing(short_domain, report_file_type)
+        casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, ctime, report_ctime = self.report_preprocessing(short_domain, report_file_type)
         print(Fore.GREEN + "Started scanning domain" + Style.RESET_ALL)
         print(Fore.GREEN + "Getting domain IP address" + Style.RESET_ALL)
         ip = cp.ip_gather(short_domain)
@@ -113,6 +113,6 @@ class DataProcessing():
             elif pagesearch_flag.lower() == 'n':
                 pass
 
-        report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type]
+        report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime]
 
         return data_array, report_info_array
