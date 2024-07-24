@@ -79,6 +79,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         db_creation_date = report_info_array[2]
         report_folder = report_info_array[3]
         ctime = report_info_array[4]
+        report_ctime = report_info_array[6]
 
         context = {'sh_domain': short_domain, 'full_url': url, 'ip_address': ip, 'registrar': res['registrar'],
                                     'creation_date': res['creation_date'],'expiration_date': res['expiration_date'],
@@ -93,14 +94,14 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                                     'ok_links': common_socials['Odnoklassniki'], 'robots_txt_result': robots_txt_result, 'sitemap_xml_result': sitemap_xml_result, 'dorking_status': dorking_status,
                                     'sitemap_links': sitemap_links_status, 'web_servers': web_servers, 'cms': cms, 'programming_languages': programming_languages, 'web_frameworks': web_frameworks, 'analytics': analytics,
                                     'javascript_frameworks': javascript_frameworks,
-                                     'ctime': ctime, 'a_tsf': subdomains_amount, 'mx_records': mx_records, 'issuer': issuer, 'subject': subject, 'notBefore': notBefore, 'notAfter': notAfter,
+                                     'ctime': report_ctime, 'a_tsf': subdomains_amount, 'mx_records': mx_records, 'issuer': issuer, 'subject': subject, 'notBefore': notBefore, 'notAfter': notAfter,
                                     'commonName': commonName, 'serialNumber': serialNumber, 'ports': ports, 'hostnames': hostnames, 'cpes': cpes,
                                     'tags': tags, 'vulns': vulns, 'a_tsm': total_socials}
 
         pdf_report_name = report_folder + '//' + casename
         template_path = 'report_template.html'
         if create_pdf(template_path, pdf_report_name, context):
-            print(Fore.GREEN + "Report for {} case was created at {}".format(''.join(short_domain), ctime) + Style.RESET_ALL)
+            print(Fore.GREEN + "Report for {} case was created at {}".format(''.join(short_domain), report_ctime) + Style.RESET_ALL)
         else:
             print(Fore.RED + 'Unable to create PDF report. Reason: {}')
         robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
