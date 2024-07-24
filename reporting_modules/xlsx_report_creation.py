@@ -232,7 +232,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['A3'] = 'TAGS'
         ws['A4'] = 'CPEs'
         ws['I1'] = 'POTENTIAL VULNERABILITIES'
-        ws['B1'] = str(ports)
+        ws['B1'] = ', '.join(str(item) for item in ports)
         ws['B2'] = str(hostnames)
         ws['B3'] = str(tags)
         ws['B4'] = str(cpes)
@@ -251,12 +251,12 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['A4'] = 'USED WEB FRAMEWORKS'
         ws['A5'] = 'ANALYTICS SERVICE'
         ws['A6'] = 'USED JAVASCRIPT FRAMEWORKS'
-        ws['B1'] = str(web_servers)
-        ws['B2'] = str(cms)
-        ws['B3'] = str(programming_languages)
-        ws['B4'] = str(web_frameworks)
-        ws['B5'] = str(analytics)
-        ws['B6'] = str(javascript_frameworks)
+        ws['B1'] = ', '.join(web_servers)
+        ws['B2'] = ', '.join(cms)
+        ws['B3'] = ', '.join(programming_languages)
+        ws['B4'] = ', '.join(web_frameworks)
+        ws['B5'] = ', '.join(analytics)
+        ws['B6'] = ', '.join(javascript_frameworks)
 
         ws = wb['SITEMAP LINKS']
         ws.column_dimensions['A'].width = 80
