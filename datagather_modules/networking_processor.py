@@ -68,14 +68,14 @@ def query_internetdb(ip, report_file_extension):
         if not tags:
             tags = ['Tags were not found']
         if not vulns:
-            vulns = ['Vulnerabilities were not found ']
+            vulns = ['Vulnerabilities were not found']
         if report_file_extension == 'pdf':
             return ports, hostnames, cpes, tags, vulns
         elif report_file_extension == 'xlsx':
-            return ports, ' // '.join(hostnames), ' // '.join(cpes), ' // '.join(tags), vulns
+            return ports, ', '.join(hostnames), ', '.join(cpes), ', '.join(tags), vulns
     else:
         print(Fore.RED + "No information was found on InternetDB" + Style.RESET_ALL)
-        ports = hostnames = cpes = tags = vulns = "No info about this web resource on InternetDB"
+        ports = hostnames = cpes = tags = vulns = ["No info about this web resource on InternetDB"]
         return ports, hostnames, cpes, tags, vulns
 
 def get_robots_txt(url, robots_path):
