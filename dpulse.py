@@ -89,7 +89,7 @@ def run():
                                         data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), keywords_list, keywords_flag)
                                     else:
                                         data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), '', keywords_flag)
-                                    pdf_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array)
+                                    pdf_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark)
                                 finally:
                                     spinner_thread.do_run = False
                                     spinner_thread.join()
@@ -99,7 +99,7 @@ def run():
                                         data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), keywords_list, keywords_flag)
                                     else:
                                         data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), '', keywords_flag)
-                                    xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array)
+                                    xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark)
                                 finally:
                                     spinner_thread.do_run = False
                                     spinner_thread.join()
