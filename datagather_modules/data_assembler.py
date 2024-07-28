@@ -93,10 +93,13 @@ class DataProcessing():
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
                           hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials]
             if pagesearch_flag.lower() == 'y':
-                to_search_array = [subdomains, social_medias, sd_socials]
-                print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS START]\n" + Style.RESET_ALL)
-                normal_search(to_search_array, report_folder, keywords, keywords_flag)
-                print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
+                if subdomains[0] != 'No subdomains were found':
+                    to_search_array = [subdomains, social_medias, sd_socials]
+                    print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS START]\n" + Style.RESET_ALL)
+                    normal_search(to_search_array, report_folder, keywords, keywords_flag)
+                    print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
+                else:
+                    print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
             elif pagesearch_flag.lower() == 'n':
                 pass
         elif report_file_type == 'xlsx':
@@ -106,10 +109,13 @@ class DataProcessing():
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
                           hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, parsed_links, subdomain_urls, dorking_results]
             if pagesearch_flag.lower() == 'y':
-                to_search_array = [subdomains, social_medias, sd_socials]
-                print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS START]\n" + Style.RESET_ALL)
-                normal_search(to_search_array, report_folder, keywords, keywords_flag)
-                print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
+                if subdomains[0] != 'No subdomains were found':
+                    to_search_array = [subdomains, social_medias, sd_socials]
+                    print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS START]\n" + Style.RESET_ALL)
+                    normal_search(to_search_array, report_folder, keywords, keywords_flag)
+                    print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
+                else:
+                    print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
             elif pagesearch_flag.lower() == 'n':
                 pass
 
