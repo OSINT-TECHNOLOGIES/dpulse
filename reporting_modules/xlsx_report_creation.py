@@ -16,7 +16,7 @@ sys.path.append('service')
 import db_processing as db
 import files_processing as fp
 
-def create_report(short_domain, url, case_comment, data_array, report_info_array):
+def create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark):
     try:
         ip = data_array[0]
         res = data_array[1]
@@ -92,14 +92,16 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['A4'] = 'SITEMAP.XML EXTRACTED?'
         ws['A5'] = 'SITEMAP.XML LINKS EXTRACTED?'
         ws['A6'] = 'DORKING STATUS'
-        ws['A7'] = 'REPORT CREATION TIME'
+        ws['A7'] = 'PAGESEARCH STATUS'
+        ws['A8'] = 'REPORT CREATION TIME'
         ws['B1'] = subdomains_amount
         ws['B2'] = total_socials
         ws['B3'] = robots_txt_result
         ws['B4'] = sitemap_xml_result
         ws['B5'] = sitemap_links_status
         ws['B6'] = dorking_status
-        ws['B7'] = report_ctime
+        ws['B7'] = pagesearch_ui_mark
+        ws['B8'] = report_ctime
 
         ws = wb['WHOIS']
         for col in ['1', '2', '3', '4', '5', '6', '7', '8']:
