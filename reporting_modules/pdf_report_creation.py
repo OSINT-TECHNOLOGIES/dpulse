@@ -40,7 +40,7 @@ def create_pdf(template_src, output_dst, context_data):
             return False
     return True
 
-def report_assembling(short_domain, url, case_comment, data_array, report_info_array):
+def report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark):
     try:
         ip = data_array[0]
         res = data_array[1]
@@ -96,7 +96,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                                     'javascript_frameworks': javascript_frameworks,
                                      'ctime': report_ctime, 'a_tsf': subdomains_amount, 'mx_records': mx_records, 'issuer': issuer, 'subject': subject, 'notBefore': notBefore, 'notAfter': notAfter,
                                     'commonName': commonName, 'serialNumber': serialNumber, 'ports': ports, 'hostnames': hostnames, 'cpes': cpes,
-                                    'tags': tags, 'vulns': vulns, 'a_tsm': total_socials}
+                                    'tags': tags, 'vulns': vulns, 'a_tsm': total_socials, 'pagesearch_ui_mark': pagesearch_ui_mark}
 
         pdf_report_name = report_folder + '//' + casename
         template_path = 'report_template.html'
