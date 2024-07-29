@@ -1,4 +1,5 @@
 import sys
+sys.path.append('service')
 
 try:
     from datetime import datetime
@@ -10,8 +11,6 @@ try:
 except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
-
-sys.path.append('service')
 
 import db_processing as db
 import files_processing as fp
@@ -50,15 +49,11 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
         report_folder = report_info_array[3]
-        ctime = report_info_array[4]
         report_ctime = report_info_array[6]
         dorking_status = data_array[30]
         dorking_results = data_array[35]
         parsed_links = data_array[33]
         subdomain_urls = data_array[34]
-
-        robots_filepath = report_folder + '//01-robots.txt'
-        sitemap_filepath = report_folder + '//02-sitemap.txt'
         os.makedirs(report_folder, exist_ok=True)
 
         wb = openpyxl.Workbook()
@@ -174,13 +169,13 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
             ws[f"J{i + 2}"] = wc_links[i]
 
         ws = wb['SUBDOMAINS']
+        ws['A1'] = 'FOUNDED SUBDOMAINS'
+        ws['B1'] = 'SUBDOMAIN IP ADDRESSES (NOT CORRELATED)'
+        ws['C1'] = 'SUBDOMAIN EMAILS (NOT CORRELATED)'
         for col in ['A', 'B', 'C']:
             cell = f"{col}1"
             ws[cell].font = bold_font
             ws.column_dimensions[col].width = 70
-        ws['A1'] = 'FOUNDED SUBDOMAINS'
-        ws['B1'] = 'SUBDOMAIN IP ADDRESSES (NOT CORRELATED)'
-        ws['C1'] = 'SUBDOMAIN EMAILS (NOT CORRELATED)'
         try:
             for i in range(len(subdomain_urls)):
                 ws[f"A{i + 2}"] = str(subdomain_urls[i])
@@ -193,28 +188,28 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
             pass
 
         ws = wb['DNS SCAN']
+        ws['A1'] = 'NAME SERVERS'
+        ws['A2'] = 'MX ADDRESSES'
         for col in ['1', '2']:
             cell = f"A{col}"
             ws[cell].font = bold_font
         ws.column_dimensions['A'].width = 45
         ws.column_dimensions['B'].width = 60
-        ws['A1'] = 'NAME SERVERS'
-        ws['A2'] = 'MX ADDRESSES'
         ws['B1'] = ', '.join(res['name_servers'])
         ws['B2'] = mx_records
 
         ws = wb['SSL CERTIFICATE']
-        for col in ['1', '2', '3', '4', '5', '6']:
-            cell = f"A{col}"
-            ws[cell].font = bold_font
-        ws.column_dimensions['A'].width = 45
-        ws.column_dimensions['B'].width = 60
         ws['A1'] = 'ISSUER'
         ws['A2'] = 'SUBJECT'
         ws['A3'] = 'NOT BEFORE'
         ws['A4'] = 'NOT AFTER'
         ws['A5'] = 'CERTIFICATE NAME'
         ws['A6'] = 'CERTIFICATE SERIAL NUMBER'
+        for col in ['1', '2', '3', '4', '5', '6']:
+            cell = f"A{col}"
+            ws[cell].font = bold_font
+        ws.column_dimensions['A'].width = 45
+        ws.column_dimensions['B'].width = 60
         ws['B1'] = issuer
         ws['B2'] = subject
         ws['B3'] = notBefore
@@ -223,17 +218,17 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['B6'] = serialNumber
 
         ws = wb['INTERNETDB SEARCH']
+        ws['A1'] = 'OPEN PORTS'
+        ws['A2'] = 'HOSTNAMES'
+        ws['A3'] = 'TAGS'
+        ws['A4'] = 'CPEs'
+        ws['I1'] = 'POTENTIAL VULNERABILITIES'
         for col in ['1', '2', '3', '4']:
             cell = f"A{col}"
             ws[cell].font = bold_font
         ws['I1'].font = bold_font
         ws.column_dimensions['A'].width = 45
         ws.column_dimensions['B'].width = 60
-        ws['A1'] = 'OPEN PORTS'
-        ws['A2'] = 'HOSTNAMES'
-        ws['A3'] = 'TAGS'
-        ws['A4'] = 'CPEs'
-        ws['I1'] = 'POTENTIAL VULNERABILITIES'
         ws['B1'] = ', '.join(str(item) for item in ports)
         ws['B2'] = ', '.join(str(item) for item in hostnames)
         ws['B3'] = ', '.join(str(item) for item in tags)
@@ -242,17 +237,17 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
             ws[f"I{i + 2}"] = str(vulns[i])
 
         ws = wb['WEBSITE TECHNOLOGIES']
-        for col in ['1', '2', '3', '4', '5', '6']:
-            cell = f"A{col}"
-            ws[cell].font = bold_font
-        ws.column_dimensions['A'].width = 45
-        ws.column_dimensions['B'].width = 60
         ws['A1'] = 'WEB SERVERS'
         ws['A2'] = 'CMS'
         ws['A3'] = 'USED PROGRAMMING LANGUAGES'
         ws['A4'] = 'USED WEB FRAMEWORKS'
         ws['A5'] = 'ANALYTICS SERVICE'
         ws['A6'] = 'USED JAVASCRIPT FRAMEWORKS'
+        for col in ['1', '2', '3', '4', '5', '6']:
+            cell = f"A{col}"
+            ws[cell].font = bold_font
+        ws.column_dimensions['A'].width = 45
+        ws.column_dimensions['B'].width = 60
         ws['B1'] = ', '.join(web_servers)
         ws['B2'] = ', '.join(cms)
         ws['B3'] = ', '.join(programming_languages)
