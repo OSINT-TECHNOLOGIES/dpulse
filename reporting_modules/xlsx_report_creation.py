@@ -235,9 +235,9 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['A4'] = 'CPEs'
         ws['I1'] = 'POTENTIAL VULNERABILITIES'
         ws['B1'] = ', '.join(str(item) for item in ports)
-        ws['B2'] = str(hostnames)
-        ws['B3'] = str(tags)
-        ws['B4'] = str(cpes)
+        ws['B2'] = ', '.join(str(item) for item in hostnames)
+        ws['B3'] = ', '.join(str(item) for item in tags)
+        ws['B4'] = ', '.join(str(item) for item in cpes)
         for i in range(len(vulns)):
             ws[f"I{i + 2}"] = str(vulns[i])
 
