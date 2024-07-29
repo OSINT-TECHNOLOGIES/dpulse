@@ -78,9 +78,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
         report_folder = report_info_array[3]
-        ctime = report_info_array[4]
         report_ctime = report_info_array[6]
-        print(subdomain_mails)
         context = {'sh_domain': short_domain, 'full_url': url, 'ip_address': ip, 'registrar': res['registrar'],
                                     'creation_date': res['creation_date'],'expiration_date': res['expiration_date'],
                                     'name_servers': ', '.join(res['name_servers']),'org': res['org'],
