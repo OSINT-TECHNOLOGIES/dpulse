@@ -49,10 +49,12 @@ def subdomains_mail_gather(url):
         r = requests.get(url)
         data = r.text
         soup = BeautifulSoup(data, "html.parser")
-        mails = []
+        mails_uncleaned = []
         for i in soup.find_all(href=re.compile("mailto")):
             i.encode().decode()
-            mails.append(i.string)
+            mails_uncleaned.append(i.string)
+        mails_cleaned = [item for item in mails_uncleaned if item is not None]
+        mails = [''.join(sublist) for sublist in mails_cleaned]
         return mails
     except requests.RequestException as e:
         print(Fore.RED + "Error while gathering e-mails. Reason: {}".format(e))
@@ -165,6 +167,7 @@ def domains_reverse_research(subdomains, report_file_type):
 
     subdomain_mails = [sublist for sublist in subdomain_mails if sublist]
     subdomain_mails = [sublist for sublist in subdomain_mails if sublist != [None]]
+    subdomain_mails = list(map(''.join, subdomain_mails))
     subdomain_socials = [{k: v for k, v in d.items() if v} for d in subdomain_socials]
     subdomain_socials = [d for d in subdomain_socials if d]
     subdomain_socials_grouped = defaultdict(list)
