@@ -15,8 +15,6 @@
 <img alt="GitHub License" src="https://img.shields.io/github/license/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red">
 </p>
 
-> **Attention every DPULSE user! You DON'T NEED TO INSTALL WKHTMLTOPDF ANYWHERE if you downloaded last v1.0.3 update! We strongly recommend you to update and install new requirements!**
-
 > DPULSE was created as a research tool, and it is not intended for criminal activities. Use DPULSE only on allowed domains and for legal purposes!
 
 > You can visit [DPULSE wiki](https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki) in order to get more technical information about this project
@@ -43,8 +41,6 @@ All this data is compiled into an easy-to-read PDF or XLSX report by category.
 
 
 # How to install and run DPULSE
-
-> **Attention every DPULSE user! You DON'T NEED TO INSTALL WKHTMLTOPDF ANYWHERE if you downloaded last v1.0.3 update! We strongly recommend you to update and install new requirements!**
 
 ## _Recommended ways_
 
