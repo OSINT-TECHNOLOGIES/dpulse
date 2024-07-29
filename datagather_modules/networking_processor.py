@@ -72,7 +72,7 @@ def query_internetdb(ip, report_file_extension):
         if report_file_extension == 'pdf':
             return ports, hostnames, cpes, tags, vulns
         elif report_file_extension == 'xlsx':
-            return ports, ', '.join(hostnames), ', '.join(cpes), ', '.join(tags), vulns
+            return ports, hostnames, cpes, tags, vulns
     else:
         print(Fore.RED + "No information was found on InternetDB" + Style.RESET_ALL)
         ports = hostnames = cpes = tags = vulns = ["No info about this web resource on InternetDB"]
