@@ -45,7 +45,6 @@ def run():
         cli.print_main_menu()
         choice = input(Fore.YELLOW + "Enter your choice >> ")
         if choice == "1":
-            print('\n')
             while True:
                 short_domain = input(Fore.YELLOW + "\nEnter target's domain name (or 'back' to return to the menu) >> ")
                 if short_domain.lower() == "back":
@@ -53,10 +52,10 @@ def run():
                     break
                 else:
                     url = "http://" + short_domain + "/"
-                    case_comment = input(Fore.YELLOW + "Enter case comment (or enter '-' if you don't need comment to the case) >> ")
+                    case_comment = input(Fore.YELLOW + "Enter case comment >> ")
                     report_filetype = input(Fore.YELLOW + "Enter report file extension [xlsx/pdf] >> ")
                     pagesearch_flag = input(Fore.YELLOW + "Would you like to use PageSearch [BETA] function? [Y/N] >> ")
-                    if pagesearch_flag == 'Y':
+                    if pagesearch_flag.lower() == 'y':
                         keywords_input = input(Fore.YELLOW + "Enter keywords (separate by comma) to search in files during PageSearch process (or write None if you don't need it) >> ")
                         if keywords_input.lower() != "none":
                             keywords_list = [keyword.strip() for keyword in keywords_input.split(',')]
@@ -64,49 +63,48 @@ def run():
                         elif keywords_input.lower() == "none":
                             keywords_list = None
                             keywords_flag = 0
-                    elif pagesearch_flag == 'N':
+                    elif pagesearch_flag.lower() == 'n':
                         keywords_flag = 0
-                    report_filetype_lowered = report_filetype.lower()
-                    if report_filetype_lowered == 'pdf' or report_filetype_lowered == 'xlsx':
-                        if pagesearch_flag == 'Y' or pagesearch_flag == 'N':
-                            if pagesearch_flag == "N":
+                    if report_filetype.lower() == 'pdf' or report_filetype.lower() == 'xlsx':
+                        if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n':
+                            if pagesearch_flag.lower() == "n":
                                 pagesearch_ui_mark = 'No'
-                            elif pagesearch_flag == 'Y' and keywords_flag == 1:
+                            elif pagesearch_flag.lower() == 'y' and keywords_flag == 1:
                                 pagesearch_ui_mark = f'Yes, with {keywords_list} keywords search'
                             else:
                                 pagesearch_ui_mark = 'Yes, without keywords search'
                             print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
                             print(Fore.GREEN + "Determined target: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + short_domain + Style.RESET_ALL)
-                            print(Fore.GREEN + "Report type: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + report_filetype_lowered + Style.RESET_ALL)
+                            print(Fore.GREEN + "Report type: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + report_filetype.lower() + Style.RESET_ALL)
                             print(Fore.GREEN + "PageSearch conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + pagesearch_ui_mark + Style.RESET_ALL)
                             print(Fore.GREEN + "Case comment: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + case_comment + Style.RESET_ALL + "\n")
                             print(Fore.LIGHTMAGENTA_EX + "[SCANNING PROCESS]\n" + Style.RESET_ALL)
                             spinner_thread = ProgressBar()
                             spinner_thread.start()
-                            if report_filetype_lowered == 'pdf':
+                            if report_filetype.lower() == 'pdf':
                                 try:
-                                    if pagesearch_flag == 'Y':
-                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), keywords_list, keywords_flag)
+                                    if pagesearch_flag.lower() == 'y':
+                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
                                     else:
-                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), '', keywords_flag)
+                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag)
                                     pdf_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark)
                                 finally:
                                     spinner_thread.do_run = False
                                     spinner_thread.join()
-                            elif report_filetype_lowered == 'xlsx':
+                            elif report_filetype.lower() == 'xlsx':
                                 try:
-                                    if pagesearch_flag == 'Y':
-                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), keywords_list, keywords_flag)
+                                    if pagesearch_flag.lower() == 'y':
+                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
                                     else:
-                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype_lowered, pagesearch_flag.lower(), '', keywords_flag)
+                                        data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag)
                                     xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark)
                                 finally:
                                     spinner_thread.do_run = False
                                     spinner_thread.join()
                         else:
-                            print(Fore.RED + "Unsupported PageSearch mode. Please choose between Y, N")
+                            print(Fore.RED + "Unsupported PageSearch mode. Please choose between Y and N")
                     else:
-                        print(Fore.RED + "Unsupported report file extension. Please choose between xlsx or pdf.")
+                        print(Fore.RED + "Unsupported report file extension. Please choose between XLSX and PDF")
 
         elif choice == "2":
             cli.print_settings_menu()
@@ -154,7 +152,7 @@ def run():
                     pass
                 else:
                     print(Fore.LIGHTMAGENTA_EX + "\n[DATABASE'S CONTENT]\n" + Style.RESET_ALL)
-                    cursor, sqlite_connection = db.db_select()
+                    db.db_select()
                     id_to_extract = int(input(Fore.YELLOW + "\nEnter report ID you want to extract >> "))
                     extracted_folder_name = 'report_recreated_ID#{}'.format(id_to_extract)
                     try:
