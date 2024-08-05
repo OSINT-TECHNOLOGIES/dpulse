@@ -45,6 +45,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         vulns = data_array[29]
         common_socials = data_array[31]
         total_socials = data_array[32]
+        ps_emails_return = data_array[33]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
@@ -55,6 +56,9 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         parsed_links = data_array[33]
         subdomain_urls = data_array[34]
         os.makedirs(report_folder, exist_ok=True)
+        if len(ps_emails_return) > 0:
+            subdomain_mails += ps_emails_return
+            subdomain_mails = list(set(subdomain_mails))
 
         wb = openpyxl.Workbook()
         sheet_names = [
