@@ -55,12 +55,14 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
     if not os.path.exists(ps_docs_path):
         os.makedirs(ps_docs_path)
     email_pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+    total_emails = []
     for url in subdomains_list:
         try:
             response = requests.get('http://' + url)
             soup = BeautifulSoup(response.content, 'html.parser')
             title = soup.title.string
             emails = re.findall(email_pattern, soup.text)
+            total_emails.append(emails)
             if not emails:
                 emails = ['None']
             print(Fore.GREEN + "Page URL: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{url}" + Style.RESET_ALL)
@@ -70,7 +72,6 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
             for link in links:
                 href = link.get('href')
                 if href:
-                    #print(f"Found link: {href}")  # Debugging line
                     if href.lower().endswith(('.docx', '.xlsx', '.csv', '.pdf', '.pptx', '.doc', '.ppt', '.xls', '.rtf')):
                         document_url = 'http://' + url + href
                         print(Fore.GREEN + "Found document: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{document_url}" + Style.RESET_ALL)
@@ -141,6 +142,9 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
             print(Fore.RED + "File extraction failed. Reason: {}".format(e) + Style.RESET_ALL)
             print(Fore.LIGHTGREEN_EX + "-------------------------------------------------" + Style.RESET_ALL)
             pass
+    ps_emails_list = [x for x in total_emails if x]
+    ps_emails_return = [', '.join(sublist) for sublist in ps_emails_list]
+    #print(ps_emails_return)
     clean_bad_pdfs(ps_docs_path)
     if keywords_flag == 1:
         print(Fore.GREEN + "Starting keywords searching in PDF files" + Style.RESET_ALL)
@@ -153,3 +157,4 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
     elif keywords_flag == 0:
         print(Fore.RED + "Keywords gathering won't start because of None user input" + Style.RESET_ALL)
     print(Fore.LIGHTGREEN_EX + "-------------------------------------------------" + Style.RESET_ALL)
+    return ps_emails_return
