@@ -87,37 +87,37 @@ class DataProcessing():
             common_socials[key] = list(set(common_socials[key]))
         total_socials = sum(len(values) for values in common_socials.values())
         if report_file_type == 'pdf':
-            data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
-                          subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
-                          robots_txt_result, sitemap_xml_result, sitemap_links_status,
-                          web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
-                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials]
             if pagesearch_flag.lower() == 'y':
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
                     print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS START]\n" + Style.RESET_ALL)
-                    normal_search(to_search_array, report_folder, keywords, keywords_flag)
+                    ps_emails_return = normal_search(to_search_array, report_folder, keywords, keywords_flag)
                     print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
                 else:
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
             elif pagesearch_flag.lower() == 'n':
                 pass
+            data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
+                          subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
+                          robots_txt_result, sitemap_xml_result, sitemap_links_status,
+                          web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
+                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, ps_emails_return]
         elif report_file_type == 'xlsx':
-            data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
-                          subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
-                          robots_txt_result, sitemap_xml_result, sitemap_links_status,
-                          web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
-                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, parsed_links, subdomain_urls, dorking_results]
             if pagesearch_flag.lower() == 'y':
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
                     print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS START]\n" + Style.RESET_ALL)
-                    normal_search(to_search_array, report_folder, keywords, keywords_flag)
+                    ps_emails_return = normal_search(to_search_array, report_folder, keywords, keywords_flag)
                     print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
                 else:
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
             elif pagesearch_flag.lower() == 'n':
                 pass
+            data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
+                          subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
+                          robots_txt_result, sitemap_xml_result, sitemap_links_status,
+                          web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
+                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, parsed_links, subdomain_urls, dorking_results, ps_emails_return]
 
         report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime]
 
