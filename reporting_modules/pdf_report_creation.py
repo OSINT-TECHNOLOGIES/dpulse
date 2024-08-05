@@ -74,11 +74,16 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         dorking_status = data_array[30]
         common_socials = data_array[31]
         total_socials = data_array[32]
+        ps_emails_return = data_array[33]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
         report_folder = report_info_array[3]
         report_ctime = report_info_array[6]
+        if len(ps_emails_return) > 0:
+            subdomain_mails += ps_emails_return
+            subdomain_mails = list(set(subdomain_mails))
+
         context = {'sh_domain': short_domain, 'full_url': url, 'ip_address': ip, 'registrar': res['registrar'],
                                     'creation_date': res['creation_date'],'expiration_date': res['expiration_date'],
                                     'name_servers': ', '.join(res['name_servers']),'org': res['org'],
