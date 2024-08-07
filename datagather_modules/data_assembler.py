@@ -60,7 +60,7 @@ class DataProcessing():
             subdomain_urls, subdomain_mails, subdomain_ip, sd_socials = cp.domains_reverse_research(subdomains, report_file_type)
         print(Fore.GREEN + 'Processing SSL certificate gathering' + Style.RESET_ALL)
         issuer, subject, notBefore, notAfter, commonName, serialNumber = np.get_ssl_certificate(short_domain)
-        print(Fore.GREEN + 'Processing MX records gathering' + Style.RESET_ALL)
+        print(Fore.GREEN + 'Processing DNS records gathering' + Style.RESET_ALL)
         mx_records = np.get_dns_info(short_domain, report_file_type)
         print(Fore.GREEN + 'Extracting robots.txt and sitemap.xml' + Style.RESET_ALL)
         robots_txt_result = np.get_robots_txt(short_domain, robots_filepath)
@@ -96,6 +96,7 @@ class DataProcessing():
                 else:
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
             elif pagesearch_flag.lower() == 'n':
+                ps_emails_return = ""
                 pass
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
@@ -112,6 +113,7 @@ class DataProcessing():
                 else:
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
             elif pagesearch_flag.lower() == 'n':
+                ps_emails_return = ""
                 pass
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
