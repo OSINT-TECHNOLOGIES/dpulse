@@ -95,6 +95,8 @@ class DataProcessing():
                     print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
                 else:
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
+                    ps_emails_return = ""
+                    pass
             elif pagesearch_flag.lower() == 'n':
                 ps_emails_return = ""
                 pass
@@ -112,6 +114,8 @@ class DataProcessing():
                     print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
                 else:
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
+                    ps_emails_return = ""
+                    pass
             elif pagesearch_flag.lower() == 'n':
                 ps_emails_return = ""
                 pass
