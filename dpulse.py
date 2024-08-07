@@ -66,8 +66,12 @@ def run():
                             if pagesearch_flag.lower() == 'y':
                                 keywords_input = input(Fore.YELLOW + "Enter keywords (separate by comma) to search in files during PageSearch process (or write None if you don't need it) >> ")
                                 if keywords_input.lower() != "none":
-                                    keywords_list = [keyword.strip() for keyword in keywords_input.split(',')]
-                                    keywords_flag = 1
+                                    if len(keywords_input.lower()) > 0:
+                                        keywords_list = [keyword.strip() for keyword in keywords_input.split(',')]
+                                        keywords_flag = 1
+                                    else:
+                                        print(Fore.RED + "\nThis field must contain at least one keyword")
+                                        break
                                 elif keywords_input.lower() == "none":
                                     keywords_list = None
                                     keywords_flag = 0
