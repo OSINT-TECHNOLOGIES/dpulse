@@ -125,9 +125,9 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
                                 with open(extracted_path, 'wb') as file:
                                     file.write(response.content)
                                 print(Fore.GREEN + "File was successfully saved")
-                            elif href and href.lower().endswith(('.rtf')):
+                            elif href and href.lower().endswith(('.json')):
                                 filename = os.path.basename(href)
-                                extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.rtf")
+                                extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.json")
                                 with open(extracted_path, 'wb') as file:
                                     file.write(response.content)
                                 print(Fore.GREEN + "File was successfully saved")
@@ -144,8 +144,8 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
             pass
     ps_emails_list = [x for x in total_emails if x]
     ps_emails_return = [', '.join(sublist) for sublist in ps_emails_list]
-    #print(ps_emails_return)
     clean_bad_pdfs(ps_docs_path)
+
     if keywords_flag == 1:
         print(Fore.GREEN + "Starting keywords searching in PDF files" + Style.RESET_ALL)
         try:
