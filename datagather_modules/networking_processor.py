@@ -120,7 +120,7 @@ def extract_links_from_sitemap(sitemap_links_path, sitemap_path, report_file_typ
         if report_file_type == 'pdf':
             with open(sitemap_links_path, 'w') as f:
                 for link in links:
-                    f.write(f"=> {link}\n")
+                    f.write(f"{link}\n")
             return 'Links from "sitemap.txt" were successfully parsed'
         elif report_file_type == 'xlsx':
             parsed_links = []
