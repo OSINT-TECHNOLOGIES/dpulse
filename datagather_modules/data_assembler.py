@@ -6,7 +6,7 @@ sys.path.append('pagesearch')
 import crawl_processor as cp
 import dorking_processor as dp
 import networking_processor as np
-from pagesearch_main import normal_search
+from pagesearch_main import normal_search, sitemap_inspection_search
 
 try:
     import requests
@@ -97,6 +97,10 @@ class DataProcessing():
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
                     ps_emails_return = ""
                     pass
+            elif pagesearch_flag.lower() == 'si':
+                print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SITEMAP INSPECTION SUBPROCESS START]\n" + Style.RESET_ALL)
+                ps_emails_return = sitemap_inspection_search(report_folder)
+                print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SITEMAP INSPECTION SUBPROCESS END]\n" + Style.RESET_ALL)
             elif pagesearch_flag.lower() == 'n':
                 ps_emails_return = ""
                 pass
@@ -116,6 +120,10 @@ class DataProcessing():
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
                     ps_emails_return = ""
                     pass
+            elif pagesearch_flag.lower() == 'si':
+                print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SITEMAP INSPECTION SUBPROCESS START]\n" + Style.RESET_ALL)
+                ps_emails_return = sitemap_inspection_search(report_folder)
+                print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SITEMAP INSPECTION SUBPROCESS END]\n" + Style.RESET_ALL)
             elif pagesearch_flag.lower() == 'n':
                 ps_emails_return = ""
                 pass
