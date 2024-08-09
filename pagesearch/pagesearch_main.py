@@ -10,5 +10,8 @@ def normal_search(to_search_array, report_folder, keywords, keywords_flag):
 def sitemap_inspection_search(report_folder):
     print(Fore.GREEN + "Conducting PageSearch in Sitemap Inspection mode. Please, be patient, it will take a long time\n" + Style.RESET_ALL)
     ds_emails_return = sitemap_inspection(report_folder)
-    return ds_emails_return
+    if ds_emails_return is not None:
+        return ds_emails_return
+    else:
+        return ""
 
