@@ -169,7 +169,7 @@ def run():
                         os.makedirs(extracted_folder_name)
                         db.db_report_recreate(extracted_folder_name, id_to_extract)
                     except FileExistsError:
-                        print(Fore.RED + "Folder with the same name alredy exists. Delete it or just check it's content" + Style.RESET_ALL)
+                        print(Fore.RED + "Folder with the same name already exists. Delete it or just check it's content" + Style.RESET_ALL)
                         pass
             elif choice_db == "3":
                 print(Fore.GREEN + "\nDatabase connection is successfully closed")
