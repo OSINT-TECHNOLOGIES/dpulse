@@ -62,7 +62,8 @@ def run():
                         if report_filetype.lower() not in ['pdf', 'xlsx']:
                             print(Fore.RED + '\nYou need to choose between PDF or XLSX report file types')
                         else:
-                            pagesearch_flag = input(Fore.YELLOW + "Would you like to use PageSearch [BETA] function? [Y/N] >> ")
+                            print(Fore.GREEN + "[!] SI mode suppose you to have sitemap_links.txt file in report folder [!]\n[!] It'll visit every link from this file [!]")
+                            pagesearch_flag = input(Fore.YELLOW + "Would you like to use PageSearch [BETA] function? [Y/N/SI] >> ")
                             if pagesearch_flag.lower() == 'y':
                                 keywords_input = input(Fore.YELLOW + "Enter keywords (separate by comma) to search in files during PageSearch process (or write None if you don't need it) >> ")
                                 if keywords_input.lower() != "none":
@@ -77,12 +78,17 @@ def run():
                                     keywords_flag = 0
                             elif pagesearch_flag.lower() == 'n':
                                 keywords_flag = 0
+                            elif pagesearch_flag.lower() == 'si':
+                                keywords_list = None
+                                keywords_flag = 0
                             if report_filetype.lower() == 'pdf' or report_filetype.lower() == 'xlsx':
-                                if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n':
+                                if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n' or pagesearch_flag.lower() == 'si':
                                     if pagesearch_flag.lower() == "n":
                                         pagesearch_ui_mark = 'No'
                                     elif pagesearch_flag.lower() == 'y' and keywords_flag == 1:
                                         pagesearch_ui_mark = f'Yes, with {keywords_list} keywords search'
+                                    elif pagesearch_flag.lower() == 'si':
+                                        pagesearch_ui_mark = 'Yes, in Sitemap Inspection mode'
                                     else:
                                         pagesearch_ui_mark = 'Yes, without keywords search'
                                     print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
@@ -97,6 +103,8 @@ def run():
                                         try:
                                             if pagesearch_flag.lower() == 'y':
                                                 data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
+                                            elif pagesearch_flag.lower() == 'si':
+                                                data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
                                             else:
                                                 data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag)
                                             pdf_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark)
@@ -107,6 +115,8 @@ def run():
                                         try:
                                             if pagesearch_flag.lower() == 'y':
                                                 data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
+                                            elif pagesearch_flag.lower() == 'si':
+                                                data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
                                             else:
                                                 data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag)
                                             xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark)
@@ -114,7 +124,7 @@ def run():
                                             spinner_thread.do_run = False
                                             spinner_thread.join()
                                 else:
-                                    print(Fore.RED + "\nUnsupported PageSearch mode. Please choose between Y and N")
+                                    print(Fore.RED + "\nUnsupported PageSearch mode. Please choose between Y, N or SI")
 
         elif choice == "2":
             cli.print_settings_menu()
