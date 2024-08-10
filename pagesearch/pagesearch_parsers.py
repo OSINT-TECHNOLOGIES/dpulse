@@ -44,7 +44,6 @@ def clean_bad_pdfs(ps_docs_path):
             bad_pdfs.append(pdf_file)
             pass
     if len(bad_pdfs) > 0:
-        print(Fore.GREEN + f"Found {len(bad_pdfs)} corrupted PDF files. Deleting..." + Style.RESET_ALL)
         for pdfs in bad_pdfs:
             os.remove(os.path.join(ps_docs_path, pdfs))
     else:
@@ -56,88 +55,102 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
         os.makedirs(ps_docs_path)
     email_pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
     total_emails = []
+    accessible_subdomains = 0
+    files_counter = 0
     for url in subdomains_list:
         try:
             response = requests.get('http://' + url)
-            soup = BeautifulSoup(response.content, 'html.parser')
-            title = soup.title.string
-            emails = re.findall(email_pattern, soup.text)
-            total_emails.append(emails)
-            if not emails:
-                emails = ['None']
-            print(Fore.GREEN + "Page URL: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{url}" + Style.RESET_ALL)
-            print(Fore.GREEN + "Page title: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{title}" + Style.RESET_ALL)
-            print(Fore.GREEN + "Founded e-mails: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{', '.join(emails)}" + Style.RESET_ALL)
-            links = soup.find_all('a')
-            for link in links:
-                href = link.get('href')
-                if href:
-                    if href.lower().endswith(('.docx', '.xlsx', '.csv', '.pdf', '.pptx', '.doc', '.ppt', '.xls', '.rtf')):
-                        document_url = 'http://' + url + href
-                        print(Fore.GREEN + "Found document: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{document_url}" + Style.RESET_ALL)
-                        response = requests.get(document_url)
-                        if response.status_code == 200:
-                            if href and href.lower().endswith(('.docx')):
-                                filename = os.path.basename(href)
-                                extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.docx")
-                                with open(extracted_path, 'wb') as file:
-                                    file.write(response.content)
-                                print(Fore.GREEN + "File was successfully saved")
-                            elif href and href.lower().endswith(('.xlsx')):
-                                filename = os.path.basename(href)
-                                extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.xlsx")
-                                with open(extracted_path, 'wb') as file:
-                                    file.write(response.content)
-                                print(Fore.GREEN + "File was successfully saved")
-                            elif href and href.lower().endswith(('.pdf')):
-                                filename = os.path.basename(href)
-                                extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.pdf")
-                                with open(extracted_path, 'wb') as file:
-                                    file.write(response.content)
-                                print(Fore.GREEN + "File was successfully saved")
-                            elif href and href.lower().endswith(('.csv')):
-                                filename = os.path.basename(href)
-                                extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.csv")
-                                with open(extracted_path, 'wb') as file:
-                                    file.write(response.content)
-                                print(Fore.GREEN + "File was successfully saved")
-                            elif href and href.lower().endswith(('.pptx')):
-                                filename = os.path.basename(href)
-                                extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.pptx")
-                                with open(extracted_path, 'wb') as file:
-                                    file.write(response.content)
-                                print(Fore.GREEN + "File was successfully saved")
-                            elif href and href.lower().endswith(('.doc')):
-                                filename = os.path.basename(href)
-                                extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.doc")
-                                with open(extracted_path, 'wb') as file:
-                                    file.write(response.content)
-                                print(Fore.GREEN + "File was successfully saved")
-                            elif href and href.lower().endswith(('.ppt')):
-                                filename = os.path.basename(href)
-                                extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.ppt")
-                                with open(extracted_path, 'wb') as file:
-                                    file.write(response.content)
-                                print(Fore.GREEN + "File was successfully saved")
-                            elif href and href.lower().endswith(('.xls')):
-                                filename = os.path.basename(href)
-                                extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.xls")
-                                with open(extracted_path, 'wb') as file:
-                                    file.write(response.content)
-                                print(Fore.GREEN + "File was successfully saved")
-                            elif href and href.lower().endswith(('.json')):
-                                filename = os.path.basename(href)
-                                extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.json")
-                                with open(extracted_path, 'wb') as file:
-                                    file.write(response.content)
-                                print(Fore.GREEN + "File was successfully saved")
-                            elif href and href.lower().endswith(('.txt')):
-                                filename = os.path.basename(href)
-                                extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.txt")
-                                with open(extracted_path, 'wb') as file:
-                                    file.write(response.content)
-                                print(Fore.GREEN + "File was successfully saved")
-            print(Fore.LIGHTGREEN_EX + "-------------------------------------------------")
+            if response.status_code == 200:
+                accessible_subdomains += 1
+                soup = BeautifulSoup(response.content, 'html.parser')
+                title = soup.title.string
+                emails = re.findall(email_pattern, soup.text)
+                total_emails.append(emails)
+                if not emails:
+                    emails = ['None']
+                print(Fore.GREEN + "Page URL: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{url}" + Style.RESET_ALL)
+                print(Fore.GREEN + "Page title: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{title}" + Style.RESET_ALL)
+                print(Fore.GREEN + "Founded e-mails: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{', '.join(emails)}" + Style.RESET_ALL)
+                links = soup.find_all('a')
+                for link in links:
+                    href = link.get('href')
+                    if href:
+                        if href.lower().endswith(('.docx', '.xlsx', '.csv', '.pdf', '.pptx', '.doc', '.ppt', '.xls', '.rtf')):
+                            document_url = 'http://' + url + href
+                            print(Fore.GREEN + "Found document: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{document_url}" + Style.RESET_ALL)
+                            response = requests.get(document_url)
+                            if response.status_code == 200:
+                                if href and href.lower().endswith(('.docx')):
+                                    filename = os.path.basename(href)
+                                    extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.docx")
+                                    with open(extracted_path, 'wb') as file:
+                                        file.write(response.content)
+                                    files_counter += 1
+                                    print(Fore.GREEN + "File was successfully saved")
+                                elif href and href.lower().endswith(('.xlsx')):
+                                    filename = os.path.basename(href)
+                                    extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.xlsx")
+                                    with open(extracted_path, 'wb') as file:
+                                        file.write(response.content)
+                                    files_counter += 1
+                                    print(Fore.GREEN + "File was successfully saved")
+                                elif href and href.lower().endswith(('.pdf')):
+                                    filename = os.path.basename(href)
+                                    extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.pdf")
+                                    with open(extracted_path, 'wb') as file:
+                                        file.write(response.content)
+                                    files_counter += 1
+                                    print(Fore.GREEN + "File was successfully saved")
+                                elif href and href.lower().endswith(('.csv')):
+                                    filename = os.path.basename(href)
+                                    extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.csv")
+                                    with open(extracted_path, 'wb') as file:
+                                        file.write(response.content)
+                                    files_counter += 1
+                                    print(Fore.GREEN + "File was successfully saved")
+                                elif href and href.lower().endswith(('.pptx')):
+                                    filename = os.path.basename(href)
+                                    extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.pptx")
+                                    with open(extracted_path, 'wb') as file:
+                                        file.write(response.content)
+                                    files_counter += 1
+                                    print(Fore.GREEN + "File was successfully saved")
+                                elif href and href.lower().endswith(('.doc')):
+                                    filename = os.path.basename(href)
+                                    extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.doc")
+                                    with open(extracted_path, 'wb') as file:
+                                        file.write(response.content)
+                                    files_counter += 1
+                                    print(Fore.GREEN + "File was successfully saved")
+                                elif href and href.lower().endswith(('.ppt')):
+                                    filename = os.path.basename(href)
+                                    extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.ppt")
+                                    with open(extracted_path, 'wb') as file:
+                                        file.write(response.content)
+                                    files_counter += 1
+                                    print(Fore.GREEN + "File was successfully saved")
+                                elif href and href.lower().endswith(('.xls')):
+                                    filename = os.path.basename(href)
+                                    extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.xls")
+                                    with open(extracted_path, 'wb') as file:
+                                        file.write(response.content)
+                                    files_counter += 1
+                                    print(Fore.GREEN + "File was successfully saved")
+                                elif href and href.lower().endswith(('.json')):
+                                    filename = os.path.basename(href)
+                                    extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.json")
+                                    with open(extracted_path, 'wb') as file:
+                                        file.write(response.content)
+                                    files_counter += 1
+                                    print(Fore.GREEN + "File was successfully saved")
+                                elif href and href.lower().endswith(('.txt')):
+                                    filename = os.path.basename(href)
+                                    extracted_path = os.path.join(ps_docs_path, f"extracted_{os.path.splitext(filename)[0]}.txt")
+                                    with open(extracted_path, 'wb') as file:
+                                        file.write(response.content)
+                                    files_counter += 1
+                                    print(Fore.GREEN + "File was successfully saved")
+                print(Fore.LIGHTGREEN_EX + "-------------------------------------------------")
         except Exception as e:
             print(Fore.RED + "File extraction failed. Reason: {}".format(e) + Style.RESET_ALL)
             print(Fore.LIGHTGREEN_EX + "-------------------------------------------------" + Style.RESET_ALL)
@@ -147,7 +160,7 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
     clean_bad_pdfs(ps_docs_path)
 
     if keywords_flag == 1:
-        print(Fore.GREEN + "Starting keywords searching in PDF files" + Style.RESET_ALL)
+        print(Fore.GREEN + "Searching keywords in PDF files..." + Style.RESET_ALL)
         try:
             pdf_results = find_keywords_in_pdfs(ps_docs_path, keywords)
             for pdf_file, found_keywords in pdf_results.items():
@@ -157,4 +170,8 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
     elif keywords_flag == 0:
         print(Fore.RED + "Keywords gathering won't start because of None user input" + Style.RESET_ALL)
     print(Fore.LIGHTGREEN_EX + "-------------------------------------------------" + Style.RESET_ALL)
+    print(Fore.GREEN + f"\nDuring PageSearch process:\n[+] Total {len(subdomains_list)} subdomains were checked")
+    print(Fore.GREEN + f"[+] Among them, {accessible_subdomains} subdomains were accessible")
+    print(Fore.GREEN + f"[+] In result, {len(ps_emails_return)} unique e-mail addresses were found")
+    print(Fore.GREEN + f"[+] Also, {files_counter} files were extracted")
     return ps_emails_return
