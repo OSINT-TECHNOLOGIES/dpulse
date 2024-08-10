@@ -126,15 +126,27 @@ If you have problems with starting installer.bat, you should try to use `dos2uni
       
 # DPULSE mentions in social medias
 
-### [First mention on X.com (by @DarkWebInformer)](https://x.com/DarkWebInformer/status/1787583156775759915?t=Ak1W9ddUPpDvLAkVyQG8fQ&s=19)
+## X.com mentions:
 
-### [Second mention on X.com (by @0xtechrock)](https://x.com/0xtechrock/status/1804470459741978974?t=us1EVJEECNZdSmSe5CQjQA&s=19)
+### [by @DarkWebInformer](https://x.com/DarkWebInformer/status/1787583156775759915?t=Ak1W9ddUPpDvLAkVyQG8fQ&s=19)
 
-### [First mention on Facebook (by Inteligência Cibernética)](https://www.facebook.com/osintbrasil/posts/pfbid037ibycZcBWe2MjtV4HiWvRWxyKei8TJ5Ycfxai4TDNHXuwrYkDGuyjDsPow8WUNbyl)
+### [by @0xtechrock](https://x.com/0xtechrock/status/1804470459741978974?t=us1EVJEECNZdSmSe5CQjQA&s=19)
 
-### [Third mention on X.com (by @OSINTech_)](https://x.com/OSINTech_/status/1805902553885888649)
+### [by @OSINTech_](https://x.com/OSINTech_/status/1805902553885888649)
 
-### [Fourth mention on X.com (by @cyb_detective)](https://x.com/cyb_detective/status/1821337404763959487?t=vbyRUeXM2C6gf47l7XvJnQ&s=19)
+### [by @cyb_detective](https://x.com/cyb_detective/status/1821337404763959487?t=vbyRUeXM2C6gf47l7XvJnQ&s=19)
+
+## Facebook mentions:
+
+### [by Inteligência Cibernética](https://www.facebook.com/osintbrasil/posts/pfbid037ibycZcBWe2MjtV4HiWvRWxyKei8TJ5Ycfxai4TDNHXuwrYkDGuyjDsPow8WUNbyl)
+
+## LinkedIn mentions:
+
+### [by Maory Schroder](https://fr.linkedin.com/posts/maory-schroder_osint-cybers%C3%A9curit%C3%A9-pentest-activity-7227562302009491456-sXoZ?trk=public_profile)
+
+### [by Maxim Marshak](https://www.linkedin.com/pulse/bormaxi8080-osint-timeline-64-27062024-maxim-marshak-jojbf)
+
+
 
 
 
