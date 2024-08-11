@@ -37,6 +37,6 @@ def sitemap_inspection(report_folder):
             print(Fore.GREEN + f"[+] In result, {len(ds_emails_return)} unique e-mail addresses were found")
             return ds_emails_return
         except FileNotFoundError:
-            print(Fore.RED + f"Cannot start PageSearch in Deep Mode because sitemap_links.txt file doesn't exist" + Style.RESET_ALL)
+            print(Fore.RED + f"Cannot start PageSearch in Sitemap Inspection mode because sitemap_links.txt file doesn't exist" + Style.RESET_ALL)
     else:
-        print(Fore.RED + f"Cannot start PageSearch in Deep Mode because sitemap_links.txt file doesn't exist" + Style.RESET_ALL)
+        print(Fore.RED + f"Cannot start PageSearch in Sitemap Inspection mode because sitemap_links.txt file doesn't exist" + Style.RESET_ALL)
