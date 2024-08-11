@@ -30,6 +30,7 @@ def sitemap_inspection(report_folder):
             ds_emails_list = [x for x in total_emails if x]
             ds_emails_cleaned = [', '.join(sublist) for sublist in ds_emails_list]
             ds_emails_return = list(set(ds_emails_cleaned))
+            print(Fore.GREEN + "PageSearch Sitemap Inspection successfully ended\n")
             print(Fore.LIGHTGREEN_EX + "-------------------------------------------------")
             print(Fore.GREEN + f"\nDuring PageSearch Sitemap Inspection process:\n[+] Total {total_links_counter} links were checked")
             print(Fore.GREEN + f"[+] Among them, {accessed_links_counter} links were accessible")
