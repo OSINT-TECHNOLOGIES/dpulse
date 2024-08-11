@@ -20,6 +20,7 @@ def find_keywords_in_pdfs(ps_docs_path, keywords: list) -> dict:
     try:
         pdf_files = [f for f in os.listdir(ps_docs_path) if f.lower().endswith(".pdf")]
         results = {}
+        pdf_with_keywords = 0
         for pdf_file in pdf_files:
             pdf_path = os.path.join(ps_docs_path, pdf_file)
             extracted_text = extract_text_from_pdf(pdf_path)
@@ -28,7 +29,8 @@ def find_keywords_in_pdfs(ps_docs_path, keywords: list) -> dict:
                     if pdf_file not in results:
                         results[pdf_file] = []
                     results[pdf_file].append(keyword)
-        return results
+                    pdf_with_keywords += 1
+        return results, pdf_with_keywords
     except Exception as e:
         print(Fore.RED + f"Can't find keywords. Reason: {e}")
         pass
@@ -162,7 +164,7 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
     if keywords_flag == 1:
         print(Fore.GREEN + "Searching keywords in PDF files..." + Style.RESET_ALL)
         try:
-            pdf_results = find_keywords_in_pdfs(ps_docs_path, keywords)
+            pdf_results, pdf_with_keywords = find_keywords_in_pdfs(ps_docs_path, keywords)
             for pdf_file, found_keywords in pdf_results.items():
                 print(Fore.GREEN + f"Keywords " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{', '.join(found_keywords)}" + Style.RESET_ALL + Fore.GREEN + f" found in '{pdf_file}'" + Style.RESET_ALL)
         except Exception as e:
@@ -174,4 +176,8 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
     print(Fore.GREEN + f"[+] Among them, {accessible_subdomains} subdomains were accessible")
     print(Fore.GREEN + f"[+] In result, {len(ps_emails_return)} unique e-mail addresses were found")
     print(Fore.GREEN + f"[+] Also, {files_counter} files were extracted")
+    if keywords_flag == 0:
+        print(Fore.GREEN + "[+] Keywords were not gathered because of None user input")
+    else:
+        print(Fore.GREEN + f"[+] Total {pdf_with_keywords} keywords were found in PDF files")
     return ps_emails_return
