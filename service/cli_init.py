@@ -37,7 +37,7 @@ class Menu:
 
     def print_help_menu(self):
         print(Fore.MAGENTA + Back.WHITE + '[HELP MENU]' + Style.RESET_ALL)
-        print(Fore.BLACK + Back.WHITE + '\nBe advised that choosing any of points below will open your web browser!\n' + Style.RESET_ALL)
+        print(Fore.BLACK + Back.WHITE + '\nBe advised that choosing any of points below will open your web browser!' + Style.RESET_ALL)
         print(Fore.CYAN + "1. Open DPULSE repository")
         print(Fore.CYAN + "2. Open DPULSE wiki")
         print(Fore.CYAN + "3. How to correctly input your targets in DPULSE")
