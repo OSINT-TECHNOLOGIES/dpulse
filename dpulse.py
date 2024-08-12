@@ -154,10 +154,16 @@ def run():
                 cli.print_help_menu()
                 choice_help = input(Fore.YELLOW + "Enter your choice >> ")
                 if choice_help == '1':
-                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/How-to-correctly-input-your-targets-address-in-DPULSE')
+                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse')
                 elif choice_help == '2':
-                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-interface-colors-meaning')
+                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-WIKI')
                 elif choice_help == '3':
+                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/How-to-correctly-input-your-targets-address-in-DPULSE')
+                elif choice_help == '4':
+                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-PageSearch-function-guide')
+                elif choice_help == '5':
+                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-report-storage-database')
+                elif choice_help == '6':
                     continue
 
             elif choice == "4":
