@@ -21,6 +21,9 @@ def ip_gather(short_domain):
 def whois_gather(short_domain):
     try:
         w = whois.whois(short_domain)
+        # Handle tld registrars that do not support org data
+        if w.org is None:
+            w['org'] = 'n/a'
         return w
     except whois.parser.PywhoisError as e:
         print(Fore.RED + "Error while gathering WHOIS information. Reason: {}".format(e))
