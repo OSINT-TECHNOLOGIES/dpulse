@@ -136,6 +136,8 @@ If you have problems with starting installer.bat, you should try to use `dos2uni
 
 ### [by @cyb_detective](https://x.com/cyb_detective/status/1821337404763959487?t=vbyRUeXM2C6gf47l7XvJnQ&s=19)
 
+### [by @DailyOsint](https://x.com/DailyOsint/status/1823013991951523997?t=Fr-oDCZ2pFmFJpUT3BKl5A&s=19)
+
 ## Facebook mentions:
 
 ### [by Inteligência Cibernética](https://www.facebook.com/osintbrasil/posts/pfbid037ibycZcBWe2MjtV4HiWvRWxyKei8TJ5Ycfxai4TDNHXuwrYkDGuyjDsPow8WUNbyl)
