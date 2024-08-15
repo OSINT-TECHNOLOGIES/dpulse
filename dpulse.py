@@ -97,7 +97,7 @@ def run():
                                         print(Fore.GREEN + "Report type: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + report_filetype.lower() + Style.RESET_ALL)
                                         print(Fore.GREEN + "PageSearch conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + pagesearch_ui_mark + Style.RESET_ALL)
                                         print(Fore.GREEN + "Case comment: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + case_comment + Style.RESET_ALL + "\n")
-                                        print(Fore.LIGHTMAGENTA_EX + "[SCANNING PROCESS]\n" + Style.RESET_ALL)
+                                        print(Fore.LIGHTMAGENTA_EX + "[BASIC SCANNING PROCESS]\n" + Style.RESET_ALL)
                                         spinner_thread = ProgressBar()
                                         spinner_thread.start()
                                         if report_filetype.lower() == 'pdf':
