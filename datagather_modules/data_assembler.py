@@ -86,21 +86,22 @@ class DataProcessing():
         for key in common_socials:
             common_socials[key] = list(set(common_socials[key]))
         total_socials = sum(len(values) for values in common_socials.values())
+        print(Fore.LIGHTMAGENTA_EX + "\n[BASIC SCAN END]\n" + Style.RESET_ALL)
         if report_file_type == 'pdf':
             if pagesearch_flag.lower() == 'y':
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
-                    print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS START]\n" + Style.RESET_ALL)
+                    print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
                     ps_emails_return = normal_search(to_search_array, report_folder, keywords, keywords_flag)
-                    print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
+                    print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH]\n" + Style.RESET_ALL)
                 else:
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
                     ps_emails_return = ""
                     pass
             elif pagesearch_flag.lower() == 'si':
-                print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SITEMAP INSPECTION SUBPROCESS START]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
                 ps_emails_return = sitemap_inspection_search(report_folder)
-                print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SITEMAP INSPECTION SUBPROCESS END]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
             elif pagesearch_flag.lower() == 'n':
                 ps_emails_return = ""
                 pass
@@ -113,17 +114,17 @@ class DataProcessing():
             if pagesearch_flag.lower() == 'y':
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
-                    print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS START]\n" + Style.RESET_ALL)
+                    print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
                     ps_emails_return = normal_search(to_search_array, report_folder, keywords, keywords_flag)
-                    print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SUBPROCESS END]\n" + Style.RESET_ALL)
+                    print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH]\n" + Style.RESET_ALL)
                 else:
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
                     ps_emails_return = ""
                     pass
             elif pagesearch_flag.lower() == 'si':
-                print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SITEMAP INSPECTION SUBPROCESS START]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
                 ps_emails_return = sitemap_inspection_search(report_folder)
-                print(Fore.LIGHTMAGENTA_EX + "\n[PAGESEARCH SITEMAP INSPECTION SUBPROCESS END]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
             elif pagesearch_flag.lower() == 'n':
                 ps_emails_return = ""
                 pass
