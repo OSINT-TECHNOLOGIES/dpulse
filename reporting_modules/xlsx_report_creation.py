@@ -45,16 +45,15 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         vulns = data_array[29]
         common_socials = data_array[31]
         total_socials = data_array[32]
-        ps_emails_return = data_array[33]
+        ps_emails_return = data_array[35]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
         report_folder = report_info_array[3]
         report_ctime = report_info_array[6]
         dorking_status = data_array[30]
-        dorking_results = data_array[35]
-        parsed_links = data_array[33]
-        subdomain_urls = data_array[34]
+        dorking_results = data_array[34]
+        subdomain_urls = data_array[33]
         os.makedirs(report_folder, exist_ok=True)
         if len(ps_emails_return) > 0:
             subdomain_mails += ps_emails_return
@@ -70,7 +69,6 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
             "SSL CERTIFICATE",
             "INTERNETDB SEARCH",
             "WEBSITE TECHNOLOGIES",
-            "SITEMAP LINKS",
             "DORKING RESULTS"
         ]
         sheet = wb.active
@@ -80,7 +78,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         bold_font = Font(bold=True)
 
         ws = wb['GENERAL INFO']
-        for col in ['1', '2', '3', '4', '5', '6', '7']:
+        for col in ['1', '2', '3', '4', '5', '6', '7', '8']:
             cell = f"A{col}"
             ws[cell].font = bold_font
         ws.column_dimensions['A'].width = 45
@@ -258,11 +256,6 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['B4'] = ', '.join(web_frameworks)
         ws['B5'] = ', '.join(analytics)
         ws['B6'] = ', '.join(javascript_frameworks)
-
-        ws = wb['SITEMAP LINKS']
-        ws.column_dimensions['A'].width = 80
-        for i in range(len(parsed_links)):
-            ws[f"A{i + 1}"] = str(parsed_links[i])
 
         ws = wb['DORKING RESULTS']
         ws.column_dimensions['A'].width = 80
