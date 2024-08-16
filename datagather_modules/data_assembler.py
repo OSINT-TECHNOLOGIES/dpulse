@@ -66,12 +66,12 @@ class DataProcessing():
         robots_txt_result = np.get_robots_txt(short_domain, robots_filepath)
         sitemap_xml_result = np.get_sitemap_xml(short_domain, sitemap_filepath)
         if report_file_type == 'pdf':
-            sitemap_links_status = np.extract_links_from_sitemap(sitemap_links_filepath, sitemap_filepath, 'pdf')
+            sitemap_links_status = np.extract_links_from_sitemap(sitemap_links_filepath, sitemap_filepath)
         elif report_file_type == 'xlsx':
             try:
-                sitemap_links_status, parsed_links = np.extract_links_from_sitemap(sitemap_links_filepath, sitemap_filepath, 'xlsx')
+                sitemap_links_status = np.extract_links_from_sitemap(sitemap_links_filepath, sitemap_filepath)
             except Exception:
-                sitemap_links_status, parsed_links = 'Sitemap links were not parsed', '0'
+                sitemap_links_status = 'Sitemap links were not parsed'
                 pass
         print(Fore.GREEN + 'Gathering info about website technologies' + Style.RESET_ALL)
         web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks = np.get_technologies(url)
@@ -132,7 +132,7 @@ class DataProcessing():
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
                           robots_txt_result, sitemap_xml_result, sitemap_links_status,
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
-                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, parsed_links, subdomain_urls, dorking_results, ps_emails_return]
+                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, subdomain_urls, dorking_results, ps_emails_return]
 
         report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime]
 
