@@ -1,5 +1,5 @@
-from colorama import Fore, Style
 import sys
+import logging
 sys.path.append('service')
 sys.path.append('pagesearch')
 
@@ -7,6 +7,7 @@ import crawl_processor as cp
 import dorking_processor as dp
 import networking_processor as np
 from pagesearch_main import normal_search, sitemap_inspection_search
+from logs_processing import write_logs
 
 try:
     import requests
@@ -46,18 +47,19 @@ class DataProcessing():
         print(Fore.GREEN + "Getting domain IP address" + Style.RESET_ALL)
         ip = cp.ip_gather(short_domain)
         print(Fore.GREEN + 'Gathering WHOIS information' + Style.RESET_ALL)
-        res = cp.whois_gather(short_domain)
+        res, whois_gather_status = cp.whois_gather(short_domain)
         print(Fore.GREEN + 'Processing e-mails gathering' + Style.RESET_ALL)
-        mails = cp.contact_mail_gather(url)
+        mails, contact_mail_gather_status = cp.contact_mail_gather(url)
         print(Fore.GREEN + 'Processing subdomain gathering' + Style.RESET_ALL)
-        subdomains, subdomains_amount = cp.subdomains_gather(url, short_domain)
+        subdomains, subdomains_amount, subdomains_gather_status = cp.subdomains_gather(url, short_domain)
         print(Fore.GREEN + 'Processing social medias gathering' + Style.RESET_ALL)
         social_medias = cp.sm_gather(url)
         print(Fore.GREEN + 'Processing subdomain analysis' + Style.RESET_ALL)
         if report_file_type == 'pdf':
-            subdomain_mails, sd_socials, subdomain_ip = cp.domains_reverse_research(subdomains, report_file_type)
+            subdomain_mails, sd_socials, subdomain_ip, list_to_log = cp.domains_reverse_research(subdomains, report_file_type)
         elif report_file_type == 'xlsx':
-            subdomain_urls, subdomain_mails, subdomain_ip, sd_socials = cp.domains_reverse_research(subdomains, report_file_type)
+            subdomain_urls, subdomain_mails, subdomain_ip, sd_socials, list_to_log = cp.domains_reverse_research(subdomains, report_file_type)
+        write_logs(ctime, whois_gather_status, contact_mail_gather_status, subdomains_gather_status, list_to_log)
         print(Fore.GREEN + 'Processing SSL certificate gathering' + Style.RESET_ALL)
         issuer, subject, notBefore, notAfter, commonName, serialNumber = np.get_ssl_certificate(short_domain)
         print(Fore.GREEN + 'Processing DNS records gathering' + Style.RESET_ALL)
@@ -135,5 +137,4 @@ class DataProcessing():
                           hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, subdomain_urls, dorking_results, ps_emails_return]
 
         report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime]
-
         return data_array, report_info_array
