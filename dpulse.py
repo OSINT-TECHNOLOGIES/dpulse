@@ -148,7 +148,8 @@ def run():
                         continue
                 elif choice_settings == '3':
                     continue
-                break
+                else:
+                    print(Fore.RED + "\nInvalid menu item. Please select between existing menu items")
 
             elif choice == "3":
                 cli.print_help_menu()
@@ -165,6 +166,8 @@ def run():
                     webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-report-storage-database')
                 elif choice_help == '6':
                     continue
+                else:
+                    print(Fore.RED + "\nInvalid menu item. Please select between existing menu items")
 
             elif choice == "4":
                 cli.print_db_menu()
@@ -195,7 +198,7 @@ def run():
                 print(Fore.RED + "Exiting the program." + Style.RESET_ALL)
                 break
             else:
-                print(Fore.RED + "Invalid choice. Please enter an existing menu item" + Style.RESET_ALL)
+                print(Fore.RED + "\nInvalid menu item. Please select between existing menu items")
         except KeyboardInterrupt:
             print(Fore.RED + "\nDPULSE process was ended using keyboard" + Style.RESET_ALL)
             sys.exit()
