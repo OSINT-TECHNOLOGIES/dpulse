@@ -112,21 +112,15 @@ def get_sitemap_xml(url, sitemap_path):
         print(Fore.RED + "Error while gathering sitemap.xml. Reason: {}".format(e))
         return 'Error occured during sitemap.xml gathering'
 
-def extract_links_from_sitemap(sitemap_links_path, sitemap_path, report_file_type):
+def extract_links_from_sitemap(sitemap_links_path, sitemap_path):
     try:
         tree = ET.parse(sitemap_path)
         root = tree.getroot()
         links = [elem.text for elem in root.iter('{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
-        if report_file_type == 'pdf':
-            with open(sitemap_links_path, 'w') as f:
-                for link in links:
-                    f.write(f"{link}\n")
-            return 'Links from "sitemap.txt" were successfully parsed'
-        elif report_file_type == 'xlsx':
-            parsed_links = []
+        with open(sitemap_links_path, 'w') as f:
             for link in links:
-                parsed_links.append(link)
-            return 'Links from "sitemap.txt" were successfully parsed', parsed_links
+                f.write(f"{link}\n")
+        return 'Links from "sitemap.txt" were successfully parsed'
     except (ET.ParseError, FileNotFoundError) as e:
         print(Fore.RED + "Links from sitemap.txt were not parsed. Reason: {}".format(e))
         return 'Links from "sitemap.txt" were not parsed'
