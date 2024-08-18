@@ -46,6 +46,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         common_socials = data_array[31]
         total_socials = data_array[32]
         ps_emails_return = data_array[35]
+        log_file_name = data_array[36]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
@@ -78,7 +79,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         bold_font = Font(bold=True)
 
         ws = wb['GENERAL INFO']
-        for col in ['1', '2', '3', '4', '5', '6', '7', '8']:
+        for col in ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
             cell = f"A{col}"
             ws[cell].font = bold_font
         ws.column_dimensions['A'].width = 45
@@ -91,6 +92,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['A6'] = 'DORKING STATUS'
         ws['A7'] = 'PAGESEARCH STATUS'
         ws['A8'] = 'REPORT CREATION TIME'
+        ws['A9'] = 'APPROPRIATE LOG FILE NAME'
         ws['B1'] = subdomains_amount
         ws['B2'] = total_socials
         ws['B3'] = robots_txt_result
@@ -99,6 +101,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['B6'] = dorking_status
         ws['B7'] = pagesearch_ui_mark
         ws['B8'] = report_ctime
+        ws['B9'] = log_file_name
 
         ws = wb['WHOIS']
         for col in ['1', '2', '3', '4', '5', '6', '7', '8']:
@@ -264,7 +267,8 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
 
         report_file = report_folder + "//" + casename
         wb.save(report_file)
-        print(Fore.GREEN + "Report for {} case was created at {}".format(''.join(short_domain), report_ctime) + Style.RESET_ALL)
+        print(Fore.GREEN + "XLSX report for {} case was created at {}".format(''.join(short_domain), report_ctime) + Style.RESET_ALL)
+        print(Fore.GREEN + "Created log file name: {}".format(log_file_name) + Style.RESET_ALL)
         robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
         xlsx_blob = fp.get_blob(report_file)
         db.insert_blob('XLSX', xlsx_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content)
