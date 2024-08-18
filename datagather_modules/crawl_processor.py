@@ -65,7 +65,7 @@ def subdomains_mail_gather(url):
         mails = [''.join(sublist) for sublist in mails_cleaned]
         return mails
     except requests.RequestException as e:
-        print(Fore.RED + "Error while gathering e-mails. Reason: {}".format(e))
+        print(Fore.RED + "Error while gathering e-mails. See logs for details".format(e))
         pass
 
 def subdomains_gather(url, short_domain):
