@@ -75,6 +75,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         common_socials = data_array[31]
         total_socials = data_array[32]
         ps_emails_return = data_array[33]
+        log_file_name = data_array[34]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
@@ -88,7 +89,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                                     'creation_date': res['creation_date'],'expiration_date': res['expiration_date'],
                                     'name_servers': ', '.join(res['name_servers']),'org': res['org'],
                                     'mails': mails, 'subdomain_mails': subdomain_mails, 'subdomain_socials': social_medias,
-                                    'subdomain_ip': subdomain_ip,
+                                    'subdomain_ip': subdomain_ip, 'log_file_name': log_file_name,
                                     'subdomains': subdomains, 'fb_links': common_socials['Facebook'],
                                     'tw_links': common_socials['Twitter'], 'inst_links': common_socials['Instagram'],
                                     'tg_links': common_socials['Telegram'], 'tt_links': common_socials['TikTok'],
@@ -104,7 +105,9 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         pdf_report_name = report_folder + '//' + casename
         template_path = 'report_template.html'
         if create_pdf(template_path, pdf_report_name, context):
-            print(Fore.GREEN + "Report for {} case was created at {}".format(''.join(short_domain), report_ctime) + Style.RESET_ALL)
+            print(Fore.GREEN + "PDF report for {} case was created at {}".format(''.join(short_domain), report_ctime) + Style.RESET_ALL)
+            print(Fore.GREEN + "Created log file name: {}".format(log_file_name) + Style.RESET_ALL)
+
         else:
             print(Fore.RED + 'Unable to create PDF report. Reason: {}')
         robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
