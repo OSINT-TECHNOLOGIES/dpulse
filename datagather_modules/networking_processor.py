@@ -14,6 +14,7 @@ except ImportError as e:
 
 def get_dns_info(short_domain, report_file_extension):
     try:
+        get_dns_info_status = 'DNS INFO GATHERING: OK'
         mx_list = []
         mx_records = dns.resolver.resolve(short_domain, 'MX')
         for record in mx_records:
@@ -23,16 +24,19 @@ def get_dns_info(short_domain, report_file_extension):
         if report_file_extension == 'xlsx':
             return ', '.join(map(str, mx_list))
         elif report_file_extension == 'pdf':
-            return ', '.join(map(str, mx_list))
+            return ', '.join(map(str, mx_list)), get_dns_info_status
     except dns.resolver.NoAnswer as error_noans:
-        print(Fore.RED + "No answer from domain about MX records. Reason: {}".format(error_noans))
-        return 'No information about MX records was gathered'
+        get_dns_info_status = f'DNS INFO GATHERING: NOT OK. REASON: {error_noans}'
+        print(Fore.RED + "No answer from domain about MX records. See logs for details")
+        return 'No information about MX records was gathered', get_dns_info_status
     except dns.resolver.Timeout as error_timeout:
-        print(Fore.RED + "Timeout while getting MX records. Reason: {}".format(error_timeout))
-        return 'No information about MX records was gathered'
+        get_dns_info_status = f'DNS INFO GATHERING: NOT OK. REASON: {error_timeout}'
+        print(Fore.RED + "Timeout while getting MX records. See logs for details")
+        return 'No information about MX records was gathered', get_dns_info_status
 
 def get_ssl_certificate(short_domain, port=443):
     try:
+        get_ssl_certificate_status = 'SSL CERTIFICATE GATHERING: OK'
         context = ssl.create_default_context()
         conn = socket.create_connection((short_domain, port))
         sock = context.wrap_socket(conn, server_hostname=short_domain)
@@ -43,11 +47,12 @@ def get_ssl_certificate(short_domain, port=443):
         notAfter = cert['notAfter']
         commonName = str(cert['issuer'][2][0][1]) + ', version: ' + str(cert['version'])
         serialNumber = cert['serialNumber']
-        return issuer, subject, notBefore, notAfter, commonName, serialNumber
+        return issuer, subject, notBefore, notAfter, commonName, serialNumber, get_ssl_certificate_status
     except (ssl.CertificateError, ssl.SSLError, socket.gaierror, ConnectionRefusedError) as e:
-        print(Fore.RED + "Error while gathering info about SSL certificate. Reason: {}".format(e))
+        get_ssl_certificate_status = f'SSL CERTIFICATE GATHERING: NOT OK. REASON: {e}'
+        print(Fore.RED + "Error while gathering info about SSL certificate. See logs for details")
         issuer = subject = notBefore = notAfter = commonName = serialNumber = ["No information about SSL certificate was gathered"]
-        return issuer, subject, notBefore, notAfter, commonName, serialNumber
+        return issuer, subject, notBefore, notAfter, commonName, serialNumber, get_ssl_certificate_status
 
 def query_internetdb(ip, report_file_extension):
     url = f"https://internetdb.shodan.io/{ip}"
@@ -70,7 +75,7 @@ def query_internetdb(ip, report_file_extension):
         if not vulns:
             vulns = ['Vulnerabilities were not found']
         if report_file_extension == 'pdf':
-            return ports, hostnames, cpes, tags, vulns
+            return ports, hostnames, cpes, tags, vulns,
         elif report_file_extension == 'xlsx':
             return ports, hostnames, cpes, tags, vulns
     else:
@@ -92,6 +97,7 @@ def get_robots_txt(url, robots_path):
 
 def get_sitemap_xml(url, sitemap_path):
     try:
+        get_sitemap_xml_status = 'SITEMAP.XML EXTRACTION: OK'
         if not url.startswith('http'):
             url = 'http://' + url
         sitemap_url = url + '/sitemap.xml'
@@ -100,30 +106,33 @@ def get_sitemap_xml(url, sitemap_path):
             if response.status_code == 200:
                 with open(sitemap_path, 'w') as f:
                     f.write(response.text)
-                return 'File "sitemap.xml" was extracted to text file in report folder'
+                return 'File "sitemap.xml" was extracted to text file in report folder', get_sitemap_xml_status
             else:
-                return 'File "sitemap.xml" was not found'
+                return 'File "sitemap.xml" was not found', get_sitemap_xml_status
         else:
             with open(sitemap_path, 'w') as f:
                 f.write('0')
             print(Fore.RED + "Error while gathering sitemap.xml. Probably it's unreachable")
-            return 'File "sitemap.xml" was not found'
+            return 'File "sitemap.xml" was not found', get_sitemap_xml_status
     except Exception as e:
-        print(Fore.RED + "Error while gathering sitemap.xml. Reason: {}".format(e))
-        return 'Error occured during sitemap.xml gathering'
+        get_sitemap_xml_status = f'SITEMAP.XML EXTRACTION: NOT OK. REASON: {e}'
+        print(Fore.RED + "Error while gathering sitemap.xml. See logs for details")
+        return 'Error occured during sitemap.xml gathering', get_sitemap_xml_status
 
 def extract_links_from_sitemap(sitemap_links_path, sitemap_path):
     try:
+        extract_links_from_sitemap_status = 'LINKS EXTRACTION FROM SITEMAP: OK'
         tree = ET.parse(sitemap_path)
         root = tree.getroot()
         links = [elem.text for elem in root.iter('{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
         with open(sitemap_links_path, 'w') as f:
             for link in links:
                 f.write(f"{link}\n")
-        return 'Links from "sitemap.txt" were successfully parsed'
+        return 'Links from "sitemap.txt" were successfully parsed', extract_links_from_sitemap_status
     except (ET.ParseError, FileNotFoundError) as e:
-        print(Fore.RED + "Links from sitemap.txt were not parsed. Reason: {}".format(e))
-        return 'Links from "sitemap.txt" were not parsed'
+        extract_links_from_sitemap_status = f'LINKS EXTRACTION FROM SITEMAP: NOT OK. REASON: {e}'
+        print(Fore.RED + "Links from sitemap.txt were not parsed. See logs for details")
+        return 'Links from "sitemap.txt" were not parsed', extract_links_from_sitemap_status
 
 def get_technologies(url):
     try:
