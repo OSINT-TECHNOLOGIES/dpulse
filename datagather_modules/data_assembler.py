@@ -59,22 +59,23 @@ class DataProcessing():
             subdomain_mails, sd_socials, subdomain_ip, list_to_log = cp.domains_reverse_research(subdomains, report_file_type)
         elif report_file_type == 'xlsx':
             subdomain_urls, subdomain_mails, subdomain_ip, sd_socials, list_to_log = cp.domains_reverse_research(subdomains, report_file_type)
-        write_logs(ctime, whois_gather_status, contact_mail_gather_status, subdomains_gather_status, list_to_log)
         print(Fore.GREEN + 'Processing SSL certificate gathering' + Style.RESET_ALL)
-        issuer, subject, notBefore, notAfter, commonName, serialNumber = np.get_ssl_certificate(short_domain)
+        issuer, subject, notBefore, notAfter, commonName, serialNumber, get_ssl_certificate_status = np.get_ssl_certificate(short_domain)
         print(Fore.GREEN + 'Processing DNS records gathering' + Style.RESET_ALL)
-        mx_records = np.get_dns_info(short_domain, report_file_type)
+        mx_records, get_dns_info_status = np.get_dns_info(short_domain, report_file_type)
         print(Fore.GREEN + 'Extracting robots.txt and sitemap.xml' + Style.RESET_ALL)
         robots_txt_result = np.get_robots_txt(short_domain, robots_filepath)
-        sitemap_xml_result = np.get_sitemap_xml(short_domain, sitemap_filepath)
+        sitemap_xml_result, get_sitemap_xml_status = np.get_sitemap_xml(short_domain, sitemap_filepath)
         if report_file_type == 'pdf':
-            sitemap_links_status = np.extract_links_from_sitemap(sitemap_links_filepath, sitemap_filepath)
+            sitemap_links_status, extract_links_from_sitemap_status = np.extract_links_from_sitemap(sitemap_links_filepath, sitemap_filepath)
         elif report_file_type == 'xlsx':
             try:
-                sitemap_links_status = np.extract_links_from_sitemap(sitemap_links_filepath, sitemap_filepath)
-            except Exception:
+                sitemap_links_status, extract_links_from_sitemap_status = np.extract_links_from_sitemap(sitemap_links_filepath, sitemap_filepath)
+            except Exception as e:
                 sitemap_links_status = 'Sitemap links were not parsed'
+                extract_links_from_sitemap_status = f'LINKS EXTRACTION FROM SITEMAP: NOT OK. REASON: {e}'
                 pass
+        log_file_name = write_logs(ctime, whois_gather_status, contact_mail_gather_status, subdomains_gather_status, list_to_log, get_ssl_certificate_status, get_dns_info_status, get_sitemap_xml_status, extract_links_from_sitemap_status)
         print(Fore.GREEN + 'Gathering info about website technologies' + Style.RESET_ALL)
         web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks = np.get_technologies(url)
         print(Fore.GREEN + 'Processing Shodan InternetDB search' + Style.RESET_ALL)
@@ -111,7 +112,7 @@ class DataProcessing():
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
                           robots_txt_result, sitemap_xml_result, sitemap_links_status,
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
-                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, ps_emails_return]
+                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, ps_emails_return, log_file_name]
         elif report_file_type == 'xlsx':
             if pagesearch_flag.lower() == 'y':
                 if subdomains[0] != 'No subdomains were found':
@@ -134,7 +135,7 @@ class DataProcessing():
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
                           robots_txt_result, sitemap_xml_result, sitemap_links_status,
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
-                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, subdomain_urls, dorking_results, ps_emails_return]
+                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, subdomain_urls, dorking_results, ps_emails_return, log_file_name]
 
         report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime]
         return data_array, report_info_array
