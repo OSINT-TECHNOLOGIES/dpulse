@@ -22,7 +22,7 @@ def get_dns_info(short_domain, report_file_extension):
         if not mx_list:
             mx_list.append('MX records were not gathered')
         if report_file_extension == 'xlsx':
-            return ', '.join(map(str, mx_list))
+            return ', '.join(map(str, mx_list)), get_dns_info_status
         elif report_file_extension == 'pdf':
             return ', '.join(map(str, mx_list)), get_dns_info_status
     except dns.resolver.NoAnswer as error_noans:
@@ -55,45 +55,59 @@ def get_ssl_certificate(short_domain, port=443):
         return issuer, subject, notBefore, notAfter, commonName, serialNumber, get_ssl_certificate_status
 
 def query_internetdb(ip, report_file_extension):
-    url = f"https://internetdb.shodan.io/{ip}"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        ports = data.get("ports", [])
-        hostnames = data.get("hostnames", [])
-        cpes = data.get("cpes", [])
-        tags = data.get("tags", [])
-        vulns = data.get("vulns", [])
-        if not ports:
-            ports = ['Open ports were not found']
-        if not hostnames:
-            hostnames = ['Hostnames were not found']
-        if not cpes:
-            cpes = ['CPEs were not found']
-        if not tags:
-            tags = ['Tags were not found']
-        if not vulns:
-            vulns = ['Vulnerabilities were not found']
-        if report_file_extension == 'pdf':
-            return ports, hostnames, cpes, tags, vulns,
-        elif report_file_extension == 'xlsx':
-            return ports, hostnames, cpes, tags, vulns
-    else:
-        print(Fore.RED + "No information was found on InternetDB" + Style.RESET_ALL)
+    try:
+        query_internetdb_status = 'GATHERING INTERNETDB DATA: OK'
+        url = f"https://internetdb.shodan.io/{ip}"
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            ports = data.get("ports", [])
+            hostnames = data.get("hostnames", [])
+            cpes = data.get("cpes", [])
+            tags = data.get("tags", [])
+            vulns = data.get("vulns", [])
+            if not ports:
+                ports = ['Open ports were not found']
+            if not hostnames:
+                hostnames = ['Hostnames were not found']
+            if not cpes:
+                cpes = ['CPEs were not found']
+            if not tags:
+                tags = ['Tags were not found']
+            if not vulns:
+                vulns = ['Vulnerabilities were not found']
+            if report_file_extension == 'pdf':
+                return ports, hostnames, cpes, tags, vulns, query_internetdb_status
+            elif report_file_extension == 'xlsx':
+                return ports, hostnames, cpes, tags, vulns, query_internetdb_status
+        else:
+            print(Fore.RED + "No information was found on InternetDB" + Style.RESET_ALL)
+            ports = hostnames = cpes = tags = vulns = ["No info about this web resource on InternetDB"]
+            return ports, hostnames, cpes, tags, vulns, query_internetdb_status
+    except Exception as e:
+        query_internetdb_status = f'GATHERING INTERNETDB DATA: NOT OK. REASON: {e}'
+        print(Fore.RED + "No information was found on InternetDB due to some error. See logs for details" + Style.RESET_ALL)
         ports = hostnames = cpes = tags = vulns = ["No info about this web resource on InternetDB"]
-        return ports, hostnames, cpes, tags, vulns
+        return ports, hostnames, cpes, tags, vulns, query_internetdb_status
+
 
 def get_robots_txt(url, robots_path):
-    if not url.startswith('http'):
-        url = 'http://' + url
-    robots_url = url + '/robots.txt'
-    response = requests.get(robots_url)
-    if response.status_code == 200:
-        with open(robots_path, 'w') as f:
-            f.write(response.text)
-        return 'File "robots.txt" was extracted to text file in report folder'
-    else:
-        return 'File "robots.txt" was not found'
+    try:
+        get_robots_txt_status = 'ROBOTS.TXT EXTRACTION: OK'
+        if not url.startswith('http'):
+            url = 'http://' + url
+        robots_url = url + '/robots.txt'
+        response = requests.get(robots_url)
+        if response.status_code == 200:
+            with open(robots_path, 'w') as f:
+                f.write(response.text)
+            return 'File "robots.txt" was extracted to text file in report folder', get_robots_txt_status
+        else:
+            return 'File "robots.txt" was not found', get_robots_txt_status
+    except Exception as e:
+        get_robots_txt_status = f'ROBOTS.TXT EXTRACTION: NOT OK. REASON: {e}'
+        print(Fore.RED + 'robots.txt file was not extracted due to some error. See logs for details')
+        return 'File "robots.txt" was not found', get_robots_txt_status
 
 def get_sitemap_xml(url, sitemap_path):
     try:
@@ -136,6 +150,7 @@ def extract_links_from_sitemap(sitemap_links_path, sitemap_path):
 
 def get_technologies(url):
     try:
+        get_technologies_status = 'GATHERING WEB-TECHNOLOGIES: OK'
         tech = builtwith.parse(url)
         web_servers = tech.get('web-servers', [])
         cms = tech.get('cms', [])
@@ -155,7 +170,8 @@ def get_technologies(url):
             analytics = ['Used analytics services were not determined']
         if not javascript_frameworks:
             javascript_frameworks = ['Used JS frameworks were not determined']
-        return web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks
-    except:
+        return web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, get_technologies_status
+    except Exception as e:
+        get_technologies_status = f'GATHERING WEB-TECHNOLOGIES: NOT OK. REASON: {e}'
         web_servers = cms = programming_languages = web_frameworks = analytics = javascript_frameworks = ['Found nothing related to web-technologies due to some error']
-        return web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks
+        return web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, get_technologies_status
