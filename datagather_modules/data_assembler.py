@@ -64,7 +64,7 @@ class DataProcessing():
         print(Fore.GREEN + 'Processing DNS records gathering' + Style.RESET_ALL)
         mx_records, get_dns_info_status = np.get_dns_info(short_domain, report_file_type)
         print(Fore.GREEN + 'Extracting robots.txt and sitemap.xml' + Style.RESET_ALL)
-        robots_txt_result = np.get_robots_txt(short_domain, robots_filepath)
+        robots_txt_result, get_robots_txt_status = np.get_robots_txt(short_domain, robots_filepath)
         sitemap_xml_result, get_sitemap_xml_status = np.get_sitemap_xml(short_domain, sitemap_filepath)
         if report_file_type == 'pdf':
             sitemap_links_status, extract_links_from_sitemap_status = np.extract_links_from_sitemap(sitemap_links_filepath, sitemap_filepath)
@@ -75,11 +75,15 @@ class DataProcessing():
                 sitemap_links_status = 'Sitemap links were not parsed'
                 extract_links_from_sitemap_status = f'LINKS EXTRACTION FROM SITEMAP: NOT OK. REASON: {e}'
                 pass
-        log_file_name = write_logs(ctime, whois_gather_status, contact_mail_gather_status, subdomains_gather_status, list_to_log, get_ssl_certificate_status, get_dns_info_status, get_sitemap_xml_status, extract_links_from_sitemap_status)
+
         print(Fore.GREEN + 'Gathering info about website technologies' + Style.RESET_ALL)
-        web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks = np.get_technologies(url)
+        web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, get_technologies_status = np.get_technologies(url)
         print(Fore.GREEN + 'Processing Shodan InternetDB search' + Style.RESET_ALL)
-        ports, hostnames, cpes, tags, vulns = np.query_internetdb(ip, report_file_type)
+        ports, hostnames, cpes, tags, vulns, query_internetdb_status = np.query_internetdb(ip, report_file_type)
+
+        log_file_name = write_logs(ctime, whois_gather_status, contact_mail_gather_status, subdomains_gather_status, list_to_log, get_ssl_certificate_status, get_dns_info_status, get_sitemap_xml_status,
+                                   extract_links_from_sitemap_status, get_robots_txt_status, get_technologies_status, query_internetdb_status)
+
         print(Fore.GREEN + 'Processing Google Dorking' + Style.RESET_ALL)
         if report_file_type == 'pdf':
             dorking_status = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain))
