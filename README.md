@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-<img alt="Static Badge" src="https://img.shields.io/badge/v1.0.4-ACTUAL%20VERSION?style=for-the-badge&label=ACTUAL%20VERSION&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/DOMAIN_OSINT-CATEGORY?style=for-the-badge&label=TOOL%20CATEGORY&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/CLI-CATEGORY?style=for-the-badge&label=interface%20type&color=red">
+<img alt="Static Badge" src="https://img.shields.io/badge/v1.0.5-ACTUAL%20VERSION?style=for-the-badge&label=ACTUAL%20VERSION&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/DOMAIN_OSINT-CATEGORY?style=for-the-badge&label=TOOL%20CATEGORY&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/CLI-CATEGORY?style=for-the-badge&label=interface%20type&color=red">
 </p>
 <p align="center">
 <img alt="GitHub License" src="https://img.shields.io/github/license/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red">
@@ -147,6 +147,18 @@ If you have problems with starting installer.bat, you should try to use `dos2uni
 ### [by Maory Schroder](https://fr.linkedin.com/posts/maory-schroder_osint-cybers%C3%A9curit%C3%A9-pentest-activity-7227562302009491456-sXoZ?trk=public_profile)
 
 ### [by Maxim Marshak](https://www.linkedin.com/pulse/bormaxi8080-osint-timeline-64-27062024-maxim-marshak-jojbf)
+
+### [by DailyOSINT](https://www.linkedin.com/posts/daily-osint_osint-reconnaissance-infosec-activity-7228779678096850946-H-zC)
+
+### [by 7HacX](https://www.linkedin.com/posts/7hacx_domain-osint-whois-activity-7228763157912002560-26Wc)
+
+## Telegram mentions:
+
+### [by Cyber Detective](https://t.me/cybdetective/2706)
+
+### [by Hackers Factory](https://t.me/dilagrafie/3673)
+
+### [by C.I.T Security](https://t.me/citsecurity/8578)
 
 
 
