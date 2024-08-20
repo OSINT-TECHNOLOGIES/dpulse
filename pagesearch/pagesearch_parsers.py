@@ -77,17 +77,25 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
                 passwords = soup.find_all('input', {'type': 'password'})
                 print(Fore.GREEN + "Page URL: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{url}" + Style.RESET_ALL)
                 print(Fore.GREEN + "Page title: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{title}" + Style.RESET_ALL)
-                print(Fore.GREEN + "Founded e-mails: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{', '.join(emails)}" + Style.RESET_ALL)
+                print(Fore.GREEN + "Found e-mails: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{', '.join(emails)}" + Style.RESET_ALL)
 
-                if customization_input:
+                website_elements_counter = 0
+                exposed_passwords_counter = 0
+
+                if customization_input and customization_input.get('value') is not None and len(customization_input.get('value')) > 0:
                     print(Fore.GREEN + "Found site customization setting: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{customization_input.get('value')}" + Style.RESET_ALL)
-                if search_query_input:
+                    website_elements_counter += 1
+                if search_query_input and search_query_input.get('value') is not None and len(search_query_input.get('value')) > 0:
                     print(Fore.GREEN + "Found search query: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{search_query_input.get('value')}" + Style.RESET_ALL)
+                    website_elements_counter += 1
                 for hidden_input in hidden_inputs:
-                    print(Fore.GREEN + "Found hidden form data: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{hidden_input.get('value')}" + Style.RESET_ALL)
+                    if hidden_input is not None and hidden_input.get('value') is not None and len(hidden_input.get('value')) > 0:
+                        print(Fore.GREEN + "Found hidden form data: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{hidden_input.get('value')}" + Style.RESET_ALL)
+                        website_elements_counter += 1
                 for password in passwords:
-                    if password is not None:
+                    if password is not None and password.get('value') is not None and len(password.get('value')) > 0:
                         print(Fore.GREEN + "Found exposed password: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{password.get('value')}" + Style.RESET_ALL)
+                        exposed_passwords_counter += 1
 
                 api_keys_counter = 0
                 api_keys = soup.find_all('input', attrs={'type': 'apikey'})
@@ -237,6 +245,9 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
     print(Fore.GREEN + f"[+] Also, {files_counter} files were extracted")
     print(Fore.GREEN + f"[+] Found {cookies_counter} cookies with values")
     print(Fore.GREEN + f"[+] Found {api_keys_counter} API keys")
+    print(Fore.GREEN + f"[+] Found {website_elements_counter} different web page elements")
+    print(Fore.GREEN + f"[+] Found {exposed_passwords_counter} exposed passwords")
+
 
     if keywords_flag == 0:
         print(Fore.GREEN + "[+] Keywords were not gathered because of None user input")
