@@ -89,14 +89,18 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
                     if password is not None:
                         print(Fore.GREEN + "Found exposed password: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{password.get('value')}" + Style.RESET_ALL)
 
+                api_keys_counter = 0
                 api_keys = soup.find_all('input', attrs={'type': 'apikey'})
                 for key in api_keys:
                     key_value = key.get('value')
                     print(Fore.GREEN + f"Found API Key: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{key_value}")
+                    api_keys_counter += 1
 
+                cookies_counter = 0
                 cookies_dict = response.cookies
                 for cookie_name, cookie_value in cookies_dict.items():
                     print(Fore.GREEN + "Found cookie: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{cookie_name}. " + Style.RESET_ALL + Fore.GREEN + "Value: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{cookie_value}" + Style.RESET_ALL)
+                    cookies_counter += 1
 
                 links = soup.find_all('a')
                 for link in links:
@@ -213,7 +217,7 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
 
     ps_emails_list = [x for x in total_emails if x]
     ps_emails_return = [', '.join(sublist) for sublist in ps_emails_list]
-    
+
     clean_bad_pdfs(ps_docs_path)
 
     if keywords_flag == 1:
@@ -231,6 +235,9 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
     print(Fore.GREEN + f"[+] Among them, {accessible_subdomains} subdomains were accessible")
     print(Fore.GREEN + f"[+] In result, {len(ps_emails_return)} unique e-mail addresses were found")
     print(Fore.GREEN + f"[+] Also, {files_counter} files were extracted")
+    print(Fore.GREEN + f"[+] Found {cookies_counter} cookies with values")
+    print(Fore.GREEN + f"[+] Found {api_keys_counter} API keys")
+
     if keywords_flag == 0:
         print(Fore.GREEN + "[+] Keywords were not gathered because of None user input")
     else:
