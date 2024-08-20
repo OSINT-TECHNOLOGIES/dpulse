@@ -26,6 +26,7 @@ def sitemap_inspection(report_folder):
                     soup = BeautifulSoup(response.content, 'html.parser')
                     emails = re.findall(email_pattern, soup.text)
                     total_emails.append(emails)
+
                 print(Fore.GREEN + f"  Inspecting links: " + Style.RESET_ALL + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"Link #{accessed_links_counter}" + Style.RESET_ALL, end="\r")
 
             ds_emails_list = [x for x in total_emails if x]
