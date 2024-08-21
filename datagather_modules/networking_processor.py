@@ -1,4 +1,6 @@
 import sys
+sys.path.append('service')
+from logs_processing import logging
 
 try:
     import dns.resolver
@@ -14,7 +16,7 @@ except ImportError as e:
 
 def get_dns_info(short_domain, report_file_extension):
     try:
-        get_dns_info_status = 'DNS INFO GATHERING: OK'
+        logging.info('DNS INFO GATHERING: OK')
         mx_list = []
         mx_records = dns.resolver.resolve(short_domain, 'MX')
         for record in mx_records:
@@ -22,21 +24,21 @@ def get_dns_info(short_domain, report_file_extension):
         if not mx_list:
             mx_list.append('MX records were not gathered')
         if report_file_extension == 'xlsx':
-            return ', '.join(map(str, mx_list)), get_dns_info_status
+            return ', '.join(map(str, mx_list))
         elif report_file_extension == 'pdf':
-            return ', '.join(map(str, mx_list)), get_dns_info_status
+            return ', '.join(map(str, mx_list))
     except dns.resolver.NoAnswer as error_noans:
-        get_dns_info_status = f'DNS INFO GATHERING: NOT OK. REASON: {error_noans}'
-        print(Fore.RED + "No answer from domain about MX records. See logs for details")
-        return 'No information about MX records was gathered', get_dns_info_status
+        print(Fore.RED + "No answer from domain about MX records. See journal for details")
+        logging.error(f'DNS INFO GATHERING: ERROR. REASON: {error_noans}')
+        return 'No information about MX records was gathered'
     except dns.resolver.Timeout as error_timeout:
-        get_dns_info_status = f'DNS INFO GATHERING: NOT OK. REASON: {error_timeout}'
-        print(Fore.RED + "Timeout while getting MX records. See logs for details")
-        return 'No information about MX records was gathered', get_dns_info_status
+        print(Fore.RED + "Timeout while getting MX records. See journal for details")
+        logging.error(f'DNS INFO GATHERING: ERROR. REASON: {error_timeout}')
+        return 'No information about MX records was gathered'
 
 def get_ssl_certificate(short_domain, port=443):
     try:
-        get_ssl_certificate_status = 'SSL CERTIFICATE GATHERING: OK'
+        logging.info('SSL CERTIFICATE GATHERING: OK')
         context = ssl.create_default_context()
         conn = socket.create_connection((short_domain, port))
         sock = context.wrap_socket(conn, server_hostname=short_domain)
@@ -47,16 +49,16 @@ def get_ssl_certificate(short_domain, port=443):
         notAfter = cert['notAfter']
         commonName = str(cert['issuer'][2][0][1]) + ', version: ' + str(cert['version'])
         serialNumber = cert['serialNumber']
-        return issuer, subject, notBefore, notAfter, commonName, serialNumber, get_ssl_certificate_status
+        return issuer, subject, notBefore, notAfter, commonName, serialNumber
     except (ssl.CertificateError, ssl.SSLError, socket.gaierror, ConnectionRefusedError) as e:
-        get_ssl_certificate_status = f'SSL CERTIFICATE GATHERING: NOT OK. REASON: {e}'
-        print(Fore.RED + "Error while gathering info about SSL certificate. See logs for details")
+        print(Fore.RED + "Error while gathering info about SSL certificate. See journal for details")
+        logging.error(f'SSL CERTIFICATE GATHERING: ERROR. REASON: {e}')
         issuer = subject = notBefore = notAfter = commonName = serialNumber = ["No information about SSL certificate was gathered"]
-        return issuer, subject, notBefore, notAfter, commonName, serialNumber, get_ssl_certificate_status
+        return issuer, subject, notBefore, notAfter, commonName, serialNumber
 
 def query_internetdb(ip, report_file_extension):
     try:
-        query_internetdb_status = 'GATHERING INTERNETDB DATA: OK'
+        logging.info('INTERNETDB DATA GATHERING: OK')
         url = f"https://internetdb.shodan.io/{ip}"
         response = requests.get(url)
         if response.status_code == 200:
@@ -77,23 +79,23 @@ def query_internetdb(ip, report_file_extension):
             if not vulns:
                 vulns = ['Vulnerabilities were not found']
             if report_file_extension == 'pdf':
-                return ports, hostnames, cpes, tags, vulns, query_internetdb_status
+                return ports, hostnames, cpes, tags, vulns
             elif report_file_extension == 'xlsx':
-                return ports, hostnames, cpes, tags, vulns, query_internetdb_status
+                return ports, hostnames, cpes, tags, vulns
         else:
             print(Fore.RED + "No information was found on InternetDB" + Style.RESET_ALL)
             ports = hostnames = cpes = tags = vulns = ["No info about this web resource on InternetDB"]
-            return ports, hostnames, cpes, tags, vulns, query_internetdb_status
+            return ports, hostnames, cpes, tags, vulns
     except Exception as e:
-        query_internetdb_status = f'GATHERING INTERNETDB DATA: NOT OK. REASON: {e}'
-        print(Fore.RED + "No information was found on InternetDB due to some error. See logs for details" + Style.RESET_ALL)
+        print(Fore.RED + "No information was found on InternetDB due to some error. See journal for details" + Style.RESET_ALL)
         ports = hostnames = cpes = tags = vulns = ["No info about this web resource on InternetDB"]
-        return ports, hostnames, cpes, tags, vulns, query_internetdb_status
+        logging.error(f'INTERNETDB DATA GATHERING: ERROR. REASON: {e}')
+        return ports, hostnames, cpes, tags, vulns
 
 
 def get_robots_txt(url, robots_path):
     try:
-        get_robots_txt_status = 'ROBOTS.TXT EXTRACTION: OK'
+        logging.info('ROBOTS.TXT EXTRACTION: OK')
         if not url.startswith('http'):
             url = 'http://' + url
         robots_url = url + '/robots.txt'
@@ -101,17 +103,17 @@ def get_robots_txt(url, robots_path):
         if response.status_code == 200:
             with open(robots_path, 'w') as f:
                 f.write(response.text)
-            return 'File "robots.txt" was extracted to text file in report folder', get_robots_txt_status
+            return 'File "robots.txt" was extracted to text file in report folder'
         else:
-            return 'File "robots.txt" was not found', get_robots_txt_status
+            return 'File "robots.txt" was not found'
     except Exception as e:
-        get_robots_txt_status = f'ROBOTS.TXT EXTRACTION: NOT OK. REASON: {e}'
-        print(Fore.RED + 'robots.txt file was not extracted due to some error. See logs for details')
-        return 'File "robots.txt" was not found', get_robots_txt_status
+        print(Fore.RED + 'robots.txt file was not extracted due to some error. See journal for details')
+        logging.error(f'ROBOTS.TXT EXTRACTION: ERROR. REASON: {e}')
+        return 'File "robots.txt" was not found'
 
 def get_sitemap_xml(url, sitemap_path):
     try:
-        get_sitemap_xml_status = 'SITEMAP.XML EXTRACTION: OK'
+        logging.info('SITEMAP.XML EXTRACTION: OK')
         if not url.startswith('http'):
             url = 'http://' + url
         sitemap_url = url + '/sitemap.xml'
@@ -120,37 +122,37 @@ def get_sitemap_xml(url, sitemap_path):
             if response.status_code == 200:
                 with open(sitemap_path, 'w') as f:
                     f.write(response.text)
-                return 'File "sitemap.xml" was extracted to text file in report folder', get_sitemap_xml_status
+                return 'File "sitemap.xml" was extracted to text file in report folder'
             else:
-                return 'File "sitemap.xml" was not found', get_sitemap_xml_status
+                return 'File "sitemap.xml" was not found'
         else:
             with open(sitemap_path, 'w') as f:
                 f.write('0')
             print(Fore.RED + "Error while gathering sitemap.xml. Probably it's unreachable")
-            return 'File "sitemap.xml" was not found', get_sitemap_xml_status
+            return 'File "sitemap.xml" was not found'
     except Exception as e:
-        get_sitemap_xml_status = f'SITEMAP.XML EXTRACTION: NOT OK. REASON: {e}'
-        print(Fore.RED + "Error while gathering sitemap.xml. See logs for details")
-        return 'Error occured during sitemap.xml gathering', get_sitemap_xml_status
+        print(Fore.RED + "Error while gathering sitemap.xml. See journal for details")
+        logging.error(f'SITEMAP.XML EXTRACTION: ERROR. REASON: {e}')
+        return 'Error occured during sitemap.xml gathering'
 
 def extract_links_from_sitemap(sitemap_links_path, sitemap_path):
     try:
-        extract_links_from_sitemap_status = 'LINKS EXTRACTION FROM SITEMAP: OK'
+        logging.info('SITEMAP.XML LINKS EXTRACTION: OK')
         tree = ET.parse(sitemap_path)
         root = tree.getroot()
         links = [elem.text for elem in root.iter('{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
         with open(sitemap_links_path, 'w') as f:
             for link in links:
                 f.write(f"{link}\n")
-        return 'Links from "sitemap.txt" were successfully parsed', extract_links_from_sitemap_status
+        return 'Links from "sitemap.txt" were successfully parsed'
     except (ET.ParseError, FileNotFoundError) as e:
-        extract_links_from_sitemap_status = f'LINKS EXTRACTION FROM SITEMAP: NOT OK. REASON: {e}'
-        print(Fore.RED + "Links from sitemap.txt were not parsed. See logs for details")
-        return 'Links from "sitemap.txt" were not parsed', extract_links_from_sitemap_status
+        print(Fore.RED + "Links from sitemap.txt were not parsed. See journal for details")
+        logging.error(f'SITEMAP.XML LINKS EXTRACTION: ERROR. REASON: {e}')
+        return 'Links from "sitemap.txt" were not parsed'
 
 def get_technologies(url):
     try:
-        get_technologies_status = 'GATHERING WEB-TECHNOLOGIES: OK'
+        logging.info('WEB-TECHNOLOGIES GATHERING: OK')
         tech = builtwith.parse(url)
         web_servers = tech.get('web-servers', [])
         cms = tech.get('cms', [])
@@ -170,8 +172,9 @@ def get_technologies(url):
             analytics = ['Used analytics services were not determined']
         if not javascript_frameworks:
             javascript_frameworks = ['Used JS frameworks were not determined']
-        return web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, get_technologies_status
+        return web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks
     except Exception as e:
-        get_technologies_status = f'GATHERING WEB-TECHNOLOGIES: NOT OK. REASON: {e}'
         web_servers = cms = programming_languages = web_frameworks = analytics = javascript_frameworks = ['Found nothing related to web-technologies due to some error']
-        return web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, get_technologies_status
+        print(Fore.RED + "Error when gathering info about web technologies. See journal for details")
+        logging.error(f'WEB-TECHNOLOGIES GATHERING: ERROR. REASON: {e}')
+        return web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks
