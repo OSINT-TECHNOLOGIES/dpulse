@@ -106,8 +106,6 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         template_path = 'report_template.html'
         if create_pdf(template_path, pdf_report_name, context):
             print(Fore.GREEN + "PDF report for {} case was created at {}".format(''.join(short_domain), report_ctime) + Style.RESET_ALL)
-            print(Fore.GREEN + "Created log file name: {}".format(log_file_name) + Style.RESET_ALL)
-
         else:
             print(Fore.RED + 'Unable to create PDF report. Reason: {}')
         robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
