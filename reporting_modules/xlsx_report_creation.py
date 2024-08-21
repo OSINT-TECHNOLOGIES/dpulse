@@ -268,7 +268,6 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         report_file = report_folder + "//" + casename
         wb.save(report_file)
         print(Fore.GREEN + "XLSX report for {} case was created at {}".format(''.join(short_domain), report_ctime) + Style.RESET_ALL)
-        print(Fore.GREEN + "Created log file name: {}".format(log_file_name) + Style.RESET_ALL)
         robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
         xlsx_blob = fp.get_blob(report_file)
         db.insert_blob('XLSX', xlsx_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content)
