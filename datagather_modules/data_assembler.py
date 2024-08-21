@@ -80,10 +80,6 @@ class DataProcessing():
         web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, get_technologies_status = np.get_technologies(url)
         print(Fore.GREEN + 'Processing Shodan InternetDB search' + Style.RESET_ALL)
         ports, hostnames, cpes, tags, vulns, query_internetdb_status = np.query_internetdb(ip, report_file_type)
-
-        log_file_name = write_logs(ctime, whois_gather_status, contact_mail_gather_status, subdomains_gather_status, list_to_log, get_ssl_certificate_status, get_dns_info_status, get_sitemap_xml_status,
-                                   extract_links_from_sitemap_status, get_robots_txt_status, get_technologies_status, query_internetdb_status)
-
         print(Fore.GREEN + 'Processing Google Dorking' + Style.RESET_ALL)
         if report_file_type == 'pdf':
             dorking_status = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain))
@@ -99,7 +95,7 @@ class DataProcessing():
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
-                    ps_emails_return = normal_search(to_search_array, report_folder, keywords, keywords_flag)
+                    ps_emails_return, ps_to_log_list = normal_search(to_search_array, report_folder, keywords, keywords_flag)
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH]\n" + Style.RESET_ALL)
                 else:
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
@@ -112,6 +108,11 @@ class DataProcessing():
             elif pagesearch_flag.lower() == 'n':
                 ps_emails_return = ""
                 pass
+            log_file_name = write_logs(ctime, whois_gather_status, contact_mail_gather_status, subdomains_gather_status,
+                                       list_to_log, get_ssl_certificate_status, get_dns_info_status,
+                                       get_sitemap_xml_status,
+                                       extract_links_from_sitemap_status, get_robots_txt_status,
+                                       get_technologies_status, query_internetdb_status, ps_to_log_list)
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
                           robots_txt_result, sitemap_xml_result, sitemap_links_status,
@@ -122,7 +123,7 @@ class DataProcessing():
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
-                    ps_emails_return = normal_search(to_search_array, report_folder, keywords, keywords_flag)
+                    ps_emails_return, ps_to_log_list = normal_search(to_search_array, report_folder, keywords, keywords_flag)
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH]\n" + Style.RESET_ALL)
                 else:
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
@@ -135,6 +136,11 @@ class DataProcessing():
             elif pagesearch_flag.lower() == 'n':
                 ps_emails_return = ""
                 pass
+            log_file_name = write_logs(ctime, whois_gather_status, contact_mail_gather_status, subdomains_gather_status,
+                                       list_to_log, get_ssl_certificate_status, get_dns_info_status,
+                                       get_sitemap_xml_status,
+                                       extract_links_from_sitemap_status, get_robots_txt_status,
+                                       get_technologies_status, query_internetdb_status, ps_to_log_list)
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
                           robots_txt_result, sitemap_xml_result, sitemap_links_status,
