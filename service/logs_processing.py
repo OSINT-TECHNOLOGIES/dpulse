@@ -11,18 +11,33 @@ def write_logs(ctime, whois_gather_status, contact_mail_gather_status, subdomain
     subdomains_processes_logs = [item for sublist in list_to_log for item in sublist]
     scan_logs_folder = create_log_folder()
     log_file_name = f"scan_log_{ctime}.log"
-    logging.basicConfig(level=logging.INFO, filename=scan_logs_folder + "// " + log_file_name, filemode="w", format="%(asctime)s %(message)s")
+    logging.basicConfig(level=logging.DEBUG, filename=scan_logs_folder + "// " + log_file_name, filemode="w", format="%(levelname)s - %(message)s'")
     logging.info("# THIS FILE REPRESENTS DPULSE SCAN LOGS\n")
-    print(Fore.GREEN + f"Created {log_file_name} log file for this scan" + Style.RESET_ALL)
+    logging.info('# DEBUG LOGS:')
+    errors_list = []
 
     for log in to_log:
-        logging.info(log)
+        if str(log).endswith('OK'):
+            logging.debug(log)
+        else:
+            errors_list.append(str(log))
 
     for log in subdomains_processes_logs:
-        logging.info(log)
+        if str(log).endswith('OK'):
+            logging.debug(log)
+        else:
+            errors_list.append(str(log))
 
     for log in ps_to_log_list:
-        logging.info(log)
+        if str(log).endswith('OK'):
+            logging.debug(log)
+        else:
+            errors_list.append(str(log))
+
+    logging.info('# ERROR LOGS:')
+    for errors in errors_list:
+        logging.error(errors)
 
     logging.shutdown()
+    print(Fore.GREEN + f"Created {log_file_name} log file for this scan" + Style.RESET_ALL)
     return log_file_name
