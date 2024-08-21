@@ -1,3 +1,7 @@
+import sys
+sys.path.append('service')
+from logs_processing import logging
+
 try:
     import socket
     import whois
@@ -8,7 +12,6 @@ try:
     from urllib.parse import urlparse
     from collections import defaultdict
     from bs4 import BeautifulSoup
-    import sys
     import random
 except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
@@ -20,20 +23,19 @@ def ip_gather(short_domain):
 
 def whois_gather(short_domain):
     try:
-        whois_gather_status = "WHOIS GATHERING: OK"
+        logging.info('WHOIS INFO GATHERING: OK')
         w = whois.whois(short_domain)
         if w.org is None:
             w['org'] = 'n/a'
-        return w, whois_gather_status
+        logging.info('WHOIS GATHERING: OK')
+        return w
     except whois.parser.PywhoisError as e:
-        whois_gather_status = f"WHOIS GATHERING: NOT OK. REASON: {e}"
-        print(Fore.RED + "Error while gathering WHOIS information. See logs for details".format(e))
-        return '', whois_gather_status
+        print(Fore.RED + "Error while gathering WHOIS information. See journal for details")
+        logging.ERROR(f'WHOIS GATHERING: ERROR. REASON: {e}')
         pass
 
 def contact_mail_gather(url):
     try:
-        contact_mail_gather_status = 'CONTACT MAIL GATHERING: OK'
         r = requests.get(url)
         data = r.text
         soup = BeautifulSoup(data, "html.parser")
@@ -43,13 +45,14 @@ def contact_mail_gather(url):
             mails.append(i.string)
         mails = [mail for mail in mails if mail is not None]
         if (not mails) or (mails is None):
-            return 'No contact e-mails were found', contact_mail_gather_status
+            logging.info('CONTACT MAIL GATHERING: OK (BUT NO MAILS WERE FOUND)')
+            return 'No contact e-mails were found'
         else:
-            return ', '.join(map(str, mails)), contact_mail_gather_status
+            logging.info('CONTACT MAIL GATHERING: OK')
+            return ', '.join(map(str, mails))
     except requests.RequestException as e:
-        contact_mail_gather_status = f'CONTACT MAIL GATHERING: NOT OK. REASON: {e}'
-        print(Fore.RED + "Error while gathering e-mails. See logs for details".format(e))
-        return '', contact_mail_gather_status
+        print(Fore.RED + "Error while gathering e-mails. See journal for details")
+        logging.error(f'CONTACT MAIL GATHERING: ERROR. REASON: {e}')
         pass
 
 def subdomains_mail_gather(url):
@@ -65,12 +68,12 @@ def subdomains_mail_gather(url):
         mails = [''.join(sublist) for sublist in mails_cleaned]
         return mails
     except requests.RequestException as e:
-        print(Fore.RED + "Error while gathering e-mails. See logs for details".format(e))
+        print(Fore.RED + "Error while gathering e-mails. See journal for details")
+        logging.error(f'SUBDOMAINS MAIL GATHERING: ERROR. REASON: {e}')
         pass
 
 def subdomains_gather(url, short_domain):
     try:
-        subdomains_gather_status = 'SUBDOMAINS GATHERING: OK'
         response = requests.get(url)
         soup = BeautifulSoup(response.text, 'html.parser')
         linked_domains = set()
@@ -83,11 +86,10 @@ def subdomains_gather(url, short_domain):
         subdomains_amount = len(subdomains)
         if not subdomains:
             subdomains = ['No subdomains were found']
-        return subdomains, subdomains_amount, subdomains_gather_status
+        return subdomains, subdomains_amount
     except Exception as e:
-        subdomains_gather_status = f'SUBDOMAINS GATHERING: NOT OK. REASON: {e}'
-        print(Fore.RED + f"Cannot gather subdomains due to error. See logs for details" + Style.RESET_ALL)
-        return '', '', subdomains_gather_status
+        print(Fore.RED + f"Cannot gather subdomains due to error. See journal for details" + Style.RESET_ALL)
+        logging.error(f'SUBDOMAINS GATHERING: ERROR. REASON: {e}')
         pass
 
 def sm_gather(url):
@@ -149,45 +151,35 @@ def domains_reverse_research(subdomains, report_file_type):
     subdomain_socials = []
     subdomain_ip = []
 
-    subdomains_status = []
-    subdomains_ip_status = []
-    subdomains_mails_sm_status = []
-
-
     try:
-        subdomains_status.append('SUBDOMAINS GATHERING: OK')
         for subdomain in subdomains:
             subdomain_url = "http://" + subdomain + "/"
             subdomain_urls.append(subdomain_url)
     except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError) as e:
-        subdomains_status.append(f'SUBDOMAINS GATHERING: NOT OK. REASON: {e}')
-        print(Fore.RED + "Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error won't be included in report. See logs for details" + Style.RESET_ALL)
+        print(Fore.RED + "Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error won't be included in report. See journal for details" + Style.RESET_ALL)
+        logging.error(f'SUBDOMAINS URL FORMING: ERROR. REASON: {e}')
         pass
 
     try:
-        subdomains_ip_status.append('SUBDOMAINS IP GATHERING: OK')
         for subdomain in subdomains:
             subdomains_ip = ip_gather(subdomain)
             subdomain_ip.append(subdomains_ip)
             subdomain_ip = list(set(subdomain_ip))
     except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError) as e:
-        subdomains_ip_status.append(f'SUBDOMAINS IP GATHERING: NOT OK. REASON: {e}')
-        print(Fore.RED + "Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error won't be included in report. See logs for details" + Style.RESET_ALL)
+        print(Fore.RED + "Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error won't be included in report. See journal for details" + Style.RESET_ALL)
+        logging.error(f'SUBDOMAINS IP GATHERING: ERROR. REASON: {e}')
         pass
 
     try:
-        subdomains_mails_sm_status.append('SUBDOMAINS MAILS/SOCIALS GATHERING: OK')
         for subdomain_url in subdomain_urls:
             subdomain_mail = subdomains_mail_gather(subdomain_url)
             subdomain_mails.append(subdomain_mail)
             subdomain_social = sm_gather(subdomain_url)
             subdomain_socials.append(subdomain_social)
     except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError) as e:
-        subdomains_mails_sm_status.append(f'SUBDOMAINS MAILS/SOCIALS GATHERING: NOT OK. REASON: {e}')
-        print(Fore.RED + "Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error won't be included in report. See logs for details" + Style.RESET_ALL)
+        print(Fore.RED + "Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error won't be included in report. See journal for details" + Style.RESET_ALL)
+        logging.error(f'SUBDOMAINS MAIL/SOCIALS GATHERING: ERROR. REASON: {e}')
         pass
-
-    list_to_log = [subdomains_status, subdomains_ip_status, subdomains_mails_sm_status]
 
     subdomain_mails = [sublist for sublist in subdomain_mails if sublist]
     subdomain_mails = [sublist for sublist in subdomain_mails if sublist != [None]]
@@ -236,6 +228,6 @@ def domains_reverse_research(subdomains, report_file_type):
         subdomain_ip = ["No subdomains IP's were found"]
 
     if report_file_type == 'pdf':
-        return subdomain_mails, sd_socials, subdomain_ip, list_to_log
+        return subdomain_mails, sd_socials, subdomain_ip
     elif report_file_type == 'xlsx':
-        return subdomain_urls, subdomain_mails, subdomain_ip, sd_socials, list_to_log
+        return subdomain_urls, subdomain_mails, subdomain_ip, sd_socials
