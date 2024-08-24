@@ -59,6 +59,10 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         if len(ps_emails_return) > 0:
             subdomain_mails += ps_emails_return
             subdomain_mails = list(set(subdomain_mails))
+            substrings = ['m=Base64', 'Ë','Á','Æ','Å','Ä','Ò','Á','ó','ð','É','ë','â']
+            for substring in substrings:
+                if any(substring in s for s in subdomain_mails):
+                    subdomain_mails.remove(next(s for s in subdomain_mails if substring in s))
 
         wb = openpyxl.Workbook()
         sheet_names = [
