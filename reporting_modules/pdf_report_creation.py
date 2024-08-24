@@ -84,6 +84,10 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         if len(ps_emails_return) > 0:
             subdomain_mails += ps_emails_return
             subdomain_mails = list(set(subdomain_mails))
+            substrings = ['m=Base64', 'Ë','Á','Æ','Å','Ä','Ò','Á','ó','ð','É','ë','â']
+            for substring in substrings:
+                if any(substring in s for s in subdomain_mails):
+                    subdomain_mails.remove(next(s for s in subdomain_mails if substring in s))
 
         context = {'sh_domain': short_domain, 'full_url': url, 'ip_address': ip, 'registrar': res['registrar'],
                                     'creation_date': res['creation_date'],'expiration_date': res['expiration_date'],
