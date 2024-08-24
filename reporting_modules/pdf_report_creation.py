@@ -84,15 +84,19 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         if len(ps_emails_return) > 0:
             subdomain_mails += ps_emails_return
             subdomain_mails = list(set(subdomain_mails))
+            subdomain_mails_cleaned = []
             substrings = ['m=Base64', 'Ë','Á','Æ','Å','Ä','Ò','Á','ó','ð','É','ë','â']
             for substring in substrings:
                 if any(substring in s for s in subdomain_mails):
                     subdomain_mails.remove(next(s for s in subdomain_mails if substring in s))
+            for email in subdomain_mails:
+                new_emails = email.split(', ')
+                subdomain_mails_cleaned.extend(new_emails)
 
         context = {'sh_domain': short_domain, 'full_url': url, 'ip_address': ip, 'registrar': res['registrar'],
                                     'creation_date': res['creation_date'],'expiration_date': res['expiration_date'],
                                     'name_servers': ', '.join(res['name_servers']),'org': res['org'],
-                                    'mails': mails, 'subdomain_mails': subdomain_mails, 'subdomain_socials': social_medias,
+                                    'mails': mails, 'subdomain_mails': subdomain_mails_cleaned, 'subdomain_socials': social_medias,
                                     'subdomain_ip': subdomain_ip,
                                     'subdomains': subdomains, 'fb_links': common_socials['Facebook'],
                                     'tw_links': common_socials['Twitter'], 'inst_links': common_socials['Instagram'],
