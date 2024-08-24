@@ -142,6 +142,8 @@ If you have problems with starting installer.bat, you should try to use `dos2uni
 
 ### [by Inteligência Cibernética](https://www.facebook.com/osintbrasil/posts/pfbid037ibycZcBWe2MjtV4HiWvRWxyKei8TJ5Ycfxai4TDNHXuwrYkDGuyjDsPow8WUNbyl)
 
+### [by Suboxone hackers society](https://www.facebook.com/groups/1277175496530786/posts/1578570389724627/)
+
 ## LinkedIn mentions:
 
 ### [by Maory Schroder](https://fr.linkedin.com/posts/maory-schroder_osint-cybers%C3%A9curit%C3%A9-pentest-activity-7227562302009491456-sXoZ?trk=public_profile)
