@@ -27,7 +27,7 @@ def whois_gather(short_domain):
         w = whois.whois(short_domain)
         if w.org is None:
             w['org'] = 'n/a'
-        logging.info('WHOIS GATHERING: OK')
+            logging.info('WHOIS INFO GATHERING: OK')
         return w
     except whois.parser.PywhoisError as e:
         print(Fore.RED + "Error while gathering WHOIS information. See journal for details")
@@ -36,6 +36,7 @@ def whois_gather(short_domain):
 
 def contact_mail_gather(url):
     try:
+        logging.info('CONTACT MAIL GATHERING: OK')
         r = requests.get(url)
         data = r.text
         soup = BeautifulSoup(data, "html.parser")
@@ -57,6 +58,7 @@ def contact_mail_gather(url):
 
 def subdomains_mail_gather(url):
     try:
+        logging.info('SUBDOMAINS MAIL GATHERING: OK')
         r = requests.get(url)
         data = r.text
         soup = BeautifulSoup(data, "html.parser")
@@ -74,6 +76,7 @@ def subdomains_mail_gather(url):
 
 def subdomains_gather(url, short_domain):
     try:
+        logging.info('SUBDOMAINS GATHERING: OK')
         response = requests.get(url)
         soup = BeautifulSoup(response.text, 'html.parser')
         linked_domains = set()
@@ -86,6 +89,7 @@ def subdomains_gather(url, short_domain):
         subdomains_amount = len(subdomains)
         if not subdomains:
             subdomains = ['No subdomains were found']
+            logging.info('SUBDOMAINS GATHERING: OK')
         return subdomains, subdomains_amount
     except Exception as e:
         print(Fore.RED + f"Cannot gather subdomains due to error. See journal for details" + Style.RESET_ALL)
