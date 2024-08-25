@@ -42,9 +42,11 @@ def sitemap_inspection(report_folder):
                 si_logs.write('# HERE YOU CAN FIND INFO THAT WAS DISCOVERED DURING SITEMAP INSPECTION PROCESS' + '\n' * 3)
                 si_logs.write(f'[+] LINKS: Received {total_links_counter} links. Amount of accessible links: {accessed_links_counter}' + '\n')
                 si_logs.write(f'[+] EMAILS: Returned and stored in PDF/XLSX report. Total {len(ds_emails_return)} unique emails found' + '\n')
-            return ds_emails_return
+            return ds_emails_return, total_links_counter, accessed_links_counter, len(ds_emails_return)
         except FileNotFoundError:
             print(Fore.RED + f"Cannot start PageSearch in Sitemap Inspection mode because sitemap_links.txt file doesn't exist" + Style.RESET_ALL)
+            return 'PageSearch Sitemap Inspection was not started because sitemap_links.txt file was not gathered', 'PageSearch Sitemap Inspection was not started because sitemap_links.txt file was not gathered', 'PageSearch Sitemap Inspection was not started because sitemap_links.txt file was not gathered', 'PageSearch Sitemap Inspection was not started because sitemap_links.txt file was not gathered'
     else:
         print(Fore.RED + f"Cannot start PageSearch in Sitemap Inspection mode because sitemap_links.txt file doesn't exist" + Style.RESET_ALL)
+        return 'PageSearch Sitemap Inspection was not started because sitemap_links.txt file was not gathered', 'PageSearch Sitemap Inspection was not started because sitemap_links.txt file was not gathered', 'PageSearch Sitemap Inspection was not started because sitemap_links.txt file was not gathered', 'PageSearch Sitemap Inspection was not started because sitemap_links.txt file was not gathered'
 
