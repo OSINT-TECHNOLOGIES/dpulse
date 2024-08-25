@@ -280,9 +280,9 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
 
     if keywords_flag == 0:
         print(Fore.GREEN + "[+] Keywords were not gathered because of None user input")
-        return ps_emails_return
+        return ps_emails_return, accessible_subdomains, len(ps_emails_return), files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter
     else:
         print(Fore.GREEN + f"[+] Total {pdf_with_keywords} keywords were found in PDF files")
-        return ps_emails_return
+        return ps_emails_return, accessible_subdomains, len(ps_emails_return), files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter
 
 
