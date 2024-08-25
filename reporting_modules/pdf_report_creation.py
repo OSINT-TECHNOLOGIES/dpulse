@@ -41,7 +41,7 @@ def create_pdf(template_src, output_dst, context_data):
             return False
     return True
 
-def report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark):
+def report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_keyword):
     try:
         ip = data_array[0]
         res = data_array[1]
@@ -76,11 +76,23 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         common_socials = data_array[31]
         total_socials = data_array[32]
         ps_emails_return = data_array[33]
+        accessible_subdomains = data_array[34]
+        emails_amount = data_array[35]
+        files_counter = data_array[36]
+        cookies_counter = data_array[37]
+        api_keys_counter = data_array[38]
+        website_elements_counter = data_array[39]
+        exposed_passwords_counter = data_array[40]
+        total_links_counter = data_array[41]
+        accessed_links_counter = data_array[42]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
         report_folder = report_info_array[3]
         report_ctime = report_info_array[6]
+
+        pdf_templates_path = 'service//pdf_report_templates'
+
         if len(ps_emails_return) > 0:
             subdomain_mails += ps_emails_return
             subdomain_mails = list(set(subdomain_mails))
@@ -92,26 +104,78 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
             for email in subdomain_mails:
                 new_emails = email.split(', ')
                 subdomain_mails_cleaned.extend(new_emails)
+        else:
+            subdomain_mails = list(set(subdomain_mails))
+            subdomain_mails_cleaned = []
+            substrings = ['m=Base64', 'Ë','Á','Æ','Å','Ä','Ò','Á','ó','ð','É','ë','â']
+            for substring in substrings:
+                if any(substring in s for s in subdomain_mails):
+                    subdomain_mails.remove(next(s for s in subdomain_mails if substring in s))
+            for email in subdomain_mails:
+                new_emails = email.split(', ')
+                subdomain_mails_cleaned.extend(new_emails)
 
-        context = {'sh_domain': short_domain, 'full_url': url, 'ip_address': ip, 'registrar': res['registrar'],
-                                    'creation_date': res['creation_date'],'expiration_date': res['expiration_date'],
-                                    'name_servers': ', '.join(res['name_servers']),'org': res['org'],
-                                    'mails': mails, 'subdomain_mails': subdomain_mails_cleaned, 'subdomain_socials': social_medias,
-                                    'subdomain_ip': subdomain_ip,
-                                    'subdomains': subdomains, 'fb_links': common_socials['Facebook'],
-                                    'tw_links': common_socials['Twitter'], 'inst_links': common_socials['Instagram'],
-                                    'tg_links': common_socials['Telegram'], 'tt_links': common_socials['TikTok'],
-                                    'li_links': common_socials['LinkedIn'], 'vk_links': common_socials['VKontakte'],
-                                    'yt_links': common_socials['YouTube'], 'wc_links': common_socials['WeChat'],
-                                    'ok_links': common_socials['Odnoklassniki'], 'robots_txt_result': robots_txt_result, 'sitemap_xml_result': sitemap_xml_result, 'dorking_status': dorking_status,
-                                    'sitemap_links': sitemap_links_status, 'web_servers': web_servers, 'cms': cms, 'programming_languages': programming_languages, 'web_frameworks': web_frameworks, 'analytics': analytics,
-                                    'javascript_frameworks': javascript_frameworks,
-                                     'ctime': report_ctime, 'a_tsf': subdomains_amount, 'mx_records': mx_records, 'issuer': issuer, 'subject': subject, 'notBefore': notBefore, 'notAfter': notAfter,
-                                    'commonName': commonName, 'serialNumber': serialNumber, 'ports': ports, 'hostnames': hostnames, 'cpes': cpes,
-                                    'tags': tags, 'vulns': vulns, 'a_tsm': total_socials, 'pagesearch_ui_mark': pagesearch_ui_mark}
+        if pagesearch_keyword == 'n':
+            template_path = pdf_templates_path + '//default_report_temp.html'
+            context = {'sh_domain': short_domain, 'full_url': url, 'ip_address': ip, 'registrar': res['registrar'],
+                                        'creation_date': res['creation_date'],'expiration_date': res['expiration_date'],
+                                        'name_servers': ', '.join(res['name_servers']),'org': res['org'],
+                                        'mails': mails, 'subdomain_mails': subdomain_mails_cleaned, 'subdomain_socials': social_medias,
+                                        'subdomain_ip': subdomain_ip,
+                                        'subdomains': subdomains, 'fb_links': common_socials['Facebook'],
+                                        'tw_links': common_socials['Twitter'], 'inst_links': common_socials['Instagram'],
+                                        'tg_links': common_socials['Telegram'], 'tt_links': common_socials['TikTok'],
+                                        'li_links': common_socials['LinkedIn'], 'vk_links': common_socials['VKontakte'],
+                                        'yt_links': common_socials['YouTube'], 'wc_links': common_socials['WeChat'],
+                                        'ok_links': common_socials['Odnoklassniki'], 'robots_txt_result': robots_txt_result, 'sitemap_xml_result': sitemap_xml_result, 'dorking_status': dorking_status,
+                                        'sitemap_links': sitemap_links_status, 'web_servers': web_servers, 'cms': cms, 'programming_languages': programming_languages, 'web_frameworks': web_frameworks, 'analytics': analytics,
+                                        'javascript_frameworks': javascript_frameworks,
+                                         'ctime': report_ctime, 'a_tsf': subdomains_amount, 'mx_records': mx_records, 'issuer': issuer, 'subject': subject, 'notBefore': notBefore, 'notAfter': notAfter,
+                                        'commonName': commonName, 'serialNumber': serialNumber, 'ports': ports, 'hostnames': hostnames, 'cpes': cpes,
+                                        'tags': tags, 'vulns': vulns, 'a_tsm': total_socials, 'pagesearch_ui_mark': pagesearch_ui_mark}
+
+        elif pagesearch_keyword == 'y':
+            template_path = pdf_templates_path + '//ps_report_temp.html'
+            context = {'sh_domain': short_domain, 'full_url': url, 'ip_address': ip, 'registrar': res['registrar'],
+                                        'creation_date': res['creation_date'],'expiration_date': res['expiration_date'],
+                                        'name_servers': ', '.join(res['name_servers']),'org': res['org'],
+                                        'mails': mails, 'subdomain_mails': subdomain_mails_cleaned, 'subdomain_socials': social_medias,
+                                        'subdomain_ip': subdomain_ip,
+                                        'subdomains': subdomains, 'fb_links': common_socials['Facebook'],
+                                        'tw_links': common_socials['Twitter'], 'inst_links': common_socials['Instagram'],
+                                        'tg_links': common_socials['Telegram'], 'tt_links': common_socials['TikTok'],
+                                        'li_links': common_socials['LinkedIn'], 'vk_links': common_socials['VKontakte'],
+                                        'yt_links': common_socials['YouTube'], 'wc_links': common_socials['WeChat'],
+                                        'ok_links': common_socials['Odnoklassniki'], 'robots_txt_result': robots_txt_result, 'sitemap_xml_result': sitemap_xml_result, 'dorking_status': dorking_status,
+                                        'sitemap_links': sitemap_links_status, 'web_servers': web_servers, 'cms': cms, 'programming_languages': programming_languages, 'web_frameworks': web_frameworks, 'analytics': analytics,
+                                        'javascript_frameworks': javascript_frameworks,
+                                         'ctime': report_ctime, 'a_tsf': subdomains_amount, 'mx_records': mx_records, 'issuer': issuer, 'subject': subject, 'notBefore': notBefore, 'notAfter': notAfter,
+                                        'commonName': commonName, 'serialNumber': serialNumber, 'ports': ports, 'hostnames': hostnames, 'cpes': cpes,
+                                        'tags': tags, 'vulns': vulns, 'a_tsm': total_socials, 'pagesearch_ui_mark': pagesearch_ui_mark,
+                                        'acc_sd': accessible_subdomains, 'add_mails': emails_amount, 'extr_files': files_counter, 'cookies': cookies_counter, 'apis': api_keys_counter,
+                                        'wpe': website_elements_counter, 'exp_pass': exposed_passwords_counter}
+
+        elif pagesearch_keyword == 'si':
+            template_path = pdf_templates_path + '//si_report_temp.html'
+            context = {'sh_domain': short_domain, 'full_url': url, 'ip_address': ip, 'registrar': res['registrar'],
+                                        'creation_date': res['creation_date'],'expiration_date': res['expiration_date'],
+                                        'name_servers': ', '.join(res['name_servers']),'org': res['org'],
+                                        'mails': mails, 'subdomain_mails': subdomain_mails_cleaned, 'subdomain_socials': social_medias,
+                                        'subdomain_ip': subdomain_ip,
+                                        'subdomains': subdomains, 'fb_links': common_socials['Facebook'],
+                                        'tw_links': common_socials['Twitter'], 'inst_links': common_socials['Instagram'],
+                                        'tg_links': common_socials['Telegram'], 'tt_links': common_socials['TikTok'],
+                                        'li_links': common_socials['LinkedIn'], 'vk_links': common_socials['VKontakte'],
+                                        'yt_links': common_socials['YouTube'], 'wc_links': common_socials['WeChat'],
+                                        'ok_links': common_socials['Odnoklassniki'], 'robots_txt_result': robots_txt_result, 'sitemap_xml_result': sitemap_xml_result, 'dorking_status': dorking_status,
+                                        'sitemap_links': sitemap_links_status, 'web_servers': web_servers, 'cms': cms, 'programming_languages': programming_languages, 'web_frameworks': web_frameworks, 'analytics': analytics,
+                                        'javascript_frameworks': javascript_frameworks,
+                                         'ctime': report_ctime, 'a_tsf': subdomains_amount, 'mx_records': mx_records, 'issuer': issuer, 'subject': subject, 'notBefore': notBefore, 'notAfter': notAfter,
+                                        'commonName': commonName, 'serialNumber': serialNumber, 'ports': ports, 'hostnames': hostnames, 'cpes': cpes,
+                                        'tags': tags, 'vulns': vulns, 'a_tsm': total_socials, 'pagesearch_ui_mark': pagesearch_ui_mark,
+                                        'a_sml': total_links_counter, 'acc_sml': accessed_links_counter, 'add_mails': emails_amount}
 
         pdf_report_name = report_folder + '//' + casename
-        template_path = 'report_template.html'
         if create_pdf(template_path, pdf_report_name, context):
             print(Fore.GREEN + "PDF report for {} case was created at {}".format(''.join(short_domain), report_ctime) + Style.RESET_ALL)
         robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
