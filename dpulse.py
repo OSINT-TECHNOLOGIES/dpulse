@@ -108,7 +108,7 @@ def run():
                                                     data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
                                                 else:
                                                     data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag)
-                                                pdf_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark)
+                                                pdf_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower())
                                             finally:
                                                 spinner_thread.do_run = False
                                                 spinner_thread.join()
