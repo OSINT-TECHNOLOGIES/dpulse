@@ -89,12 +89,14 @@ class DataProcessing():
             common_socials[key] = list(set(common_socials[key]))
         total_socials = sum(len(values) for values in common_socials.values())
         print(Fore.LIGHTMAGENTA_EX + "\n[BASIC SCAN END]\n" + Style.RESET_ALL)
+
         if report_file_type == 'pdf':
             if pagesearch_flag.lower() == 'y':
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
-                    ps_emails_return = normal_search(to_search_array, report_folder, keywords, keywords_flag)
+                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter = normal_search(to_search_array, report_folder, keywords, keywords_flag)
+                    total_links_counter = accessed_links_counter = 0
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH]\n" + Style.RESET_ALL)
                 else:
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
@@ -102,22 +104,28 @@ class DataProcessing():
                     pass
             elif pagesearch_flag.lower() == 'si':
                 print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
-                ps_emails_return = sitemap_inspection_search(report_folder)
+                ps_emails_return, total_links_counter, accessed_links_counter, emails_amount = sitemap_inspection_search(report_folder)
+                accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = 0
                 print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
             elif pagesearch_flag.lower() == 'n':
+                accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 0
                 ps_emails_return = ""
                 pass
+
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
                           robots_txt_result, sitemap_xml_result, sitemap_links_status,
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
-                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, ps_emails_return]
+                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, ps_emails_return,
+                          accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
+                          website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter]
+
         elif report_file_type == 'xlsx':
             if pagesearch_flag.lower() == 'y':
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
-                    ps_emails_return = normal_search(to_search_array, report_folder, keywords, keywords_flag)
+                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter = normal_search(to_search_array, report_folder, keywords, keywords_flag)
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH]\n" + Style.RESET_ALL)
                 else:
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
@@ -125,16 +133,19 @@ class DataProcessing():
                     pass
             elif pagesearch_flag.lower() == 'si':
                 print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
-                ps_emails_return = sitemap_inspection_search(report_folder)
+                ps_emails_return, total_links_counter, accessed_links_counter, emails_amount = sitemap_inspection_search(report_folder)
                 print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
             elif pagesearch_flag.lower() == 'n':
                 ps_emails_return = ""
                 pass
+
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
                           robots_txt_result, sitemap_xml_result, sitemap_links_status,
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
-                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, subdomain_urls, dorking_results, ps_emails_return]
+                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, ps_emails_return,
+                          accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
+                          website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter]
 
         report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime]
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} ENDS HERE')
