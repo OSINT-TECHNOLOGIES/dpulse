@@ -4,14 +4,12 @@ from pagesearch_deepsearch import sitemap_inspection
 
 def normal_search(to_search_array, report_folder, keywords, keywords_flag):
     print(Fore.GREEN + "Conducting PageSearch. Please, be patient, it may take a long time\n" + Style.RESET_ALL)
-    ps_emails_return = subdomains_parser(to_search_array[0], report_folder, keywords, keywords_flag)
-    return ps_emails_return
+    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter = subdomains_parser(to_search_array[0], report_folder, keywords, keywords_flag)
+    return ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter
 
 def sitemap_inspection_search(report_folder):
     print(Fore.GREEN + "Conducting PageSearch in Sitemap Inspection mode. Please, be patient, it will take a long time\n" + Style.RESET_ALL)
-    ds_emails_return = sitemap_inspection(report_folder)
-    if ds_emails_return is not None:
-        return ds_emails_return
-    else:
-        return ""
+    ds_emails_return, total_links_counter, accessed_links_counter, emails_amount = sitemap_inspection(report_folder)
+    return ds_emails_return, total_links_counter, accessed_links_counter, emails_amount
+
 
