@@ -69,6 +69,10 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
     total_emails = []
     accessible_subdomains = 0
     files_counter = 0
+    website_elements_counter = 0
+    exposed_passwords_counter = 0
+    api_keys_counter = 0
+    cookies_counter = 0
 
     for url in subdomains_list:
         try:
@@ -98,8 +102,6 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
             print(Fore.GREEN + "Page title: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{title}" + Style.RESET_ALL)
             print(Fore.GREEN + "Found e-mails: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{', '.join(emails)}" + Style.RESET_ALL)
 
-            website_elements_counter = 0
-            exposed_passwords_counter = 0
 
             if customization_input and customization_input.get('value') is not None and len(customization_input.get('value')) > 0:
                 print(Fore.GREEN + "Found site customization setting: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{customization_input.get('value')}" + Style.RESET_ALL)
@@ -116,14 +118,12 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
                     print(Fore.GREEN + "Found exposed password: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{password.get('value')}" + Style.RESET_ALL)
                     exposed_passwords_counter += 1
 
-            api_keys_counter = 0
             api_keys = soup.find_all('input', attrs={'type': 'apikey'})
             for key in api_keys:
                 key_value = key.get('value')
                 print(Fore.GREEN + f"Found API Key: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{key_value}")
                 api_keys_counter += 1
 
-            cookies_counter = 0
             cookies_dict = response.cookies
             for cookie_name, cookie_value in cookies_dict.items():
                 print(Fore.GREEN + "Found cookie: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{cookie_name}. " + Style.RESET_ALL + Fore.GREEN + "Value: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{cookie_value}" + Style.RESET_ALL)
