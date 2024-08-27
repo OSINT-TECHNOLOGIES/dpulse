@@ -102,7 +102,6 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
             print(Fore.GREEN + "Page title: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{title}" + Style.RESET_ALL)
             print(Fore.GREEN + "Found e-mails: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{', '.join(emails)}" + Style.RESET_ALL)
 
-
             if customization_input and customization_input.get('value') is not None and len(customization_input.get('value')) > 0:
                 print(Fore.GREEN + "Found site customization setting: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{customization_input.get('value')}" + Style.RESET_ALL)
                 website_elements_counter += 1
@@ -128,7 +127,6 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
             for cookie_name, cookie_value in cookies_dict.items():
                 print(Fore.GREEN + "Found cookie: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{cookie_name}. " + Style.RESET_ALL + Fore.GREEN + "Value: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{cookie_value}" + Style.RESET_ALL)
                 cookies_counter += 1
-
         except Exception as e:
             print(Fore.RED + "Error while getting detailed info on web resource. See journal for details")
             logging.error(f'WEB RESOURCE ADDITIONAL INFO GATHERING (PAGESEARCH): ERROR. REASON: {e}')
@@ -266,8 +264,6 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
             print(Fore.RED + f"Can't find keywords. See journal for details")
             logging.error(f'KEYWORDS SEARCH IN PDF (PAGESEARCH): ERROR. REASON: {e}')
             pdf_with_keywords = 0
-    elif keywords_flag == 0:
-        print(Fore.RED + "Keywords gathering won't start because of None user input" + Style.RESET_ALL)
     print(Fore.LIGHTGREEN_EX + "-------------------------------------------------" + Style.RESET_ALL)
     print(Fore.GREEN + f"\nDuring subdomains analysis:\n[+] Total {len(subdomains_list)} subdomains were checked")
     print(Fore.GREEN + f"[+] Among them, {accessible_subdomains} subdomains were accessible")
@@ -279,10 +275,8 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
     print(Fore.GREEN + f"[+] Found {exposed_passwords_counter} exposed passwords")
 
     if keywords_flag == 0:
-        print(Fore.GREEN + "[+] Keywords were not gathered because of None user input")
+        print(Fore.RED + "[+] Keywords were not gathered because of None user input")
         return ps_emails_return, accessible_subdomains, len(ps_emails_return), files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter
     else:
         print(Fore.GREEN + f"[+] Total {pdf_with_keywords} keywords were found in PDF files")
         return ps_emails_return, accessible_subdomains, len(ps_emails_return), files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter
-
-
