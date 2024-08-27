@@ -16,12 +16,16 @@ except ImportError as e:
 import db_processing as db
 import files_processing as fp
 
-def create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark):
+def create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_keyword):
     try:
         ip = data_array[0]
         res = data_array[1]
+        #mails
+        #subdomains
         subdomains_amount = data_array[4]
+        #social_medias
         subdomain_mails = data_array[6]
+        #sd_socials,
         subdomain_ip = data_array[8]
         issuer = data_array[9]
         subject = data_array[10]
@@ -44,18 +48,26 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         cpes = data_array[27]
         tags = data_array[28]
         vulns = data_array[29]
+        dorking_status = data_array[30]
         common_socials = data_array[31]
         total_socials = data_array[32]
-        ps_emails_return = data_array[35]
+        ps_emails_return = data_array[33]
+        accessible_subdomains = data_array[34]
+        emails_amount = data_array[35]
+        files_counter = data_array[36]
+        cookies_counter = data_array[37]
+        api_keys_counter = data_array[38]
+        website_elements_counter = data_array[39]
+        exposed_passwords_counter = data_array[40]
+        total_links_counter = data_array[41]
+        accessed_links_counter = data_array[42]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
         report_folder = report_info_array[3]
         report_ctime = report_info_array[6]
-        dorking_status = data_array[30]
-        dorking_results = data_array[34]
-        subdomain_urls = data_array[33]
         os.makedirs(report_folder, exist_ok=True)
+
         if len(ps_emails_return) > 0:
             subdomain_mails += ps_emails_return
             subdomain_mails = list(set(subdomain_mails))
@@ -87,9 +99,18 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         bold_font = Font(bold=True)
 
         ws = wb['GENERAL INFO']
-        for col in ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
-            cell = f"A{col}"
-            ws[cell].font = bold_font
+        if pagesearch_keyword == 'n':
+            for col in ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
+                cell = f"A{col}"
+                ws[cell].font = bold_font
+        elif pagesearch_keyword == 'y':
+            for col in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']:
+                cell = f"A{col}"
+                ws[cell].font = bold_font
+        elif pagesearch_keyword == 'si':
+            for col in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']:
+                cell = f"A{col}"
+                ws[cell].font = bold_font
         ws.column_dimensions['A'].width = 45
         ws.column_dimensions['B'].width = 60
         ws['A1'] = 'SUBDOMAINS FOUND'
@@ -100,6 +121,30 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['A6'] = 'DORKING STATUS'
         ws['A7'] = 'PAGESEARCH STATUS'
         ws['A8'] = 'REPORT CREATION TIME'
+        if pagesearch_keyword == 'y':
+            ws['A9'] = 'TOTAL SUBDOMAINS CHECKED'
+            ws['A10'] = 'AMOUNT OF ACCESSIBLE SUBDOMAINS'
+            ws['A11'] = 'AMOUNT OF ADDITIONAL EMAILS FOUND'
+            ws['A12'] = 'AMOUNT OF EXTRACTED FILES'
+            ws['A13'] = 'FOUND COOKIES WITH VALUES'
+            ws['A14'] = 'FOUND API VALUES'
+            ws['A15'] = 'FOUND DIFFERENT WEB PAGE ELEMENTS'
+            ws['A16'] = 'FOUND EXPOSED PASSWORDS'
+            ws['B9'] = subdomains_amount
+            ws['B10'] = accessible_subdomains
+            ws['B11'] = emails_amount
+            ws['B12'] = files_counter
+            ws['B13'] = cookies_counter
+            ws['B14'] = api_keys_counter
+            ws['B15'] = website_elements_counter
+            ws['B16'] = exposed_passwords_counter
+        elif pagesearch_keyword == 'si':
+            ws['A9'] = 'TOTAL LINKS CHECKED'
+            ws['A10'] = 'AMOUNT OF ACCESSIBLE LINKS'
+            ws['A11'] = 'AMOUNT OF ADDITIONAL EMAILS FOUND'
+            ws['B9'] = total_links_counter
+            ws['B10'] = accessed_links_counter
+            ws['B11'] = emails_amount
         ws['B1'] = subdomains_amount
         ws['B2'] = total_socials
         ws['B3'] = robots_txt_result
@@ -188,14 +233,15 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
             ws[cell].font = bold_font
             ws.column_dimensions[col].width = 70
         try:
-            for i in range(len(subdomain_urls)):
-                ws[f"A{i + 2}"] = str(subdomain_urls[i])
+            #for i in range(len(subdomain_urls)):
+                #ws[f"A{i + 2}"] = str(subdomain_urls[i])
             for i in range(len(subdomain_ip)):
                 ws[f"B{i + 2}"] = str(subdomain_ip[i])
             for i in range(len(subdomain_mails)):
                 ws[f"C{i + 2}"] = str(subdomain_mails[i])
         except Exception as e:
-            print(Fore.RED + "Error appeared when writing some information about subdomains in XLSX file. Reason: {}".format(e))
+            print(Fore.RED + "Error appeared when writing some information about subdomains in XLSX file. See journal for details")
+            logging.error(f'ERROR WHEN WRITING INFORMATION IN XLSX REPORT. REASON: {e}')
             pass
 
         ws = wb['DNS SCAN']
@@ -268,8 +314,8 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
 
         ws = wb['DORKING RESULTS']
         ws.column_dimensions['A'].width = 80
-        for i in range(len(dorking_results)):
-            ws[f"A{i + 1}"] = str(dorking_results[i])
+        #for i in range(len(dorking_results)):
+            #ws[f"A{i + 1}"] = str(dorking_results[i])
 
         report_file = report_folder + "//" + casename
         wb.save(report_file)
