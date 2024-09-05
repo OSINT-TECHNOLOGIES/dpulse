@@ -85,6 +85,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         exposed_passwords_counter = data_array[40]
         total_links_counter = data_array[41]
         accessed_links_counter = data_array[42]
+        keywords_messages_list = data_array[43]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
@@ -153,7 +154,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                                         'commonName': commonName, 'serialNumber': serialNumber, 'ports': ports, 'hostnames': hostnames, 'cpes': cpes,
                                         'tags': tags, 'vulns': vulns, 'a_tsm': total_socials, 'pagesearch_ui_mark': pagesearch_ui_mark,
                                         'acc_sd': accessible_subdomains, 'add_mails': emails_amount, 'extr_files': files_counter, 'cookies': cookies_counter, 'apis': api_keys_counter,
-                                        'wpe': website_elements_counter, 'exp_pass': exposed_passwords_counter}
+                                        'wpe': website_elements_counter, 'exp_pass': exposed_passwords_counter, 'kml': keywords_messages_list}
 
         elif pagesearch_keyword == 'si':
             template_path = pdf_templates_path + '//si_report_temp.html'
