@@ -253,13 +253,14 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
     ps_emails_return = [', '.join(sublist) for sublist in ps_emails_list]
 
     clean_bad_pdfs(ps_docs_path)
-
+    keywords_messages_list = []
     if keywords_flag == 1:
         print(Fore.GREEN + "Searching keywords in PDF files..." + Style.RESET_ALL)
         try:
             pdf_results, pdf_with_keywords = find_keywords_in_pdfs(ps_docs_path, keywords)
             for pdf_file, found_keywords in pdf_results.items():
                 print(Fore.GREEN + f"Keywords " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{', '.join(found_keywords)}" + Style.RESET_ALL + Fore.GREEN + f" found in '{pdf_file}'" + Style.RESET_ALL)
+                keywords_messages_list.append(f"Keywords {', '.join(found_keywords)} found in '{pdf_file}'")
         except Exception as e:
             print(Fore.RED + f"Can't find keywords. See journal for details")
             logging.error(f'KEYWORDS SEARCH IN PDF (PAGESEARCH): ERROR. REASON: {e}')
@@ -276,7 +277,7 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
 
     if keywords_flag == 0:
         print(Fore.RED + "[+] Keywords were not gathered because of None user input")
-        return ps_emails_return, accessible_subdomains, len(ps_emails_return), files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter
+        return ps_emails_return, accessible_subdomains, len(ps_emails_return), files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, ['No keywords were found because of None user input']
     else:
         print(Fore.GREEN + f"[+] Total {pdf_with_keywords} keywords were found in PDF files")
-        return ps_emails_return, accessible_subdomains, len(ps_emails_return), files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter
+        return ps_emails_return, accessible_subdomains, len(ps_emails_return), files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, keywords_messages_list
