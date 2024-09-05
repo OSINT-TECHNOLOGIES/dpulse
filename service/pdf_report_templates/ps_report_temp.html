@@ -26,6 +26,7 @@
 	<p><span style="color: #333333;"><strong>Found API keys: <span style="color: #333399;">{{apis}}</span></strong></span></p>
 	<p><span style="color: #333333;"><strong>Found different web page elements: <span style="color: #333399;">{{wpe}}</span></strong></span></p>
 	<p><span style="color: #333333;"><strong>Found exposed passwords: <span style="color: #333399;">{{exp_pass}}</span></strong></span></p>
+	<p><span style="text-decoration: underline; color: #ff0000;"><em>You can find more PageSearch scan results in the end of this report</em></span></p>
 	<p>&nbsp;</p>
 	<p>&nbsp;</p>
 	<div class="notranslate" style="all: initial;">&nbsp;</div>
@@ -204,7 +205,14 @@
 	<p>&nbsp;</p>
 	<p>&nbsp;</p>
 	<pdf:nextpage/>
-	
+	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333;"><strong>PAGESEARCH SCAN RESULTS<br /></strong></span></span></h3>
+	<p><span style="color: #333333;"><strong>Found keywords in PDFs: </strong></span><span style="color: #333399;"><strong></span></p>
+	<ul>
+	{% for km in kml %}
+	<li><span style="color: #333399;"><strong>=> {{ km }}</strong></span></li>
+	{% endfor %}
+	</ul>
+	<p>&nbsp;</p>
 	<h3 style="color: #334455; padding-top: 10px; text-align: center;"><strong><span style="color: #333333;">Created using DPULSE software by OSINT-TECHNOLOGIES</span></strong></h3>
 	<p style="color: #334455; padding-top: 10px; text-align: left;"><strong><span style="color: #333333;">Visit our web-pages:</span></strong></p>
 	<ul>
