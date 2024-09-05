@@ -20,6 +20,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
     try:
         ip = data_array[0]
         res = data_array[1]
+        subdomain_urls = data_array[3]
         subdomains_amount = data_array[4]
         subdomain_mails = data_array[6]
         subdomain_ip = data_array[8]
@@ -230,8 +231,8 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
             ws[cell].font = bold_font
             ws.column_dimensions[col].width = 70
         try:
-            #for i in range(len(subdomain_urls)):
-                #ws[f"A{i + 2}"] = str(subdomain_urls[i])
+            for i in range(len(subdomain_urls)):
+                ws[f"A{i + 2}"] = str(subdomain_urls[i])
             for i in range(len(subdomain_ip)):
                 ws[f"B{i + 2}"] = str(subdomain_ip[i])
             for i in range(len(subdomain_mails)):
