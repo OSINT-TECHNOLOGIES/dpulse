@@ -20,12 +20,8 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
     try:
         ip = data_array[0]
         res = data_array[1]
-        #mails
-        #subdomains
         subdomains_amount = data_array[4]
-        #social_medias
         subdomain_mails = data_array[6]
-        #sd_socials,
         subdomain_ip = data_array[8]
         issuer = data_array[9]
         subject = data_array[10]
@@ -61,6 +57,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         exposed_passwords_counter = data_array[40]
         total_links_counter = data_array[41]
         accessed_links_counter = data_array[42]
+        dorking_results = data_array[43]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
@@ -314,8 +311,8 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
 
         ws = wb['DORKING RESULTS']
         ws.column_dimensions['A'].width = 80
-        #for i in range(len(dorking_results)):
-            #ws[f"A{i + 1}"] = str(dorking_results[i])
+        for i in range(len(dorking_results)):
+            ws[f"A{i + 1}"] = str(dorking_results[i])
 
         report_file = report_folder + "//" + casename
         wb.save(report_file)
