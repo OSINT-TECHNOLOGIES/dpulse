@@ -95,7 +95,7 @@ class DataProcessing():
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
-                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter = normal_search(to_search_array, report_folder, keywords, keywords_flag)
+                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, keywords_messages_list = normal_search(to_search_array, report_folder, keywords, keywords_flag)
                     total_links_counter = accessed_links_counter = 0
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH]\n" + Style.RESET_ALL)
                 else:
@@ -119,7 +119,7 @@ class DataProcessing():
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
                           hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, ps_emails_return,
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
-                          website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter]
+                          website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, keywords_messages_list]
 
         elif report_file_type == 'xlsx':
             if pagesearch_flag.lower() == 'y':
