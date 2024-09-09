@@ -25,6 +25,7 @@ def whois_gather(short_domain):
     try:
         logging.info('WHOIS INFO GATHERING: OK')
         w = whois.whois(short_domain)
+        print(w)
         if w.org is None:
             w['org'] = 'n/a'
             logging.info('WHOIS INFO GATHERING: OK')
@@ -32,6 +33,14 @@ def whois_gather(short_domain):
     except Exception as e:
         print(Fore.RED + "Error while gathering WHOIS information. See journal for details")
         logging.error(f'WHOIS GATHERING: ERROR. REASON: {e}')
+        w = {
+            'registrar': 'N/A',
+            'creation_date': 'N/A',
+            'expiration_date': 'N/A',
+            'name_servers': ['N/A'],
+            'org': 'N/A'
+        }
+        return w
         pass
 
 def contact_mail_gather(url):
