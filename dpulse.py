@@ -17,7 +17,7 @@ try:
     import os
     import itertools
     import threading
-    from time import sleep
+    from time import sleep, time
 except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
@@ -25,6 +25,15 @@ except ImportError as e:
 cli = cli_init.Menu()
 cli.welcome_menu()
 data_processing = DataProcessing()
+
+def time_processing(end):
+    if end < 60:
+        endtime = round(end)
+        endtime_string = f'{endtime} seconds'
+    else:
+        time_minutes = round(end) / 60
+        endtime_string = f'{time_minutes} minutes'
+    return endtime_string
 
 class ProgressBar(threading.Thread):
     def __init__(self):
@@ -103,24 +112,38 @@ def run():
                                         if report_filetype.lower() == 'pdf':
                                             try:
                                                 if pagesearch_flag.lower() == 'y':
+                                                    start = time()
                                                     data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
+                                                    end = time() - start
                                                 elif pagesearch_flag.lower() == 'si':
+                                                    start = time()
                                                     data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
+                                                    end = time() - start
                                                 else:
+                                                    start = time()
                                                     data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag)
-                                                pdf_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower())
+                                                    end = time() - start
+                                                endtime_string = time_processing(end)
+                                                pdf_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
                                             finally:
                                                 spinner_thread.do_run = False
                                                 spinner_thread.join()
                                         elif report_filetype.lower() == 'xlsx':
                                             try:
                                                 if pagesearch_flag.lower() == 'y':
+                                                    start = time()
                                                     data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
+                                                    end = time() - start
                                                 elif pagesearch_flag.lower() == 'si':
+                                                    start = time()
                                                     data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
+                                                    end = time() - start
                                                 else:
+                                                    start = time()
                                                     data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag)
-                                                xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower())
+                                                    end = time() - start
+                                                endtime_string = time_processing(end)
+                                                xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
                                             finally:
                                                 spinner_thread.do_run = False
                                                 spinner_thread.join()
