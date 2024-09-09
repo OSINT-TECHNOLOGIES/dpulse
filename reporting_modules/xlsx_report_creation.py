@@ -16,7 +16,7 @@ except ImportError as e:
 import db_processing as db
 import files_processing as fp
 
-def create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_keyword):
+def create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_keyword, end):
     try:
         ip = data_array[0]
         res = data_array[1]
@@ -318,6 +318,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         report_file = report_folder + "//" + casename
         wb.save(report_file)
         print(Fore.GREEN + "XLSX report for {} case was created at {}".format(''.join(short_domain), report_ctime) + Style.RESET_ALL)
+        print(Fore.GREEN + f"Scan elapsed time: {end}" + Style.RESET_ALL)
         robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
         xlsx_blob = fp.get_blob(report_file)
         db.insert_blob('XLSX', xlsx_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content)
