@@ -29,10 +29,10 @@ data_processing = DataProcessing()
 def time_processing(end):
     if end < 60:
         endtime = round(end)
-        endtime_string = f'{endtime} seconds'
+        endtime_string = f'approximately {endtime} seconds'
     else:
-        time_minutes = round(end) / 60
-        endtime_string = f'{time_minutes} minutes'
+        time_minutes = round(end / 60)
+        endtime_string = f'approximately {time_minutes} minutes'
     return endtime_string
 
 class ProgressBar(threading.Thread):
