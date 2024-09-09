@@ -25,7 +25,6 @@ def whois_gather(short_domain):
     try:
         logging.info('WHOIS INFO GATHERING: OK')
         w = whois.whois(short_domain)
-        print(w)
         if w.org is None:
             w['org'] = 'n/a'
             logging.info('WHOIS INFO GATHERING: OK')
