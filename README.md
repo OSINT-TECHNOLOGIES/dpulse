@@ -126,6 +126,10 @@ If you have problems with starting installer.bat, you should try to use `dos2uni
       
 # DPULSE mentions in social medias
 
+## Mention on OSINT/Infosec related websites:
+
+### [Mention on osinttools.io](https://osinttools.io/tools/dpulse/)
+
 ## X.com mentions:
 
 ### [by @DarkWebInformer](https://x.com/DarkWebInformer/status/1787583156775759915?t=Ak1W9ddUPpDvLAkVyQG8fQ&s=19)
