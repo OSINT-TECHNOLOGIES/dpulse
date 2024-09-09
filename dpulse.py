@@ -32,7 +32,10 @@ def time_processing(end):
         endtime_string = f'approximately {endtime} seconds'
     else:
         time_minutes = round(end / 60)
-        endtime_string = f'approximately {time_minutes} minutes'
+        if time_minutes == 1:
+            endtime_string = f'approximately {time_minutes} minute'
+        else:
+            endtime_string = f'approximately {time_minutes} minutes'
     return endtime_string
 
 class ProgressBar(threading.Thread):
