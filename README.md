@@ -133,10 +133,10 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 
 
 # Tasks to complete before new release
-- [x] Create CSV report processing function
-- [ ] Bugfixes
-- [x] Find an opportunity to get rid of the manual installation of wkhtmltopdf
-- [ ] IntelliSearch function to search useful strings in documents, SMs and so on
+- [ ] Rework Google Dorking module in separate mode
+- [ ] Rework Google Dorks list into separate databases with different pre-configured dorks for various purposes
+- [ ] Allow user to create their own dorks DB
+- [ ] Add separate API search mode with different free APIs
       
 # DPULSE mentions in social medias
 
