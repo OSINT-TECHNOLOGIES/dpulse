@@ -1,6 +1,10 @@
 import sys
+
 sys.path.append('service')
+
 from logs_processing import logging
+import db_processing as db
+import files_processing as fp
 
 try:
     from datetime import datetime
@@ -12,9 +16,6 @@ try:
 except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
-
-import db_processing as db
-import files_processing as fp
 
 def create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_keyword, end):
     try:
