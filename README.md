@@ -122,11 +122,11 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 
 ### You can start DPULSE and see the main menu on the screen using one of the recommended commands in DPULSE root folder. Don't forget to install all requirements before starting DPULSE
 
-![dpulse_start](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/2ac7f332-5482-45e4-a0c9-0cc20e0e0ac7)
+![dpulse_start](https://github.com/user-attachments/assets/f8d94701-c005-48f3-809c-740c6bab51b1)
 
 ### After choosing first menu point, you will be able to enter target's URL and case comment, and then you will see scanning progress
 
-![dpulse_running](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/27a64244-03f6-4360-b872-64661e68ffb5)
+![dpulse_running](https://github.com/user-attachments/assets/1b46044c-d43e-46db-92c1-62b0c58fdafd)
 
 ### Finally, DPULSE will create report folder which contains case name (basically URL of target), date and time of scan. All report folders are contained in DPULSE root folder
 
