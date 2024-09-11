@@ -239,7 +239,7 @@ def domains_reverse_research(subdomains, report_file_type):
     if not subdomain_ip:
         subdomain_ip = ["No subdomains IP's were found"]
 
-    if report_file_type == 'pdf':
+    if report_file_type == 'pdf' or report_file_type == 'html':
         return subdomain_mails, sd_socials, subdomain_ip
     elif report_file_type == 'xlsx':
         return subdomain_urls, subdomain_mails, subdomain_ip, sd_socials
