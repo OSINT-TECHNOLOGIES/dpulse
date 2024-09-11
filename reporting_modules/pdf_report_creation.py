@@ -1,19 +1,18 @@
 import sys
-sys.path.append('service')
-from logs_processing import logging
 
+sys.path.append('service')
+
+from logs_processing import logging
 import db_processing as db
 import files_processing as fp
 
 try:
-    import requests
     from datetime import datetime
     from jinja2 import Environment, FileSystemLoader
     from xhtml2pdf import pisa
     import os
     from io import BytesIO
     from colorama import Fore, Style
-    import webbrowser
     import sqlite3
 except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
