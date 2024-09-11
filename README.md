@@ -9,7 +9,8 @@
 </p>
 
 <p align="center">
-<img alt="Static Badge" src="https://img.shields.io/badge/v1.1-ACTUAL%20STABLE%20VERSION?style=for-the-badge&label=ACTUAL%20STABLE%20VERSION&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/DOMAIN_OSINT-CATEGORY?style=for-the-badge&label=TOOL%20CATEGORY&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/CLI-CATEGORY?style=for-the-badge&label=interface%20type&color=red">
+<img alt="Static Badge" src="https://img.shields.io/badge/v1.1-ACTUAL%20STABLE%20VERSION?style=for-the-badge&label=ACTUAL%20STABLE%20VERSION&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/V1.1-red?style=for-the-badge&logo=f&label=ACTUAL%20ROLLING%20VERSION">
+<img alt="Static Badge" src="https://img.shields.io/badge/DOMAIN_OSINT-CATEGORY?style=for-the-badge&label=TOOL%20CATEGORY&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/CLI-CATEGORY?style=for-the-badge&label=interface%20type&color=red">
 </p>
 <p align="center">
 <img alt="GitHub License" src="https://img.shields.io/github/license/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red">
@@ -133,10 +134,10 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 
 
 # Tasks to complete before new release
-- [x] Create CSV report processing function
-- [ ] Bugfixes
-- [x] Find an opportunity to get rid of the manual installation of wkhtmltopdf
-- [ ] IntelliSearch function to search useful strings in documents, SMs and so on
+- [ ] Rework Google Dorking module in separate mode
+- [ ] Rework Google Dorks list into separate databases with different pre-configured dorks for various purposes
+- [ ] Allow user to create their own dorks DB
+- [ ] Add separate API search mode with different free APIs
       
 # DPULSE mentions in social medias
 
