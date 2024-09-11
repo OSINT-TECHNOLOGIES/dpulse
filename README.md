@@ -67,7 +67,17 @@ Since DPULSE repository is using Poetry* to manage dependencies, it is higly rec
 
 _* Poetry is a tool for dependency management and packaging in Python. It can be simply installed everywhere using `pip install poetry` command, but more instructions you can find on [Poetry official documentation page](https://python-poetry.org/docs/#ci-recommendations)_
 
-### First way (recommended on every OS, using Poetry)
+### <ins>First way (the simplest way, recommended on every OS)</ins>
+
+Just download DPULSE using fast-access links at the top of the README:
+
+![изображение](https://github.com/user-attachments/assets/bd1d9627-950b-40d4-91c4-6751476d7b65)
+
+Then just unpack downloaded archive, open terminal in DPULSE root folder and use `pip install -r requirements.txt` command to install requirements. Then type `python dpulse.py` in terminal, and that's where program starts.
+
+If `pip install -r requirements.txt` doesn't work, then just use `poetry install` command. After that, start DPULSE with `poetry run python dpulse.py`
+
+### <ins>Second way (recommended on every OS, using Poetry)</ins>
 
 Use this set of commands to use recommended way of DPULSE installation:
 
@@ -78,7 +88,7 @@ Use this set of commands to use recommended way of DPULSE installation:
   ```
 Then you simply start DPULSE using `poetry run python dpulse.py`
 
-### Second way (recommended on Windows systems, without using Poetry)
+### <ins>Third way (recommended on Windows systems, without using Poetry)</ins>
 
 Simply download zip archive from assets in releases bookmark, just right here:
 
@@ -94,9 +104,11 @@ You also can use this installation way with some different approach using this s
   pip install -r requirements.txt
   ```
 
+If `pip install -r requirements.txt` doesn't work, then just use `poetry install` command. After that, start DPULSE with `poetry run python dpulse.py`
+
 ## _Other ways_
 
-### Third way (using pip)
+### <ins>Fourth way (using pip)</ins>
 
 You also can install DPULSE using pip manager. It'll install DPULSE and necessery dependencies in one command: `pip install dpulse`. Then you just locate DPULSE root folder and type `python dpulse.py` to start program.
 
@@ -104,13 +116,13 @@ You also can install DPULSE using pip manager. It'll install DPULSE and necesser
 
 DPULSE has two pre-written installation scripts, both for Windows (installer.bat) and for Linux (installer.sh). You can use them to clone repository and install dependencies or only for dependencies installation. Keep in mind that installer.bat (Windows installer) requires installed Git to clone repository.
 
-### Windows installer usage
+### <ins>Windows installer usage</ins>
 
 You can start installer.bat from terminal by typing `./installer.bat` in terminal. Then you choose menu item which you want to start.
 
 If you have problems with starting installer.bat, you should try to start it in admin terminal.
 
-### Linux installer usage
+### <ins>Linux installer usage</ins>
 
 To start installer.sh in Linux you should follow these steps in your terminal:
 
