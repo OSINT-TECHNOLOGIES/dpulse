@@ -24,6 +24,9 @@
 
 > You can also contact the developer via e-mail: osint.technologies@gmail.com
 
+***[Download DPULSE stable ZIP archive (with latest stable changes)](https://github.com/OSINT-TECHNOLOGIES/dpulse/archive/refs/heads/main.zip)***
+
+***[Download DPULSE rolling ZIP archive (with latest developer commit)](https://github.com/OSINT-TECHNOLOGIES/dpulse/archive/refs/heads/rolling.zip)***
 
 # About DPULSE
 
