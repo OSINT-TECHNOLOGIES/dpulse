@@ -29,6 +29,8 @@ class DataProcessing():
             casename = files_body + '.pdf'
         elif report_file_type == 'xlsx':
             casename = files_body + '.xlsx'
+        elif report_file_type == 'html':
+            casename = files_body + '.html'
         foldername = files_body
         db_casename = short_domain.replace(".", "")
         now = datetime.now()
@@ -59,6 +61,8 @@ class DataProcessing():
             subdomain_mails, sd_socials, subdomain_ip = cp.domains_reverse_research(subdomains, report_file_type)
         elif report_file_type == 'xlsx':
             subdomain_urls, subdomain_mails, subdomain_ip, sd_socials = cp.domains_reverse_research(subdomains, report_file_type)
+        elif report_file_type == 'html':
+            subdomain_mails, sd_socials, subdomain_ip = cp.domains_reverse_research(subdomains, report_file_type)
         print(Fore.GREEN + 'Processing SSL certificate gathering' + Style.RESET_ALL)
         issuer, subject, notBefore, notAfter, commonName, serialNumber = np.get_ssl_certificate(short_domain)
         print(Fore.GREEN + 'Processing DNS records gathering' + Style.RESET_ALL)
@@ -66,7 +70,7 @@ class DataProcessing():
         print(Fore.GREEN + 'Extracting robots.txt and sitemap.xml' + Style.RESET_ALL)
         robots_txt_result = np.get_robots_txt(short_domain, robots_filepath)
         sitemap_xml_result = np.get_sitemap_xml(short_domain, sitemap_filepath)
-        if report_file_type == 'pdf':
+        if report_file_type == 'pdf' or report_file_type == 'html':
             sitemap_links_status = np.extract_links_from_sitemap(sitemap_links_filepath, sitemap_filepath)
         elif report_file_type == 'xlsx':
             try:
@@ -80,7 +84,7 @@ class DataProcessing():
         print(Fore.GREEN + 'Processing Shodan InternetDB search' + Style.RESET_ALL)
         ports, hostnames, cpes, tags, vulns = np.query_internetdb(ip, report_file_type)
         print(Fore.GREEN + 'Processing Google Dorking' + Style.RESET_ALL)
-        if report_file_type == 'pdf':
+        if report_file_type == 'pdf' or report_file_type == 'html':
             dorking_status = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain))
         elif report_file_type == 'xlsx':
             dorking_status, dorking_results = dp.transfer_results_to_xlsx(dp.get_dorking_query(short_domain))
@@ -151,6 +155,37 @@ class DataProcessing():
                           hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, ps_emails_return,
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
                           website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, dorking_results]
+
+        elif report_file_type == 'html':
+            if pagesearch_flag.lower() == 'y':
+                if subdomains[0] != 'No subdomains were found':
+                    to_search_array = [subdomains, social_medias, sd_socials]
+                    print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
+                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, keywords_messages_list = normal_search(to_search_array, report_folder, keywords, keywords_flag)
+                    total_links_counter = accessed_links_counter = 0
+                    print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH]\n" + Style.RESET_ALL)
+                else:
+                    print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
+                    ps_emails_return = ""
+                    accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 'No data was gathered because no subdomains were found'
+                    pass
+            elif pagesearch_flag.lower() == 'si':
+                print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
+                ps_emails_return, total_links_counter, accessed_links_counter, emails_amount = sitemap_inspection_search(report_folder)
+                accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = keywords_messages_list = 0
+                print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
+            elif pagesearch_flag.lower() == 'n':
+                accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = keywords_messages_list = 0
+                ps_emails_return = ""
+                pass
+
+            data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
+                          subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
+                          robots_txt_result, sitemap_xml_result, sitemap_links_status,
+                          web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
+                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, ps_emails_return,
+                          accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
+                          website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, keywords_messages_list]
 
         report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime]
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} ENDS HERE')
