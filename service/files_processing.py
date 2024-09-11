@@ -6,9 +6,6 @@ def get_blob(file):
     return blob_data
 
 def find_files(filename):
-    """
-    Function which will find wkhtmltopdf executable file
-    """
     root_directory = os.getcwd()
     for root, dirs, files in os.walk(root_directory):
         if filename in files:
