@@ -7,6 +7,7 @@ import pdf_report_creation as pdf_rc
 import cli_init
 import db_processing as db
 import xlsx_report_creation as xlsx_rc
+import html_report_creation as html_rc
 from data_assembler import DataProcessing
 
 try:
@@ -69,11 +70,11 @@ def run():
                         else:
                             url = "http://" + short_domain + "/"
                             case_comment = input(Fore.YELLOW + "Enter case comment >> ")
-                            report_filetype = input(Fore.YELLOW + "Enter report file extension [xlsx/pdf] >> ")
+                            report_filetype = input(Fore.YELLOW + "Enter report file extension [xlsx/pdf/html] >> ")
                             if not report_filetype:
                                 print(Fore.RED + "\nReport filetype cannot be empty")
-                            if report_filetype.lower() not in ['pdf', 'xlsx']:
-                                print(Fore.RED + '\nYou need to choose between PDF or XLSX report file types')
+                            if report_filetype.lower() not in ['pdf', 'xlsx', 'html']:
+                                print(Fore.RED + '\nYou need to choose between PDF, XLSX or HTML report file types')
                             else:
                                 print(Fore.GREEN + "[!] SI mode suppose you to have sitemap_links.txt file in report folder [!]\n[!] It'll visit every link from this file [!]")
                                 pagesearch_flag = input(Fore.YELLOW + "Would you like to use PageSearch [BETA] function? [Y/N/SI] >> ")
@@ -94,7 +95,7 @@ def run():
                                 elif pagesearch_flag.lower() == 'si':
                                     keywords_list = None
                                     keywords_flag = 0
-                                if report_filetype.lower() == 'pdf' or report_filetype.lower() == 'xlsx':
+                                if report_filetype.lower() == 'pdf' or report_filetype.lower() == 'xlsx' or report_filetype.lower() == 'html':
                                     if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n' or pagesearch_flag.lower() == 'si':
                                         if pagesearch_flag.lower() == "n":
                                             pagesearch_ui_mark = 'No'
@@ -147,6 +148,25 @@ def run():
                                                     end = time() - start
                                                 endtime_string = time_processing(end)
                                                 xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
+                                            finally:
+                                                spinner_thread.do_run = False
+                                                spinner_thread.join()
+                                        elif report_filetype.lower() == 'html':
+                                            try:
+                                                if pagesearch_flag.lower() == 'y':
+                                                    start = time()
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
+                                                    end = time() - start
+                                                elif pagesearch_flag.lower() == 'si':
+                                                    start = time()
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
+                                                    end = time() - start
+                                                else:
+                                                    start = time()
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag)
+                                                    end = time() - start
+                                                endtime_string = time_processing(end)
+                                                html_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
                                             finally:
                                                 spinner_thread.do_run = False
                                                 spinner_thread.join()
