@@ -78,7 +78,7 @@ def query_internetdb(ip, report_file_extension):
                 tags = ['Tags were not found']
             if not vulns:
                 vulns = ['Vulnerabilities were not found']
-            if report_file_extension == 'pdf':
+            if report_file_extension == 'pdf' or report_file_extension == 'html':
                 return ports, hostnames, cpes, tags, vulns
             elif report_file_extension == 'xlsx':
                 return ports, hostnames, cpes, tags, vulns
