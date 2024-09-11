@@ -26,19 +26,33 @@
 
 # About DPULSE
 
-DPULSE is a software solution for conducting OSINT research in relation to a certain domain. Using this software you can extract useful information such as:
-1. PageSearch function [BETA] which gives opportunity to extract public documents, find keywords (temporarily only in PDF files) and more
-2. WHOIS information 
-3. Subdomains
-4. Mentions of the domain's owner organization in some social networks, as well as organization profiles in social networks.
-5. IP addresses
-6. Automated Google Dorking related to domain
-7. InternetDB search results (possible vulnerabilities, open ports and so on)
-8. Used web-technologies
-9. Sitemap, robots.txt files, SSL certificate info
-  
-All this data is compiled into an easy-to-read PDF or XLSX report by category.
+DPULSE is a software solution for conducting OSINT research in relation to a certain domain. In general, it provides you with a certain set of functions, such as:
 
+1. ***Basic scan:*** extracts general information about domain, such as
+   - WHOIS information
+   - subdomains
+   - e-mail addresses
+   - IP addresses
+   - social medias links/posts/profiles
+   - SSL certificate info
+   - possible vulnerabilities
+   - open ports
+   - CPEs, used web-technologies and so on.
+   - It also can download sitemap.xml and robots.txt files from a domain, and, moreover, it can do automated Google Dorking
+     
+2. ***PageSearch standard scan:*** extended subdomains deep search function, which can find:
+   - more e-mail addresses
+   - API keys
+   - exposed passwords
+   - cookies
+   - hidden forms of data and other web page elements
+   - documents, config files, databases files (and PageSearch can download them!)
+   - specified words by user in PDF files
+
+3. ***PageSearch Sitemap inspection scan:*** sitemap links crawler which can find even more e-mails
+
+  
+Finally, DPULSE compiles all found data into an easy-to-read PDF, HTML or XLSX report by category.
 
 # How to install and run DPULSE
 
@@ -101,7 +115,7 @@ To start installer.sh in Linux you should follow these steps in your terminal:
   ```
 Then you choose menu item which you want to start.
 
-If you have problems with starting installer.bat, you should try to use `dos2unix installer.sh` or `sed -i 's/\r//' installer.sh` commands.
+If you have problems with starting installer.sh, you should try to use `dos2unix installer.sh` or `sed -i 's/\r//' installer.sh` commands.
 
 # DPULSE demos
 
