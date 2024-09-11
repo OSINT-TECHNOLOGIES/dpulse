@@ -40,7 +40,7 @@ DPULSE is a software solution for conducting OSINT research in relation to a cer
    - CPEs, used web-technologies and so on.
    - It also can download sitemap.xml and robots.txt files from a domain, and, moreover, it can do automated Google Dorking
      
-2. ***PageSearch standard scan:*** extended subdomains deep search function, which can find:
+2. ***PageSearch standard scan:*** extended subdomains deep search function, which starts in addition to basic scan and which can find:
    - more e-mail addresses
    - API keys
    - exposed passwords
@@ -49,7 +49,7 @@ DPULSE is a software solution for conducting OSINT research in relation to a cer
    - documents, config files, databases files (and PageSearch can download them!)
    - specified words by user in PDF files
 
-3. ***PageSearch Sitemap inspection scan:*** sitemap links crawler which can find even more e-mails
+3. ***PageSearch Sitemap inspection scan:*** sitemap links crawler which starts in addition to basic scan and which can find even more e-mails
 
   
 Finally, DPULSE compiles all found data into an easy-to-read PDF, HTML or XLSX report by category. It also saves all information about scan in local report storage database, which can be restored later.
