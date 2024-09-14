@@ -32,7 +32,7 @@ def db_creation(db_path):
         sqlite_connection.close()
         print(Fore.GREEN + "Successfully created report storage database" + Style.RESET_ALL)
     else:
-        print(Fore.GREEN + "Report storage database exists" + Style.RESET_ALL)
+        print(Fore.GREEN + "Report storage database presence: OK" + Style.RESET_ALL)
 
 def db_select():
     db_creation('report_storage.db')
