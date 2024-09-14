@@ -2,6 +2,7 @@ import sys
 sys.path.append('datagather_modules')
 sys.path.append('service')
 sys.path.append('reporting_modules')
+sys.path.append('dorking')
 
 import pdf_report_creation as pdf_rc
 import cli_init
@@ -39,6 +40,23 @@ def time_processing(end):
             endtime_string = f'approximately {time_minutes} minutes'
     return endtime_string
 
+def dorks_files_check():
+    dorks_path = 'dorking//'
+    dorks_files = ['iot_dorking.db', 'files_dorking.db', 'basic_dorking.db']
+    dorks_files_counter = 0
+    for dork_files in dorks_files:
+        files_path = os.path.join(dorks_path, dork_files)
+        if os.path.isfile(files_path):
+            dorks_files_counter += 1
+        else:
+            pass
+
+    if dorks_files_counter == 3:
+        print(Fore.GREEN + "Dorks databases presence: OK" + Style.RESET_ALL)
+    else:
+        print(Fore.RED + "Dorks databases presence: NOT OK\nSome files may not be in folder. Please compare dorking folder with the same folder on the official repository\n" + Style.RESET_ALL)
+        sys.exit()
+
 class ProgressBar(threading.Thread):
     def __init__(self):
         super(ProgressBar, self).__init__()
@@ -52,7 +70,7 @@ class ProgressBar(threading.Thread):
             sleep(0.1)
 
 db.db_creation('report_storage.db')
-
+dorks_files_check()
 def run():
     while True:
         try:
@@ -174,28 +192,7 @@ def run():
                                         print(Fore.RED + "\nUnsupported PageSearch mode. Please choose between Y, N or SI")
 
             elif choice == "2":
-                cli.print_settings_menu()
-                choice_settings = input(Fore.YELLOW + "Enter your choice >> ")
-                if choice_settings == '1':
-                    with open('dorkslist.txt', 'r') as cfg_file:
-                        print(Fore.LIGHTMAGENTA_EX + '\n[START OF CONFIG FILE]' + Style.RESET_ALL)
-                        print('\n' + Fore.LIGHTBLUE_EX + cfg_file.read() + Style.RESET_ALL)
-                        print(Fore.LIGHTMAGENTA_EX + '\n[END OF CONFIG FILE]\n' + Style.RESET_ALL)
-                        continue
-                elif choice_settings == '2':
-                    with open('dorkslist.txt', 'a+') as cfg_file:
-                        print(Fore.LIGHTMAGENTA_EX + '\n[START OF CONFIG FILE]' + Style.RESET_ALL)
-                        cfg_file.seek(0)
-                        print('\n' + Fore.LIGHTBLUE_EX + cfg_file.read() + Style.RESET_ALL)
-                        print(Fore.LIGHTMAGENTA_EX + '\n[END OF CONFIG FILE]\n' + Style.RESET_ALL)
-                        new_line = str(input(Fore.YELLOW + "Input new dork >> ") + Style.RESET_ALL)
-                        print(Fore.GREEN + "New dork successfully added to dorks list" + Style.RESET_ALL)
-                        cfg_file.write(new_line + '\n')
-                        continue
-                elif choice_settings == '3':
-                    continue
-                else:
-                    print(Fore.RED + "\nInvalid menu item. Please select between existing menu items")
+                print(Fore.RED + "Sorry, but this menu is deprecated since v1.1.1. It will be back soon")
 
             elif choice == "3":
                 cli.print_help_menu()
