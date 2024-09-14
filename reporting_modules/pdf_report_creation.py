@@ -18,14 +18,6 @@ except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
 
-try:
-    current_script = os.path.realpath(__file__)
-    current_directory = os.path.dirname(current_script)
-    cfg_file_path = os.path.join(current_directory, fp.find_files('dorkslist.txt'))
-    print(Fore.GREEN + 'Dorks list was found at {}'.format(cfg_file_path))
-except TypeError as e:
-    print(Fore.RED + 'Dorks list was not found in DPULSE root directory. Reason: {}'.format(e) + Style.RESET_ALL)
-    sys.exit()
 
 short_domain = ''
 search_query = []
