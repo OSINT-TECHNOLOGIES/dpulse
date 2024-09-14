@@ -67,7 +67,7 @@ Since DPULSE repository is using Poetry* to manage dependencies, it is higly rec
 
 _* Poetry is a tool for dependency management and packaging in Python. It can be simply installed everywhere using `pip install poetry` command, but more instructions you can find on [Poetry official documentation page](https://python-poetry.org/docs/#ci-recommendations)_
 
-### <ins>First way (the simplest way, recommended on every OS)</ins>
+### <ins>First way (the simplest way)</ins>
 
 Just download DPULSE using fast-access links at the top of the README:
 
@@ -77,7 +77,7 @@ Then just unpack downloaded archive, open terminal in DPULSE root folder and use
 
 If `pip install -r requirements.txt` doesn't work, then just use `poetry install` command. After that, start DPULSE with `poetry run python dpulse.py`
 
-### <ins>Second way (recommended on every OS, using Poetry)</ins>
+### <ins>Second way (the most correct way)</ins>
 
 Use this set of commands to install DPULSE stable versions:
 
@@ -97,27 +97,9 @@ Use this set of commands to install DPULSE rolling versions:
 
 After installation, you simply start DPULSE using `poetry run python dpulse.py`
 
-### <ins>Third way (recommended on Windows systems, without using Poetry)</ins>
-
-Simply download zip archive from assets in releases bookmark, just right here:
-
-![изображение](https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/bd2ebf09-a31c-4e27-a674-5b602808a667)
-
-Then you just unpack the archive, open terminal in DPULSE root folder and use `pip install -r requirements.txt` command to install requirements. Then type `python dpulse.py` in terminal, and that's where program starts.
-
-You also can use this installation way with some different approach using this set of commands:
-
-  ```
-  git clone https://github.com/OSINT-TECHNOLOGIES/dpulse
-  cd dpulse
-  pip install -r requirements.txt
-  ```
-
-If `pip install -r requirements.txt` doesn't work, then just use `poetry install` command. After that, start DPULSE with `poetry run python dpulse.py`
-
 ## _Other ways_
 
-### <ins>Fourth way (using pip)</ins>
+### <ins>Third way (using pip manager)</ins>
 
 You also can install DPULSE using pip manager. It'll install DPULSE and necessery dependencies in one command: `pip install dpulse`. Then you just locate DPULSE root folder and type `python dpulse.py` to start program.
 
