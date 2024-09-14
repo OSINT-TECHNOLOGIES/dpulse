@@ -79,14 +79,23 @@ If `pip install -r requirements.txt` doesn't work, then just use `poetry install
 
 ### <ins>Second way (recommended on every OS, using Poetry)</ins>
 
-Use this set of commands to use recommended way of DPULSE installation:
+Use this set of commands to install DPULSE stable versions:
 
   ```
   git clone https://github.com/OSINT-TECHNOLOGIES/dpulse
   cd dpulse
   poetry install
   ```
-Then you simply start DPULSE using `poetry run python dpulse.py`
+
+Use this set of commands to install DPULSE rolling versions:
+
+  ```
+  git clone --branch rolling --single-branch https://github.com/OSINT-TECHNOLOGIES/dpulse.git
+  cd dpulse
+  poetry install
+  ```
+
+After installation, you simply start DPULSE using `poetry run python dpulse.py`
 
 ### <ins>Third way (recommended on Windows systems, without using Poetry)</ins>
 
