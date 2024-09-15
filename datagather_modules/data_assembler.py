@@ -1,9 +1,10 @@
 import sys
 sys.path.append('service')
 sys.path.append('pagesearch')
+sys.path.append('dorking')
 
 import crawl_processor as cp
-import dorking_processor as dp
+import dorking_handler as dp
 import networking_processor as np
 from pagesearch_main import normal_search, sitemap_inspection_search
 from logs_processing import logging
@@ -19,6 +20,21 @@ try:
 except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
+
+def establishing_dork_db_connection(dorking_flag):
+    if dorking_flag == 'basic':
+        conn = sqlite3.connect('dorking//basic_dorking.db')
+        table = 'basic_dorks'
+    elif dorking_flag == 'iot':
+        conn = sqlite3.connect('dorking//iot_dorking.db')
+        table = 'iot_dorks'
+    elif dorking_flag == 'files':
+        conn = sqlite3.connect('dorking//files_dorking.db')
+        table = 'files_dorks'
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT dork_id, dork FROM {table}")
+    dorks = cursor.fetchall()
+    return conn, dorks
 
 class DataProcessing():
     def report_preprocessing(self, short_domain, report_file_type):
@@ -42,7 +58,7 @@ class DataProcessing():
         os.makedirs(report_folder, exist_ok=True)
         return casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, files_ctime, report_ctime
 
-    def data_gathering(self, short_domain, url, report_file_type, pagesearch_flag, keywords, keywords_flag):
+    def data_gathering(self, short_domain, url, report_file_type, pagesearch_flag, keywords, keywords_flag, dorking_flag):
         casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, ctime, report_ctime = self.report_preprocessing(short_domain, report_file_type)
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} STARTS HERE')
         print(Fore.GREEN + "Started scanning domain" + Style.RESET_ALL)
@@ -84,10 +100,10 @@ class DataProcessing():
         print(Fore.GREEN + 'Processing Shodan InternetDB search' + Style.RESET_ALL)
         ports, hostnames, cpes, tags, vulns = np.query_internetdb(ip, report_file_type)
         print(Fore.GREEN + 'Processing Google Dorking' + Style.RESET_ALL)
-        if report_file_type == 'pdf' or report_file_type == 'html':
-            dorking_status = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain))
-        elif report_file_type == 'xlsx':
-            dorking_status, dorking_results = dp.transfer_results_to_xlsx(dp.get_dorking_query(short_domain))
+        #if report_file_type == 'pdf' or report_file_type == 'html':
+            #dorking_status = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain))
+        #elif report_file_type == 'xlsx':
+            #dorking_status, dorking_results = dp.transfer_results_to_xlsx(dp.get_dorking_query(short_domain))
         common_socials = {key: social_medias.get(key, []) + sd_socials.get(key, []) for key in set(social_medias) | set(sd_socials)}
         for key in common_socials:
             common_socials[key] = list(set(common_socials[key]))
@@ -117,11 +133,29 @@ class DataProcessing():
                 ps_emails_return = ""
                 pass
 
+            if dorking_flag == 'none':
+                pass
+            elif dorking_flag == 'basic':
+                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+            elif dorking_flag == 'iot':
+                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+            elif dorking_flag == 'files':
+                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
                           robots_txt_result, sitemap_xml_result, sitemap_links_status,
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
-                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, ps_emails_return,
+                          hostnames, cpes, tags, vulns, common_socials, total_socials, ps_emails_return,
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
                           website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, keywords_messages_list]
 
@@ -148,11 +182,29 @@ class DataProcessing():
                 accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 0
                 pass
 
+            if dorking_flag == 'none':
+                pass
+            elif dorking_flag == 'basic':
+                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+            elif dorking_flag == 'iot':
+                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+            elif dorking_flag == 'files':
+                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
                           robots_txt_result, sitemap_xml_result, sitemap_links_status,
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
-                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, ps_emails_return,
+                          hostnames, cpes, tags, vulns, common_socials, total_socials, ps_emails_return,
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
                           website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, dorking_results]
 
@@ -179,11 +231,29 @@ class DataProcessing():
                 ps_emails_return = ""
                 pass
 
+            if dorking_flag == 'none':
+                pass
+            elif dorking_flag == 'basic':
+                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+            elif dorking_flag == 'iot':
+                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+            elif dorking_flag == 'files':
+                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
                           robots_txt_result, sitemap_xml_result, sitemap_links_status,
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
-                          hostnames, cpes, tags, vulns, dorking_status, common_socials, total_socials, ps_emails_return,
+                          hostnames, cpes, tags, vulns, common_socials, total_socials, ps_emails_return,
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
                           website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, keywords_messages_list]
 
