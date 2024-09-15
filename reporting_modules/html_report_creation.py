@@ -57,20 +57,20 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         cpes = data_array[27]
         tags = data_array[28]
         vulns = data_array[29]
-        dorking_status = data_array[30]
-        common_socials = data_array[31]
-        total_socials = data_array[32]
-        ps_emails_return = data_array[33]
-        accessible_subdomains = data_array[34]
-        emails_amount = data_array[35]
-        files_counter = data_array[36]
-        cookies_counter = data_array[37]
-        api_keys_counter = data_array[38]
-        website_elements_counter = data_array[39]
-        exposed_passwords_counter = data_array[40]
-        total_links_counter = data_array[41]
-        accessed_links_counter = data_array[42]
-        keywords_messages_list = data_array[43]
+        #dorking_status = data_array[30]
+        common_socials = data_array[30]
+        total_socials = data_array[31]
+        ps_emails_return = data_array[32]
+        accessible_subdomains = data_array[33]
+        emails_amount = data_array[34]
+        files_counter = data_array[35]
+        cookies_counter = data_array[36]
+        api_keys_counter = data_array[37]
+        website_elements_counter = data_array[38]
+        exposed_passwords_counter = data_array[39]
+        total_links_counter = data_array[40]
+        accessed_links_counter = data_array[41]
+        keywords_messages_list = data_array[42]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
@@ -113,7 +113,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                                             'tg_links': common_socials['Telegram'], 'tt_links': common_socials['TikTok'],
                                             'li_links': common_socials['LinkedIn'], 'vk_links': common_socials['VKontakte'],
                                             'yt_links': common_socials['YouTube'], 'wc_links': common_socials['WeChat'],
-                                            'ok_links': common_socials['Odnoklassniki'], 'robots_txt_result': robots_txt_result, 'sitemap_xml_result': sitemap_xml_result, 'dorking_status': dorking_status,
+                                            'ok_links': common_socials['Odnoklassniki'], 'robots_txt_result': robots_txt_result, 'sitemap_xml_result': sitemap_xml_result,
                                             'sitemap_links': sitemap_links_status, 'web_servers': web_servers, 'cms': cms, 'programming_languages': programming_languages, 'web_frameworks': web_frameworks, 'analytics': analytics,
                                             'javascript_frameworks': javascript_frameworks,
                                              'ctime': report_ctime, 'a_tsf': subdomains_amount, 'mx_records': mx_records, 'issuer': issuer, 'subject': subject, 'notBefore': notBefore, 'notAfter': notAfter,
@@ -132,7 +132,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                                             'tg_links': common_socials['Telegram'], 'tt_links': common_socials['TikTok'],
                                             'li_links': common_socials['LinkedIn'], 'vk_links': common_socials['VKontakte'],
                                             'yt_links': common_socials['YouTube'], 'wc_links': common_socials['WeChat'],
-                                            'ok_links': common_socials['Odnoklassniki'], 'robots_txt_result': robots_txt_result, 'sitemap_xml_result': sitemap_xml_result, 'dorking_status': dorking_status,
+                                            'ok_links': common_socials['Odnoklassniki'], 'robots_txt_result': robots_txt_result, 'sitemap_xml_result': sitemap_xml_result,
                                             'sitemap_links': sitemap_links_status, 'web_servers': web_servers, 'cms': cms, 'programming_languages': programming_languages, 'web_frameworks': web_frameworks, 'analytics': analytics,
                                             'javascript_frameworks': javascript_frameworks,
                                              'ctime': report_ctime, 'a_tsf': subdomains_amount, 'mx_records': mx_records, 'issuer': issuer, 'subject': subject, 'notBefore': notBefore, 'notAfter': notAfter,
@@ -153,7 +153,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                                             'tg_links': common_socials['Telegram'], 'tt_links': common_socials['TikTok'],
                                             'li_links': common_socials['LinkedIn'], 'vk_links': common_socials['VKontakte'],
                                             'yt_links': common_socials['YouTube'], 'wc_links': common_socials['WeChat'],
-                                            'ok_links': common_socials['Odnoklassniki'], 'robots_txt_result': robots_txt_result, 'sitemap_xml_result': sitemap_xml_result, 'dorking_status': dorking_status,
+                                            'ok_links': common_socials['Odnoklassniki'], 'robots_txt_result': robots_txt_result, 'sitemap_xml_result': sitemap_xml_result,
                                             'sitemap_links': sitemap_links_status, 'web_servers': web_servers, 'cms': cms, 'programming_languages': programming_languages, 'web_frameworks': web_frameworks, 'analytics': analytics,
                                             'javascript_frameworks': javascript_frameworks,
                                              'ctime': report_ctime, 'a_tsf': subdomains_amount, 'mx_records': mx_records, 'issuer': issuer, 'subject': subject, 'notBefore': notBefore, 'notAfter': notAfter,
@@ -165,9 +165,9 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         if generate_report(context, html_report_name, template_path):
             print(Fore.GREEN + "HTML report for {} case was created at {}".format(''.join(short_domain), report_ctime) + Style.RESET_ALL)
             print(Fore.GREEN + f"Scan elapsed time: {end}" + Style.RESET_ALL)
-        robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
+        robots_content, sitemap_content, sitemap_links_content = fp.get_db_columns(report_folder) #, dorking_content was removed here
         pdf_blob = fp.get_blob(html_report_name)
-        db.insert_blob('HTML', pdf_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content)
+        db.insert_blob('HTML', pdf_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content) #, dorking_content was removed here
     except Exception as e:
         print(Fore.RED + 'Unable to create HTML report. See journal for details')
         logging.error(f'HTML REPORT CREATION: ERROR. REASON: {e}')
