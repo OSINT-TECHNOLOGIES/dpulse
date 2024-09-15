@@ -46,20 +46,21 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         cpes = data_array[27]
         tags = data_array[28]
         vulns = data_array[29]
-        dorking_status = data_array[30]
-        common_socials = data_array[31]
-        total_socials = data_array[32]
-        ps_emails_return = data_array[33]
-        accessible_subdomains = data_array[34]
-        emails_amount = data_array[35]
-        files_counter = data_array[36]
-        cookies_counter = data_array[37]
-        api_keys_counter = data_array[38]
-        website_elements_counter = data_array[39]
-        exposed_passwords_counter = data_array[40]
-        total_links_counter = data_array[41]
-        accessed_links_counter = data_array[42]
-        dorking_results = data_array[43]
+        #dorking_status = data_array[30]
+        common_socials = data_array[30]
+        total_socials = data_array[31]
+        ps_emails_return = data_array[32]
+        accessible_subdomains = data_array[33]
+        emails_amount = data_array[34]
+        files_counter = data_array[35]
+        cookies_counter = data_array[36]
+        api_keys_counter = data_array[37]
+        website_elements_counter = data_array[38]
+        exposed_passwords_counter = data_array[39]
+        total_links_counter = data_array[40]
+        accessed_links_counter = data_array[41]
+        #keywords_messages_list = data_array[42]
+        #dorking_results = data_array[43]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
@@ -149,7 +150,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['B3'] = robots_txt_result
         ws['B4'] = sitemap_xml_result
         ws['B5'] = sitemap_links_status
-        ws['B6'] = dorking_status
+        #ws['B6'] = dorking_status
         ws['B7'] = pagesearch_ui_mark
         ws['B8'] = report_ctime
 
@@ -313,8 +314,8 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
 
         ws = wb['DORKING RESULTS']
         ws.column_dimensions['A'].width = 80
-        for i in range(len(dorking_results)):
-            ws[f"A{i + 1}"] = str(dorking_results[i])
+        #for i in range(len(dorking_results)):
+            #ws[f"A{i + 1}"] = str(dorking_results[i])
 
         report_file = report_folder + "//" + casename
         wb.save(report_file)
