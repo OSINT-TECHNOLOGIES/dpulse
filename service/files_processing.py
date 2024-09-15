@@ -31,10 +31,10 @@ def get_db_columns(report_folder):
     except:
         sitemap_links_content = 0
         pass
-    try:
-        with open(report_folder + "//" + '04-dorking_results.txt', 'r') as dorking_file:
-            dorking_content = dorking_file.read()
-    except:
-        dorking_content = 0
-        pass
-    return robots_content, sitemap_content, sitemap_links_content, dorking_content
+    #try:
+        #with open(report_folder + "//" + '04-dorking_results.txt', 'r') as dorking_file:
+            #dorking_content = dorking_file.read()
+    #except:
+        #dorking_content = 0
+        #pass
+    return robots_content, sitemap_content, sitemap_links_content
