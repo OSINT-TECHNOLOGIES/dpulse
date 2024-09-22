@@ -23,18 +23,15 @@ except ImportError as e:
 
 def establishing_dork_db_connection(dorking_flag):
     if dorking_flag == 'basic':
-        conn = sqlite3.connect('dorking//basic_dorking.db')
+        dorking_db_path = 'dorking//basic_dorking.db'
         table = 'basic_dorks'
     elif dorking_flag == 'iot':
-        conn = sqlite3.connect('dorking//iot_dorking.db')
+        dorking_db_path = 'dorking//iot_dorking.db'
         table = 'iot_dorks'
     elif dorking_flag == 'files':
-        conn = sqlite3.connect('dorking//files_dorking.db')
+        dorking_db_path = 'dorking//files_dorking.db'
         table = 'files_dorks'
-    cursor = conn.cursor()
-    cursor.execute(f"SELECT dork_id, dork FROM {table}")
-    dorks = cursor.fetchall()
-    return conn, dorks
+    return dorking_db_path, table
 
 class DataProcessing():
     def report_preprocessing(self, short_domain, report_file_type):
@@ -136,19 +133,19 @@ class DataProcessing():
             if dorking_flag == 'none':
                 pass
             elif dorking_flag == 'basic':
-                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
             elif dorking_flag == 'iot':
-                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
             elif dorking_flag == 'files':
-                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
 
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
@@ -185,19 +182,19 @@ class DataProcessing():
             if dorking_flag == 'none':
                 pass
             elif dorking_flag == 'basic':
-                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
             elif dorking_flag == 'iot':
-                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
             elif dorking_flag == 'files':
-                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
 
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
@@ -206,7 +203,7 @@ class DataProcessing():
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
                           hostnames, cpes, tags, vulns, common_socials, total_socials, ps_emails_return,
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
-                          website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, dorking_results]
+                          website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter]
 
         elif report_file_type == 'html':
             if pagesearch_flag.lower() == 'y':
@@ -234,19 +231,19 @@ class DataProcessing():
             if dorking_flag == 'none':
                 pass
             elif dorking_flag == 'basic':
-                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
             elif dorking_flag == 'iot':
-                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
             elif dorking_flag == 'files':
-                conn, dorks = establishing_dork_db_connection(dorking_flag.lower())
+                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.composing_dorking(dorks, conn, short_domain, report_folder)
+                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
 
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
