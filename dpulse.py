@@ -8,23 +8,7 @@ import cli_init
 from config_processing import create_config, check_cfg_presence, read_config
 import db_processing as db
 import os
-
-def dorks_files_check():
-    dorks_path = 'dorking//'
-    dorks_files = ['iot_dorking.db', 'files_dorking.db', 'basic_dorking.db']
-    dorks_files_counter = 0
-    for dork_files in dorks_files:
-        files_path = os.path.join(dorks_path, dork_files)
-        if os.path.isfile(files_path):
-            dorks_files_counter += 1
-        else:
-            pass
-
-    if dorks_files_counter == 3:
-        print(Fore.GREEN + "Dorks databases presence: OK" + Style.RESET_ALL)
-    else:
-        print(Fore.RED + "Dorks databases presence: NOT OK\nSome files may not be in folder. Please compare dorking folder with the same folder on the official repository\n" + Style.RESET_ALL)
-        sys.exit()
+from dorking_handler import dorks_files_check
 
 db.db_creation('report_storage.db')
 dorks_files_check()
