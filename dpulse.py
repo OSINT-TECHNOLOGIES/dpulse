@@ -3,42 +3,11 @@ sys.path.append('datagather_modules')
 sys.path.append('service')
 sys.path.append('reporting_modules')
 sys.path.append('dorking')
-
-import pdf_report_creation as pdf_rc
+from colorama import Fore, Style
 import cli_init
+from config_processing import create_config, check_cfg_presence, read_config
 import db_processing as db
-import xlsx_report_creation as xlsx_rc
-import html_report_creation as html_rc
-from data_assembler import DataProcessing
-
-try:
-    import time
-    from colorama import Fore, Style, Back
-    import webbrowser
-    import sqlite3
-    import os
-    import itertools
-    import threading
-    from time import sleep, time
-except ImportError as e:
-    print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
-    sys.exit()
-
-cli = cli_init.Menu()
-cli.welcome_menu()
-data_processing = DataProcessing()
-
-def time_processing(end):
-    if end < 60:
-        endtime = round(end)
-        endtime_string = f'approximately {endtime} seconds'
-    else:
-        time_minutes = round(end / 60)
-        if time_minutes == 1:
-            endtime_string = f'approximately {time_minutes} minute'
-        else:
-            endtime_string = f'approximately {time_minutes} minutes'
-    return endtime_string
+import os
 
 def dorks_files_check():
     dorks_path = 'dorking//'
@@ -57,6 +26,51 @@ def dorks_files_check():
         print(Fore.RED + "Dorks databases presence: NOT OK\nSome files may not be in folder. Please compare dorking folder with the same folder on the official repository\n" + Style.RESET_ALL)
         sys.exit()
 
+db.db_creation('report_storage.db')
+dorks_files_check()
+cfg_presence = check_cfg_presence()
+if cfg_presence is True:
+    print(Fore.GREEN + "Global config file presence: OK" + Style.RESET_ALL)
+else:
+    print(Fore.RED + "Global config file presence: NOT OK")
+    create_config()
+    print(Fore.GREEN + "Successfully generated global config file")
+
+
+import pdf_report_creation as pdf_rc
+import xlsx_report_creation as xlsx_rc
+import html_report_creation as html_rc
+from data_assembler import DataProcessing
+try:
+    import time
+    from colorama import Fore, Style, Back
+    import webbrowser
+    import sqlite3
+    import itertools
+    import threading
+    from time import sleep, time
+except ImportError as e:
+    print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
+    sys.exit()
+
+data_processing = DataProcessing()
+config_values = read_config()
+
+cli = cli_init.Menu()
+cli.welcome_menu()
+
+def time_processing(end):
+    if end < 60:
+        endtime = round(end)
+        endtime_string = f'approximately {endtime} seconds'
+    else:
+        time_minutes = round(end / 60)
+        if time_minutes == 1:
+            endtime_string = f'approximately {time_minutes} minute'
+        else:
+            endtime_string = f'approximately {time_minutes} minutes'
+    return endtime_string
+
 class ProgressBar(threading.Thread):
     def __init__(self):
         super(ProgressBar, self).__init__()
@@ -69,8 +83,6 @@ class ProgressBar(threading.Thread):
             print(Fore.LIGHTMAGENTA_EX + Back.WHITE + char + Style.RESET_ALL, end='\r')
             sleep(0.1)
 
-db.db_creation('report_storage.db')
-dorks_files_check()
 def run():
     while True:
         try:
@@ -208,7 +220,7 @@ def run():
             elif choice == "2":
                 print(Fore.RED + "Sorry, but this menu is deprecated since v1.1.1. It will be back soon")
 
-            elif choice == "3":
+            elif choice == "4":
                 cli.print_help_menu()
                 choice_help = input(Fore.YELLOW + "Enter your choice >> ")
                 if choice_help == '1':
@@ -226,7 +238,7 @@ def run():
                 else:
                     print(Fore.RED + "\nInvalid menu item. Please select between existing menu items")
 
-            elif choice == "4":
+            elif choice == "3":
                 cli.print_db_menu()
                 print('\n')
                 db.db_creation('report_storage.db')
