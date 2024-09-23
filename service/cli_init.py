@@ -16,7 +16,8 @@ class Menu:
     def welcome_menu(self):
         config_values = read_config()
         preview_style = (config_values['preview_color']).lower()
-        fig = Figlet(font='slant')
+        wm_font = (config_values['wm_font']).lower()
+        fig = Figlet(font=wm_font)
         print('\n')
         self.console.print(fig.renderText('DPULSE'), style=preview_style)
         print(Fore.MAGENTA + Style.BRIGHT + 'DPULSE-CLI // 1.1.1 (rolling) // OSINT-TECHNOLOGIES\n' + Style.RESET_ALL)
