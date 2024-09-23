@@ -3,6 +3,7 @@ sys.path.append('datagather_modules')
 sys.path.append('service')
 sys.path.append('reporting_modules')
 sys.path.append('dorking')
+
 from colorama import Fore, Style
 import cli_init
 from config_processing import create_config, check_cfg_presence, read_config
@@ -25,7 +26,10 @@ import pdf_report_creation as pdf_rc
 import xlsx_report_creation as xlsx_rc
 import html_report_creation as html_rc
 from data_assembler import DataProcessing
+
 try:
+    import socket
+    import re
     import time
     from colorama import Fore, Style, Back
     import webbrowser
@@ -55,6 +59,13 @@ def time_processing(end):
             endtime_string = f'approximately {time_minutes} minutes'
     return endtime_string
 
+def domain_precheck(domain):
+    try:
+        socket.create_connection((domain, 80), timeout=5)
+        return True
+    except OSError:
+        return False
+
 class ProgressBar(threading.Thread):
     def __init__(self):
         super(ProgressBar, self).__init__()
@@ -71,6 +82,7 @@ def run():
     while True:
         try:
             cli.print_main_menu()
+            domain_patter = r'^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$'
             choice = input(Fore.YELLOW + "Enter your choice >> ")
             if choice == "1":
                 while True:
@@ -81,8 +93,15 @@ def run():
                     else:
                         if not short_domain:
                             print(Fore.RED + "\nEmpty domain names are not supported")
+                        elif re.match(domain_patter, short_domain) is None:
+                            print(Fore.RED + '\nYour string does not match domain pattern')
                         else:
                             url = "http://" + short_domain + "/"
+                            if domain_precheck(short_domain):
+                                print(Fore.GREEN + 'Entered domain is accessible. Continuation' + Style.RESET_ALL)
+                            else:
+                                print(Fore.RED + "Entered domain is not accessible. Scan is impossible" + Style.RESET_ALL)
+                                break
                             case_comment = input(Fore.YELLOW + "Enter case comment >> ")
                             report_filetype = input(Fore.YELLOW + "Enter report file extension [xlsx/pdf/html] >> ")
                             if not report_filetype:
