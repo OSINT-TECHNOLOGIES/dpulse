@@ -47,22 +47,31 @@ def solid_google_dorking(query, pages=100):
         print(Fore.RED + "Error while establishing connection with domain. No results will appear. Reason: {}".format(e) + Style.RESET_ALL)
         #return "Google Dorking results file was not created"
 
+
 def save_results_to_txt(folderpath, queries, pages=10):
     txt_writepath = folderpath + '//04-dorking_results.txt'
+    total_results = []
+
     with open(txt_writepath, 'w') as f:
+        print(Fore.GREEN + "Started Google Dorking. Please, be patient, it may take some time")
         for i, query in enumerate(queries, start=1):
             f.write(f"QUERY #{i}: {query}\n")
             results = solid_google_dorking(query, pages)
-            print(Fore.GREEN + f"Dorking with {query} dork")
             if not results:
                 f.write("=> NO RESULT FOUND\n")
-                print(Fore.RED + f"No results were found for {query} dork")
+                total_results.append((query, 0))
             else:
+                total_results.append((query, len(results)))
                 for result in results:
                     f.write(f"=> {result}\n")
             f.write("\n")
-    print(Fore.GREEN + "Google Dorking results successfully saved in TXT file" + Style.RESET_ALL)
-    #return "File with gathered links was successfully created"
+
+    print(Fore.GREEN + "Google Dorking end. Results successfully saved in TXT file\n" + Style.RESET_ALL)
+    print(Fore.GREEN + "During Google Dorking:")
+    for query, count in total_results:
+        if count == 0:
+            count = 'no results'
+        print(Fore.GREEN + f"[+] Found results for " + Fore.LIGHTCYAN_EX + f' {query}' + Fore.GREEN + ' query: ' + Fore.LIGHTCYAN_EX + f'{count}' + Style.RESET_ALL)
 
 def transfer_results_to_xlsx(queries, pages=10):
     dorking_return_list = []
