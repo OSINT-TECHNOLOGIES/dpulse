@@ -7,6 +7,7 @@ try:
     import re
     import requests
     import sqlite3
+    import os
 except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
@@ -75,3 +76,20 @@ def transfer_results_to_xlsx(queries, pages=10):
                 dorking_return_list.append(f"{result}\n")
         dorking_return_list.append("\n")
     #return "File with gathered links was successfully created", dorking_return_list
+
+def dorks_files_check():
+    dorks_path = 'dorking//'
+    dorks_files = ['iot_dorking.db', 'files_dorking.db', 'basic_dorking.db']
+    dorks_files_counter = 0
+    for dork_files in dorks_files:
+        files_path = os.path.join(dorks_path, dork_files)
+        if os.path.isfile(files_path):
+            dorks_files_counter += 1
+        else:
+            pass
+
+    if dorks_files_counter == 3:
+        print(Fore.GREEN + "Dorks databases presence: OK" + Style.RESET_ALL)
+    else:
+        print(Fore.RED + "Dorks databases presence: NOT OK\nSome files may not be in folder. Please compare dorking folder with the same folder on the official repository\n" + Style.RESET_ALL)
+        sys.exit()
