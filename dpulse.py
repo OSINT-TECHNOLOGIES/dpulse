@@ -93,7 +93,6 @@ def run():
                             else:
                                 print(Fore.GREEN + "[!] SI mode suppose you to have sitemap_links.txt file in report folder [!]\n[!] It'll visit every link from this file [!]")
                                 pagesearch_flag = input(Fore.YELLOW + "Would you like to use PageSearch function? [Y/N/SI] >> ")
-                                dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/None] >> ")
                                 if pagesearch_flag.lower() == 'y':
                                     keywords_input = input(Fore.YELLOW + "Enter keywords (separate by comma) to search in files during PageSearch process (or write None if you don't need it) >> ")
                                     if keywords_input.lower() != "none":
@@ -112,6 +111,7 @@ def run():
                                     keywords_list = None
                                     keywords_flag = 0
                                 if report_filetype.lower() == 'pdf' or report_filetype.lower() == 'xlsx' or report_filetype.lower() == 'html':
+                                    dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/None] >> ")
                                     if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n' or pagesearch_flag.lower() == 'si':
                                         if pagesearch_flag.lower() == "n":
                                             pagesearch_ui_mark = 'No'
