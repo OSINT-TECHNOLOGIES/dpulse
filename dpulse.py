@@ -4,7 +4,7 @@ sys.path.append('service')
 sys.path.append('reporting_modules')
 sys.path.append('dorking')
 
-from colorama import Fore, Style
+from colorama import Fore, Style, Back
 import cli_init
 from config_processing import create_config, check_cfg_presence, read_config
 import db_processing as db
@@ -32,7 +32,6 @@ try:
     import socket
     import re
     import time
-    from colorama import Fore, Style, Back
     import webbrowser
     import sqlite3
     import itertools
