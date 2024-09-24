@@ -71,7 +71,7 @@ def save_results_to_txt(folderpath, queries, pages=10):
     for query, count in total_results:
         if count == 0:
             count = 'no results'
-        print(Fore.GREEN + f"[+] Found results for " + Fore.LIGHTCYAN_EX + f' {query}' + Fore.GREEN + ' query: ' + Fore.LIGHTCYAN_EX + f'{count}' + Style.RESET_ALL)
+        print(Fore.GREEN + f"[+] Found results for " + Fore.LIGHTCYAN_EX + f'{query}' + Fore.GREEN + ' query: ' + Fore.LIGHTCYAN_EX + f'{count}' + Style.RESET_ALL)
 
 def transfer_results_to_xlsx(queries, pages=10):
     dorking_return_list = []
