@@ -205,7 +205,7 @@ def run():
             elif choice == "2":
                 print(Fore.RED + "Sorry, but this menu is deprecated since v1.1.1. It will be back soon")
 
-            elif choice == "4":
+            elif choice == "5":
                 cli.print_help_menu()
                 choice_help = input(Fore.YELLOW + "Enter your choice >> ")
                 if choice_help == '1':
@@ -248,7 +248,7 @@ def run():
                 elif choice_db == "3":
                     print(Fore.GREEN + "\nDatabase connection is successfully closed")
                     continue
-            elif choice == "5":
+            elif choice == "6":
                 print(Fore.RED + "Exiting the program." + Style.RESET_ALL)
                 break
             else:
