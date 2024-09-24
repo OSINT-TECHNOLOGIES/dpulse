@@ -29,8 +29,9 @@ class Menu:
         print(Fore.CYAN + "1. Determine target and start scan")
         print(Fore.CYAN + "2. Settings")
         print(Fore.CYAN + "3. Report storage DB management")
-        print(Fore.CYAN + "4. Help")
-        print(Fore.LIGHTRED_EX + "5. Exit DPULSE" + Style.RESET_ALL + '\n')
+        print(Fore.CYAN + "4. Show API module status (not active)")
+        print(Fore.CYAN + "5. Help")
+        print(Fore.LIGHTRED_EX + "6. Exit DPULSE" + Style.RESET_ALL + '\n')
 
     def print_settings_menu(self):
         print('\n')
@@ -38,7 +39,8 @@ class Menu:
         print(Fore.CYAN + "1. Print current config file")
         print(Fore.CYAN + "2. Edit config file")
         print(Fore.CYAN + "3. Generate custom Dorking DB")
-        print(Fore.LIGHTRED_EX + "4. Return to main menu" + Style.RESET_ALL + '\n')
+        print(Fore.CYAN + "4. Add API key for existing API")
+        print(Fore.LIGHTRED_EX + "5. Return to main menu" + Style.RESET_ALL + '\n')
 
     def print_help_menu(self):
         print(Fore.MAGENTA + Back.WHITE + '[HELP MENU]' + Style.RESET_ALL)
