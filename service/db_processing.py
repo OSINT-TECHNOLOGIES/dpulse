@@ -78,6 +78,9 @@ def db_report_recreate(extracted_folder_name, id_to_extract):
             elif str(report_file_extension) == 'XLSX':
                 with open(extracted_folder_name + '//report_extracted.xlsx', 'wb') as file:
                     file.write(blob_data)
+            elif str(report_file_extension) == 'HTML':
+                with open(extracted_folder_name + '//report_extracted.html', 'wb') as file:
+                    file.write(blob_data)
         cursor.execute("SELECT dorks_results FROM report_storage WHERE id=?", (id_to_extract,))
         dorks_results = (cursor.fetchone())[0]
         with open(extracted_folder_name + '//dorks_extracted.txt', 'w') as file:
