@@ -78,6 +78,7 @@ def run():
                             print(Fore.RED + '\nYour string does not match domain pattern')
                         else:
                             url = "http://" + short_domain + "/"
+                            print(Fore.GREEN + 'Pinging domain...' + Style.RESET_ALL)
                             if domain_precheck(short_domain):
                                 print(Fore.GREEN + 'Entered domain is accessible. Continuation' + Style.RESET_ALL)
                             else:
@@ -111,6 +112,14 @@ def run():
                                     keywords_flag = 0
                                 if report_filetype.lower() == 'pdf' or report_filetype.lower() == 'xlsx' or report_filetype.lower() == 'html':
                                     dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/None] >> ")
+                                    #api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N] >> ")
+                                    #if api_flag.lower() == 'y':
+                                        #print api db content
+                                        #write ID which you want to use using comma (ex: 1,3,4)
+                                    #elif api_flag.lower() == 'n':
+                                        #pass
+                                    #else:
+                                        #print invalid mode
                                     if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n' or pagesearch_flag.lower() == 'si':
                                         if pagesearch_flag.lower() == "n":
                                             pagesearch_ui_mark = 'No'
