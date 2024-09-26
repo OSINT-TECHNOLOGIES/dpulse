@@ -96,11 +96,6 @@ class DataProcessing():
         web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks = np.get_technologies(url)
         print(Fore.GREEN + 'Processing Shodan InternetDB search' + Style.RESET_ALL)
         ports, hostnames, cpes, tags, vulns = np.query_internetdb(ip, report_file_type)
-        print(Fore.GREEN + 'Processing Google Dorking' + Style.RESET_ALL)
-        #if report_file_type == 'pdf' or report_file_type == 'html':
-            #dorking_status = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain))
-        #elif report_file_type == 'xlsx':
-            #dorking_status, dorking_results = dp.transfer_results_to_xlsx(dp.get_dorking_query(short_domain))
         common_socials = {key: social_medias.get(key, []) + sd_socials.get(key, []) for key in set(social_medias) | set(sd_socials)}
         for key in common_socials:
             common_socials[key] = list(set(common_socials[key]))
@@ -132,20 +127,22 @@ class DataProcessing():
 
             if dorking_flag == 'none':
                 pass
+                dorking_status = 'Google Dorking mode was not selected for this scan'
+                dorking_file_path = 'Google Dorking mode was not selected for this scan'
             elif dorking_flag == 'basic':
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
+                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
             elif dorking_flag == 'iot':
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
+                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
             elif dorking_flag == 'files':
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
+                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
 
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
@@ -154,7 +151,7 @@ class DataProcessing():
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
                           hostnames, cpes, tags, vulns, common_socials, total_socials, ps_emails_return,
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
-                          website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, keywords_messages_list]
+                          website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, keywords_messages_list, dorking_status, dorking_file_path]
 
         elif report_file_type == 'xlsx':
             if pagesearch_flag.lower() == 'y':
@@ -181,20 +178,22 @@ class DataProcessing():
 
             if dorking_flag == 'none':
                 pass
+                dorking_status = 'Google Dorking mode was not selected for this scan'
+                dorking_file_path = 'Google Dorking mode was not selected for this scan'
             elif dorking_flag == 'basic':
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
+                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
             elif dorking_flag == 'iot':
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
+                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
             elif dorking_flag == 'files':
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
+                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
 
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
@@ -203,7 +202,7 @@ class DataProcessing():
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
                           hostnames, cpes, tags, vulns, common_socials, total_socials, ps_emails_return,
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
-                          website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter]
+                          website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, dorking_status, dorking_file_path]
 
         elif report_file_type == 'html':
             if pagesearch_flag.lower() == 'y':
@@ -230,20 +229,22 @@ class DataProcessing():
 
             if dorking_flag == 'none':
                 pass
+                dorking_status = 'Google Dorking mode was not selected for this scan'
+                dorking_file_path = 'Google Dorking mode was not selected for this scan'
             elif dorking_flag == 'basic':
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
+                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
             elif dorking_flag == 'iot':
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
+                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
             elif dorking_flag == 'files':
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
+                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
 
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
@@ -252,7 +253,7 @@ class DataProcessing():
                           web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
                           hostnames, cpes, tags, vulns, common_socials, total_socials, ps_emails_return,
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
-                          website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, keywords_messages_list]
+                          website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, keywords_messages_list, dorking_status, dorking_file_path]
 
         report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime]
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} ENDS HERE')
