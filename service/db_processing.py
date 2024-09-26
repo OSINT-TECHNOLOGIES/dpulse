@@ -98,16 +98,16 @@ def db_report_recreate(extracted_folder_name, id_to_extract):
     except Exception as e:
         print(Fore.RED + "Error appeared when recreating report from database. Reason: {}".format(e))
 
-def insert_blob(report_file_type, pdf_blob, db_casename, creation_date, case_comment, robots, sitemap_xml, sitemap_links): #, dorking_results was removed here
+def insert_blob(report_file_type, pdf_blob, db_casename, creation_date, case_comment, robots, sitemap_xml, sitemap_links, dorking_results): #, dorking_results was removed here
     try:
         sqlite_connection = sqlite3.connect('report_storage.db')
         cursor = sqlite_connection.cursor()
         print(Fore.GREEN + "Connected to report storage database")
         sqlite_insert_blob_query = """INSERT INTO report_storage
-                                  (report_file_extension, report_content, creation_date, target, comment, robots_text, sitemap_text, sitemap_file) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
+                                  (report_file_extension, report_content, creation_date, target, comment, sitemap_file, robots_text, sitemap_text, dorks_results) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"""
                                     #dorks_results was removed between comment and robots_text
 
-        data_tuple = (report_file_type, pdf_blob, creation_date, db_casename, case_comment, robots, sitemap_links, sitemap_xml) #dorking_results was removed between case_comments and robots
+        data_tuple = (report_file_type, pdf_blob, creation_date, db_casename, case_comment, sitemap_xml, robots, sitemap_links, dorking_results)
         cursor.execute(sqlite_insert_blob_query, data_tuple)
         sqlite_connection.commit()
         print(Fore.GREEN + "Scanning results are successfully saved in report storage database")
