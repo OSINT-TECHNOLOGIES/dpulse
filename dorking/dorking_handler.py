@@ -49,29 +49,34 @@ def solid_google_dorking(query, pages=100):
 
 
 def save_results_to_txt(folderpath, queries, pages=10):
-    txt_writepath = folderpath + '//04-dorking_results.txt'
-    total_results = []
+    try:
+        txt_writepath = folderpath + '//04-dorking_results.txt'
+        total_results = []
 
-    with open(txt_writepath, 'w') as f:
-        print(Fore.GREEN + "Started Google Dorking. Please, be patient, it may take some time")
-        for i, query in enumerate(queries, start=1):
-            f.write(f"QUERY #{i}: {query}\n")
-            results = solid_google_dorking(query, pages)
-            if not results:
-                f.write("=> NO RESULT FOUND\n")
-                total_results.append((query, 0))
-            else:
-                total_results.append((query, len(results)))
-                for result in results:
-                    f.write(f"=> {result}\n")
-            f.write("\n")
+        with open(txt_writepath, 'w') as f:
+            print(Fore.GREEN + "Started Google Dorking. Please, be patient, it may take some time")
+            for i, query in enumerate(queries, start=1):
+                f.write(f"QUERY #{i}: {query}\n")
+                results = solid_google_dorking(query, pages)
+                if not results:
+                    f.write("=> NO RESULT FOUND\n")
+                    total_results.append((query, 0))
+                else:
+                    total_results.append((query, len(results)))
+                    for result in results:
+                        f.write(f"=> {result}\n")
+                f.write("\n")
 
-    print(Fore.GREEN + "Google Dorking end. Results successfully saved in TXT file\n" + Style.RESET_ALL)
-    print(Fore.GREEN + "During Google Dorking:")
-    for query, count in total_results:
-        if count == 0:
-            count = 'no results'
-        print(Fore.GREEN + f"[+] Found results for " + Fore.LIGHTCYAN_EX + f'{query}' + Fore.GREEN + ' query: ' + Fore.LIGHTCYAN_EX + f'{count}' + Style.RESET_ALL)
+        print(Fore.GREEN + "Google Dorking end. Results successfully saved in TXT file\n" + Style.RESET_ALL)
+        print(Fore.GREEN + "During Google Dorking:")
+        for query, count in total_results:
+            if count == 0:
+                count = 'no results'
+            print(Fore.GREEN + f"[+] Found results for " + Fore.LIGHTCYAN_EX + f'{query}' + Fore.GREEN + ' query: ' + Fore.LIGHTCYAN_EX + f'{count}' + Style.RESET_ALL)
+        return 'Successfully dorked domain', txt_writepath
+    except Exception:
+        print(Fore.RED + 'Error appeared while trying to dork target. See journal for details')
+        return 'Domain dorking failed. See journal for details'
 
 def transfer_results_to_xlsx(queries, pages=10):
     dorking_return_list = []
