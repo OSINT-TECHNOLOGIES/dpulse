@@ -17,24 +17,24 @@ def get_db_columns(report_folder):
         with open(report_folder + "//" + '01-robots.txt', 'r') as robots_file:
             robots_content = robots_file.read()
     except:
-        robots_content = 0
+        robots_content = 'robots.txt: empty'
         pass
     try:
         with open(report_folder + "//" + '02-sitemap.txt', 'r') as sitemap_xml:
             sitemap_content = sitemap_xml.read()
     except:
-        sitemap_content = 0
+        sitemap_content = 'sitemap.xml: empty'
         pass
     try:
         with open(report_folder + "//" + '03-sitemap_links.txt', 'r') as sitemap_links:
             sitemap_links_content = sitemap_links.read()
     except:
-        sitemap_links_content = 0
+        sitemap_links_content = 'Sitemap links: empty'
         pass
-    #try:
-        #with open(report_folder + "//" + '04-dorking_results.txt', 'r') as dorking_file:
-            #dorking_content = dorking_file.read()
-    #except:
-        #dorking_content = 0
-        #pass
-    return robots_content, sitemap_content, sitemap_links_content
+    try:
+        with open(report_folder + "//" + '04-dorking_results.txt', 'r') as dorking_file:
+            dorking_content = dorking_file.read()
+    except:
+        dorking_content = 'Dorking content: empty'
+        pass
+    return robots_content, sitemap_content, sitemap_links_content, dorking_content
