@@ -52,9 +52,10 @@ def save_results_to_txt(folderpath, queries, pages=10):
     try:
         txt_writepath = folderpath + '//04-dorking_results.txt'
         total_results = []
-
+        total_dorks_amount = len(queries)
         with open(txt_writepath, 'w') as f:
             print(Fore.GREEN + "Started Google Dorking. Please, be patient, it may take some time")
+            dorked_query_counter = 0
             for i, query in enumerate(queries, start=1):
                 f.write(f"QUERY #{i}: {query}\n")
                 results = solid_google_dorking(query, pages)
@@ -66,6 +67,9 @@ def save_results_to_txt(folderpath, queries, pages=10):
                     for result in results:
                         f.write(f"=> {result}\n")
                 f.write("\n")
+                dorked_query_counter += 1
+                print(Fore.GREEN + f"  Dorking with " + Style.RESET_ALL + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{dorked_query_counter}/{total_dorks_amount}" + Style.RESET_ALL + Fore.GREEN + " dork" + Style.RESET_ALL, end="\r")
+
 
         print(Fore.GREEN + "Google Dorking end. Results successfully saved in TXT file\n" + Style.RESET_ALL)
         print(Fore.GREEN + "During Google Dorking:")
