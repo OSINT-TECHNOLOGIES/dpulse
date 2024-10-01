@@ -30,7 +30,6 @@ def get_columns_amount(dorking_db_path, table):
     conn.close()
     return row_count
 
-
 def solid_google_dorking(query, pages=100):
     try:
         browser = mechanicalsoup.StatefulBrowser()
@@ -54,8 +53,6 @@ def solid_google_dorking(query, pages=100):
         return result_query
     except requests.exceptions.ConnectionError as e:
         print(Fore.RED + "Error while establishing connection with domain. No results will appear. Reason: {}".format(e) + Style.RESET_ALL)
-        #return "Google Dorking results file was not created"
-
 
 def save_results_to_txt(folderpath, table, queries, pages=10):
     try:
@@ -87,7 +84,7 @@ def save_results_to_txt(folderpath, table, queries, pages=10):
         return f'Successfully dorked domain with {table.upper()} dorks table', txt_writepath
     except Exception:
         print(Fore.RED + 'Error appeared while trying to dork target. See journal for details')
-        return 'Domain dorking failed. See journal for details'
+        return 'Domain dorking failed. See journal for details', txt_writepath
 
 def transfer_results_to_xlsx(queries, pages=10):
     dorking_return_list = []
@@ -112,7 +109,6 @@ def dorks_files_check():
             dorks_files_counter += 1
         else:
             pass
-
     if dorks_files_counter == 3:
         print(Fore.GREEN + "Dorks databases presence: OK" + Style.RESET_ALL)
     else:
