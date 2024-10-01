@@ -22,6 +22,15 @@ def get_dorking_query(short_domain, dorking_db_path, table):
     conn.close()
     return search_query
 
+def get_columns_amount(dorking_db_path, table):
+    conn = sqlite3.connect(dorking_db_path)
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT COUNT(*) FROM {table}")
+    row_count = cursor.fetchone()[0]
+    conn.close()
+    return row_count
+
+
 def solid_google_dorking(query, pages=100):
     try:
         browser = mechanicalsoup.StatefulBrowser()
