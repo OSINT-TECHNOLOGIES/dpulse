@@ -1,4 +1,5 @@
 import sys
+from config_processing import read_config
 
 try:
     from colorama import Fore, Back, Style
@@ -13,27 +14,33 @@ class Menu:
         self.console = Console()
 
     def welcome_menu(self):
-        fig = Figlet(font='slant')
+        config_values = read_config()
+        preview_style = (config_values['preview_color']).lower()
+        wm_font = (config_values['wm_font']).lower()
+        fig = Figlet(font=wm_font)
         print('\n')
-        self.console.print(fig.renderText('DPULSE'), style="red")
-        print(Fore.MAGENTA + Style.BRIGHT + 'DPULSE-CLI // 1.1 (stable) // OSINT-TECHNOLOGIES\n' + Style.RESET_ALL)
-        print(Fore.MAGENTA + Style.BRIGHT + 'Visit our pages:\nhttps://github.com/OSINT-TECHNOLOGIES\nhttps://pypi.org/project/dpulse/' + Style.RESET_ALL + '\n')
+        self.console.print(fig.renderText('DPULSE'), style=preview_style)
+        print(Fore.MAGENTA + Style.BRIGHT + 'DPULSE-CLI // 1.1.1 (rolling) // OSINT-TECHNOLOGIES\n' + Style.RESET_ALL)
+        print(Fore.MAGENTA + Style.BRIGHT + 'Visit our pages:\nhttps://github.com/OSINT-TECHNOLOGIES\nhttps://pypi.org/project/dpulse/' + Style.RESET_ALL)
 
     def print_main_menu(self):
         print('\n')
         print(Fore.MAGENTA + Back.WHITE + '[MAIN MENU]' + Style.RESET_ALL)
         print(Fore.CYAN + "1. Determine target and start scan")
         print(Fore.CYAN + "2. Settings")
-        print(Fore.CYAN + "3. Help")
-        print(Fore.CYAN + "4. Manage/create report storage database")
-        print(Fore.LIGHTRED_EX + "5. Exit DPULSE" + Style.RESET_ALL + '\n')
+        print(Fore.CYAN + "3. Report storage DB management")
+        print(Fore.CYAN + "4. Show API module status (not active)")
+        print(Fore.CYAN + "5. Help")
+        print(Fore.LIGHTRED_EX + "6. Exit DPULSE" + Style.RESET_ALL + '\n')
 
     def print_settings_menu(self):
         print('\n')
         print(Fore.MAGENTA + Back.WHITE + '[SETTINGS MENU]' + Style.RESET_ALL)
-        print(Fore.CYAN + "1. Show current dorks list")
-        print(Fore.CYAN + "2. Add Google Dork to config file")
-        print(Fore.LIGHTRED_EX + "3. Return to main menu" + Style.RESET_ALL + '\n')
+        print(Fore.CYAN + "1. Print current config file")
+        print(Fore.CYAN + "2. Edit config file")
+        print(Fore.CYAN + "3. Generate custom Dorking DB")
+        print(Fore.CYAN + "4. Add API key for existing API")
+        print(Fore.LIGHTRED_EX + "5. Return to main menu" + Style.RESET_ALL + '\n')
 
     def print_help_menu(self):
         print(Fore.MAGENTA + Back.WHITE + '[HELP MENU]' + Style.RESET_ALL)

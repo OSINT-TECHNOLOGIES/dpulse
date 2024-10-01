@@ -2,20 +2,38 @@ import sys
 sys.path.append('datagather_modules')
 sys.path.append('service')
 sys.path.append('reporting_modules')
+sys.path.append('dorking')
+
+from colorama import Fore, Style, Back
+import cli_init
+from config_processing import create_config, check_cfg_presence, read_config
+import db_processing as db
+import os
+from dorking_handler import dorks_files_check, get_columns_amount
+
+db.db_creation('report_storage.db')
+dorks_files_check()
+cfg_presence = check_cfg_presence()
+if cfg_presence is True:
+    print(Fore.GREEN + "Global config file presence: OK" + Style.RESET_ALL)
+else:
+    print(Fore.RED + "Global config file presence: NOT OK")
+    create_config()
+    print(Fore.GREEN + "Successfully generated global config file")
+
 
 import pdf_report_creation as pdf_rc
-import cli_init
-import db_processing as db
 import xlsx_report_creation as xlsx_rc
 import html_report_creation as html_rc
 from data_assembler import DataProcessing
+from misc import time_processing, domain_precheck
 
 try:
+    import socket
+    import re
     import time
-    from colorama import Fore, Style, Back
     import webbrowser
     import sqlite3
-    import os
     import itertools
     import threading
     from time import sleep, time
@@ -23,21 +41,11 @@ except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
 
+data_processing = DataProcessing()
+config_values = read_config()
+
 cli = cli_init.Menu()
 cli.welcome_menu()
-data_processing = DataProcessing()
-
-def time_processing(end):
-    if end < 60:
-        endtime = round(end)
-        endtime_string = f'approximately {endtime} seconds'
-    else:
-        time_minutes = round(end / 60)
-        if time_minutes == 1:
-            endtime_string = f'approximately {time_minutes} minute'
-        else:
-            endtime_string = f'approximately {time_minutes} minutes'
-    return endtime_string
 
 class ProgressBar(threading.Thread):
     def __init__(self):
@@ -51,12 +59,11 @@ class ProgressBar(threading.Thread):
             print(Fore.LIGHTMAGENTA_EX + Back.WHITE + char + Style.RESET_ALL, end='\r')
             sleep(0.1)
 
-db.db_creation('report_storage.db')
-
 def run():
     while True:
         try:
             cli.print_main_menu()
+            domain_patter = r'^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$'
             choice = input(Fore.YELLOW + "Enter your choice >> ")
             if choice == "1":
                 while True:
@@ -67,8 +74,16 @@ def run():
                     else:
                         if not short_domain:
                             print(Fore.RED + "\nEmpty domain names are not supported")
+                        elif re.match(domain_patter, short_domain) is None:
+                            print(Fore.RED + '\nYour string does not match domain pattern')
                         else:
                             url = "http://" + short_domain + "/"
+                            print(Fore.GREEN + 'Pinging domain...' + Style.RESET_ALL)
+                            if domain_precheck(short_domain):
+                                print(Fore.GREEN + 'Entered domain is accessible. Continuation' + Style.RESET_ALL)
+                            else:
+                                print(Fore.RED + "Entered domain is not accessible. Scan is impossible" + Style.RESET_ALL)
+                                break
                             case_comment = input(Fore.YELLOW + "Enter case comment >> ")
                             report_filetype = input(Fore.YELLOW + "Enter report file extension [xlsx/pdf/html] >> ")
                             if not report_filetype:
@@ -96,6 +111,15 @@ def run():
                                     keywords_list = None
                                     keywords_flag = 0
                                 if report_filetype.lower() == 'pdf' or report_filetype.lower() == 'xlsx' or report_filetype.lower() == 'html':
+                                    dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/None] >> ")
+                                    #api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N] >> ")
+                                    #if api_flag.lower() == 'y':
+                                        #print api db content
+                                        #write ID which you want to use using comma (ex: 1,3,4)
+                                    #elif api_flag.lower() == 'n':
+                                        #pass
+                                    #else:
+                                        #print invalid mode
                                     if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n' or pagesearch_flag.lower() == 'si':
                                         if pagesearch_flag.lower() == "n":
                                             pagesearch_ui_mark = 'No'
@@ -105,10 +129,26 @@ def run():
                                             pagesearch_ui_mark = 'Yes, in Sitemap Inspection mode'
                                         else:
                                             pagesearch_ui_mark = 'Yes, without keywords search'
+                                        if dorking_flag.lower() not in ['basic', 'iot', 'none', 'files']:
+                                            print(Fore.RED + "\nInvalid Dorking mode. Please select mode among Basic, IoT, Files or None")
+                                            break
+                                        else:
+                                            if dorking_flag.lower() == 'basic':
+                                                row_count = get_columns_amount('dorking//basic_dorking.db', 'basic_dorks')
+                                                dorking_ui_mark = f'Yes, Basic dorking ({row_count} dorks)'
+                                            elif dorking_flag.lower() == 'iot':
+                                                row_count = get_columns_amount('dorking//iot_dorking.db', 'iot_dorks')
+                                                dorking_ui_mark = f'Yes, IoT dorking ({row_count} dorks)'
+                                            elif dorking_flag.lower() == 'none':
+                                                dorking_ui_mark = 'No'
+                                            elif dorking_flag.lower() == 'files':
+                                                row_count = get_columns_amount('dorking//files_dorking.db', 'files_dorks')
+                                                dorking_ui_mark = f'Yes, Files dorking ({row_count} dorks)'
                                         print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
                                         print(Fore.GREEN + "Determined target: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + short_domain + Style.RESET_ALL)
                                         print(Fore.GREEN + "Report type: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + report_filetype.lower() + Style.RESET_ALL)
                                         print(Fore.GREEN + "PageSearch conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + pagesearch_ui_mark + Style.RESET_ALL)
+                                        print(Fore.GREEN + "Dorking conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + dorking_ui_mark + Style.RESET_ALL)
                                         print(Fore.GREEN + "Case comment: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + case_comment + Style.RESET_ALL + "\n")
                                         print(Fore.LIGHTMAGENTA_EX + "[BASIC SCAN START]\n" + Style.RESET_ALL)
                                         spinner_thread = ProgressBar()
@@ -117,15 +157,15 @@ def run():
                                             try:
                                                 if pagesearch_flag.lower() == 'y':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
                                                     end = time() - start
                                                 elif pagesearch_flag.lower() == 'si':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
                                                     end = time() - start
                                                 else:
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag)
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower())
                                                     end = time() - start
                                                 endtime_string = time_processing(end)
                                                 pdf_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
@@ -136,15 +176,15 @@ def run():
                                             try:
                                                 if pagesearch_flag.lower() == 'y':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
                                                     end = time() - start
                                                 elif pagesearch_flag.lower() == 'si':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
                                                     end = time() - start
                                                 else:
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag)
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower())
                                                     end = time() - start
                                                 endtime_string = time_processing(end)
                                                 xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
@@ -155,15 +195,15 @@ def run():
                                             try:
                                                 if pagesearch_flag.lower() == 'y':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
                                                     end = time() - start
                                                 elif pagesearch_flag.lower() == 'si':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag)
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
                                                     end = time() - start
                                                 else:
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag)
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower())
                                                     end = time() - start
                                                 endtime_string = time_processing(end)
                                                 html_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
@@ -174,30 +214,9 @@ def run():
                                         print(Fore.RED + "\nUnsupported PageSearch mode. Please choose between Y, N or SI")
 
             elif choice == "2":
-                cli.print_settings_menu()
-                choice_settings = input(Fore.YELLOW + "Enter your choice >> ")
-                if choice_settings == '1':
-                    with open('dorkslist.txt', 'r') as cfg_file:
-                        print(Fore.LIGHTMAGENTA_EX + '\n[START OF CONFIG FILE]' + Style.RESET_ALL)
-                        print('\n' + Fore.LIGHTBLUE_EX + cfg_file.read() + Style.RESET_ALL)
-                        print(Fore.LIGHTMAGENTA_EX + '\n[END OF CONFIG FILE]\n' + Style.RESET_ALL)
-                        continue
-                elif choice_settings == '2':
-                    with open('dorkslist.txt', 'a+') as cfg_file:
-                        print(Fore.LIGHTMAGENTA_EX + '\n[START OF CONFIG FILE]' + Style.RESET_ALL)
-                        cfg_file.seek(0)
-                        print('\n' + Fore.LIGHTBLUE_EX + cfg_file.read() + Style.RESET_ALL)
-                        print(Fore.LIGHTMAGENTA_EX + '\n[END OF CONFIG FILE]\n' + Style.RESET_ALL)
-                        new_line = str(input(Fore.YELLOW + "Input new dork >> ") + Style.RESET_ALL)
-                        print(Fore.GREEN + "New dork successfully added to dorks list" + Style.RESET_ALL)
-                        cfg_file.write(new_line + '\n')
-                        continue
-                elif choice_settings == '3':
-                    continue
-                else:
-                    print(Fore.RED + "\nInvalid menu item. Please select between existing menu items")
+                print(Fore.RED + "Sorry, but this menu is deprecated since v1.1.1. It will be back soon")
 
-            elif choice == "3":
+            elif choice == "5":
                 cli.print_help_menu()
                 choice_help = input(Fore.YELLOW + "Enter your choice >> ")
                 if choice_help == '1':
@@ -215,7 +234,7 @@ def run():
                 else:
                     print(Fore.RED + "\nInvalid menu item. Please select between existing menu items")
 
-            elif choice == "4":
+            elif choice == "3":
                 cli.print_db_menu()
                 print('\n')
                 db.db_creation('report_storage.db')
@@ -240,7 +259,7 @@ def run():
                 elif choice_db == "3":
                     print(Fore.GREEN + "\nDatabase connection is successfully closed")
                     continue
-            elif choice == "5":
+            elif choice == "6":
                 print(Fore.RED + "Exiting the program." + Style.RESET_ALL)
                 break
             else:
