@@ -9,7 +9,7 @@ import cli_init
 from config_processing import create_config, check_cfg_presence, read_config
 import db_processing as db
 import os
-from dorking_handler import dorks_files_check
+from dorking_handler import dorks_files_check, get_columns_amount
 
 db.db_creation('report_storage.db')
 dorks_files_check()
@@ -134,13 +134,16 @@ def run():
                                             break
                                         else:
                                             if dorking_flag.lower() == 'basic':
-                                                dorking_ui_mark = 'Yes, Basic dorking (N dorks)'
+                                                row_count = get_columns_amount('dorking//basic_dorking.db', 'basic_dorks')
+                                                dorking_ui_mark = f'Yes, Basic dorking ({row_count} dorks)'
                                             elif dorking_flag.lower() == 'iot':
-                                                dorking_ui_mark = 'Yes, IoT dorking (N dorks)'
+                                                row_count = get_columns_amount('dorking//iot_dorking.db', 'iot_dorks')
+                                                dorking_ui_mark = f'Yes, IoT dorking ({row_count} dorks)'
                                             elif dorking_flag.lower() == 'none':
                                                 dorking_ui_mark = 'No'
                                             elif dorking_flag.lower() == 'files':
-                                                dorking_ui_mark = 'Yes, Files dorking (N dorks)'
+                                                row_count = get_columns_amount('dorking//files_dorking.db', 'files_dorks')
+                                                dorking_ui_mark = f'Yes, Files dorking ({row_count} dorks)'
                                         print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
                                         print(Fore.GREEN + "Determined target: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + short_domain + Style.RESET_ALL)
                                         print(Fore.GREEN + "Report type: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + report_filetype.lower() + Style.RESET_ALL)
