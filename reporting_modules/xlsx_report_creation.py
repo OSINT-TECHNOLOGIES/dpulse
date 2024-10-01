@@ -150,7 +150,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['B3'] = robots_txt_result
         ws['B4'] = sitemap_xml_result
         ws['B5'] = sitemap_links_status
-        #ws['B6'] = dorking_status
+        ws['B6'] = dorking_status
         ws['B7'] = pagesearch_ui_mark
         ws['B8'] = report_ctime
 
