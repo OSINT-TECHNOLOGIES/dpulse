@@ -9,13 +9,12 @@
 </p>
 
 <p align="center">
-<img alt="Static Badge" src="https://img.shields.io/badge/v1.1-CURRENT%20STABLE%20VERSION?style=for-the-badge&label=CURRENT%20STABLE%20VERSION&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/V1.1.1-red?style=for-the-badge&logo=f&label=CURRENT%20ROLLING%20VERSION">
-</p>
-
-<p align="center">
+<img alt="Static Badge" src="https://img.shields.io/badge/v1.1-ACTUAL%20STABLE%20VERSION?style=for-the-badge&label=ACTUAL%20STABLE%20VERSION&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/V1.1.1-red?style=for-the-badge&logo=f&label=ACTUAL%20ROLLING%20VERSION">
 <img alt="Static Badge" src="https://img.shields.io/badge/DOMAIN_OSINT-CATEGORY?style=for-the-badge&label=TOOL%20CATEGORY&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/CLI-CATEGORY?style=for-the-badge&label=interface%20type&color=red">
 </p>
-
+<p align="center">
+<img alt="GitHub License" src="https://img.shields.io/github/license/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red"> <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=red">
+</p>
 
 > DPULSE was created as a research tool, and it is not intended for criminal activities. Use DPULSE only on allowed domains and for legal purposes!
 
@@ -142,7 +141,7 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 
 
 # Tasks to complete before new release
-- [x] Rework Google Dorking module in separate mode
+- [ ] Rework Google Dorking module in separate mode
 - [ ] Rework Google Dorks list into separate databases with different pre-configured dorks for various purposes
 - [ ] Allow user to create their own dorks DB
 - [ ] Add separate API search mode with different free APIs
@@ -191,9 +190,6 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 
 ### [by C.I.T Security](https://t.me/citsecurity/8578)
 
-### [by Adityaa_oky](https://t.me/adityaa_oky/960)
-
-### [by Реальний OSINT](https://t.me/realOSINT/462)
 
 
 
