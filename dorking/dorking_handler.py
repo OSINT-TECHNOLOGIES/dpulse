@@ -86,7 +86,10 @@ def save_results_to_txt(folderpath, table, queries, pages=10):
         print(Fore.RED + 'Error appeared while trying to dork target. See journal for details')
         return 'Domain dorking failed. See journal for details', txt_writepath
 
-def transfer_results_to_xlsx(queries, pages=10):
+def transfer_results_to_xlsx(table, queries, pages=10):
+    print(Fore.GREEN + "Started Google Dorking. Please, be patient, it may take some time")
+    dorked_query_counter = 0
+    total_dorks_amount = len(queries)
     dorking_return_list = []
     for i, query in enumerate(queries, start=1):
         dorking_return_list.append(f"QUERY #{i}: {query}\n")
@@ -96,8 +99,11 @@ def transfer_results_to_xlsx(queries, pages=10):
         else:
             for result in results:
                 dorking_return_list.append(f"{result}\n")
+        dorked_query_counter += 1
         dorking_return_list.append("\n")
-    #return "File with gathered links was successfully created", dorking_return_list
+        print(Fore.GREEN + f"  Dorking with " + Style.RESET_ALL + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{dorked_query_counter}/{total_dorks_amount}" + Style.RESET_ALL + Fore.GREEN + " dork" + Style.RESET_ALL, end="\r")
+    print(Fore.GREEN + "Google Dorking end. Results successfully saved in XLSX report\n" + Style.RESET_ALL)
+    return f'Successfully dorked domain with {table.upper()} dorks table', dorking_return_list
 
 def dorks_files_check():
     dorks_path = 'dorking//'
