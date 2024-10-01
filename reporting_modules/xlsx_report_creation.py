@@ -46,7 +46,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         cpes = data_array[27]
         tags = data_array[28]
         vulns = data_array[29]
-        #dorking_status = data_array[30]
+        dorking_status = data_array[42]
         common_socials = data_array[30]
         total_socials = data_array[31]
         ps_emails_return = data_array[32]
@@ -60,7 +60,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         total_links_counter = data_array[40]
         accessed_links_counter = data_array[41]
         #keywords_messages_list = data_array[42]
-        #dorking_results = data_array[43]
+        dorking_results = data_array[43]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
@@ -314,8 +314,8 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
 
         ws = wb['DORKING RESULTS']
         ws.column_dimensions['A'].width = 80
-        #for i in range(len(dorking_results)):
-            #ws[f"A{i + 1}"] = str(dorking_results[i])
+        for i in range(len(dorking_results)):
+            ws[f"A{i + 1}"] = str(dorking_results[i])
 
         report_file = report_folder + "//" + casename
         wb.save(report_file)
