@@ -6,7 +6,7 @@ sys.path.append('dorking')
 
 from colorama import Fore, Style, Back
 import cli_init
-from config_processing import create_config, check_cfg_presence, read_config
+from config_processing import create_config, check_cfg_presence, read_config, print_and_return_config
 import db_processing as db
 import os
 from dorking_handler import dorks_files_check, get_columns_amount
@@ -217,7 +217,25 @@ def run():
                                         print(Fore.RED + "\nUnsupported PageSearch mode. Please choose between Y, N or SI")
 
             elif choice == "2":
-                print(Fore.RED + "Sorry, but this menu is deprecated since v1.1.1. It will be back soon")
+                cli.print_settings_menu()
+                choice_settings = input(Fore.YELLOW + "Enter your choice >> ")
+                if choice_settings == '1':
+                    import configparser
+                    config = print_and_return_config()
+                elif choice_settings == '2':
+                    import configparser
+                    config = print_and_return_config()
+                    section = input(Fore.YELLOW + "Enter the section you want to update >> ")
+                    option = input(Fore.YELLOW + "Enter the option you want to update >> ")
+                    value = input(Fore.YELLOW + "Enter the new value >> ")
+                    if not config.has_section(section):
+                        config.add_section(section)
+                    config.set(section, option, value)
+                    with open('service//config.ini', 'w') as configfile:
+                        config.write(configfile)
+                    print(Fore.GREEN + "Configuration updated successfully" + Style.RESET_ALL)
+                else:
+                    continue
 
             elif choice == "5":
                 cli.print_help_menu()
