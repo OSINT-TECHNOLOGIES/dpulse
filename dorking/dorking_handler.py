@@ -107,7 +107,7 @@ def transfer_results_to_xlsx(table, queries, pages=10):
 
 def dorks_files_check():
     dorks_path = 'dorking//'
-    dorks_files = ['iot_dorking.db', 'files_dorking.db', 'basic_dorking.db', 'adminpanels_dorking.db']
+    dorks_files = ['iot_dorking.db', 'files_dorking.db', 'basic_dorking.db']
     dorks_files_counter = 0
     for dork_files in dorks_files:
         files_path = os.path.join(dorks_path, dork_files)
@@ -115,7 +115,7 @@ def dorks_files_check():
             dorks_files_counter += 1
         else:
             pass
-    if dorks_files_counter == 4:
+    if dorks_files_counter == 3:
         print(Fore.GREEN + "Dorks databases presence: OK" + Style.RESET_ALL)
     else:
         print(Fore.RED + "Dorks databases presence: NOT OK\nSome files may not be in folder. Please compare dorking folder with the same folder on the official repository\n" + Style.RESET_ALL)
