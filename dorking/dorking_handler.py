@@ -34,7 +34,7 @@ def get_columns_amount(dorking_db_path, table):
     conn.close()
     return row_count
 
-def solid_google_dorking(query, pages=100, dorking_delay=5, delay_step=10):
+def solid_google_dorking(query, dorking_delay, delay_step, pages=100):
     try:
         browser = mechanicalsoup.StatefulBrowser()
         browser.open("https://www.google.com/")
@@ -78,7 +78,7 @@ def save_results_to_txt(folderpath, table, queries, pages=10):
             dorked_query_counter = 0
             for i, query in enumerate(queries, start=1):
                 f.write(f"QUERY #{i}: {query}\n")
-                results = solid_google_dorking(query, pages, dorking_delay, delay_step)
+                results = solid_google_dorking(query, dorking_delay, delay_step, pages)
                 if not results:
                     f.write("=> NO RESULT FOUND\n")
                     total_results.append((query, 0))
