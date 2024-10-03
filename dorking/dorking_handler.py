@@ -1,4 +1,7 @@
 import sys
+sys.path.append('service')
+from config_processing import read_config
+from logs_processing import logging
 
 try:
     import requests.exceptions
@@ -7,6 +10,7 @@ try:
     import re
     import requests
     import sqlite3
+    import time
     import os
 except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
@@ -30,7 +34,7 @@ def get_columns_amount(dorking_db_path, table):
     conn.close()
     return row_count
 
-def solid_google_dorking(query, pages=100):
+def solid_google_dorking(query, pages=100, dorking_delay=5, delay_step=10):
     try:
         browser = mechanicalsoup.StatefulBrowser()
         browser.open("https://www.google.com/")
@@ -38,6 +42,7 @@ def solid_google_dorking(query, pages=100):
         browser["q"] = str(query)
         browser.submit_selected(btnName="btnG")
         result_query = []
+        request_count = 0
         for page in range(pages):
             for link in browser.links():
                 target = link.attrs['href']
@@ -45,26 +50,35 @@ def solid_google_dorking(query, pages=100):
                 target.startswith("/url?q=http://webcache.googleusercontent.com")):
                     target = re.sub(r"^/url\?q=([^&]*)&.*", r"\1", target)
                     result_query.append(target)
+                    request_count += 1
+                    if request_count % delay_step == 0:
+                        time.sleep(dorking_delay)
             try:
                 browser.follow_link(nr=page + 1)
             except mechanicalsoup.LinkNotFoundError:
                 break
+
         del result_query[-2:]
         return result_query
     except requests.exceptions.ConnectionError as e:
-        print(Fore.RED + "Error while establishing connection with domain. No results will appear. Reason: {}".format(e) + Style.RESET_ALL)
+        print(Fore.RED + "Error while establishing connection with domain. No results will appear. See journal for details" + Style.RESET_ALL)
+        logging.error(f'DORKING PROCESSING: ERROR. REASON: {e}')
 
 def save_results_to_txt(folderpath, table, queries, pages=10):
     try:
+        config_values = read_config()
+        dorking_delay = int(config_values['dorking_delay (secs)'])
+        delay_step = int(config_values['delay_step'])
         txt_writepath = folderpath + '//04-dorking_results.txt'
         total_results = []
         total_dorks_amount = len(queries)
         with open(txt_writepath, 'w') as f:
             print(Fore.GREEN + "Started Google Dorking. Please, be patient, it may take some time")
+            print(Fore.GREEN + f"{dorking_delay} seconds delay after each {delay_step} dorking requests was configured" + Style.RESET_ALL)
             dorked_query_counter = 0
             for i, query in enumerate(queries, start=1):
                 f.write(f"QUERY #{i}: {query}\n")
-                results = solid_google_dorking(query, pages)
+                results = solid_google_dorking(query, pages, dorking_delay, delay_step)
                 if not results:
                     f.write("=> NO RESULT FOUND\n")
                     total_results.append((query, 0))
@@ -82,12 +96,17 @@ def save_results_to_txt(folderpath, table, queries, pages=10):
                 count = 'no results'
             print(Fore.GREEN + f"[+] Found results for " + Fore.LIGHTCYAN_EX + f'{query}' + Fore.GREEN + ' query: ' + Fore.LIGHTCYAN_EX + f'{count}' + Style.RESET_ALL)
         return f'Successfully dorked domain with {table.upper()} dorks table', txt_writepath
-    except Exception:
+    except Exception as e:
         print(Fore.RED + 'Error appeared while trying to dork target. See journal for details')
+        logging.error(f'DORKING PROCESSING: ERROR. REASON: {e}')
         return 'Domain dorking failed. See journal for details', txt_writepath
 
 def transfer_results_to_xlsx(table, queries, pages=10):
+    config_values = read_config()
+    dorking_delay = int(config_values['dorking_delay (secs)'])
+    delay_step = int(config_values['delay_step'])
     print(Fore.GREEN + "Started Google Dorking. Please, be patient, it may take some time")
+    print(Fore.GREEN + f"{dorking_delay} seconds delay after each {delay_step} dorking requests was configured" + Style.RESET_ALL)
     dorked_query_counter = 0
     total_dorks_amount = len(queries)
     dorking_return_list = []
