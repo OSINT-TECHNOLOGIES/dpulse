@@ -31,6 +31,9 @@ def establishing_dork_db_connection(dorking_flag):
     elif dorking_flag == 'files':
         dorking_db_path = 'dorking//files_dorking.db'
         table = 'files_dorks'
+    elif dorking_flag == 'admins':
+        dorking_db_path = 'dorking//adminpanels_dorking.db'
+        table = 'adminpanels_dorks'
     return dorking_db_path, table
 
 class DataProcessing():
@@ -248,6 +251,11 @@ class DataProcessing():
                 dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
             elif dorking_flag == 'files':
+                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+            elif dorking_flag == 'admins':
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
                 dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
