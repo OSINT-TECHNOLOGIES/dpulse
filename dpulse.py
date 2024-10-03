@@ -9,10 +9,8 @@ import cli_init
 from config_processing import create_config, check_cfg_presence, read_config, print_and_return_config
 import db_processing as db
 import os
-from dorking_handler import dorks_files_check, get_columns_amount
 
 db.db_creation('report_storage.db')
-dorks_files_check()
 cfg_presence = check_cfg_presence()
 if cfg_presence is True:
     print(Fore.GREEN + "Global config file presence: OK" + Style.RESET_ALL)
@@ -21,7 +19,8 @@ else:
     create_config()
     print(Fore.GREEN + "Successfully generated global config file")
 
-
+from dorking_handler import dorks_files_check, get_columns_amount
+dorks_files_check()
 import pdf_report_creation as pdf_rc
 import xlsx_report_creation as xlsx_rc
 import html_report_creation as html_rc
