@@ -110,7 +110,7 @@ def run():
                                     keywords_list = None
                                     keywords_flag = 0
                                 if report_filetype.lower() == 'pdf' or report_filetype.lower() == 'xlsx' or report_filetype.lower() == 'html':
-                                    dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/Admins/None] >> ")
+                                    dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/Admins/Web/None] >> ")
                                     #api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N] >> ")
                                     #if api_flag.lower() == 'y':
                                         #print api db content
@@ -128,7 +128,7 @@ def run():
                                             pagesearch_ui_mark = 'Yes, in Sitemap Inspection mode'
                                         else:
                                             pagesearch_ui_mark = 'Yes, without keywords search'
-                                        if dorking_flag.lower() not in ['basic', 'iot', 'none', 'admins', 'files']:
+                                        if dorking_flag.lower() not in ['basic', 'iot', 'none', 'admins', 'files', 'web']:
                                             print(Fore.RED + "\nInvalid Dorking mode. Please select mode among Basic, IoT, Files or None")
                                             break
                                         else:
@@ -145,6 +145,9 @@ def run():
                                                 dorking_ui_mark = f'Yes, Files dorking ({row_count} dorks)'
                                             elif dorking_flag.lower() == 'admins':
                                                 row_count = get_columns_amount('dorking//adminpanels_dorking.db', 'adminpanels_dorks')
+                                                dorking_ui_mark = f'Yes, Admin panels dorking ({row_count} dorks)'
+                                            elif dorking_flag.lower() == 'web':
+                                                row_count = get_columns_amount('dorking//webstructure_dorking.db', 'webstructure_dorks')
                                                 dorking_ui_mark = f'Yes, Admin panels dorking ({row_count} dorks)'
                                         print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
                                         print(Fore.GREEN + "Determined target: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + short_domain + Style.RESET_ALL)
