@@ -40,7 +40,8 @@ class Menu:
         print(Fore.CYAN + "2. Edit config file")
         print(Fore.CYAN + "3. Generate custom Dorking DB (not active)")
         print(Fore.CYAN + "4. Add API key for existing API (not active)")
-        print(Fore.LIGHTRED_EX + "5. Return to main menu" + Style.RESET_ALL + '\n')
+        print(Fore.CYAN + "5. Clear journal content")
+        print(Fore.LIGHTRED_EX + "6. Return to main menu" + Style.RESET_ALL + '\n')
 
     def print_help_menu(self):
         print(Fore.MAGENTA + Back.WHITE + '[HELP MENU]' + Style.RESET_ALL)
