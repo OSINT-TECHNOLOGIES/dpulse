@@ -240,6 +240,16 @@ def run():
                     with open('journal.log', 'w'):
                         print(Fore.GREEN + "Journal file was successfully cleared" + Style.RESET_ALL)
                         pass
+                elif choice_settings == '3':
+                    from db_creator import manage_dorks
+                    print('\n')
+                    print(Fore.GREEN + "You've entered custom Dorking DB generator!\n" + Style.RESET_ALL)
+                    print(Fore.GREEN + "Remember some rules in order to successfully create your custom Dorking DB:" + Style.RESET_ALL)
+                    print(Fore.GREEN + "[1] - dork_id variable must be unique, starting with 1 and then +1 every new dork" + Style.RESET_ALL)
+                    print(Fore.GREEN + "[2] - When it comes to define domain in dork, put {} in it\n" + Style.RESET_ALL)
+                    print(Fore.GREEN + "Examples: related:{}, site:{} inurl:login and so on\n" + Style.RESET_ALL)
+                    ddb_name = input(Fore.YELLOW + "Enter a name for your custom Dorking DB (without any extensions) >> ")
+                    manage_dorks(ddb_name)
                 elif choice_settings == '6':
                     continue
 
