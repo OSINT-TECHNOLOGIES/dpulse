@@ -38,7 +38,7 @@ class Menu:
         print(Fore.MAGENTA + Back.WHITE + '[SETTINGS MENU]' + Style.RESET_ALL)
         print(Fore.CYAN + "1. Print current config file")
         print(Fore.CYAN + "2. Edit config file")
-        print(Fore.CYAN + "3. Generate custom Dorking DB (not active)")
+        print(Fore.CYAN + "3. Generate custom Dorking DB")
         print(Fore.CYAN + "4. Add API key for existing API (not active)")
         print(Fore.CYAN + "5. Clear journal content")
         print(Fore.LIGHTRED_EX + "6. Return to main menu" + Style.RESET_ALL + '\n')
