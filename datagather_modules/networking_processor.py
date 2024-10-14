@@ -40,6 +40,7 @@ def get_ssl_certificate(short_domain, port=443):
     try:
         logging.info('SSL CERTIFICATE GATHERING: OK')
         context = ssl.create_default_context()
+        context.minimum_version = ssl.TLSVersion.TLSv1_2
         conn = socket.create_connection((short_domain, port))
         sock = context.wrap_socket(conn, server_hostname=short_domain)
         cert = sock.getpeercert()
