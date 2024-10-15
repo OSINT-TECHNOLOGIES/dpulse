@@ -140,8 +140,8 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 
 # Tasks to complete before new release
 - [x] Rework Google Dorking module in separate mode
-- [ ] Rework Google Dorks list into separate databases with different pre-configured dorks for various purposes
-- [ ] Allow user to create their own dorks DB
+- [x] Rework Google Dorks list into separate databases with different pre-configured dorks for various purposes
+- [x] Allow user to create their own dorks DB
 - [ ] Add separate API search mode with different free APIs
       
 # DPULSE mentions in social medias
