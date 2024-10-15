@@ -139,10 +139,8 @@ def run():
                                                     'iot': 'iot_dorking.db',
                                                     'files': 'files_dorking.db',
                                                     'admins': 'adminpanels_dorking.db',
-                                                    'web': 'webstructure_dorking.db'
-                                                }[dorking_flag.lower()]
-                                                row_count = get_columns_amount(f'dorking//{db_name}',
-                                                                               f'{dorking_flag.lower()}_dorks')
+                                                    'web': 'webstructure_dorking.db'}[dorking_flag.lower()]
+                                                row_count = get_columns_amount(f'dorking//{db_name}', f'{dorking_flag.lower()}_dorks')
                                                 dorking_ui_mark = f'Yes, {dorking_flag.lower().replace("_", " ")} dorking ({row_count} dorks)'
                                             elif dorking_flag.lower() == 'custom':
                                                 custom_db_name = str(input(
