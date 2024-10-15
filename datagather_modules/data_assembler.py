@@ -139,30 +139,9 @@ class DataProcessing():
                 pass
 
             if dorking_flag == 'none':
-                pass
                 dorking_status = 'Google Dorking mode was not selected for this scan'
                 dorking_file_path = 'Google Dorking mode was not selected for this scan'
-            elif dorking_flag == 'basic':
-                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-            elif dorking_flag == 'iot':
-                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-            elif dorking_flag == 'files':
-                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-            elif dorking_flag == 'web':
-                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-            elif dorking_flag.startswith('custom'):
+            else:
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
                 dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
@@ -200,30 +179,9 @@ class DataProcessing():
                 pass
 
             if dorking_flag == 'none':
-                pass
                 dorking_status = 'Google Dorking mode was not selected for this scan'
-                dorking_results = 'Google Dorking mode was not selected for this scan'
-            elif dorking_flag == 'basic':
-                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_results = dp.transfer_results_to_xlsx(table, dp.get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-            elif dorking_flag == 'iot':
-                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_results = dp.transfer_results_to_xlsx(table, dp.get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-            elif dorking_flag == 'files':
-                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_results = dp.transfer_results_to_xlsx(table, dp.get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-            elif dorking_flag == 'web':
-                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-            elif dorking_flag.startswith('custom'):
+                dorking_file_path = 'Google Dorking mode was not selected for this scan'
+            else:
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
                 dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
@@ -264,35 +222,9 @@ class DataProcessing():
                 pass
 
             if dorking_flag == 'none':
-                pass
                 dorking_status = 'Google Dorking mode was not selected for this scan'
                 dorking_file_path = 'Google Dorking mode was not selected for this scan'
-            elif dorking_flag == 'basic':
-                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-            elif dorking_flag == 'iot':
-                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-            elif dorking_flag == 'files':
-                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-            elif dorking_flag == 'admins':
-                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-            elif dorking_flag == 'web':
-                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-            elif dorking_flag.startswith('custom'):
+            else:
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
                 dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
