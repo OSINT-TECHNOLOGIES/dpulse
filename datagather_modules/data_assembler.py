@@ -34,7 +34,7 @@ def establishing_dork_db_connection(dorking_flag):
         'iot': 'iot_dorks',
         'files': 'files_dorks',
         'admins': 'admins_dorks',
-        'web': 'webstructure_dorks',
+        'web': 'web_dorks',
     }
     if dorking_flag in dorking_db_paths:
         dorking_db_path = dorking_db_paths[dorking_flag]
