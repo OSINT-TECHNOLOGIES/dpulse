@@ -37,6 +37,11 @@ def establishing_dork_db_connection(dorking_flag):
     elif dorking_flag == 'web':
         dorking_db_path = 'dorking//webstructure_dorking.db'
         table = 'webstructure_dorks'
+    elif dorking_flag.startswith('custom'):
+        lst = dorking_flag.split('+')
+        dorking_db_name = lst[1]
+        dorking_db_path = 'dorking//' + dorking_db_name
+        table = 'dorks'
     return dorking_db_path, table
 
 class DataProcessing():
@@ -158,6 +163,11 @@ class DataProcessing():
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
                 dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+            elif dorking_flag.startswith('custom'):
+                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
 
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
@@ -210,6 +220,11 @@ class DataProcessing():
                 dorking_status, dorking_results = dp.transfer_results_to_xlsx(table, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
             elif dorking_flag == 'web':
+                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+            elif dorking_flag.startswith('custom'):
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
                 dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
@@ -274,6 +289,11 @@ class DataProcessing():
                 dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
             elif dorking_flag == 'web':
+                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+            elif dorking_flag.startswith('custom'):
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
                 dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
