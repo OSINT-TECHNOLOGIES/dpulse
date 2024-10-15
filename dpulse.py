@@ -132,25 +132,21 @@ def run():
                                             print(Fore.RED + "\nInvalid Dorking mode. Please select mode among Basic/IoT/Files/Web/Admins/Custom or None")
                                             break
                                         else:
-                                            if dorking_flag.lower() == 'basic':
-                                                row_count = get_columns_amount('dorking//basic_dorking.db', 'basic_dorks')
-                                                dorking_ui_mark = f'Yes, Basic dorking ({row_count} dorks)'
-                                            elif dorking_flag.lower() == 'iot':
-                                                row_count = get_columns_amount('dorking//iot_dorking.db', 'iot_dorks')
-                                                dorking_ui_mark = f'Yes, IoT dorking ({row_count} dorks)'
-                                            elif dorking_flag.lower() == 'none':
-                                                dorking_ui_mark = 'No'
-                                            elif dorking_flag.lower() == 'files':
-                                                row_count = get_columns_amount('dorking//files_dorking.db', 'files_dorks')
-                                                dorking_ui_mark = f'Yes, Files dorking ({row_count} dorks)'
-                                            elif dorking_flag.lower() == 'admins':
-                                                row_count = get_columns_amount('dorking//adminpanels_dorking.db', 'adminpanels_dorks')
-                                                dorking_ui_mark = f'Yes, Admin panels dorking ({row_count} dorks)'
-                                            elif dorking_flag.lower() == 'web':
-                                                row_count = get_columns_amount('dorking//webstructure_dorking.db', 'webstructure_dorks')
-                                                dorking_ui_mark = f'Yes, Admin panels dorking ({row_count} dorks)'
+                                            dorking_ui_mark = 'No'
+                                            if dorking_flag.lower() in ('basic', 'iot', 'files', 'admins', 'web'):
+                                                db_name = {
+                                                    'basic': 'basic_dorking.db',
+                                                    'iot': 'iot_dorking.db',
+                                                    'files': 'files_dorking.db',
+                                                    'admins': 'adminpanels_dorking.db',
+                                                    'web': 'webstructure_dorking.db'
+                                                }[dorking_flag.lower()]
+                                                row_count = get_columns_amount(f'dorking//{db_name}',
+                                                                               f'{dorking_flag.lower()}_dorks')
+                                                dorking_ui_mark = f'Yes, {dorking_flag.lower().replace("_", " ")} dorking ({row_count} dorks)'
                                             elif dorking_flag.lower() == 'custom':
-                                                custom_db_name = str(input(Fore.YELLOW + "Enter your custom Dorking DB name (without any file extensions) >> "))
+                                                custom_db_name = str(input(
+                                                    Fore.YELLOW + "Enter your custom Dorking DB name (without any file extensions) >> "))
                                                 row_count = get_columns_amount(f'dorking//{custom_db_name}.db', 'dorks')
                                                 dorking_ui_mark = f'Yes, Custom table dorking ({row_count} dorks)'
                                                 dorking_flag = str(dorking_flag.lower() + f"+{custom_db_name}.db")
@@ -301,8 +297,10 @@ def run():
                             os.makedirs(extracted_folder_name)
                             db.db_report_recreate(extracted_folder_name, id_to_extract)
                         except FileExistsError:
-                            print(Fore.RED + "Folder with the same name already exists. Delete it or just check it's content" + Style.RESET_ALL)
-                            pass
+                            print(Fore.RED + "Report with the same recreated folder already exists. Please check its content or delete it and try again" + Style.RESET_ALL)
+                        except Exception as e:
+                            print(Fore.RED + "Error appeared when trying to recreate report from DB. See journal for details" + Style.RESET_ALL)
+
                 elif choice_db == "3":
                     print(Fore.GREEN + "\nDatabase connection is successfully closed")
                     continue
