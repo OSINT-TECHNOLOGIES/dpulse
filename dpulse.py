@@ -242,11 +242,16 @@ def run():
                     with open('service//config.ini', 'w') as configfile:
                         config.write(configfile)
                     print(Fore.GREEN + "Configuration updated successfully" + Style.RESET_ALL)
-                elif choice_settings == '5':
+                elif choice_settings == '4':
                     with open('journal.log', 'w'):
                         print(Fore.GREEN + "Journal file was successfully cleared" + Style.RESET_ALL)
                         pass
-                elif choice_settings == '3':
+                elif choice_settings == '5':
+                    continue
+            elif choice == '3':
+                cli.dorking_db_manager()
+                choice_dorking = input(Fore.YELLOW + "Enter your choice >> ")
+                if choice_dorking == '1':
                     from db_creator import manage_dorks
                     print('\n')
                     print(Fore.GREEN + "You've entered custom Dorking DB generator!\n" + Style.RESET_ALL)
@@ -256,10 +261,9 @@ def run():
                     print(Fore.GREEN + "Examples: related:{}, site:{} inurl:login and so on\n" + Style.RESET_ALL)
                     ddb_name = input(Fore.YELLOW + "Enter a name for your custom Dorking DB (without any extensions) >> ")
                     manage_dorks(ddb_name)
-                elif choice_settings == '6':
+                elif choice_dorking == '2':
                     continue
-
-            elif choice == "5":
+            elif choice == "6":
                 cli.print_help_menu()
                 choice_help = input(Fore.YELLOW + "Enter your choice >> ")
                 if choice_help == '1':
@@ -277,7 +281,7 @@ def run():
                 else:
                     print(Fore.RED + "\nInvalid menu item. Please select between existing menu items")
 
-            elif choice == "3":
+            elif choice == "4":
                 cli.print_db_menu()
                 print('\n')
                 db.db_creation('report_storage.db')
@@ -302,7 +306,7 @@ def run():
                 elif choice_db == "3":
                     print(Fore.GREEN + "\nDatabase connection is successfully closed")
                     continue
-            elif choice == "6":
+            elif choice == "7":
                 print(Fore.RED + "Exiting the program." + Style.RESET_ALL)
                 break
             else:
