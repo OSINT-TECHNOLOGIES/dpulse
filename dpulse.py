@@ -110,7 +110,7 @@ def run():
                                     keywords_list = None
                                     keywords_flag = 0
                                 if report_filetype.lower() == 'pdf' or report_filetype.lower() == 'xlsx' or report_filetype.lower() == 'html':
-                                    dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/Admins/Web/None] >> ")
+                                    dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/Admins/Web/Custom/None] >> ")
                                     #api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N] >> ")
                                     #if api_flag.lower() == 'y':
                                         #print api db content
@@ -128,8 +128,8 @@ def run():
                                             pagesearch_ui_mark = 'Yes, in Sitemap Inspection mode'
                                         else:
                                             pagesearch_ui_mark = 'Yes, without keywords search'
-                                        if dorking_flag.lower() not in ['basic', 'iot', 'none', 'admins', 'files', 'web']:
-                                            print(Fore.RED + "\nInvalid Dorking mode. Please select mode among Basic, IoT, Files or None")
+                                        if dorking_flag.lower() not in ['basic', 'iot', 'none', 'admins', 'files', 'web', 'custom']:
+                                            print(Fore.RED + "\nInvalid Dorking mode. Please select mode among Basic/IoT/Files/Web/Admins/Custom or None")
                                             break
                                         else:
                                             if dorking_flag.lower() == 'basic':
@@ -149,6 +149,11 @@ def run():
                                             elif dorking_flag.lower() == 'web':
                                                 row_count = get_columns_amount('dorking//webstructure_dorking.db', 'webstructure_dorks')
                                                 dorking_ui_mark = f'Yes, Admin panels dorking ({row_count} dorks)'
+                                            elif dorking_flag.lower() == 'custom':
+                                                custom_db_name = str(input(Fore.YELLOW + "Enter your custom Dorking DB name (without any file extensions) >> "))
+                                                row_count = get_columns_amount(f'dorking//{custom_db_name}.db', 'dorks')
+                                                dorking_ui_mark = f'Yes, Custom table dorking ({row_count} dorks)'
+                                                dorking_flag = str(dorking_flag.lower() + f"+{custom_db_name}.db")
                                         print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
                                         print(Fore.GREEN + "Determined target: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + short_domain + Style.RESET_ALL)
                                         print(Fore.GREEN + "Report type: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + report_filetype.lower() + Style.RESET_ALL)
@@ -208,7 +213,8 @@ def run():
                                                     end = time() - start
                                                 else:
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower())
+                                                    print(dorking_flag)
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, str(dorking_flag.lower()))
                                                     end = time() - start
                                                 endtime_string = time_processing(end)
                                                 html_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
