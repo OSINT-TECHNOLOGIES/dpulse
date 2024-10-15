@@ -26,7 +26,7 @@ def manage_dorks(db_name):
                 print(Fore.GREEN + "Successfully added new dork")
             except sqlite3.IntegrityError:
                 print(Fore.RED + "Attention, dork_id variable must be unique")
-    
+
         while True:
             dork_id = input(Fore.YELLOW + "Enter dork_id (or 'q' to quit this mode and save changes) >> ")
             if dork_id.lower() == 'q':
