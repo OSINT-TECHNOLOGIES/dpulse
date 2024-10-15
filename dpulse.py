@@ -77,7 +77,7 @@ def run():
                             print(Fore.RED + '\nYour string does not match domain pattern')
                         else:
                             url = "http://" + short_domain + "/"
-                            print(Fore.GREEN + 'Pinging domain...' + Style.RESET_ALL)
+                            print(Fore.GREEN + 'Pinging domain...' + Style.RESET_ALL, end = ' ')
                             if domain_precheck(short_domain):
                                 print(Fore.GREEN + 'Entered domain is accessible. Continuation' + Style.RESET_ALL)
                             else:
