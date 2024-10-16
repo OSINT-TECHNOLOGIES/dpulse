@@ -167,8 +167,10 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         if generate_report(context, html_report_name, template_path):
             print(Fore.GREEN + "HTML report for {} case was created at {}".format(''.join(short_domain), report_ctime) + Style.RESET_ALL)
             print(Fore.GREEN + f"Scan elapsed time: {end}" + Style.RESET_ALL)
-        with open(dorking_file_path, 'r') as df:
-            dorking_content = df.read()
+
+        if dorking_status != 'Google Dorking mode was not selected for this scan':
+            with open(dorking_file_path, 'r') as df:
+                dorking_content = df.read()
         robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder) #, dorking_content was removed here
         pdf_blob = fp.get_blob(html_report_name)
         db.insert_blob('HTML', pdf_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content) #, dorking_content was removed here

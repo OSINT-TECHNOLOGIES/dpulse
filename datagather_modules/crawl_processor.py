@@ -113,25 +113,27 @@ def sm_gather(url):
                          'VKontakte': [], 'YouTube': [], 'Odnoklassniki': [], 'WeChat': []}
 
     for link in links:
-        if 'facebook.com' in link:
+        parsed_url = urlparse(link)
+        hostname = parsed_url.hostname
+        if hostname and hostname.endswith('facebook.com'):
             categorized_links['Facebook'].append(urllib.parse.unquote(link))
-        elif 'twitter.com' in link:
+        elif hostname and hostname.endswith('twitter.com'):
             categorized_links['Twitter'].append(urllib.parse.unquote(link))
-        elif 'instagram.com' in link:
+        elif hostname and hostname.endswith('instagram.com'):
             categorized_links['Instagram'].append(urllib.parse.unquote(link))
-        elif 't.me' in link:
+        elif hostname and hostname.endswith('t.me'):
             categorized_links['Telegram'].append(urllib.parse.unquote(link))
-        elif 'tiktok.com' in link:
+        elif hostname and hostname.endswith('tiktok.com'):
             categorized_links['TikTok'].append(urllib.parse.unquote(link))
-        elif 'linkedin.com' in link:
+        elif hostname and hostname.endswith('linkedin.com'):
             categorized_links['LinkedIn'].append(urllib.parse.unquote(link))
-        elif 'vk.com' in link:
+        elif hostname and hostname.endswith('vk.com'):
             categorized_links['VKontakte'].append(urllib.parse.unquote(link))
-        elif 'youtube.com' in link:
+        elif hostname and hostname.endswith('youtube.com'):
             categorized_links['YouTube'].append(urllib.parse.unquote(link))
-        elif 'wechat.com' in link:
+        elif hostname and hostname.endswith('wechat.com'):
             categorized_links['WeChat'].append(urllib.parse.unquote(link))
-        elif 'ok.ru' in link:
+        elif hostname and hostname.endswith('ok.ru'):
             categorized_links['Odnoklassniki'].append(urllib.parse.unquote(link))
 
     if not categorized_links['Odnoklassniki']:
@@ -211,25 +213,26 @@ def domains_reverse_research(subdomains, report_file_type):
 
     for inner_list in subdomain_socials_grouped:
         for link in inner_list:
-            if 'facebook.com' in link:
+            hostname = urlparse(link).hostname
+            if hostname and hostname.endswith('facebook.com'):
                 sd_socials['Facebook'].append(urllib.parse.unquote(link))
-            elif 'twitter.com' in link:
+            elif hostname and hostname.endswith('twitter.com'):
                 sd_socials['Twitter'].append(urllib.parse.unquote(link))
-            elif 'instagram.com' in link:
+            elif hostname and hostname.endswith('instagram.com'):
                 sd_socials['Instagram'].append(urllib.parse.unquote(link))
-            elif 't.me' in link:
+            elif hostname and hostname.endswith('t.me'):
                 sd_socials['Telegram'].append(urllib.parse.unquote(link))
-            elif 'tiktok.com' in link:
+            elif hostname and hostname.endswith('tiktok.com'):
                 sd_socials['TikTok'].append(urllib.parse.unquote(link))
-            elif 'linkedin.com' in link:
+            elif hostname and hostname.endswith('linkedin.com'):
                 sd_socials['LinkedIn'].append(urllib.parse.unquote(link))
-            elif 'vk.com' in link:
+            elif hostname and hostname.endswith('vk.com'):
                 sd_socials['VKontakte'].append(urllib.parse.unquote(link))
-            elif 'youtube.com' in link:
+            elif hostname and hostname.endswith('youtube.com'):
                 sd_socials['YouTube'].append(urllib.parse.unquote(link))
-            elif 'wechat.com' in link:
+            elif hostname and hostname.endswith('wechat.com'):
                 sd_socials['WeChat'].append(urllib.parse.unquote(link))
-            elif 'ok.ru' in link:
+            elif hostname and hostname.endswith('ok.ru'):
                 sd_socials['Odnoklassniki'].append(urllib.parse.unquote(link))
 
     sd_socials = {k: list(set(v)) for k, v in sd_socials.items()}
