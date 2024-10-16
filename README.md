@@ -13,14 +13,7 @@
 <img alt="Static Badge" src="https://img.shields.io/badge/DOMAIN_OSINT-CATEGORY?style=for-the-badge&label=TOOL%20CATEGORY&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/CLI-CATEGORY?style=for-the-badge&label=interface%20type&color=red">
 </p>
 
-
-> DPULSE was created as a research tool, and it is not intended for criminal activities. Use DPULSE only on allowed domains and for legal purposes!
-
-> You can visit [DPULSE wiki](https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-WIKI) in order to get more technical information about this project
-
-> You can visit [DPULSE roadmap](https://github.com/users/OSINT-TECHNOLOGIES/projects/1) to get more information about development process
-
-> You can also contact the developer via e-mail: osint.technologies@gmail.com
+> Attention! DPULSE is a research tool. It is not intended for criminal activities! Use DPULSE only on allowed domains and for legal purposes!
 
 # Repository map
 
@@ -29,7 +22,7 @@
 | What do you want to see? | Link |
 | --- | --- |
 | What is DPULSE? | [See "About DPULSE" page](https://github.com/OSINT-TECHNOLOGIES/dpulse?tab=readme-ov-file#about-dpulse) |
-| Where I can find some demo and use-cases? | [See "Demo and use-cases" page](https://github.com/OSINT-TECHNOLOGIES/dpulse?tab=readme-ov-file#dpulse-demos) |
+| Where I can find some demo and use-cases? | [See "Demo and use-cases" page](https://github.com/OSINT-TECHNOLOGIES/dpulse?tab=readme-ov-file#dpulse-demo-and-use-cases) |
 | I want to read project documentation | [See DPULSE wiki](https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-WIKI) |
 | I want to see project roadmap and future development plans | [See DPULSE roadmap](https://github.com/users/OSINT-TECHNOLOGIES/projects/1) |
 
@@ -42,6 +35,12 @@
 | You want to use only one specific version of DPULSE  | [See DPULSE releases page](https://github.com/OSINT-TECHNOLOGIES/dpulse/releases) |
 | I want to see more detailed installation instructions | [See DPULSE installation guides](https://github.com/OSINT-TECHNOLOGIES/dpulse?tab=readme-ov-file#how-to-install-and-run-dpulse)
 
+## How can I contact the developer? 
+
+| Reasons to contact | Links & addresses |
+| --- | --- |
+| I want to talk with developer in person  | DM to osint.technologies@gmail.com |
+| I want to report some bug or issue, or maybe I have some good idea for developer  | [Make a new issue page](https://github.com/OSINT-TECHNOLOGIES/dpulse/issues/new/choose) |
 
 # About DPULSE
 
