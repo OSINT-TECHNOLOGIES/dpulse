@@ -10,9 +10,6 @@
 
 <p align="center">
 <img alt="Static Badge" src="https://img.shields.io/badge/v1.1.2-CURRENT%20STABLE%20VERSION?style=for-the-badge&label=CURRENT%20STABLE%20VERSION&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/V1.1.3-red?style=for-the-badge&logo=f&label=CURRENT%20ROLLING%20VERSION">
-</p>
-
-<p align="center">
 <img alt="Static Badge" src="https://img.shields.io/badge/DOMAIN_OSINT-CATEGORY?style=for-the-badge&label=TOOL%20CATEGORY&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/CLI-CATEGORY?style=for-the-badge&label=interface%20type&color=red">
 </p>
 
@@ -25,9 +22,25 @@
 
 > You can also contact the developer via e-mail: osint.technologies@gmail.com
 
-***[Download DPULSE stable ZIP archive (with latest stable changes)](https://github.com/OSINT-TECHNOLOGIES/dpulse/archive/refs/heads/main.zip)***
+# Repository map
 
-***[Download DPULSE rolling ZIP archive (with latest developer commit)](https://github.com/OSINT-TECHNOLOGIES/dpulse/archive/refs/heads/rolling.zip)***
+## What to visit?
+
+| What do you want to see? | Link |
+| --- | --- |
+| What is DPULSE? | [See "About DPULSE" page](https://github.com/OSINT-TECHNOLOGIES/dpulse?tab=readme-ov-file#about-dpulse) |
+| Where I can find some demo and use-cases? | [See "Demo and use-cases" page](https://github.com/OSINT-TECHNOLOGIES/dpulse?tab=readme-ov-file#dpulse-demos) |
+| I want to read project documentation | [See DPULSE wiki](https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-WIKI) |
+| I want to see project roadmap and future development plans | [See DPULSE roadmap](https://github.com/users/OSINT-TECHNOLOGIES/projects/1) |
+
+## What to download?
+
+| Your expectations | Version and link for you |
+| --- | --- |
+| You want to use only tested and stable version of DPULSE | [DPULSE stable ZIP archive](https://github.com/OSINT-TECHNOLOGIES/dpulse/archive/refs/heads/main.zip) |
+| You don't mind to use DPULSE with latest changes and you're OK with bugs and issues  | [DPULSE rolling ZIP archive](https://github.com/OSINT-TECHNOLOGIES/dpulse/archive/refs/heads/rolling.zip) |
+| You want to use only one specific version of DPULSE  | [See DPULSE releases page](https://github.com/OSINT-TECHNOLOGIES/dpulse/releases) |
+| I want to see more detailed installation instructions | [See DPULSE installation guides](https://github.com/OSINT-TECHNOLOGIES/dpulse?tab=readme-ov-file#how-to-install-and-run-dpulse)
 
 
 # About DPULSE
@@ -126,7 +139,7 @@ Then you choose menu item which you want to start.
 
 If you have problems with starting installer.sh, you should try to use `dos2unix installer.sh` or `sed -i 's/\r//' installer.sh` commands.
 
-# DPULSE demos
+# DPULSE demo and use-cases
 
 ### You can start DPULSE and see the main menu on the screen using one of the recommended commands in DPULSE root folder. Don't forget to install all requirements before starting DPULSE
 
