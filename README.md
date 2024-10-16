@@ -10,6 +10,9 @@
 
 <p align="center">
 <img alt="Static Badge" src="https://img.shields.io/badge/v1.1.1-CURRENT%20STABLE%20VERSION?style=for-the-badge&label=CURRENT%20STABLE%20VERSION&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/V1.1.2-red?style=for-the-badge&logo=f&label=CURRENT%20ROLLING%20VERSION">
+</p>
+
+<p align="center">
 <img alt="Static Badge" src="https://img.shields.io/badge/DOMAIN_OSINT-CATEGORY?style=for-the-badge&label=TOOL%20CATEGORY&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/CLI-CATEGORY?style=for-the-badge&label=interface%20type&color=red">
 </p>
 
