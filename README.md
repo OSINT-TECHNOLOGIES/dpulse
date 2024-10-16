@@ -30,9 +30,9 @@
 
 | Your expectations | Version and link for you |
 | --- | --- |
-| You want to use only tested and stable version of DPULSE | [DPULSE stable ZIP archive](https://github.com/OSINT-TECHNOLOGIES/dpulse/archive/refs/heads/main.zip) |
-| You don't mind to use DPULSE with latest changes and you're OK with bugs and issues  | [DPULSE rolling ZIP archive](https://github.com/OSINT-TECHNOLOGIES/dpulse/archive/refs/heads/rolling.zip) |
-| You want to use only one specific version of DPULSE  | [See DPULSE releases page](https://github.com/OSINT-TECHNOLOGIES/dpulse/releases) |
+| I want to use only tested and stable version of DPULSE | [DPULSE stable ZIP archive](https://github.com/OSINT-TECHNOLOGIES/dpulse/archive/refs/heads/main.zip) |
+| I don't mind to use DPULSE with latest changes and you're OK with bugs and issues  | [DPULSE rolling ZIP archive](https://github.com/OSINT-TECHNOLOGIES/dpulse/archive/refs/heads/rolling.zip) |
+| I want to use only one specific version of DPULSE  | [See DPULSE releases page](https://github.com/OSINT-TECHNOLOGIES/dpulse/releases) |
 | I want to see more detailed installation instructions | [See DPULSE installation guides](https://github.com/OSINT-TECHNOLOGIES/dpulse?tab=readme-ov-file#how-to-install-and-run-dpulse)
 
 ## How can I contact the developer? 
