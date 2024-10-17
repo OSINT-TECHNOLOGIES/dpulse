@@ -18,20 +18,30 @@ except ImportError as e:
 
 def get_dorking_query(short_domain, dorking_db_path, table):
     print(Fore.GREEN + "Getting dorking query from database")
-    conn = sqlite3.connect(dorking_db_path)
-    cursor = conn.cursor()
-    cursor.execute(f"SELECT dork FROM {table}")
-    rows = cursor.fetchall()
-    search_query = [row[0].format(short_domain) for row in rows]
-    conn.close()
-    return search_query
+    try:
+        conn = sqlite3.connect(dorking_db_path)
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT dork FROM {table}")
+        rows = cursor.fetchall()
+        search_query = [row[0].format(short_domain) for row in rows]
+        conn.close()
+        return search_query
+    except Exception as e:
+        print(Fore.RED + f"Error getting dorking query: {e}")
+        return []
+        pass
 
 def get_columns_amount(dorking_db_path, table):
-    conn = sqlite3.connect(dorking_db_path)
-    cursor = conn.cursor()
-    cursor.execute(f"SELECT COUNT(*) FROM {table}")
-    row_count = cursor.fetchone()[0]
-    conn.close()
+    try:
+        conn = sqlite3.connect(dorking_db_path)
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT COUNT(*) FROM {table}")
+        row_count = cursor.fetchone()[0]
+    except Exception as e:
+        print(f"Error getting column count: {e}")
+        return None
+    finally:
+        conn.close()
     return row_count
 
 def solid_google_dorking(query, dorking_delay, delay_step, pages=100):
@@ -44,24 +54,27 @@ def solid_google_dorking(query, dorking_delay, delay_step, pages=100):
         result_query = []
         request_count = 0
         for page in range(pages):
-            for link in browser.links():
-                target = link.attrs['href']
-                if (target.startswith('/url?') and not
-                target.startswith("/url?q=http://webcache.googleusercontent.com")):
-                    target = re.sub(r"^/url\?q=([^&]*)&.*", r"\1", target)
-                    result_query.append(target)
-                    request_count += 1
-                    if request_count % delay_step == 0:
-                        time.sleep(dorking_delay)
             try:
+                for link in browser.links():
+                    target = link.attrs['href']
+                    if (target.startswith('/url?') and not
+                    target.startswith("/url?q=http://webcache.googleusercontent.com")):
+                        target = re.sub(r"^/url\?q=([^&]*)&.*", r"\1", target)
+                        result_query.append(target)
+                        request_count += 1
+                        if request_count % delay_step == 0:
+                            time.sleep(dorking_delay)
                 browser.follow_link(nr=page + 1)
             except mechanicalsoup.LinkNotFoundError:
                 break
-
+            except Exception as e:
+                logging.error(f'DORKING PROCESSING: ERROR. REASON: {e}')
         del result_query[-2:]
         return result_query
     except requests.exceptions.ConnectionError as e:
         print(Fore.RED + "Error while establishing connection with domain. No results will appear. See journal for details" + Style.RESET_ALL)
+        logging.error(f'DORKING PROCESSING: ERROR. REASON: {e}')
+    except Exception as e:
         logging.error(f'DORKING PROCESSING: ERROR. REASON: {e}')
 
 def save_results_to_txt(folderpath, table, queries, pages=10):
@@ -78,14 +91,18 @@ def save_results_to_txt(folderpath, table, queries, pages=10):
             dorked_query_counter = 0
             for i, query in enumerate(queries, start=1):
                 f.write(f"QUERY #{i}: {query}\n")
-                results = solid_google_dorking(query, dorking_delay, delay_step, pages)
-                if not results:
-                    f.write("=> NO RESULT FOUND\n")
+                try:
+                    results = solid_google_dorking(query, dorking_delay, delay_step, pages)
+                    if not results:
+                        f.write("=> NO RESULT FOUND\n")
+                        total_results.append((query, 0))
+                    else:
+                        total_results.append((query, len(results)))
+                        for result in results:
+                            f.write(f"=> {result}\n")
+                except Exception as e:
+                    logging.error(f"DORKING PROCESSING: ERROR. REASON: {e}")
                     total_results.append((query, 0))
-                else:
-                    total_results.append((query, len(results)))
-                    for result in results:
-                        f.write(f"=> {result}\n")
                 f.write("\n")
                 dorked_query_counter += 1
                 print(Fore.GREEN + f"  Dorking with " + Style.RESET_ALL + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{dorked_query_counter}/{total_dorks_amount}" + Style.RESET_ALL + Fore.GREEN + " dork" + Style.RESET_ALL, end="\r")
