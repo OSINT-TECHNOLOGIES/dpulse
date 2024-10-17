@@ -27,6 +27,7 @@ import xlsx_report_creation as xlsx_rc
 import html_report_creation as html_rc
 from data_assembler import DataProcessing
 from misc import time_processing, domain_precheck
+from api_virustotal import api_virustotal_check
 
 try:
     import socket
@@ -128,7 +129,11 @@ def run():
                                         print(Fore.GREEN + "Pay attention that APIs with red-colored API Key field are unable to use!\n")
                                         to_use_api_flag = input(Fore.YELLOW + "Select APIs IDs you want to use in scan (separated by comma) >> ")
                                         used_api_flag = [int(num) for num in to_use_api_flag.split(',')]
+                                        print(used_api_flag)
+                                        used_api_ui = f'Yes, using APIs with following IDs: {','.join(str(used_api_flag))}'
                                     elif api_flag.lower() == 'n':
+                                        used_api_ui = 'No'
+                                        used_api_flag = ['Empty']
                                         pass
                                     #else:
                                         #print invalid mode
@@ -166,6 +171,7 @@ def run():
                                         print(Fore.GREEN + "Report type: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + report_filetype.lower() + Style.RESET_ALL)
                                         print(Fore.GREEN + "PageSearch conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + pagesearch_ui_mark + Style.RESET_ALL)
                                         print(Fore.GREEN + "Dorking conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + dorking_ui_mark + Style.RESET_ALL)
+                                        print(Fore.GREEN + "APIs scan: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + used_api_ui + Style.RESET_ALL)
                                         print(Fore.GREEN + "Case comment: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + case_comment + Style.RESET_ALL + "\n")
                                         print(Fore.LIGHTMAGENTA_EX + "[BASIC SCAN START]\n" + Style.RESET_ALL)
                                         spinner_thread = ProgressBar()
@@ -174,15 +180,15 @@ def run():
                                             try:
                                                 if pagesearch_flag.lower() == 'y':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
                                                     end = time() - start
                                                 elif pagesearch_flag.lower() == 'si':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
                                                     end = time() - start
                                                 else:
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower())
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower(), used_api_flag)
                                                     end = time() - start
                                                 endtime_string = time_processing(end)
                                                 pdf_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
@@ -193,15 +199,15 @@ def run():
                                             try:
                                                 if pagesearch_flag.lower() == 'y':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
                                                     end = time() - start
                                                 elif pagesearch_flag.lower() == 'si':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
                                                     end = time() - start
                                                 else:
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower())
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower(), used_api_flag)
                                                     end = time() - start
                                                 endtime_string = time_processing(end)
                                                 xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
@@ -212,15 +218,15 @@ def run():
                                             try:
                                                 if pagesearch_flag.lower() == 'y':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
                                                     end = time() - start
                                                 elif pagesearch_flag.lower() == 'si':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
                                                     end = time() - start
                                                 else:
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, str(dorking_flag.lower()))
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, str(dorking_flag.lower()), used_api_flag)
                                                     end = time() - start
                                                 endtime_string = time_processing(end)
                                                 html_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
