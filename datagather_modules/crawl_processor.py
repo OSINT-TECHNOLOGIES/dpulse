@@ -115,25 +115,25 @@ def sm_gather(url):
     for link in links:
         parsed_url = urlparse(link)
         hostname = parsed_url.hostname
-        if hostname and hostname.endswith('facebook.com'):
+        if hostname and (hostname == 'facebook.com' or hostname.endswith('.facebook.com')):
             categorized_links['Facebook'].append(urllib.parse.unquote(link))
-        elif hostname and hostname.endswith('twitter.com'):
+        elif hostname and (hostname == 'twitter.com' or hostname.endswith('.twitter.com')):
             categorized_links['Twitter'].append(urllib.parse.unquote(link))
-        elif hostname and hostname.endswith('instagram.com'):
+        elif hostname and (hostname == 'instagram.com' or hostname.endswith('.instagram.com')):
             categorized_links['Instagram'].append(urllib.parse.unquote(link))
-        elif hostname and hostname.endswith('t.me'):
+        elif hostname and (hostname == 't.me' or hostname.endswith('.t.me')):
             categorized_links['Telegram'].append(urllib.parse.unquote(link))
-        elif hostname and hostname.endswith('tiktok.com'):
+        elif hostname and (hostname == 'tiktok.com' or hostname.endswith('.tiktok.com')):
             categorized_links['TikTok'].append(urllib.parse.unquote(link))
-        elif hostname and hostname.endswith('linkedin.com'):
+        elif hostname and (hostname == 'linkedin.com' or hostname.endswith('.linkedin.com')):
             categorized_links['LinkedIn'].append(urllib.parse.unquote(link))
-        elif hostname and hostname.endswith('vk.com'):
+        elif hostname and (hostname == 'vk.com' or hostname.endswith('.vk.com')):
             categorized_links['VKontakte'].append(urllib.parse.unquote(link))
-        elif hostname and hostname.endswith('youtube.com'):
+        elif hostname and (hostname == 'youtube.com' or hostname.endswith('.youtube.com')):
             categorized_links['YouTube'].append(urllib.parse.unquote(link))
-        elif hostname and hostname.endswith('wechat.com'):
+        elif hostname and (hostname == 'wechat.com' or hostname.endswith('.wechat.com')):
             categorized_links['WeChat'].append(urllib.parse.unquote(link))
-        elif hostname and hostname.endswith('ok.ru'):
+        elif hostname and (hostname == 'ok.ru' or hostname.endswith('.ok.ru')):
             categorized_links['Odnoklassniki'].append(urllib.parse.unquote(link))
 
     if not categorized_links['Odnoklassniki']:
