@@ -48,6 +48,16 @@ config_values = read_config()
 cli = cli_init.Menu()
 cli.welcome_menu()
 
+def check_api_keys(used_api_flag):
+    for key in used_api_flag:
+        conn = sqlite3.connect('apis//api_keys.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT api_key FROM api_keys WHERE id = ?", (key,))
+        result = cursor.fetchone()
+        if result[0] == 'YOUR_API_KEY':
+            return False
+    return True
+
 class ProgressBar(threading.Thread):
     def __init__(self):
         super(ProgressBar, self).__init__()
@@ -126,17 +136,25 @@ def run():
                                             else:
                                                 print(Fore.LIGHTBLUE_EX + f"ID: {row[0]} | API Name: {row[1]} | " + Style.RESET_ALL + Fore.RED + f"API Key: {row[2]} " + Fore.LIGHTBLUE_EX + f"| Limitations: {row[3]}\n" + Style.RESET_ALL)
                                         conn.close()
+
                                         print(Fore.GREEN + "Pay attention that APIs with red-colored API Key field are unable to use!\n")
                                         to_use_api_flag = input(Fore.YELLOW + "Select APIs IDs you want to use in scan (separated by comma) >> ")
                                         used_api_flag = [int(num) for num in to_use_api_flag.split(',')]
-                                        print(used_api_flag)
+                                        if check_api_keys(used_api_flag):
+                                            print(Fore.GREEN + 'Found API key. Continuation')
+                                        else:
+                                            print(Fore.RED + "\nAPI key was not found. Check if you've entered valid API key in API Keys DB")
+                                            break
                                         used_api_ui = f'Yes, using APIs with following IDs: {','.join(str(used_api_flag))}'
                                     elif api_flag.lower() == 'n':
                                         used_api_ui = 'No'
                                         used_api_flag = ['Empty']
                                         pass
-                                    #else:
-                                        #print invalid mode
+                                    else:
+                                        print(Fore.RED + "\nInvalid API usage mode" + Style.RESET_ALL)
+                                        break
+
+
                                     if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n' or pagesearch_flag.lower() == 'si':
                                         if pagesearch_flag.lower() == "n":
                                             pagesearch_ui_mark = 'No'
