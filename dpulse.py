@@ -10,6 +10,7 @@ import cli_init
 from config_processing import create_config, check_cfg_presence, read_config, print_and_return_config
 import db_processing as db
 import os
+import shutil
 
 db.db_creation('report_storage.db')
 cfg_presence = check_cfg_presence()
@@ -136,7 +137,6 @@ def run():
                                             else:
                                                 print(Fore.LIGHTBLUE_EX + f"ID: {row[0]} | API Name: {row[1]} | " + Style.RESET_ALL + Fore.RED + f"API Key: {row[2]} " + Fore.LIGHTBLUE_EX + f"| Limitations: {row[3]}\n" + Style.RESET_ALL)
                                         conn.close()
-
                                         print(Fore.GREEN + "Pay attention that APIs with red-colored API Key field are unable to use!\n")
                                         to_use_api_flag = input(Fore.YELLOW + "Select APIs IDs you want to use in scan (separated by comma) >> ")
                                         used_api_flag = [int(num) for num in to_use_api_flag.split(',')]
@@ -153,8 +153,6 @@ def run():
                                     else:
                                         print(Fore.RED + "\nInvalid API usage mode" + Style.RESET_ALL)
                                         break
-
-
                                     if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n' or pagesearch_flag.lower() == 'si':
                                         if pagesearch_flag.lower() == "n":
                                             pagesearch_ui_mark = 'No'
@@ -311,6 +309,47 @@ def run():
                 else:
                     print(Fore.RED + "\nInvalid menu item. Please select between existing menu items")
 
+            elif choice == '5':
+                cli.api_manager()
+                print('\n')
+                choice_api = input(Fore.YELLOW + "Enter your choice >> ")
+                if choice_api == '1':
+                    print(Fore.GREEN + "\nSupported APIs and your keys:\n")
+                    conn = sqlite3.connect('apis//api_keys.db')
+                    cursor = conn.cursor()
+                    cursor.execute("SELECT id, api_name, api_key, limitations FROM api_keys")
+                    rows = cursor.fetchall()
+                    for row in rows:
+                        if row[2] != 'YOUR_API_KEY':
+                            print(Fore.LIGHTBLUE_EX + f"ID: {row[0]} | API Name: {row[1]} | API Key: {row[2]} | Limitations: {row[3]}\n" + Style.RESET_ALL)
+                        else:
+                            print(Fore.LIGHTBLUE_EX + f"ID: {row[0]} | API Name: {row[1]} | " + Style.RESET_ALL + Fore.RED + f"API Key: {row[2]} " + Fore.LIGHTBLUE_EX + f"| Limitations: {row[3]}\n" + Style.RESET_ALL)
+
+                    api_id_to_update = input(Fore.YELLOW + "Enter API's ID to update its key >> ")
+                    new_api_key = input(Fore.YELLOW + "Enter new API key >> ")
+
+                    cursor.execute("""
+                        UPDATE api_keys 
+                        SET api_key = ? 
+                        WHERE id = ?
+                    """, (new_api_key, api_id_to_update))
+
+                    conn.commit()
+                    conn.close()
+
+                elif choice_api == '2':
+                    try:
+                        os.remove('apis//api_keys.db')
+                        print(Fore.GREEN + "Deleted old API Keys DB")
+                    except FileNotFoundError:
+                        print(Fore.RED + "API Keys DB was not found")
+                    try:
+                        shutil.copyfile('apis//api_keys_reference.db', 'apis//api_keys.db')
+                        print(Fore.GREEN + "Sucessfully restored reference API Keys DB")
+                    except FileNotFoundError:
+                        print(Fore.RED + "Reference API Keys DB was not found")
+                else:
+                    continue
             elif choice == "4":
                 cli.print_db_menu()
                 print('\n')
