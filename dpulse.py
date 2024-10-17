@@ -3,6 +3,7 @@ sys.path.append('datagather_modules')
 sys.path.append('service')
 sys.path.append('reporting_modules')
 sys.path.append('dorking')
+sys.path.append('apis')
 
 from colorama import Fore, Style, Back
 import cli_init
@@ -111,12 +112,24 @@ def run():
                                     keywords_flag = 0
                                 if report_filetype.lower() == 'pdf' or report_filetype.lower() == 'xlsx' or report_filetype.lower() == 'html':
                                     dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/Admins/Web/Custom/None] >> ")
-                                    #api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N] >> ")
-                                    #if api_flag.lower() == 'y':
-                                        #print api db content
-                                        #write ID which you want to use using comma (ex: 1,3,4)
-                                    #elif api_flag.lower() == 'n':
-                                        #pass
+                                    api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N] >> ")
+                                    if api_flag.lower() == 'y':
+                                        print(Fore.GREEN + "\nSupported APIs and your keys:\n")
+                                        conn = sqlite3.connect('apis//api_keys.db')
+                                        cursor = conn.cursor()
+                                        cursor.execute("SELECT id, api_name, api_key, limitations FROM api_keys")
+                                        rows = cursor.fetchall()
+                                        for row in rows:
+                                            if row[2] != 'YOUR_API_KEY':
+                                                print(Fore.LIGHTBLUE_EX + f"ID: {row[0]} | API Name: {row[1]} | API Key: {row[2]} | Limitations: {row[3]}\n" + Style.RESET_ALL)
+                                            else:
+                                                print(Fore.LIGHTBLUE_EX + f"ID: {row[0]} | API Name: {row[1]} | " + Style.RESET_ALL + Fore.RED + f"API Key: {row[2]} " + Fore.LIGHTBLUE_EX + f"| Limitations: {row[3]}\n" + Style.RESET_ALL)
+                                        conn.close()
+                                        print(Fore.GREEN + "Pay attention that APIs with red-colored API Key field are unable to use!\n")
+                                        to_use_api_flag = input(Fore.YELLOW + "Select APIs IDs you want to use in scan (separated by comma) >> ")
+                                        used_api_flag = [int(num) for num in to_use_api_flag.split(',')]
+                                    elif api_flag.lower() == 'n':
+                                        pass
                                     #else:
                                         #print invalid mode
                                     if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n' or pagesearch_flag.lower() == 'si':
