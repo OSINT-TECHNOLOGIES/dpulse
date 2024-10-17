@@ -214,25 +214,25 @@ def domains_reverse_research(subdomains, report_file_type):
     for inner_list in subdomain_socials_grouped:
         for link in inner_list:
             hostname = urlparse(link).hostname
-            if hostname and hostname.endswith('facebook.com'):
+            if hostname and (hostname == 'facebook.com' or hostname.endswith('.facebook.com')):
                 sd_socials['Facebook'].append(urllib.parse.unquote(link))
-            elif hostname and hostname.endswith('twitter.com'):
+            elif hostname and (hostname == 'twitter.com' or hostname.endswith('.twitter.com')):
                 sd_socials['Twitter'].append(urllib.parse.unquote(link))
-            elif hostname and hostname.endswith('instagram.com'):
+            elif hostname and (hostname == 'instagram.com' or hostname.endswith('.instagram.com')):
                 sd_socials['Instagram'].append(urllib.parse.unquote(link))
-            elif hostname and hostname.endswith('t.me'):
+            elif hostname and (hostname == 't.me' or hostname.endswith('.t.me')):
                 sd_socials['Telegram'].append(urllib.parse.unquote(link))
-            elif hostname and hostname.endswith('tiktok.com'):
+            elif hostname and (hostname == 'tiktok.com' or hostname.endswith('.tiktok.com')):
                 sd_socials['TikTok'].append(urllib.parse.unquote(link))
-            elif hostname and hostname.endswith('linkedin.com'):
+            elif hostname and (hostname == 'linkedin.com' or hostname.endswith('.linkedin.com')):
                 sd_socials['LinkedIn'].append(urllib.parse.unquote(link))
-            elif hostname and hostname.endswith('vk.com'):
+            elif hostname and (hostname == 'vk.com' or hostname.endswith('.vk.com')):
                 sd_socials['VKontakte'].append(urllib.parse.unquote(link))
-            elif hostname and hostname.endswith('youtube.com'):
+            elif hostname and (hostname == 'youtube.com' or hostname.endswith('.youtube.com')):
                 sd_socials['YouTube'].append(urllib.parse.unquote(link))
-            elif hostname and hostname.endswith('wechat.com'):
+            elif hostname and (hostname == 'wechat.com' or hostname.endswith('.wechat.com')):
                 sd_socials['WeChat'].append(urllib.parse.unquote(link))
-            elif hostname and hostname.endswith('ok.ru'):
+            elif hostname and (hostname == 'ok.ru' or hostname.endswith('.ok.ru')):
                 sd_socials['Odnoklassniki'].append(urllib.parse.unquote(link))
 
     sd_socials = {k: list(set(v)) for k, v in sd_socials.items()}
