@@ -207,7 +207,6 @@ def run():
                                                     end = time() - start
                                                 else:
                                                     start = time()
-                                                    print(dorking_flag)
                                                     data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, str(dorking_flag.lower()))
                                                     end = time() - start
                                                 endtime_string = time_processing(end)
