@@ -30,7 +30,7 @@ class Menu:
         print(Fore.CYAN + "2. General settings")
         print(Fore.CYAN + "3. Dorking module manager")
         print(Fore.CYAN + "4. Report storage DB manager")
-        print(Fore.CYAN + "5. API modules manager (not active)")
+        print(Fore.CYAN + "5. API modules manager")
         print(Fore.CYAN + "6. Help")
         print(Fore.LIGHTRED_EX + "7. Exit DPULSE" + Style.RESET_ALL + '\n')
 
@@ -66,3 +66,10 @@ class Menu:
         print(Fore.CYAN + "1. Generate custom Dorking DB")
         print(Fore.LIGHTRED_EX + "2. Return to main menu" + Style.RESET_ALL)
         print('\n')
+
+    def api_manager(self):
+        print('\n')
+        print(Fore.MAGENTA + Back.WHITE + '[API KEYS DB MANAGER]' + Style.RESET_ALL)
+        print(Fore.CYAN + "1. Add API key")
+        print(Fore.CYAN + "2. Restore reference API Keys DB")
+        print(Fore.LIGHTRED_EX + "3. Return to main menu" + Style.RESET_ALL)
