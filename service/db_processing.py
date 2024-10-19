@@ -1,6 +1,9 @@
 from colorama import Fore, Style
 import os
 import sqlite3
+import sys
+
+sys.path.append('apis//api_keys.db')
 
 def db_connect():
     sqlite_connection = sqlite3.connect('report_storage.db')
@@ -121,3 +124,13 @@ def insert_blob(report_file_type, pdf_blob, db_casename, creation_date, case_com
         if sqlite_connection:
             sqlite_connection.close()
             print(Fore.GREEN + "Database connection is successfully closed")
+
+def check_api_keys(used_api_flag):
+    for key in used_api_flag:
+        conn = sqlite3.connect('apis//api_keys.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT api_key FROM api_keys WHERE id = ?", (key,))
+        result = cursor.fetchone()
+        if result[0] == 'YOUR_API_KEY':
+            return False
+    return True
