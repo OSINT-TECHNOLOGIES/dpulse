@@ -270,11 +270,11 @@ def run():
                     with open('service//config.ini', 'w') as configfile:
                         config.write(configfile)
                     print(Fore.GREEN + "Configuration updated successfully" + Style.RESET_ALL)
-                elif choice_settings == '4':
+                elif choice_settings == '5':
                     with open('journal.log', 'w'):
                         print(Fore.GREEN + "Journal file was successfully cleared" + Style.RESET_ALL)
                         pass
-                elif choice_settings == '5':
+                elif choice_settings == '4':
                     continue
             elif choice == '3':
                 cli.dorking_db_manager()
