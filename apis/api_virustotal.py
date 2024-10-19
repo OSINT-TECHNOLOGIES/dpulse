@@ -27,17 +27,20 @@ def api_virustotal_check(domain):
         api_name, api_key = row
         if api_name == 'VirusTotal':
             api_key = str(row[1])
-            print(Fore.GREEN + 'Found VirusTotal API key')
+            print(Fore.GREEN + 'Got VirusTotal API key. Starting VirusTotal scan...\n')
 
     result = check_domain(domain, api_key)
 
     if result:
-        print(Fore.GREEN + "VIRUSTOTAL DOMAIN REPORT")
+        print(Fore.GREEN + "[VIRUSTOTAL DOMAIN REPORT]")
         print(Fore.GREEN + f"Domain: {result.get('domain')}")
         print(Fore.GREEN + f"Categories: {result.get('categories')}")
         print(Fore.GREEN + f"Detected URLs: {len(result.get('detected_urls', []))}")
         print(Fore.GREEN + f"Detected Samples: {len(result.get('detected_samples', []))}")
-        print(Fore.GREEN + f"Undetected Samples: {len(result.get('undetected_samples', []))}")
+        print(Fore.GREEN + f"Undetected Samples: {len(result.get('undetected_samples', []))}\n")
+        print(Fore.LIGHTGREEN_EX + "-------------------------------------------------\n" + Style.RESET_ALL)
     else:
-        print(Fore.RED + "Failed to get domain report")
+        print(Fore.RED + "Failed to get domain report\n")
+        print(Fore.LIGHTGREEN_EX + "-------------------------------------------------\n" + Style.RESET_ALL)
+
 
