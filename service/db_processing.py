@@ -134,3 +134,20 @@ def check_api_keys(used_api_flag):
         if result[0] == 'YOUR_API_KEY':
             return False
     return True
+
+def select_api_keys(mode):
+    conn = sqlite3.connect('apis//api_keys.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, api_name, api_key, limitations FROM api_keys")
+    rows = cursor.fetchall()
+    for row in rows:
+        if row[2] != 'YOUR_API_KEY':
+            print(Fore.LIGHTBLUE_EX + f"ID: {row[0]} | API Name: {row[1]} | API Key: {row[2]} | Limitations: {row[3]}\n" + Style.RESET_ALL)
+        else:
+            print(Fore.LIGHTBLUE_EX + f"ID: {row[0]} | API Name: {row[1]} | " + Style.RESET_ALL + Fore.RED + f"API Key: {row[2]} " + Fore.LIGHTBLUE_EX + f"| Limitations: {row[3]}\n" + Style.RESET_ALL)
+    if mode == 'printing':
+        conn.close()
+        return None
+    else:
+        pass
+        return cursor, conn
