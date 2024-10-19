@@ -1,16 +1,22 @@
 import sys
+import os
+from colorama import Fore, Style, Back
+
 sys.path.append('datagather_modules')
 sys.path.append('service')
 sys.path.append('reporting_modules')
 sys.path.append('dorking')
 sys.path.append('apis')
 
-from colorama import Fore, Style, Back
-import cli_init
 from config_processing import create_config, check_cfg_presence, read_config, print_and_return_config
 import db_processing as db
-import os
-import shutil
+import cli_init
+from dorking_handler import dorks_files_check, get_columns_amount
+import pdf_report_creation as pdf_rc
+import xlsx_report_creation as xlsx_rc
+import html_report_creation as html_rc
+from data_assembler import DataProcessing
+from misc import time_processing, domain_precheck
 
 db.db_creation('report_storage.db')
 cfg_presence = check_cfg_presence()
@@ -21,15 +27,10 @@ else:
     create_config()
     print(Fore.GREEN + "Successfully generated global config file")
 
-from dorking_handler import dorks_files_check, get_columns_amount
 dorks_files_check()
-import pdf_report_creation as pdf_rc
-import xlsx_report_creation as xlsx_rc
-import html_report_creation as html_rc
-from data_assembler import DataProcessing
-from misc import time_processing, domain_precheck
 
 try:
+    import shutil
     import socket
     import re
     import time
@@ -116,16 +117,7 @@ def run():
                                     api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N] >> ")
                                     if api_flag.lower() == 'y':
                                         print(Fore.GREEN + "\nSupported APIs and your keys:\n")
-                                        conn = sqlite3.connect('apis//api_keys.db')
-                                        cursor = conn.cursor()
-                                        cursor.execute("SELECT id, api_name, api_key, limitations FROM api_keys")
-                                        rows = cursor.fetchall()
-                                        for row in rows:
-                                            if row[2] != 'YOUR_API_KEY':
-                                                print(Fore.LIGHTBLUE_EX + f"ID: {row[0]} | API Name: {row[1]} | API Key: {row[2]} | Limitations: {row[3]}\n" + Style.RESET_ALL)
-                                            else:
-                                                print(Fore.LIGHTBLUE_EX + f"ID: {row[0]} | API Name: {row[1]} | " + Style.RESET_ALL + Fore.RED + f"API Key: {row[2]} " + Fore.LIGHTBLUE_EX + f"| Limitations: {row[3]}\n" + Style.RESET_ALL)
-                                        conn.close()
+                                        db.select_api_keys('printing')
                                         print(Fore.GREEN + "Pay attention that APIs with red-colored API Key field are unable to use!\n")
                                         to_use_api_flag = input(Fore.YELLOW + "Select APIs IDs you want to use in scan (separated by comma) >> ")
                                         used_api_flag = [int(num) for num in to_use_api_flag.split(',')]
@@ -304,16 +296,7 @@ def run():
                 choice_api = input(Fore.YELLOW + "Enter your choice >> ")
                 if choice_api == '1':
                     print(Fore.GREEN + "\nSupported APIs and your keys:\n")
-                    conn = sqlite3.connect('apis//api_keys.db')
-                    cursor = conn.cursor()
-                    cursor.execute("SELECT id, api_name, api_key, limitations FROM api_keys")
-                    rows = cursor.fetchall()
-                    for row in rows:
-                        if row[2] != 'YOUR_API_KEY':
-                            print(Fore.LIGHTBLUE_EX + f"ID: {row[0]} | API Name: {row[1]} | API Key: {row[2]} | Limitations: {row[3]}\n" + Style.RESET_ALL)
-                        else:
-                            print(Fore.LIGHTBLUE_EX + f"ID: {row[0]} | API Name: {row[1]} | " + Style.RESET_ALL + Fore.RED + f"API Key: {row[2]} " + Fore.LIGHTBLUE_EX + f"| Limitations: {row[3]}\n" + Style.RESET_ALL)
-
+                    cursor, conn = db.select_api_keys('updating')
                     api_id_to_update = input(Fore.YELLOW + "Enter API's ID to update its key >> ")
                     new_api_key = input(Fore.YELLOW + "Enter new API key >> ")
 
@@ -339,6 +322,7 @@ def run():
                         print(Fore.RED + "Reference API Keys DB was not found")
                 else:
                     continue
+
             elif choice == "4":
                 cli.print_db_menu()
                 print('\n')
