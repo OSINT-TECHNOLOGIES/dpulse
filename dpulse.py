@@ -30,7 +30,6 @@ else:
 dorks_files_check()
 
 try:
-    import shutil
     import socket
     import re
     import time
@@ -163,13 +162,7 @@ def run():
                                                 row_count = get_columns_amount(f'dorking//{custom_db_name}.db', 'dorks')
                                                 dorking_ui_mark = f'Yes, Custom table dorking ({row_count} dorks)'
                                                 dorking_flag = str(dorking_flag.lower() + f"+{custom_db_name}.db")
-                                        print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
-                                        print(Fore.GREEN + "Determined target: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + short_domain + Style.RESET_ALL)
-                                        print(Fore.GREEN + "Report type: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + report_filetype.lower() + Style.RESET_ALL)
-                                        print(Fore.GREEN + "PageSearch conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + pagesearch_ui_mark + Style.RESET_ALL)
-                                        print(Fore.GREEN + "Dorking conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + dorking_ui_mark + Style.RESET_ALL)
-                                        print(Fore.GREEN + "APIs scan: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + used_api_ui + Style.RESET_ALL)
-                                        print(Fore.GREEN + "Case comment: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + case_comment + Style.RESET_ALL + "\n")
+                                        cli_init.print_prescan_summary(short_domain, report_filetype.upper(), pagesearch_ui_mark, dorking_ui_mark, used_api_ui, case_comment)
                                         print(Fore.LIGHTMAGENTA_EX + "[BASIC SCAN START]\n" + Style.RESET_ALL)
                                         spinner_thread = ProgressBar()
                                         spinner_thread.start()
@@ -262,12 +255,7 @@ def run():
                 choice_dorking = input(Fore.YELLOW + "Enter your choice >> ")
                 if choice_dorking == '1':
                     from db_creator import manage_dorks
-                    print('\n')
-                    print(Fore.GREEN + "You've entered custom Dorking DB generator!\n" + Style.RESET_ALL)
-                    print(Fore.GREEN + "Remember some rules in order to successfully create your custom Dorking DB:" + Style.RESET_ALL)
-                    print(Fore.GREEN + "[1] - dork_id variable must be unique, starting with 1 and then +1 every new dork" + Style.RESET_ALL)
-                    print(Fore.GREEN + "[2] - When it comes to define domain in dork, put {} in it\n" + Style.RESET_ALL)
-                    print(Fore.GREEN + "Examples: related:{}, site:{} inurl:login and so on\n" + Style.RESET_ALL)
+                    cli_init.print_api_db_msg()
                     ddb_name = input(Fore.YELLOW + "Enter a name for your custom Dorking DB (without any extensions) >> ")
                     manage_dorks(ddb_name)
                 elif choice_dorking == '2':
@@ -310,6 +298,7 @@ def run():
                     conn.close()
 
                 elif choice_api == '2':
+                    import shutil
                     try:
                         os.remove('apis//api_keys.db')
                         print(Fore.GREEN + "Deleted old API Keys DB")
