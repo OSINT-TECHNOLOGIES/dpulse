@@ -28,7 +28,6 @@ import xlsx_report_creation as xlsx_rc
 import html_report_creation as html_rc
 from data_assembler import DataProcessing
 from misc import time_processing, domain_precheck
-from api_virustotal import api_virustotal_check
 
 try:
     import socket
