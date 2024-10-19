@@ -48,16 +48,6 @@ config_values = read_config()
 cli = cli_init.Menu()
 cli.welcome_menu()
 
-def check_api_keys(used_api_flag):
-    for key in used_api_flag:
-        conn = sqlite3.connect('apis//api_keys.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT api_key FROM api_keys WHERE id = ?", (key,))
-        result = cursor.fetchone()
-        if result[0] == 'YOUR_API_KEY':
-            return False
-    return True
-
 class ProgressBar(threading.Thread):
     def __init__(self):
         super(ProgressBar, self).__init__()
@@ -139,7 +129,7 @@ def run():
                                         print(Fore.GREEN + "Pay attention that APIs with red-colored API Key field are unable to use!\n")
                                         to_use_api_flag = input(Fore.YELLOW + "Select APIs IDs you want to use in scan (separated by comma) >> ")
                                         used_api_flag = [int(num) for num in to_use_api_flag.split(',')]
-                                        if check_api_keys(used_api_flag):
+                                        if db.check_api_keys(used_api_flag):
                                             print(Fore.GREEN + 'Found API key. Continuation')
                                         else:
                                             print(Fore.RED + "\nAPI key was not found. Check if you've entered valid API key in API Keys DB")
