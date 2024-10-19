@@ -39,9 +39,8 @@ class Menu:
         print(Fore.MAGENTA + Back.WHITE + '[SETTINGS MENU]' + Style.RESET_ALL)
         print(Fore.CYAN + "1. Print current config file")
         print(Fore.CYAN + "2. Edit config file")
-        print(Fore.CYAN + "3. Add API key for existing API (not active)")
-        print(Fore.CYAN + "4. Clear journal content")
-        print(Fore.LIGHTRED_EX + "5. Return to main menu" + Style.RESET_ALL + '\n')
+        print(Fore.CYAN + "3. Clear journal content")
+        print(Fore.LIGHTRED_EX + "4. Return to main menu" + Style.RESET_ALL + '\n')
 
     def print_help_menu(self):
         print(Fore.MAGENTA + Back.WHITE + '[HELP MENU]' + Style.RESET_ALL)
