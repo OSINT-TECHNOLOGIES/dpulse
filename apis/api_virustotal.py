@@ -39,8 +39,11 @@ def api_virustotal_check(domain):
         print(Fore.GREEN + f"Detected Samples: {len(result.get('detected_samples', []))}")
         print(Fore.GREEN + f"Undetected Samples: {len(result.get('undetected_samples', []))}\n")
         print(Fore.LIGHTGREEN_EX + "-------------------------------------------------\n" + Style.RESET_ALL)
+        conn.close()
     else:
         print(Fore.RED + "Failed to get domain report\n")
         print(Fore.LIGHTGREEN_EX + "-------------------------------------------------\n" + Style.RESET_ALL)
+        conn.close()
+        pass
 
 
