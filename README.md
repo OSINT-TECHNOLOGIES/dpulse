@@ -76,6 +76,8 @@ DPULSE is a software solution for conducting OSINT research in relation to a cer
 
 4. ***Dorking scan:*** extended domain research function with prepared Google Dorking databases for different purposes, such as IoT dorking, files dorking, admin panels dorking and so on. Moreover, this mode allows you to create your own custom Google Dorking database
 
+5. ***API scan:*** extended domain research function with prepared functions for 3rd party APIs usage. Currently DPULSE supports VirusTotal API (for brief domain information gathering) and SecurityTrails API (deep subdomains and DNS enumeration)
+
 Finally, DPULSE compiles all found data into an easy-to-read PDF, HTML or XLSX report by category. It also saves all information about scan in local report storage database, which can be restored later.
 
 # How to install and run DPULSE
