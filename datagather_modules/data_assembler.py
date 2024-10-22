@@ -9,6 +9,7 @@ import networking_processor as np
 from pagesearch_main import normal_search, sitemap_inspection_search
 from logs_processing import logging
 from api_virustotal import api_virustotal_check
+from api_securitytrails import api_securitytrails_check
 
 try:
     import requests
@@ -152,6 +153,8 @@ class DataProcessing():
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: API SCANNING]\n" + Style.RESET_ALL)
                 if 1 in used_api_flag:
                     api_virustotal_check(short_domain)
+                if 2 in used_api_flag:
+                    api_securitytrails_check(short_domain)
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
             else:
                 pass
@@ -200,6 +203,8 @@ class DataProcessing():
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: API SCANNING]\n" + Style.RESET_ALL)
                 if 1 in used_api_flag:
                     api_virustotal_check(short_domain)
+                if 2 in used_api_flag:
+                    api_securitytrails_check(short_domain)
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
             else:
                 pass
@@ -251,6 +256,8 @@ class DataProcessing():
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: API SCANNING]\n" + Style.RESET_ALL)
                 if 1 in used_api_flag:
                     api_virustotal_check(short_domain)
+                if 2 in used_api_flag:
+                    api_securitytrails_check(short_domain)
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
             else:
                 pass
