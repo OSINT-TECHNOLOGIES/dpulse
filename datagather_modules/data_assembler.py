@@ -193,7 +193,7 @@ class DataProcessing():
             else:
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
+                dorking_status, dorking_results = dp.transfer_results_to_xlsx(table, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
 
             if used_api_flag != ['Empty']:
