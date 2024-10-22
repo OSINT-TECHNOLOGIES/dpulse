@@ -129,7 +129,7 @@ def transfer_results_to_xlsx(table, queries, pages=10):
     dorking_return_list = []
     for i, query in enumerate(queries, start=1):
         dorking_return_list.append(f"QUERY #{i}: {query}\n")
-        results = solid_google_dorking(query, pages)
+        results = solid_google_dorking(query, dorking_delay, delay_step)
         if not results:
             dorking_return_list.append("NO RESULT FOUND\n")
         else:
