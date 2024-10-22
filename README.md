@@ -13,6 +13,11 @@
 <img alt="Static Badge" src="https://img.shields.io/badge/DOMAIN_OSINT-CATEGORY?style=for-the-badge&label=TOOL%20CATEGORY&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/CLI-CATEGORY?style=for-the-badge&label=interface%20type&color=red">
 </p>
 
+<p align="center">
+<img alt="Static Badge" src="https://img.shields.io/badge/supports-virus_total_api-red?style=for-the-badge">
+
+</p>
+
 > Attention! DPULSE is a research tool. It is not intended for criminal activities! Use DPULSE only on allowed domains and for legal purposes!
 
 # Repository map
