@@ -189,7 +189,7 @@ class DataProcessing():
 
             if dorking_flag == 'none':
                 dorking_status = 'Google Dorking mode was not selected for this scan'
-                dorking_results = 'Google Dorking mode was not selected for this scan'
+                dorking_results = ['Google Dorking mode was not selected for this scan']
             else:
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
