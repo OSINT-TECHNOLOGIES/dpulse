@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-<img alt="Static Badge" src="https://img.shields.io/badge/supports-virus_total_api-red?style=for-the-badge">
+<img alt="Static Badge" src="https://img.shields.io/badge/supports-virustotal_api-red?style=for-the-badge">
 
 </p>
 
