@@ -9,6 +9,15 @@ sys.path.append('dorking')
 sys.path.append('apis')
 
 from config_processing import create_config, check_cfg_presence, read_config, print_and_return_config
+
+cfg_presence = check_cfg_presence()
+if cfg_presence is True:
+    print(Fore.GREEN + "Global config file presence: OK" + Style.RESET_ALL)
+else:
+    print(Fore.RED + "Global config file presence: NOT OK")
+    create_config()
+    print(Fore.GREEN + "Successfully generated global config file")
+
 import db_processing as db
 import cli_init
 from dorking_handler import dorks_files_check, get_columns_amount
@@ -19,13 +28,6 @@ from data_assembler import DataProcessing
 from misc import time_processing, domain_precheck
 
 db.db_creation('report_storage.db')
-cfg_presence = check_cfg_presence()
-if cfg_presence is True:
-    print(Fore.GREEN + "Global config file presence: OK" + Style.RESET_ALL)
-else:
-    print(Fore.RED + "Global config file presence: NOT OK")
-    create_config()
-    print(Fore.GREEN + "Successfully generated global config file")
 
 dorks_files_check()
 
