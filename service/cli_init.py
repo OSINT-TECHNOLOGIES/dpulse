@@ -89,3 +89,13 @@ def print_api_db_msg():
     print(Fore.GREEN + "[1] - dork_id variable must be unique, starting with 1 and then +1 every new dork" + Style.RESET_ALL)
     print(Fore.GREEN + "[2] - When it comes to define domain in dork, put {} in it\n" + Style.RESET_ALL)
     print(Fore.GREEN + "Examples: related:{}, site:{} inurl:login and so on\n" + Style.RESET_ALL)
+
+def print_ps_cli_report(subdomains_list,  accessible_subdomains, ps_emails_return, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter):
+    print(Fore.GREEN + f"\nDuring subdomains analysis:\n[+] Total {len(subdomains_list)} subdomains were checked")
+    print(Fore.GREEN + f"[+] Among them, {accessible_subdomains} subdomains were accessible")
+    print(Fore.GREEN + f"[+] In result, {len(ps_emails_return)} unique e-mail addresses were found")
+    print(Fore.GREEN + f"[+] Also, {files_counter} files were extracted")
+    print(Fore.GREEN + f"[+] Found {cookies_counter} cookies with values")
+    print(Fore.GREEN + f"[+] Found {api_keys_counter} API keys")
+    print(Fore.GREEN + f"[+] Found {website_elements_counter} different web page elements")
+    print(Fore.GREEN + f"[+] Found {exposed_passwords_counter} exposed passwords")
