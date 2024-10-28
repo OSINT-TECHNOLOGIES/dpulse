@@ -26,6 +26,7 @@ import xlsx_report_creation as xlsx_rc
 import html_report_creation as html_rc
 from data_assembler import DataProcessing
 from misc import time_processing, domain_precheck
+from logs_processing import logging
 
 db.db_creation('report_storage.db')
 
@@ -290,14 +291,19 @@ def run():
                     api_id_to_update = input(Fore.YELLOW + "Enter API's ID to update its key >> ")
                     new_api_key = input(Fore.YELLOW + "Enter new API key >> ")
 
-                    cursor.execute("""
-                        UPDATE api_keys 
-                        SET api_key = ? 
-                        WHERE id = ?
-                    """, (new_api_key, api_id_to_update))
+                    try:
+                        cursor.execute("""
+                            UPDATE api_keys 
+                            SET api_key = ? 
+                            WHERE id = ?
+                        """, (new_api_key, api_id_to_update))
 
-                    conn.commit()
-                    conn.close()
+                        conn.commit()
+                        conn.close()
+                        print(Fore.GREEN + "\nSuccessfully added new API key" + Style.RESET_ALL)
+                    except:
+                        print(Fore.RED + "Something went wrong when adding new API key. See journal for details" + Style.RESET_ALL)
+                        logging.error(f'KEYWORDS SEARCH IN PDF (PAGESEARCH): ERROR. REASON: {e}')
 
                 elif choice_api == '2':
                     import shutil
