@@ -7,6 +7,7 @@ import fitz
 import sys
 sys.path.append('service')
 from logs_processing import logging
+from cli_init import print_ps_cli_report
 
 def extract_text_from_pdf(filename: str) -> str:
     try:
@@ -194,14 +195,7 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
             logging.error(f'KEYWORDS SEARCH IN PDF (PAGESEARCH): ERROR. REASON: {e}')
             pdf_with_keywords = 0
     print(Fore.LIGHTGREEN_EX + "-------------------------------------------------" + Style.RESET_ALL)
-    print(Fore.GREEN + f"\nDuring subdomains analysis:\n[+] Total {len(subdomains_list)} subdomains were checked")
-    print(Fore.GREEN + f"[+] Among them, {accessible_subdomains} subdomains were accessible")
-    print(Fore.GREEN + f"[+] In result, {len(ps_emails_return)} unique e-mail addresses were found")
-    print(Fore.GREEN + f"[+] Also, {files_counter} files were extracted")
-    print(Fore.GREEN + f"[+] Found {cookies_counter} cookies with values")
-    print(Fore.GREEN + f"[+] Found {api_keys_counter} API keys")
-    print(Fore.GREEN + f"[+] Found {website_elements_counter} different web page elements")
-    print(Fore.GREEN + f"[+] Found {exposed_passwords_counter} exposed passwords")
+    print_ps_cli_report(subdomains_list, accessible_subdomains, ps_emails_return, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter)
 
     if keywords_flag == 0:
         print(Fore.RED + "[+] Keywords were not gathered because of None user input")
