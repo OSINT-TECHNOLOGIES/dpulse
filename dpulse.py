@@ -21,9 +21,6 @@ else:
 import db_processing as db
 import cli_init
 from dorking_handler import dorks_files_check, get_columns_amount
-import pdf_report_creation as pdf_rc
-import xlsx_report_creation as xlsx_rc
-import html_report_creation as html_rc
 from data_assembler import DataProcessing
 from misc import time_processing, domain_precheck
 from logs_processing import logging
@@ -35,7 +32,6 @@ dorks_files_check()
 try:
     import socket
     import re
-    import time
     import webbrowser
     import sqlite3
     import itertools
@@ -70,6 +66,10 @@ def run():
             domain_patter = r'^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$'
             choice = input(Fore.YELLOW + "Enter your choice >> ")
             if choice == "1":
+                import pdf_report_creation as pdf_rc
+                import xlsx_report_creation as xlsx_rc
+                import html_report_creation as html_rc
+                print(Fore.GREEN + "\nImported and activated reporting modules" + Style.RESET_ALL)
                 while True:
                     short_domain = input(Fore.YELLOW + "\nEnter target's domain name (or 'back' to return to the menu) >> ")
                     if short_domain.lower() == "back":
