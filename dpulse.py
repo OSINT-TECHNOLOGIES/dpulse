@@ -247,7 +247,7 @@ def run():
                     with open('service//config.ini', 'w') as configfile:
                         config.write(configfile)
                     print(Fore.GREEN + "Configuration updated successfully" + Style.RESET_ALL)
-                elif choice_settings == '5':
+                elif choice_settings == '3':
                     with open('journal.log', 'w'):
                         print(Fore.GREEN + "Journal file was successfully cleared" + Style.RESET_ALL)
                         pass
