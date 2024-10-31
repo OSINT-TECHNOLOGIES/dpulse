@@ -234,7 +234,7 @@ def run():
                 choice_settings = input(Fore.YELLOW + "Enter your choice >> ")
                 if choice_settings == '1':
                     import configparser
-                    config = print_and_return_config()
+                    print_and_return_config()
                 elif choice_settings == '2':
                     import configparser
                     config = print_and_return_config()
