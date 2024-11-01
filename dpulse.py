@@ -22,7 +22,6 @@ import db_processing as db
 import cli_init
 from dorking_handler import dorks_files_check, get_columns_amount
 from data_assembler import DataProcessing
-from misc import time_processing, domain_precheck
 from logs_processing import logging
 
 db.db_creation('report_storage.db')
@@ -66,6 +65,7 @@ def run():
             domain_patter = r'^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$'
             choice = input(Fore.YELLOW + "Enter your choice >> ")
             if choice == "1":
+                from misc import time_processing, domain_precheck
                 import pdf_report_creation as pdf_rc
                 import xlsx_report_creation as xlsx_rc
                 import html_report_creation as html_rc
