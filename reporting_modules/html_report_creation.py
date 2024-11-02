@@ -12,7 +12,6 @@ try:
     from jinja2 import Environment, FileSystemLoader
     import os
     from colorama import Fore, Style
-    import webbrowser
     import sqlite3
 except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
@@ -57,7 +56,6 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         cpes = data_array[27]
         tags = data_array[28]
         vulns = data_array[29]
-        #dorking_status = data_array[30]
         common_socials = data_array[30]
         total_socials = data_array[31]
         ps_emails_return = data_array[32]
@@ -171,9 +169,9 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         if dorking_status != 'Google Dorking mode was not selected for this scan':
             with open(dorking_file_path, 'r') as df:
                 dorking_content = df.read()
-        robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder) #, dorking_content was removed here
+        robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
         pdf_blob = fp.get_blob(html_report_name)
-        db.insert_blob('HTML', pdf_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content) #, dorking_content was removed here
+        db.insert_blob('HTML', pdf_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content)
     except Exception as e:
         print(Fore.RED + 'Unable to create HTML report. See journal for details')
         logging.error(f'HTML REPORT CREATION: ERROR. REASON: {e}')

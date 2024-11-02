@@ -1,16 +1,15 @@
 import sys
+import os
+from colorama import Fore, Style, Back
+
 sys.path.append('datagather_modules')
 sys.path.append('service')
 sys.path.append('reporting_modules')
 sys.path.append('dorking')
+sys.path.append('apis')
 
-from colorama import Fore, Style, Back
-import cli_init
 from config_processing import create_config, check_cfg_presence, read_config, print_and_return_config
-import db_processing as db
-import os
 
-db.db_creation('report_storage.db')
 cfg_presence = check_cfg_presence()
 if cfg_presence is True:
     print(Fore.GREEN + "Global config file presence: OK" + Style.RESET_ALL)
@@ -19,18 +18,19 @@ else:
     create_config()
     print(Fore.GREEN + "Successfully generated global config file")
 
+import db_processing as db
+import cli_init
 from dorking_handler import dorks_files_check, get_columns_amount
-dorks_files_check()
-import pdf_report_creation as pdf_rc
-import xlsx_report_creation as xlsx_rc
-import html_report_creation as html_rc
 from data_assembler import DataProcessing
-from misc import time_processing, domain_precheck
+from logs_processing import logging
+
+db.db_creation('report_storage.db')
+
+dorks_files_check()
 
 try:
     import socket
     import re
-    import time
     import webbrowser
     import sqlite3
     import itertools
@@ -65,6 +65,11 @@ def run():
             domain_patter = r'^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$'
             choice = input(Fore.YELLOW + "Enter your choice >> ")
             if choice == "1":
+                from misc import time_processing, domain_precheck
+                import pdf_report_creation as pdf_rc
+                import xlsx_report_creation as xlsx_rc
+                import html_report_creation as html_rc
+                print(Fore.GREEN + "\nImported and activated reporting modules" + Style.RESET_ALL)
                 while True:
                     short_domain = input(Fore.YELLOW + "\nEnter target's domain name (or 'back' to return to the menu) >> ")
                     if short_domain.lower() == "back":
@@ -111,14 +116,26 @@ def run():
                                     keywords_flag = 0
                                 if report_filetype.lower() == 'pdf' or report_filetype.lower() == 'xlsx' or report_filetype.lower() == 'html':
                                     dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/Admins/Web/Custom/None] >> ")
-                                    #api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N] >> ")
-                                    #if api_flag.lower() == 'y':
-                                        #print api db content
-                                        #write ID which you want to use using comma (ex: 1,3,4)
-                                    #elif api_flag.lower() == 'n':
-                                        #pass
-                                    #else:
-                                        #print invalid mode
+                                    api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N] >> ")
+                                    if api_flag.lower() == 'y':
+                                        print(Fore.GREEN + "\nSupported APIs and your keys:\n")
+                                        db.select_api_keys('printing')
+                                        print(Fore.GREEN + "Pay attention that APIs with red-colored API Key field are unable to use!\n")
+                                        to_use_api_flag = input(Fore.YELLOW + "Select APIs IDs you want to use in scan (separated by comma) >> ")
+                                        used_api_flag = [int(num) for num in to_use_api_flag.split(',')]
+                                        if db.check_api_keys(used_api_flag):
+                                            print(Fore.GREEN + 'Found API key. Continuation')
+                                        else:
+                                            print(Fore.RED + "\nAPI key was not found. Check if you've entered valid API key in API Keys DB")
+                                            break
+                                        used_api_ui = f'Yes, using APIs with following IDs: {','.join(str(used_api_flag))}'
+                                    elif api_flag.lower() == 'n':
+                                        used_api_ui = 'No'
+                                        used_api_flag = ['Empty']
+                                        pass
+                                    else:
+                                        print(Fore.RED + "\nInvalid API usage mode" + Style.RESET_ALL)
+                                        break
                                     if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n' or pagesearch_flag.lower() == 'si':
                                         if pagesearch_flag.lower() == "n":
                                             pagesearch_ui_mark = 'No'
@@ -148,12 +165,7 @@ def run():
                                                 row_count = get_columns_amount(f'dorking//{custom_db_name}.db', 'dorks')
                                                 dorking_ui_mark = f'Yes, Custom table dorking ({row_count} dorks)'
                                                 dorking_flag = str(dorking_flag.lower() + f"+{custom_db_name}.db")
-                                        print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
-                                        print(Fore.GREEN + "Determined target: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + short_domain + Style.RESET_ALL)
-                                        print(Fore.GREEN + "Report type: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + report_filetype.lower() + Style.RESET_ALL)
-                                        print(Fore.GREEN + "PageSearch conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + pagesearch_ui_mark + Style.RESET_ALL)
-                                        print(Fore.GREEN + "Dorking conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + dorking_ui_mark + Style.RESET_ALL)
-                                        print(Fore.GREEN + "Case comment: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + case_comment + Style.RESET_ALL + "\n")
+                                        cli_init.print_prescan_summary(short_domain, report_filetype.upper(), pagesearch_ui_mark, dorking_ui_mark, used_api_ui, case_comment)
                                         print(Fore.LIGHTMAGENTA_EX + "[BASIC SCAN START]\n" + Style.RESET_ALL)
                                         spinner_thread = ProgressBar()
                                         spinner_thread.start()
@@ -161,15 +173,15 @@ def run():
                                             try:
                                                 if pagesearch_flag.lower() == 'y':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
                                                     end = time() - start
                                                 elif pagesearch_flag.lower() == 'si':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
                                                     end = time() - start
                                                 else:
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower())
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower(), used_api_flag)
                                                     end = time() - start
                                                 endtime_string = time_processing(end)
                                                 pdf_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
@@ -180,15 +192,15 @@ def run():
                                             try:
                                                 if pagesearch_flag.lower() == 'y':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
                                                     end = time() - start
                                                 elif pagesearch_flag.lower() == 'si':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
                                                     end = time() - start
                                                 else:
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower())
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower(), used_api_flag)
                                                     end = time() - start
                                                 endtime_string = time_processing(end)
                                                 xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
@@ -199,16 +211,15 @@ def run():
                                             try:
                                                 if pagesearch_flag.lower() == 'y':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
                                                     end = time() - start
                                                 elif pagesearch_flag.lower() == 'si':
                                                     start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower())
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
                                                     end = time() - start
                                                 else:
                                                     start = time()
-                                                    print(dorking_flag)
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, str(dorking_flag.lower()))
+                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, str(dorking_flag.lower()), used_api_flag)
                                                     end = time() - start
                                                 endtime_string = time_processing(end)
                                                 html_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
@@ -223,7 +234,7 @@ def run():
                 choice_settings = input(Fore.YELLOW + "Enter your choice >> ")
                 if choice_settings == '1':
                     import configparser
-                    config = print_and_return_config()
+                    print_and_return_config()
                 elif choice_settings == '2':
                     import configparser
                     config = print_and_return_config()
@@ -236,23 +247,18 @@ def run():
                     with open('service//config.ini', 'w') as configfile:
                         config.write(configfile)
                     print(Fore.GREEN + "Configuration updated successfully" + Style.RESET_ALL)
-                elif choice_settings == '4':
+                elif choice_settings == '3':
                     with open('journal.log', 'w'):
                         print(Fore.GREEN + "Journal file was successfully cleared" + Style.RESET_ALL)
                         pass
-                elif choice_settings == '5':
+                elif choice_settings == '4':
                     continue
             elif choice == '3':
                 cli.dorking_db_manager()
                 choice_dorking = input(Fore.YELLOW + "Enter your choice >> ")
                 if choice_dorking == '1':
                     from db_creator import manage_dorks
-                    print('\n')
-                    print(Fore.GREEN + "You've entered custom Dorking DB generator!\n" + Style.RESET_ALL)
-                    print(Fore.GREEN + "Remember some rules in order to successfully create your custom Dorking DB:" + Style.RESET_ALL)
-                    print(Fore.GREEN + "[1] - dork_id variable must be unique, starting with 1 and then +1 every new dork" + Style.RESET_ALL)
-                    print(Fore.GREEN + "[2] - When it comes to define domain in dork, put {} in it\n" + Style.RESET_ALL)
-                    print(Fore.GREEN + "Examples: related:{}, site:{} inurl:login and so on\n" + Style.RESET_ALL)
+                    cli_init.print_api_db_msg()
                     ddb_name = input(Fore.YELLOW + "Enter a name for your custom Dorking DB (without any extensions) >> ")
                     manage_dorks(ddb_name)
                 elif choice_dorking == '2':
@@ -274,6 +280,45 @@ def run():
                     continue
                 else:
                     print(Fore.RED + "\nInvalid menu item. Please select between existing menu items")
+
+            elif choice == '5':
+                cli.api_manager()
+                print('\n')
+                choice_api = input(Fore.YELLOW + "Enter your choice >> ")
+                if choice_api == '1':
+                    print(Fore.GREEN + "\nSupported APIs and your keys:\n")
+                    cursor, conn = db.select_api_keys('updating')
+                    api_id_to_update = input(Fore.YELLOW + "Enter API's ID to update its key >> ")
+                    new_api_key = input(Fore.YELLOW + "Enter new API key >> ")
+
+                    try:
+                        cursor.execute("""
+                            UPDATE api_keys 
+                            SET api_key = ? 
+                            WHERE id = ?
+                        """, (new_api_key, api_id_to_update))
+
+                        conn.commit()
+                        conn.close()
+                        print(Fore.GREEN + "\nSuccessfully added new API key" + Style.RESET_ALL)
+                    except:
+                        print(Fore.RED + "Something went wrong when adding new API key. See journal for details" + Style.RESET_ALL)
+                        logging.error(f'KEYWORDS SEARCH IN PDF (PAGESEARCH): ERROR. REASON: {e}')
+
+                elif choice_api == '2':
+                    import shutil
+                    try:
+                        os.remove('apis//api_keys.db')
+                        print(Fore.GREEN + "Deleted old API Keys DB")
+                    except FileNotFoundError:
+                        print(Fore.RED + "API Keys DB was not found")
+                    try:
+                        shutil.copyfile('apis//api_keys_reference.db', 'apis//api_keys.db')
+                        print(Fore.GREEN + "Sucessfully restored reference API Keys DB")
+                    except FileNotFoundError:
+                        print(Fore.RED + "Reference API Keys DB was not found")
+                else:
+                    continue
 
             elif choice == "4":
                 cli.print_db_menu()
