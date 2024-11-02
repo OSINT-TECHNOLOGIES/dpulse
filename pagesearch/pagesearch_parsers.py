@@ -85,7 +85,6 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
         except Exception as e:
             print(Fore.RED + "Can't access some subdomain. See journal for details")
             logging.error(f'ACCESSING SUBDOMAIN (PAGESEARCH): ERROR. REASON: {e}')
-            print(Fore.LIGHTGREEN_EX + "-------------------------------------------------" + Style.RESET_ALL)
             pass
 
         try:
@@ -99,6 +98,7 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
             search_query_input = soup.find('input', {'name': 'q'})
             customization_input = soup.find('input', {'name': 'language'})
             passwords = soup.find_all('input', {'type': 'password'})
+            print(Fore.LIGHTGREEN_EX + "-------------------------------------------------" + Style.RESET_ALL)
             print(Fore.GREEN + "Page URL: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{url}" + Style.RESET_ALL)
             print(Fore.GREEN + "Page title: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{title}" + Style.RESET_ALL)
             print(Fore.GREEN + "Found e-mails: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{', '.join(emails)}" + Style.RESET_ALL)
@@ -131,7 +131,6 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
         except Exception as e:
             print(Fore.RED + "Error while getting detailed info on web resource. See journal for details")
             logging.error(f'WEB RESOURCE ADDITIONAL INFO GATHERING (PAGESEARCH): ERROR. REASON: {e}')
-            print(Fore.LIGHTGREEN_EX + "-------------------------------------------------" + Style.RESET_ALL)
             pass
 
         try:
@@ -171,11 +170,9 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
                                         file.write(response.content)
                                     files_counter += 1
                                     print(Fore.GREEN + "File was successfully saved")
-                        print(Fore.LIGHTGREEN_EX + "-------------------------------------------------")
         except Exception as e:
             print(Fore.RED + "This file can't be accessed to extract it. See journal for details")
             logging.error(f'FILES EXTRACTION (PAGESEARCH): ERROR. REASON: {e}')
-            print(Fore.LIGHTGREEN_EX + "-------------------------------------------------" + Style.RESET_ALL)
             pass
 
     ps_emails_list = [x for x in total_emails if x]
@@ -194,7 +191,6 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
             print(Fore.RED + f"Can't find keywords. See journal for details")
             logging.error(f'KEYWORDS SEARCH IN PDF (PAGESEARCH): ERROR. REASON: {e}')
             pdf_with_keywords = 0
-    print(Fore.LIGHTGREEN_EX + "-------------------------------------------------" + Style.RESET_ALL)
     print_ps_cli_report(subdomains_list, accessible_subdomains, ps_emails_return, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter)
 
     if keywords_flag == 0:
