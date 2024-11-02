@@ -9,8 +9,13 @@
 </p>
 
 <p align="center">
-<img alt="Static Badge" src="https://img.shields.io/badge/v1.1.2-CURRENT%20STABLE%20VERSION?style=for-the-badge&label=CURRENT%20STABLE%20VERSION&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/V1.1.3-red?style=for-the-badge&logo=f&label=CURRENT%20ROLLING%20VERSION">
+<img alt="Static Badge" src="https://img.shields.io/badge/v1.1.3-CURRENT%20STABLE%20VERSION?style=for-the-badge&label=CURRENT%20STABLE%20VERSION&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/V1.1.4-red?style=for-the-badge&logo=f&label=CURRENT%20ROLLING%20VERSION">
 <img alt="Static Badge" src="https://img.shields.io/badge/DOMAIN_OSINT-CATEGORY?style=for-the-badge&label=TOOL%20CATEGORY&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/CLI-CATEGORY?style=for-the-badge&label=interface%20type&color=red">
+</p>
+
+<p align="center">
+<img alt="Static Badge" src="https://img.shields.io/badge/supports-virustotal_api-red?style=for-the-badge"> <img alt="Static Badge" src="https://img.shields.io/badge/supports-securitytrails_api-red?style=for-the-badge">
+
 </p>
 
 > Attention! DPULSE is a research tool. It is not intended for criminal activities! Use DPULSE only on allowed domains and for legal purposes!
@@ -55,8 +60,8 @@ DPULSE is a software solution for conducting OSINT research in relation to a cer
    - SSL certificate info
    - possible vulnerabilities
    - open ports
-   - CPEs, used web-technologies and so on.
-   - It also can download sitemap.xml and robots.txt files from a domain, and, moreover, it can do automated Google Dorking
+   - CPEs, used web-technologies and so on
+   - It also can download sitemap.xml and robots.txt files from a domain
      
 2. ***PageSearch standard scan:*** extended subdomains deep search function, which starts in addition to basic scan and which can find:
    - more e-mail addresses
@@ -69,7 +74,10 @@ DPULSE is a software solution for conducting OSINT research in relation to a cer
 
 3. ***PageSearch Sitemap inspection scan:*** sitemap links crawler which starts in addition to basic scan and which can find even more e-mails
 
-  
+4. ***Dorking scan:*** extended domain research function with prepared Google Dorking databases for different purposes, such as IoT dorking, files dorking, admin panels dorking and so on. Moreover, this mode allows you to create your own custom Google Dorking database
+
+5. ***API scan:*** extended domain research function with prepared functions for 3rd party APIs usage. Currently DPULSE supports VirusTotal API (for brief domain information gathering) and SecurityTrails API (deep subdomains and DNS enumeration)
+
 Finally, DPULSE compiles all found data into an easy-to-read PDF, HTML or XLSX report by category. It also saves all information about scan in local report storage database, which can be restored later.
 
 # How to install and run DPULSE
@@ -206,8 +214,3 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 ### [by Adityaa_oky](https://t.me/adityaa_oky/960)
 
 ### [by Реальний OSINT](https://t.me/realOSINT/462)
-
-
-
-
-
