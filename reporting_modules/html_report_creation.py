@@ -108,6 +108,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                 add_dsi = f.read()
         else:
             add_dsi = 'Dorking mode was not enabled so there is no results to see'
+
         context = {'sh_domain': short_domain, 'full_url': url, 'ip_address': ip, 'registrar': res['registrar'],
                        'creation_date': res['creation_date'], 'expiration_date': res['expiration_date'],
                        'name_servers': ', '.join(res['name_servers']), 'org': res['org'],
@@ -130,7 +131,8 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                        'cpes': cpes,
                        'tags': tags, 'vulns': vulns, 'a_tsm': total_socials, 'pagesearch_ui_mark': pagesearch_ui_mark,
                        'dorking_status': dorking_status,
-                       'add_dsi': add_dsi}
+                       'add_dsi': add_dsi, 'ps_s': accessible_subdomains, 'ps_e': emails_amount, 'ps_f': files_counter, 'ps_c': cookies_counter, 'ps_a': api_keys_counter,
+                        'ps_w': website_elements_counter, 'ps_p': exposed_passwords_counter, 'ss_l': total_links_counter, 'ss_a': accessed_links_counter}
 
         html_report_name = report_folder + '//' + casename
         if generate_report(context, html_report_name, template_path):
