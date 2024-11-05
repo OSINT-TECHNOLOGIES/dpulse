@@ -19,9 +19,13 @@
 	<p style="text-align: center;"><span style="color: #333333;"><strong>6. Services &amp; frameworks information<br /></strong></span></p>
 	<p style="text-align: center;"><span style="color: #333333;"><strong>7. Basic pre-pentest information</strong></span></p>
 	<p style="text-align: center;"><span style="color: #333333;"><strong><span style="text-decoration: underline; color: #800000;">[DORKING SCAN INFO]</span></strong></span></p>
-	<p style="text-align: center;"><span style="color: #333333;"><strong><span style="color: #333333;">8. Dorking queries and results links <span style="color: #ff0000;">(if was selected)</span></span><span style="text-decoration: underline; color: #333333;"><br /></span></strong></span></p>	<p>&nbsp;</p>
-	<hr />
+	<p style="text-align: center;"><span style="color: #333333;"><strong><span style="color: #333333;">8. Dorking queries and results links <span style="color: #ff0000;">(if was selected)</span></span><span style="text-decoration: underline; color: #333333;"><br /></span></strong></span></p>
+	<p style="text-align: center;"><span style="color: #333333;"><strong><span style="color: #333333;"><span style="color: #ff0000;"><span style="text-decoration: underline; color: #800000;">[PAGESEARCH SCAN INFO]</span></span></span></strong></span></p>
+	<p style="text-align: center;"><span style="color: #333333;"><strong><span style="color: #333333;"><span style="color: #333333;">9. PageSearch results <span style="color: #ff0000;">(if was selected)</span><br /></span></span></strong></span></p>
+	<p style="text-align: center;"><span style="color: #333333;"><strong>10. PageSearch Sitemap Inspection results <span style="color: #ff0000;">(if was selected)</span></strong></span></p>
 	<p>&nbsp;</p>
+	<hr />
+	<div class="notranslate" style="all: initial;">&nbsp;</div>
 	<h3 style="text-align: center;"><strong><span style="text-decoration: underline; color: #333333;">GENERAL SCAN INFORMATION</span></strong></h3>
 	<p><span style="color: #333333;"><strong>Total subdomains found: <span style="color: #333399;">{{a_tsf}}</span></strong></span></p>
 	<p><span style="color: #333333;"><strong>Total social media links found: <span style="color: #333399;">{{a_tsm}}</span></strong></span></p>
@@ -170,8 +174,28 @@
 	<hr />
 	<h3 style="text-align: center;">&nbsp;</h3>
 	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333; text-decoration: underline;"><strong>DORKING SCAN INFO</strong></span></span></h3>
-	<pre style="color: #333399;">{{ add_dsi | safe }}<br /><br /></pre>
+	<pre style="color: #333399;">{{ add_dsi | safe }}</pre>
 	<hr />
+	<h3 style="text-align: center;">&nbsp;</h3>
+	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333; text-decoration: underline;"><strong>PAGESEARCH RESULTS<br /></strong></span></span></h3>
+	<p>&nbsp;</p>
+	<p><span style="color: #333333;"><strong>Amount of accessible subdomains: <span style="color: #333399;">{{ps_s}}</span><br /></strong></span></p>
+	<p><span style="color: #333333;"><strong>Amount of email addresses: <span style="color: #333399;">{{ps_e}}</span></strong></span></p>
+	<p><span style="color: #333333;"><strong>Amount of found documents: <span style="color: #333399;">{{ps_f}}</span></strong></span></p>
+	<p><span style="color: #333333;"><strong>Amount of found cookies: <span style="color: #333399;">{{ps_c}}</span></strong></span></p>
+	<p><span style="color: #333333;"><strong>Amount of found API key: <span style="color: #333399;">{{ps_a}}</span></strong></span></p>
+	<p><span style="color: #333333;"><strong>Amount of WEB elements found: <span style="color: #333399;">{{ps_w}}</span></strong></span></p>
+	<p><span style="color: #333333;"><strong><span style="color: #333333;">Amount of exposed passwords found: <span style="color: #333399;">{{ps_p}}</span><br /></span></strong></span></p>
+	<p>&nbsp;</p>
+	<hr />
+	<h3 style="text-align: center;">&nbsp;</h3>
+	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333; text-decoration: underline;"><strong>PAGESEARCH SITEMAP INSPECTION RESULTS</strong></span></span></h3>
+	<p>&nbsp;</p>
+	<p><span style="color: #333333;"><strong>Total links amount: <span style="color: #333399;">{{ss_l}}</span><br /></strong></span></p>
+	<p><span style="color: #333333;"><strong>Amount of accessed links: <span style="color: #333399;">{{ss_a}}</span></strong></span></p>
+	<p><span style="color: #333333;"><strong>&nbsp;</strong></span></p>
+	<hr />
+	<p>&nbsp;</p>
 	<h3 style="color: #334455; padding-top: 10px; text-align: center;"><strong><span style="color: #333333;">Created using DPULSE software by OSINT-TECHNOLOGIES</span></strong></h3>
 	<p style="color: #334455; padding-top: 10px; text-align: left;"><strong><span style="color: #333333;">Visit our web-pages:</span></strong></p>
 	<ul>
