@@ -8,7 +8,7 @@
 	<h2 style="text-align: center;"><span style="color: #333333;"><strong>{{org}}</strong></span></h2>
 	<p>&nbsp;</p>
 	<hr />
-	<p>&nbsp;</p>
+	<div class="notranslate" style="all: initial;">&nbsp;</div>
 	<h2 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333;"><strong>Table of contents</strong></span></span></h2>
 	<p style="text-align: center;"><span style="color: #333333;"><strong>1. General scan information</strong></span></p>
 	<p style="text-align: center;"><span style="text-decoration: underline; color: #800000;"><strong>[BASIC SCAN INFO]</strong></span></p>
@@ -37,7 +37,6 @@
 	<p><span style="color: #333333;"><strong>Report creation time: <span style="color: #333399;">{{ctime}}</span></strong></span></p>
 	<p>&nbsp;</p>
 	<hr />
-	<p>&nbsp;</p>
 	<div class="notranslate" style="all: initial;">&nbsp;</div>
 	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333;"><strong>WHOIS INFORMATION</strong></span></span></h3>
 	<p><span style="color: #333333;"><strong>Domain: <span style="color: #333399;">{{sh_domain}}</span></strong></span></p>
@@ -50,7 +49,7 @@
 	<p><span style="color: #333333;"><strong>Contact e-mails: <span style="color: #333399;">{{mails}}</span></strong></span></p>
 	<p>&nbsp;</p>
 	<hr />
-	<h3 style="text-align: center;">&nbsp;</h3>
+	<div class="notranslate" style="all: initial;">&nbsp;</div>
 	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333;"><strong>SOCIAL MEDIAS SEARCH RESULTS</strong></span></span></h3>
 	<p><span style="color: #333333;"><strong>FACEBOOK:</strong></span></p>
 	<ul>{% for link in fb_links %}
@@ -92,9 +91,9 @@
 	<ul>{% for link in wc_links %}
 	<li><span style="color: #333399;"><strong>=&gt; {{ link }}</strong></span></li>
 	{% endfor %}</ul>
-	<h3 style="text-align: center;">&nbsp;</h3>
-	<h3 style="text-align: center;">&nbsp;</h3>
+	<p>&nbsp;</p>
 	<hr />
+	<div class="notranslate" style="all: initial;">&nbsp;</div>
 	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333;"><strong>SUBDOMAINS ANALYSIS RESULTS</strong></span></span></h3>
 	<p><span style="color: #333333;"><strong>Found subdomains: </strong></span></p>
 	<ul>{% for sd in subdomains %}
@@ -108,8 +107,9 @@
 	<ul>{% for smails in subdomain_mails %}
 	<li><span style="color: #333399;"><strong>=&gt; {{ smails }}</strong></span></li>
 	{% endfor %}</ul>
+	<p>&nbsp;</p>
 	<hr />
-	<h3 style="text-align: center;">&nbsp;</h3>
+	<div class="notranslate" style="all: initial;">&nbsp;</div>
 	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333;"><strong>DNS &amp; SSL INFORMATION</strong></span></span></h3>
 	<p><span style="color: #333333;"><strong>(DNS) Name servers: </strong></span><span style="color: #333399;"><strong>{{name_servers}}</strong></span></p>
 	<p><span style="color: #333333;"><strong>(DNS) MX addresses: </strong></span><span style="color: #333399;"><strong>{{mx_records}}</strong></span></p>
@@ -121,7 +121,7 @@
 	<p><span style="color: #333333;"><strong>(SSL) Certificate serial number: <span style="color: #333399;">{{serialNumber}}</span></strong></span></p>
 	<p>&nbsp;</p>
 	<hr />
-	<h3 style="text-align: center;">&nbsp;</h3>
+	<div class="notranslate" style="all: initial;">&nbsp;</div>
 	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333; text-decoration: underline;"><strong>SERVICES &amp; FRAMEWORKS INFORMATION<br /></strong></span></span></h3>
 	<p><span style="color: #333333;"><strong>Web servers:</strong></span></p>
 	<ul>{% for ws in web_servers %}
@@ -155,8 +155,9 @@
 	<ul>{% for cpe in cpes %}
 	<li><span style="color: #333399;"><strong>=&gt; {{ cpe }}</strong></span></li>
 	{% endfor %}</ul>
+	<p>&nbsp;</p>
 	<hr />
-	<h3 style="text-align: center;">&nbsp;</h3>
+	<div class="notranslate" style="all: initial;">&nbsp;</div>
 	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333; text-decoration: underline;"><strong>BASIC PRE-PENTEST INFORMATION</strong></span></span></h3>
 	<p><strong><span style="color: #333333;">Open ports:</span></strong></p>
 	<ul>{% for op in ports %}
@@ -172,11 +173,12 @@
 	{% endfor %}</ul>
 	<p>&nbsp;</p>
 	<hr />
-	<h3 style="text-align: center;">&nbsp;</h3>
+	<div class="notranslate" style="all: initial;">&nbsp;</div>
 	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333; text-decoration: underline;"><strong>DORKING SCAN INFO</strong></span></span></h3>
 	<pre style="color: #333399;">{{ add_dsi | safe }}</pre>
+	<p>&nbsp;</p>
 	<hr />
-	<h3 style="text-align: center;">&nbsp;</h3>
+	<div class="notranslate" style="all: initial;">&nbsp;</div>
 	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333; text-decoration: underline;"><strong>PAGESEARCH RESULTS<br /></strong></span></span></h3>
 	<p>&nbsp;</p>
 	<p><span style="color: #333333;"><strong>Amount of accessible subdomains: <span style="color: #333399;">{{ps_s}}</span><br /></strong></span></p>
@@ -188,7 +190,7 @@
 	<p><span style="color: #333333;"><strong><span style="color: #333333;">Amount of exposed passwords found: <span style="color: #333399;">{{ps_p}}</span><br /></span></strong></span></p>
 	<p>&nbsp;</p>
 	<hr />
-	<h3 style="text-align: center;">&nbsp;</h3>
+	<div class="notranslate" style="all: initial;">&nbsp;</div>
 	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333; text-decoration: underline;"><strong>PAGESEARCH SITEMAP INSPECTION RESULTS</strong></span></span></h3>
 	<p>&nbsp;</p>
 	<p><span style="color: #333333;"><strong>Total links amount: <span style="color: #333399;">{{ss_l}}</span><br /></strong></span></p>
