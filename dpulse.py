@@ -89,6 +89,7 @@ def run():
                                 print(Fore.RED + "Entered domain is not accessible. Scan is impossible" + Style.RESET_ALL)
                                 break
                             case_comment = input(Fore.YELLOW + "Enter case comment >> ")
+                            print(Fore.GREEN + "Be advised that PDF report support is deprecated since v1.1.4. Instead, try to work with HTML report :)\nSoon PDF report creation choice will be removed" + Style.RESET_ALL)
                             report_filetype = input(Fore.YELLOW + "Enter report file extension [xlsx/pdf/html] >> ")
                             if not report_filetype:
                                 print(Fore.RED + "\nReport filetype cannot be empty")
