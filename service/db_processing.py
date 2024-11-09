@@ -57,7 +57,7 @@ def db_select():
                     robots_presence = "In DB"
                 if len(row[6]) > 1:
                     sitemap_presence = "In DB"
-                print(Fore.LIGHTBLUE_EX + f"Case ID: {row[3]} | Case name: {row[2]} | Case file extension: {row[1]} | Case comment: {row[4]} | Case creation date: {row[0]} | Dorking: {dorks_presence} | robots.txt: {robots_presence} | sitemap.xml: {sitemap_presence} | API scan: {ap}" + Style.RESET_ALL)
+                print(Fore.LIGHTBLUE_EX + f"Case ID: {row[3]} | Case name: {row[2]} | Case file extension: {row[1]} | Case comment: {row[4]} | Case creation date: {row[0]} | Dorking: {dorks_presence} | robots.txt: {robots_presence} | sitemap.xml: {sitemap_presence} | API scan: {row[-1]}" + Style.RESET_ALL)
         except sqlite3.Error as e:
             print(Fore.RED + "Failed to see storage database's content. Reason: {}".format(e))
             sqlite_connection.close()
