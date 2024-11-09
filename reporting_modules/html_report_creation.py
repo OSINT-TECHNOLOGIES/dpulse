@@ -76,6 +76,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         db_creation_date = report_info_array[2]
         report_folder = report_info_array[3]
         report_ctime = report_info_array[6]
+        api_scan_db = report_info_array[7]
 
         pdf_templates_path = 'service//pdf_report_templates'
 
@@ -144,7 +145,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                 dorking_content = df.read()
         robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
         pdf_blob = fp.get_blob(html_report_name)
-        db.insert_blob('HTML', pdf_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content)
+        db.insert_blob('HTML', pdf_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content, api_scan_db)
     except Exception as e:
         print(Fore.RED + 'Unable to create HTML report. See journal for details')
         logging.error(f'HTML REPORT CREATION: ERROR. REASON: {e}')
