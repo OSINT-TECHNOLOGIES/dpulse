@@ -27,6 +27,7 @@ def db_creation(db_path):
             "robots_text" TEXT,
             "sitemap_text" TEXT,
             "sitemap_file" TEXT,
+            "api_scan" TEXT,
             PRIMARY KEY("id" AUTOINCREMENT)
         );
         """
@@ -45,7 +46,7 @@ def db_select():
     rows = cursor.fetchall()
     if rows:
         try:
-            select_query = "SELECT creation_date, report_file_extension, target, id, comment, dorks_results, robots_text, sitemap_text, sitemap_file FROM report_storage;"
+            select_query = "SELECT creation_date, report_file_extension, target, id, comment, dorks_results, robots_text, sitemap_text, sitemap_file, api_scan FROM report_storage;"
             cursor.execute(select_query)
             records = cursor.fetchall()
             for row in records:
@@ -56,7 +57,7 @@ def db_select():
                     robots_presence = "In DB"
                 if len(row[6]) > 1:
                     sitemap_presence = "In DB"
-                print(Fore.LIGHTBLUE_EX + f"Case ID: {row[3]} | Case name: {row[2]} | Case file extension: {row[1]} | Case comment: {row[4]} | Case creation date: {row[0]} | Dorks: {dorks_presence} | robots.txt: {robots_presence} | sitemap.xml: {sitemap_presence}" + Style.RESET_ALL)
+                print(Fore.LIGHTBLUE_EX + f"Case ID: {row[3]} | Case name: {row[2]} | Case file extension: {row[1]} | Case comment: {row[4]} | Case creation date: {row[0]} | Dorking: {dorks_presence} | robots.txt: {robots_presence} | sitemap.xml: {sitemap_presence} | API scan: {ap}" + Style.RESET_ALL)
         except sqlite3.Error as e:
             print(Fore.RED + "Failed to see storage database's content. Reason: {}".format(e))
             sqlite_connection.close()
@@ -104,16 +105,25 @@ def db_report_recreate(extracted_folder_name, id_to_extract):
     except Exception as e:
         print(Fore.RED + "Error appeared when recreating report from database. Reason: {}".format(e))
 
-def insert_blob(report_file_type, pdf_blob, db_casename, creation_date, case_comment, robots, sitemap_xml, sitemap_links, dorking_results): #, dorking_results was removed here
+def insert_blob(report_file_type, pdf_blob, db_casename, creation_date, case_comment, robots, sitemap_xml, sitemap_links, dorking_results, api_scan_db): #, dorking_results was removed here
     try:
         sqlite_connection = sqlite3.connect('report_storage.db')
         cursor = sqlite_connection.cursor()
         print(Fore.GREEN + "Connected to report storage database")
+        if 'No' in api_scan_db:
+            api_scan_insert = 'No'
+        elif 'VirusTotal' and 'SecurityTrails' in api_scan_db:
+            api_scan_insert = 'VirusTotal and SecurityTrails'
+        elif 'VirusTotal' in api_scan_db:
+            api_scan_insert = 'VirusTotal'
+        elif 'SecurityTrails' in api_scan_db:
+            api_scan_insert = 'SecurityTrails'
+
         sqlite_insert_blob_query = """INSERT INTO report_storage
-                                  (report_file_extension, report_content, creation_date, target, comment, sitemap_file, robots_text, sitemap_text, dorks_results) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+                                  (report_file_extension, report_content, creation_date, target, comment, sitemap_file, robots_text, sitemap_text, dorks_results, api_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
                                     #dorks_results was removed between comment and robots_text
 
-        data_tuple = (report_file_type, pdf_blob, creation_date, db_casename, case_comment, sitemap_xml, robots, sitemap_links, dorking_results)
+        data_tuple = (report_file_type, pdf_blob, creation_date, db_casename, case_comment, sitemap_xml, robots, sitemap_links, dorking_results, api_scan_insert)
         cursor.execute(sqlite_insert_blob_query, data_tuple)
         sqlite_connection.commit()
         print(Fore.GREEN + "Scanning results are successfully saved in report storage database")
