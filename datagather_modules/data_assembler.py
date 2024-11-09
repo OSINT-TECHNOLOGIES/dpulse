@@ -252,15 +252,20 @@ class DataProcessing():
                 dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
 
+            api_scan_db = []
             if used_api_flag != ['Empty']:
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: API SCANNING]\n" + Style.RESET_ALL)
                 if 1 in used_api_flag:
                     api_virustotal_check(short_domain)
+                    api_scan_db.append('VirusTotal')
                 if 2 in used_api_flag:
                     api_securitytrails_check(short_domain)
+                    api_scan_db.append('SecurityTrails')
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
             else:
+                api_scan_db.append('No')
                 pass
+
 
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
@@ -270,6 +275,6 @@ class DataProcessing():
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
                           website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, keywords_messages_list, dorking_status, dorking_file_path]
 
-        report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime]
+        report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime, api_scan_db]
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} ENDS HERE')
         return data_array, report_info_array
