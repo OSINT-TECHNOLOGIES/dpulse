@@ -66,7 +66,6 @@ def run():
             choice = input(Fore.YELLOW + "Enter your choice >> ")
             if choice == "1":
                 from misc import time_processing, domain_precheck
-                import pdf_report_creation as pdf_rc
                 import xlsx_report_creation as xlsx_rc
                 import html_report_creation as html_rc
                 print(Fore.GREEN + "\nImported and activated reporting modules" + Style.RESET_ALL)
