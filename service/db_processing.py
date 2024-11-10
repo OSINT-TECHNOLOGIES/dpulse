@@ -76,10 +76,7 @@ def db_report_recreate(extracted_folder_name, id_to_extract):
             blob_data = blob[0]
             cursor.execute("SELECT report_file_extension FROM report_storage WHERE id=?", (id_to_extract,))
             report_file_extension = (cursor.fetchone())[0]
-            if str(report_file_extension) == 'PDF':
-                with open(extracted_folder_name + '//report_extracted.pdf', 'wb') as file:
-                    file.write(blob_data)
-            elif str(report_file_extension) == 'XLSX':
+            if str(report_file_extension) == 'XLSX':
                 with open(extracted_folder_name + '//report_extracted.xlsx', 'wb') as file:
                     file.write(blob_data)
             elif str(report_file_extension) == 'HTML':
