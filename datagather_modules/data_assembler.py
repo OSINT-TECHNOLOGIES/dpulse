@@ -134,7 +134,7 @@ class DataProcessing():
                 accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 0
                 pass
 
-            if dorking_flag == 'none':
+            if dorking_flag == 'n':
                 dorking_status = 'Google Dorking mode was not selected for this scan'
                 dorking_results = ['Google Dorking mode was not selected for this scan']
             else:
@@ -187,7 +187,7 @@ class DataProcessing():
                 ps_emails_return = ""
                 pass
 
-            if dorking_flag == 'none':
+            if dorking_flag == 'n':
                 dorking_status = 'Google Dorking mode was not selected for this scan'
                 dorking_file_path = 'Google Dorking mode was not selected for this scan'
             else:
