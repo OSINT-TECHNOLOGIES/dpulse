@@ -146,8 +146,10 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
         pdf_blob = fp.get_blob(html_report_name)
         db.insert_blob('HTML', pdf_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content, api_scan_db)
-        os.remove(report_folder + '//04-dorking_results.txt')
+        if os.path.exists(report_folder + '//04-dorking_results.txt'):
+            os.remove(report_folder + '//04-dorking_results.txt')
+        else:
+            pass
     except Exception as e:
         print(Fore.RED + 'Unable to create HTML report. See journal for details')
         logging.error(f'HTML REPORT CREATION: ERROR. REASON: {e}')
-
