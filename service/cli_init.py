@@ -20,7 +20,7 @@ class Menu:
         fig = Figlet(font=wm_font)
         print('\n')
         self.console.print(fig.renderText('DPULSE'), style=preview_style)
-        print(Fore.MAGENTA + Style.BRIGHT + '[DPULSE-CLI] - [v1.1.4 rolling] - [OSINT-TECHNOLOGIES]\n' + Style.RESET_ALL)
+        print(Fore.MAGENTA + Style.BRIGHT + '[DPULSE-CLI] - [v1.1.4 stable] - [OSINT-TECHNOLOGIES]\n' + Style.RESET_ALL)
         print(Fore.MAGENTA + Style.BRIGHT + 'Visit our pages:\nhttps://github.com/OSINT-TECHNOLOGIES\nhttps://pypi.org/project/dpulse/' + Style.RESET_ALL)
 
     def print_main_menu(self):
