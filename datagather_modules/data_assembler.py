@@ -116,7 +116,7 @@ class DataProcessing():
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
-                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter = normal_search(to_search_array, report_folder, keywords, keywords_flag)
+                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, keywords_messages_list = normal_search(to_search_array, report_folder, keywords, keywords_flag)
                     total_links_counter = accessed_links_counter = 0
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH]\n" + Style.RESET_ALL)
                 else:
@@ -141,7 +141,7 @@ class DataProcessing():
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
                 dorking_status, dorking_results = dp.transfer_results_to_xlsx(table, dp.get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + f"[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
 
             api_scan_db = []
             if used_api_flag != ['Empty']:
@@ -152,7 +152,7 @@ class DataProcessing():
                 if 2 in used_api_flag:
                     api_securitytrails_check(short_domain)
                     api_scan_db.append('SecurityTrails')
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + f"[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
             else:
                 api_scan_db.append('No')
                 pass
