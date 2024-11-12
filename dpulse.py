@@ -219,7 +219,7 @@ def run():
                 elif choice_settings == '2':
                     import configparser
                     config = print_and_return_config()
-                    section = input(Fore.YELLOW + "Enter the section you want to update >> ")
+                    section = input(Fore.YELLOW + "\nEnter the section you want to update >> ")
                     option = input(Fore.YELLOW + "Enter the option you want to update >> ")
                     value = input(Fore.YELLOW + "Enter the new value >> ")
                     if not config.has_section(section):
@@ -227,7 +227,7 @@ def run():
                     config.set(section, option, value)
                     with open('service//config.ini', 'w') as configfile:
                         config.write(configfile)
-                    print(Fore.GREEN + "Configuration updated successfully" + Style.RESET_ALL)
+                    print(Fore.GREEN + "\nConfiguration updated successfully" + Style.RESET_ALL)
                 elif choice_settings == '3':
                     with open('journal.log', 'w'):
                         print(Fore.GREEN + "Journal file was successfully cleared" + Style.RESET_ALL)
