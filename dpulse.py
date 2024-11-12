@@ -160,8 +160,7 @@ def run():
                                                 row_count = get_columns_amount(f'dorking//{db_name}', f'{dorking_flag.lower()}_dorks')
                                                 dorking_ui_mark = f'Yes, {dorking_flag.lower().replace("_", " ")} dorking ({row_count} dorks)'
                                             elif dorking_flag.lower() == 'custom':
-                                                custom_db_name = str(input(
-                                                    Fore.YELLOW + "Enter your custom Dorking DB name (without any file extensions) >> "))
+                                                custom_db_name = str(input(Fore.YELLOW + "Enter your custom Dorking DB name (without any file extensions) >> "))
                                                 row_count = get_columns_amount(f'dorking//{custom_db_name}.db', 'dorks')
                                                 dorking_ui_mark = f'Yes, Custom table dorking ({row_count} dorks)'
                                                 dorking_flag = str(dorking_flag.lower() + f"+{custom_db_name}.db")
@@ -219,14 +218,20 @@ def run():
                 elif choice_settings == '2':
                     config = print_and_return_config()
                     section = input(Fore.YELLOW + "\nEnter the section you want to update >> ")
-                    option = input(Fore.YELLOW + "Enter the option you want to update >> ")
-                    value = input(Fore.YELLOW + "Enter the new value >> ")
-                    if not config.has_section(section):
-                        config.add_section(section)
-                    config.set(section, option, value)
-                    with open('service//config.ini', 'w') as configfile:
-                        config.write(configfile)
-                    print(Fore.GREEN + "\nConfiguration updated successfully" + Style.RESET_ALL)
+                    if not config.has_section(section.upper()):
+                        print(Fore.RED + "\nSection you've entered does not exist in config file. Please verify that section name is correct")
+                        pass
+                    else:
+                        option = input(Fore.YELLOW + "Enter the option you want to update >> ")
+                        if not config.has_option(section.upper(), option):
+                            print(Fore.RED + "\nOption you've entered does not exist in config file. Please verify that option name is correct")
+                            pass
+                        else:
+                            value = input(Fore.YELLOW + "Enter the new value >> ")
+                            config.set(section.upper(), option, value)
+                            with open('service//config.ini', 'w') as configfile:
+                                config.write(configfile)
+                            print(Fore.GREEN + "\nConfiguration updated successfully" + Style.RESET_ALL)
                 elif choice_settings == '3':
                     with open('journal.log', 'w'):
                         print(Fore.GREEN + "Journal file was successfully cleared" + Style.RESET_ALL)
