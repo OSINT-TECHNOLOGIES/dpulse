@@ -46,6 +46,28 @@ config_values = read_config()
 cli = cli_init.Menu()
 cli.welcome_menu()
 
+def process_report(report_filetype, short_domain, url, case_comment, keywords_list, keywords_flag, dorking_flag, used_api_flag, pagesearch_flag, pagesearch_ui_mark, spinner_thread):
+    import xlsx_report_creation as xlsx_rc
+    import html_report_creation as html_rc
+    from misc import time_processing
+
+    try:
+        start = time()
+        if pagesearch_flag in ['y', 'si']:
+            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
+        else:
+            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower(), used_api_flag)
+        end = time() - start
+        endtime_string = time_processing(end)
+
+        if report_filetype == 'xlsx':
+            xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag, endtime_string)
+        elif report_filetype == 'html':
+            html_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag, endtime_string)
+    finally:
+        spinner_thread.do_run = False
+        spinner_thread.join()
+
 class ProgressBar(threading.Thread):
     def __init__(self):
         super(ProgressBar, self).__init__()
@@ -65,9 +87,7 @@ def run():
             domain_patter = r'^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$'
             choice = input(Fore.YELLOW + "Enter your choice >> ")
             if choice == "1":
-                from misc import time_processing, domain_precheck
-                import xlsx_report_creation as xlsx_rc
-                import html_report_creation as html_rc
+                from misc import domain_precheck
                 print(Fore.GREEN + "\nImported and activated reporting modules" + Style.RESET_ALL)
                 while True:
                     short_domain = input(Fore.YELLOW + "\nEnter target's domain name (or 'back' to return to the menu) >> ")
@@ -106,7 +126,7 @@ def run():
                                         else:
                                             print(Fore.RED + "\nThis field must contain at least one keyword")
                                             break
-                                    elif keywords_input.lower() == "none":
+                                    elif keywords_input.lower() == "n":
                                         keywords_list = None
                                         keywords_flag = 0
                                 elif pagesearch_flag.lower() == 'n':
@@ -168,44 +188,10 @@ def run():
                                         print(Fore.LIGHTMAGENTA_EX + "[BASIC SCAN START]\n" + Style.RESET_ALL)
                                         spinner_thread = ProgressBar()
                                         spinner_thread.start()
-                                        if report_filetype.lower() == 'xlsx':
-                                            try:
-                                                if pagesearch_flag.lower() == 'y':
-                                                    start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
-                                                    end = time() - start
-                                                elif pagesearch_flag.lower() == 'si':
-                                                    start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
-                                                    end = time() - start
-                                                else:
-                                                    start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower(), used_api_flag)
-                                                    end = time() - start
-                                                endtime_string = time_processing(end)
-                                                xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
-                                            finally:
-                                                spinner_thread.do_run = False
-                                                spinner_thread.join()
-                                        elif report_filetype.lower() == 'html':
-                                            try:
-                                                if pagesearch_flag.lower() == 'y':
-                                                    start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
-                                                    end = time() - start
-                                                elif pagesearch_flag.lower() == 'si':
-                                                    start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
-                                                    end = time() - start
-                                                else:
-                                                    start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, str(dorking_flag.lower()), used_api_flag)
-                                                    end = time() - start
-                                                endtime_string = time_processing(end)
-                                                html_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
-                                            finally:
-                                                spinner_thread.do_run = False
-                                                spinner_thread.join()
+                                        if report_filetype.lower() in ['xlsx', 'html']:
+                                            process_report(report_filetype, short_domain, url, case_comment,
+                                                           keywords_list, keywords_flag, dorking_flag, used_api_flag,
+                                                           pagesearch_flag, pagesearch_ui_mark, spinner_thread)
                                     else:
                                         print(Fore.RED + "\nUnsupported PageSearch mode. Please choose between Y, N or SI")
 
