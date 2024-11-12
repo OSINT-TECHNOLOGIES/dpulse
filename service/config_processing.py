@@ -43,5 +43,5 @@ def print_and_return_config():
         print(Fore.GREEN + f"[{section}]" + Style.RESET_ALL)
         for key in config[section]:
             print(Fore.GREEN + f"{key} = {config[section][key]}" + Style.RESET_ALL)
-    print(Fore.LIGHTMAGENTA_EX + "\n\n[CURRENT CONFIG CONTENT END]\n" + Style.RESET_ALL)
+    print(Fore.LIGHTMAGENTA_EX + "\n\n[CURRENT CONFIG CONTENT END]" + Style.RESET_ALL)
     return config
