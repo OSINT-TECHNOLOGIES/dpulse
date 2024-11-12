@@ -211,13 +211,12 @@ def run():
                                         print(Fore.RED + "\nUnsupported PageSearch mode. Please choose between Y, N or SI")
 
             elif choice == "2":
+                import configparser
                 cli.print_settings_menu()
                 choice_settings = input(Fore.YELLOW + "Enter your choice >> ")
                 if choice_settings == '1':
-                    import configparser
                     print_and_return_config()
                 elif choice_settings == '2':
-                    import configparser
                     config = print_and_return_config()
                     section = input(Fore.YELLOW + "\nEnter the section you want to update >> ")
                     option = input(Fore.YELLOW + "Enter the option you want to update >> ")
