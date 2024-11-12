@@ -66,6 +66,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         db_creation_date = report_info_array[2]
         report_folder = report_info_array[3]
         report_ctime = report_info_array[6]
+        api_scan_db = report_info_array[7]
         os.makedirs(report_folder, exist_ok=True)
 
         if len(ps_emails_return) > 0:
@@ -323,7 +324,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         print(Fore.GREEN + f"Scan elapsed time: {end}" + Style.RESET_ALL)
         robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
         xlsx_blob = fp.get_blob(report_file)
-        db.insert_blob('XLSX', xlsx_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content)
+        db.insert_blob('XLSX', xlsx_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content, api_scan_db)
     except Exception as e:
         print(Fore.RED + 'Unable to create XLSX report. See journal for details')
         logging.error(f'XLSX REPORT CREATION: ERROR. REASON: {e}')

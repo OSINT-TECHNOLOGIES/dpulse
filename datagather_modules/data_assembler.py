@@ -82,9 +82,7 @@ class DataProcessing():
         print(Fore.GREEN + 'Processing social medias gathering' + Style.RESET_ALL)
         social_medias = cp.sm_gather(url)
         print(Fore.GREEN + 'Processing subdomain analysis' + Style.RESET_ALL)
-        if report_file_type == 'pdf':
-            subdomain_mails, sd_socials, subdomain_ip = cp.domains_reverse_research(subdomains, report_file_type)
-        elif report_file_type == 'xlsx':
+        if report_file_type == 'xlsx':
             subdomain_urls, subdomain_mails, subdomain_ip, sd_socials = cp.domains_reverse_research(subdomains, report_file_type)
         elif report_file_type == 'html':
             subdomain_mails, sd_socials, subdomain_ip = cp.domains_reverse_research(subdomains, report_file_type)
@@ -95,7 +93,7 @@ class DataProcessing():
         print(Fore.GREEN + 'Extracting robots.txt and sitemap.xml' + Style.RESET_ALL)
         robots_txt_result = np.get_robots_txt(short_domain, robots_filepath)
         sitemap_xml_result = np.get_sitemap_xml(short_domain, sitemap_filepath)
-        if report_file_type == 'pdf' or report_file_type == 'html':
+        if report_file_type == 'html':
             sitemap_links_status = np.extract_links_from_sitemap(sitemap_links_filepath, sitemap_filepath)
         elif report_file_type == 'xlsx':
             try:
@@ -113,66 +111,12 @@ class DataProcessing():
             common_socials[key] = list(set(common_socials[key]))
         total_socials = sum(len(values) for values in common_socials.values())
         print(Fore.LIGHTMAGENTA_EX + "\n[BASIC SCAN END]\n" + Style.RESET_ALL)
-
-        if report_file_type == 'pdf':
+        if report_file_type == 'xlsx':
             if pagesearch_flag.lower() == 'y':
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
                     ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, keywords_messages_list = normal_search(to_search_array, report_folder, keywords, keywords_flag)
-                    if len(keywords_messages_list) == 0:
-                        keywords_messages_list = ['No keywords were found']
-                    total_links_counter = accessed_links_counter = 0
-                    print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH]\n" + Style.RESET_ALL)
-                else:
-                    print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
-                    ps_emails_return = ""
-                    accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 'No data was gathered because no subdomains were found'
-                    keywords_messages_list = ['No data was gathered because no subdomains were found']
-                    pass
-            elif pagesearch_flag.lower() == 'si':
-                print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
-                ps_emails_return, total_links_counter, accessed_links_counter, emails_amount = sitemap_inspection_search(report_folder)
-                accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = keywords_messages_list = 0
-                print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
-            elif pagesearch_flag.lower() == 'n':
-                accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = keywords_messages_list = 0
-                ps_emails_return = ""
-                pass
-
-            if dorking_flag == 'none':
-                dorking_status = 'Google Dorking mode was not selected for this scan'
-                dorking_file_path = 'Google Dorking mode was not selected for this scan'
-            else:
-                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-
-            if used_api_flag != ['Empty']:
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: API SCANNING]\n" + Style.RESET_ALL)
-                if 1 in used_api_flag:
-                    api_virustotal_check(short_domain)
-                if 2 in used_api_flag:
-                    api_securitytrails_check(short_domain)
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
-            else:
-                pass
-
-            data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
-                          subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
-                          robots_txt_result, sitemap_xml_result, sitemap_links_status,
-                          web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
-                          hostnames, cpes, tags, vulns, common_socials, total_socials, ps_emails_return,
-                          accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
-                          website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, keywords_messages_list, dorking_status, dorking_file_path]
-
-        elif report_file_type == 'xlsx':
-            if pagesearch_flag.lower() == 'y':
-                if subdomains[0] != 'No subdomains were found':
-                    to_search_array = [subdomains, social_medias, sd_socials]
-                    print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
-                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter = normal_search(to_search_array, report_folder, keywords, keywords_flag)
                     total_links_counter = accessed_links_counter = 0
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH]\n" + Style.RESET_ALL)
                 else:
@@ -190,23 +134,27 @@ class DataProcessing():
                 accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 0
                 pass
 
-            if dorking_flag == 'none':
+            if dorking_flag == 'n':
                 dorking_status = 'Google Dorking mode was not selected for this scan'
                 dorking_results = ['Google Dorking mode was not selected for this scan']
             else:
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
                 dorking_status, dorking_results = dp.transfer_results_to_xlsx(table, dp.get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + f"[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
 
+            api_scan_db = []
             if used_api_flag != ['Empty']:
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: API SCANNING]\n" + Style.RESET_ALL)
                 if 1 in used_api_flag:
                     api_virustotal_check(short_domain)
+                    api_scan_db.append('VirusTotal')
                 if 2 in used_api_flag:
                     api_securitytrails_check(short_domain)
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
+                    api_scan_db.append('SecurityTrails')
+                print(Fore.LIGHTMAGENTA_EX + f"[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
             else:
+                api_scan_db.append('No')
                 pass
 
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
@@ -243,7 +191,7 @@ class DataProcessing():
                 ps_emails_return = ""
                 pass
 
-            if dorking_flag == 'none':
+            if dorking_flag == 'n':
                 dorking_status = 'Google Dorking mode was not selected for this scan'
                 dorking_file_path = 'Google Dorking mode was not selected for this scan'
             else:
@@ -252,15 +200,20 @@ class DataProcessing():
                 dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
 
+            api_scan_db = []
             if used_api_flag != ['Empty']:
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: API SCANNING]\n" + Style.RESET_ALL)
                 if 1 in used_api_flag:
                     api_virustotal_check(short_domain)
+                    api_scan_db.append('VirusTotal')
                 if 2 in used_api_flag:
                     api_securitytrails_check(short_domain)
+                    api_scan_db.append('SecurityTrails')
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
             else:
+                api_scan_db.append('No')
                 pass
+
 
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
@@ -270,6 +223,6 @@ class DataProcessing():
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
                           website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, keywords_messages_list, dorking_status, dorking_file_path]
 
-        report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime]
+        report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime, api_scan_db]
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} ENDS HERE')
         return data_array, report_info_array

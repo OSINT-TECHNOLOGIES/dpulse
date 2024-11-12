@@ -36,12 +36,12 @@ def read_config():
 
 def print_and_return_config():
     config = configparser.ConfigParser()
-    cfg_content = config.read('service//config.ini')
+    config.read('service//config.ini')
     print(Fore.LIGHTMAGENTA_EX + "\n[CURRENT CONFIG CONTENT START]" + Style.RESET_ALL)
     for section in config.sections():
         print('\n')
         print(Fore.GREEN + f"[{section}]" + Style.RESET_ALL)
         for key in config[section]:
             print(Fore.GREEN + f"{key} = {config[section][key]}" + Style.RESET_ALL)
-    print(Fore.LIGHTMAGENTA_EX + "\n\n[CURRENT CONFIG CONTENT END]\n" + Style.RESET_ALL)
+    print(Fore.LIGHTMAGENTA_EX + "\n\n[CURRENT CONFIG CONTENT END]" + Style.RESET_ALL)
     return config

@@ -46,6 +46,28 @@ config_values = read_config()
 cli = cli_init.Menu()
 cli.welcome_menu()
 
+def process_report(report_filetype, short_domain, url, case_comment, keywords_list, keywords_flag, dorking_flag, used_api_flag, pagesearch_flag, pagesearch_ui_mark, spinner_thread):
+    import xlsx_report_creation as xlsx_rc
+    import html_report_creation as html_rc
+    from misc import time_processing
+
+    try:
+        start = time()
+        if pagesearch_flag in ['y', 'si']:
+            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
+        else:
+            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower(), used_api_flag)
+        end = time() - start
+        endtime_string = time_processing(end)
+
+        if report_filetype == 'xlsx':
+            xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag, endtime_string)
+        elif report_filetype == 'html':
+            html_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag, endtime_string)
+    finally:
+        spinner_thread.do_run = False
+        spinner_thread.join()
+
 class ProgressBar(threading.Thread):
     def __init__(self):
         super(ProgressBar, self).__init__()
@@ -65,10 +87,7 @@ def run():
             domain_patter = r'^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$'
             choice = input(Fore.YELLOW + "Enter your choice >> ")
             if choice == "1":
-                from misc import time_processing, domain_precheck
-                import pdf_report_creation as pdf_rc
-                import xlsx_report_creation as xlsx_rc
-                import html_report_creation as html_rc
+                from misc import domain_precheck
                 print(Fore.GREEN + "\nImported and activated reporting modules" + Style.RESET_ALL)
                 while True:
                     short_domain = input(Fore.YELLOW + "\nEnter target's domain name (or 'back' to return to the menu) >> ")
@@ -89,24 +108,25 @@ def run():
                                 print(Fore.RED + "Entered domain is not accessible. Scan is impossible" + Style.RESET_ALL)
                                 break
                             case_comment = input(Fore.YELLOW + "Enter case comment >> ")
-                            report_filetype = input(Fore.YELLOW + "Enter report file extension [xlsx/pdf/html] >> ")
+                            print(Fore.GREEN + "Be advised that PDF report support is deprecated since v1.1.4. Instead, try to work with HTML report :)" + Style.RESET_ALL)
+                            report_filetype = input(Fore.YELLOW + "Enter report file extension [XLSX/HTML] >> ")
                             if not report_filetype:
                                 print(Fore.RED + "\nReport filetype cannot be empty")
-                            if report_filetype.lower() not in ['pdf', 'xlsx', 'html']:
-                                print(Fore.RED + '\nYou need to choose between PDF, XLSX or HTML report file types')
+                            if report_filetype.lower() not in ['xlsx', 'html']:
+                                print(Fore.RED + '\nYou need to choose between XLSX or HTML report file types')
                             else:
                                 print(Fore.GREEN + "[!] SI mode suppose you to have sitemap_links.txt file in report folder [!]\n[!] It'll visit every link from this file [!]")
-                                pagesearch_flag = input(Fore.YELLOW + "Would you like to use PageSearch function? [Y/N/SI] >> ")
+                                pagesearch_flag = input(Fore.YELLOW + "Would you like to use PageSearch function? [Y/SI/N (for No)] >> ")
                                 if pagesearch_flag.lower() == 'y':
-                                    keywords_input = input(Fore.YELLOW + "Enter keywords (separate by comma) to search in files during PageSearch process (or write None if you don't need it) >> ")
-                                    if keywords_input.lower() != "none":
+                                    keywords_input = input(Fore.YELLOW + "Enter keywords (separate by comma) to search in files during PageSearch process (or write N if you don't need it) >> ")
+                                    if keywords_input.lower() != "n":
                                         if len(keywords_input.lower()) > 0:
                                             keywords_list = [keyword.strip() for keyword in keywords_input.split(',')]
                                             keywords_flag = 1
                                         else:
                                             print(Fore.RED + "\nThis field must contain at least one keyword")
                                             break
-                                    elif keywords_input.lower() == "none":
+                                    elif keywords_input.lower() == "n":
                                         keywords_list = None
                                         keywords_flag = 0
                                 elif pagesearch_flag.lower() == 'n':
@@ -114,9 +134,9 @@ def run():
                                 elif pagesearch_flag.lower() == 'si':
                                     keywords_list = None
                                     keywords_flag = 0
-                                if report_filetype.lower() == 'pdf' or report_filetype.lower() == 'xlsx' or report_filetype.lower() == 'html':
-                                    dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/Admins/Web/Custom/None] >> ")
-                                    api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N] >> ")
+                                if report_filetype.lower() == 'xlsx' or report_filetype.lower() == 'html':
+                                    dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/Admins/Web/Custom/N (for None)] >> ")
+                                    api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N (for No)] >> ")
                                     if api_flag.lower() == 'y':
                                         print(Fore.GREEN + "\nSupported APIs and your keys:\n")
                                         db.select_api_keys('printing')
@@ -145,8 +165,8 @@ def run():
                                             pagesearch_ui_mark = 'Yes, in Sitemap Inspection mode'
                                         else:
                                             pagesearch_ui_mark = 'Yes, without keywords search'
-                                        if dorking_flag.lower() not in ['basic', 'iot', 'none', 'admins', 'files', 'web', 'custom']:
-                                            print(Fore.RED + "\nInvalid Dorking mode. Please select mode among Basic/IoT/Files/Web/Admins/Custom or None")
+                                        if dorking_flag.lower() not in ['basic', 'iot', 'n', 'admins', 'files', 'web', 'custom']:
+                                            print(Fore.RED + "\nInvalid Dorking mode. Please select mode among Basic/IoT/Files/Web/Admins/Custom or N")
                                             break
                                         else:
                                             dorking_ui_mark = 'No'
@@ -160,8 +180,7 @@ def run():
                                                 row_count = get_columns_amount(f'dorking//{db_name}', f'{dorking_flag.lower()}_dorks')
                                                 dorking_ui_mark = f'Yes, {dorking_flag.lower().replace("_", " ")} dorking ({row_count} dorks)'
                                             elif dorking_flag.lower() == 'custom':
-                                                custom_db_name = str(input(
-                                                    Fore.YELLOW + "Enter your custom Dorking DB name (without any file extensions) >> "))
+                                                custom_db_name = str(input(Fore.YELLOW + "Enter your custom Dorking DB name (without any file extensions) >> "))
                                                 row_count = get_columns_amount(f'dorking//{custom_db_name}.db', 'dorks')
                                                 dorking_ui_mark = f'Yes, Custom table dorking ({row_count} dorks)'
                                                 dorking_flag = str(dorking_flag.lower() + f"+{custom_db_name}.db")
@@ -169,84 +188,36 @@ def run():
                                         print(Fore.LIGHTMAGENTA_EX + "[BASIC SCAN START]\n" + Style.RESET_ALL)
                                         spinner_thread = ProgressBar()
                                         spinner_thread.start()
-                                        if report_filetype.lower() == 'pdf':
-                                            try:
-                                                if pagesearch_flag.lower() == 'y':
-                                                    start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
-                                                    end = time() - start
-                                                elif pagesearch_flag.lower() == 'si':
-                                                    start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
-                                                    end = time() - start
-                                                else:
-                                                    start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower(), used_api_flag)
-                                                    end = time() - start
-                                                endtime_string = time_processing(end)
-                                                pdf_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
-                                            finally:
-                                                spinner_thread.do_run = False
-                                                spinner_thread.join()
-                                        elif report_filetype.lower() == 'xlsx':
-                                            try:
-                                                if pagesearch_flag.lower() == 'y':
-                                                    start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
-                                                    end = time() - start
-                                                elif pagesearch_flag.lower() == 'si':
-                                                    start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
-                                                    end = time() - start
-                                                else:
-                                                    start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower(), used_api_flag)
-                                                    end = time() - start
-                                                endtime_string = time_processing(end)
-                                                xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
-                                            finally:
-                                                spinner_thread.do_run = False
-                                                spinner_thread.join()
-                                        elif report_filetype.lower() == 'html':
-                                            try:
-                                                if pagesearch_flag.lower() == 'y':
-                                                    start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
-                                                    end = time() - start
-                                                elif pagesearch_flag.lower() == 'si':
-                                                    start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
-                                                    end = time() - start
-                                                else:
-                                                    start = time()
-                                                    data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, str(dorking_flag.lower()), used_api_flag)
-                                                    end = time() - start
-                                                endtime_string = time_processing(end)
-                                                html_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag.lower(), endtime_string)
-                                            finally:
-                                                spinner_thread.do_run = False
-                                                spinner_thread.join()
+                                        if report_filetype.lower() in ['xlsx', 'html']:
+                                            process_report(report_filetype, short_domain, url, case_comment,
+                                                           keywords_list, keywords_flag, dorking_flag, used_api_flag,
+                                                           pagesearch_flag, pagesearch_ui_mark, spinner_thread)
                                     else:
                                         print(Fore.RED + "\nUnsupported PageSearch mode. Please choose between Y, N or SI")
 
             elif choice == "2":
+                import configparser
                 cli.print_settings_menu()
                 choice_settings = input(Fore.YELLOW + "Enter your choice >> ")
                 if choice_settings == '1':
-                    import configparser
                     print_and_return_config()
                 elif choice_settings == '2':
-                    import configparser
                     config = print_and_return_config()
-                    section = input(Fore.YELLOW + "Enter the section you want to update >> ")
-                    option = input(Fore.YELLOW + "Enter the option you want to update >> ")
-                    value = input(Fore.YELLOW + "Enter the new value >> ")
-                    if not config.has_section(section):
-                        config.add_section(section)
-                    config.set(section, option, value)
-                    with open('service//config.ini', 'w') as configfile:
-                        config.write(configfile)
-                    print(Fore.GREEN + "Configuration updated successfully" + Style.RESET_ALL)
+                    section = input(Fore.YELLOW + "\nEnter the section you want to update >> ")
+                    if not config.has_section(section.upper()):
+                        print(Fore.RED + "\nSection you've entered does not exist in config file. Please verify that section name is correct")
+                        pass
+                    else:
+                        option = input(Fore.YELLOW + "Enter the option you want to update >> ")
+                        if not config.has_option(section.upper(), option):
+                            print(Fore.RED + "\nOption you've entered does not exist in config file. Please verify that option name is correct")
+                            pass
+                        else:
+                            value = input(Fore.YELLOW + "Enter the new value >> ")
+                            config.set(section.upper(), option, value)
+                            with open('service//config.ini', 'w') as configfile:
+                                config.write(configfile)
+                            print(Fore.GREEN + "\nConfiguration updated successfully" + Style.RESET_ALL)
                 elif choice_settings == '3':
                     with open('journal.log', 'w'):
                         print(Fore.GREEN + "Journal file was successfully cleared" + Style.RESET_ALL)
@@ -303,7 +274,7 @@ def run():
                         print(Fore.GREEN + "\nSuccessfully added new API key" + Style.RESET_ALL)
                     except:
                         print(Fore.RED + "Something went wrong when adding new API key. See journal for details" + Style.RESET_ALL)
-                        logging.error(f'KEYWORDS SEARCH IN PDF (PAGESEARCH): ERROR. REASON: {e}')
+                        logging.error(f'API KEY ADDING: ERROR. REASON: {e}')
 
                 elif choice_api == '2':
                     import shutil
@@ -314,7 +285,7 @@ def run():
                         print(Fore.RED + "API Keys DB was not found")
                     try:
                         shutil.copyfile('apis//api_keys_reference.db', 'apis//api_keys.db')
-                        print(Fore.GREEN + "Sucessfully restored reference API Keys DB")
+                        print(Fore.GREEN + "Successfully restored reference API Keys DB")
                     except FileNotFoundError:
                         print(Fore.RED + "Reference API Keys DB was not found")
                 else:

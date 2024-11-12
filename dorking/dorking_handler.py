@@ -106,7 +106,7 @@ def save_results_to_txt(folderpath, table, queries, pages=10):
                 f.write("\n")
                 dorked_query_counter += 1
                 print(Fore.GREEN + f"  Dorking with " + Style.RESET_ALL + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{dorked_query_counter}/{total_dorks_amount}" + Style.RESET_ALL + Fore.GREEN + " dork" + Style.RESET_ALL, end="\r")
-        print(Fore.GREEN + "Google Dorking end. Results successfully saved in TXT file\n" + Style.RESET_ALL)
+        print(Fore.GREEN + "Google Dorking end. Results successfully saved in HTML report\n" + Style.RESET_ALL)
         print(Fore.GREEN + f"During Google Dorking with {table.upper()}:")
         for query, count in total_results:
             if count == 0:
