@@ -288,7 +288,7 @@ def run():
                         print(Fore.GREEN + "\nSuccessfully added new API key" + Style.RESET_ALL)
                     except:
                         print(Fore.RED + "Something went wrong when adding new API key. See journal for details" + Style.RESET_ALL)
-                        logging.error(f'KEYWORDS SEARCH IN PDF (PAGESEARCH): ERROR. REASON: {e}')
+                        logging.error(f'API KEY ADDING: ERROR. REASON: {e}')
 
                 elif choice_api == '2':
                     import shutil
@@ -299,7 +299,7 @@ def run():
                         print(Fore.RED + "API Keys DB was not found")
                     try:
                         shutil.copyfile('apis//api_keys_reference.db', 'apis//api_keys.db')
-                        print(Fore.GREEN + "Sucessfully restored reference API Keys DB")
+                        print(Fore.GREEN + "Successfully restored reference API Keys DB")
                     except FileNotFoundError:
                         print(Fore.RED + "Reference API Keys DB was not found")
                 else:
