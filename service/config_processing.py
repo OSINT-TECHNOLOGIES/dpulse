@@ -36,7 +36,7 @@ def read_config():
 
 def print_and_return_config():
     config = configparser.ConfigParser()
-    cfg_content = config.read('service//config.ini')
+    config.read('service//config.ini')
     print(Fore.LIGHTMAGENTA_EX + "\n[CURRENT CONFIG CONTENT START]" + Style.RESET_ALL)
     for section in config.sections():
         print('\n')
