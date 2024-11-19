@@ -10,6 +10,7 @@ from pagesearch_main import normal_search, sitemap_inspection_search
 from logs_processing import logging
 from api_virustotal import api_virustotal_check
 from api_securitytrails import api_securitytrails_check
+from db_creator import get_dorking_query
 
 try:
     import requests
@@ -140,7 +141,7 @@ class DataProcessing():
             else:
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_results = dp.transfer_results_to_xlsx(table, dp.get_dorking_query(short_domain, dorking_db_path, table))
+                dorking_status, dorking_results = dp.transfer_results_to_xlsx(table, get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
 
             api_scan_db = []
@@ -197,7 +198,7 @@ class DataProcessing():
             else:
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
-                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, dp.get_dorking_query(short_domain, dorking_db_path, table))
+                dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, get_dorking_query(short_domain, dorking_db_path, table))
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
 
             api_scan_db = []
