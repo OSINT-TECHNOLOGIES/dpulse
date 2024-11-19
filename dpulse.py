@@ -20,9 +20,10 @@ else:
 
 import db_processing as db
 import cli_init
-from dorking_handler import dorks_files_check, get_columns_amount
+from dorking_handler import dorks_files_check
 from data_assembler import DataProcessing
 from logs_processing import logging
+from db_creator import get_columns_amount
 
 db.db_creation('report_storage.db')
 
