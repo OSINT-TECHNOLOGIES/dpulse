@@ -130,6 +130,7 @@ def run():
                                         keywords_list = None
                                         keywords_flag = 0
                                 elif pagesearch_flag.lower() == 'n':
+                                    keywords_list = None
                                     keywords_flag = 0
                                 elif pagesearch_flag.lower() == 'si':
                                     keywords_list = None
