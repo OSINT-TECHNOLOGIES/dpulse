@@ -2,6 +2,7 @@ import sys
 sys.path.append('service')
 from config_processing import read_config
 from logs_processing import logging
+from ua_rotator import user_agent_rotator
 
 try:
     import requests.exceptions
@@ -36,6 +37,7 @@ def solid_google_dorking(query, dorking_delay, delay_step, pages=100):
                         request_count += 1
                         if request_count % delay_step == 0:
                             time.sleep(dorking_delay)
+                browser.session.headers['User-Agent'] = user_agent_rotator.get_random_user_agent()
                 browser.follow_link(nr=page + 1)
             except mechanicalsoup.LinkNotFoundError:
                 break
