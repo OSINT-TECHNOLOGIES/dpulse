@@ -110,7 +110,7 @@ def sm_gather(url):
     links = [a['href'] for a in soup.find_all('a', href=True)]
     categorized_links = {'Facebook': [], 'Twitter': [], 'Instagram': [],
                          'Telegram': [], 'TikTok': [], 'LinkedIn': [],
-                         'VKontakte': [], 'YouTube': [], 'Odnoklassniki': [], 'WeChat': []}
+                         'VKontakte': [], 'YouTube': [], 'Odnoklassniki': [], 'WeChat': [], 'X.com': []}
 
     for link in links:
         parsed_url = urlparse(link)
@@ -135,6 +135,8 @@ def sm_gather(url):
             categorized_links['WeChat'].append(urllib.parse.unquote(link))
         elif hostname and (hostname == 'ok.ru' or hostname.endswith('.ok.ru')):
             categorized_links['Odnoklassniki'].append(urllib.parse.unquote(link))
+        elif hostname and (hostname == 'x.com' or hostname.endswith('.x.com')):
+            categorized_links['X.com'].append(urllib.parse.unquote(link))
 
     if not categorized_links['Odnoklassniki']:
         categorized_links['Odnoklassniki'].append('Odnoklassniki links were not found')
@@ -156,6 +158,8 @@ def sm_gather(url):
         categorized_links['Twitter'].append('Twitter links were not found')
     if not categorized_links['Facebook']:
         categorized_links['Facebook'].append('Facebook links were not found')
+    if not categorized_links['X.com']:
+        categorized_links['X.com'].append('X.com links were not found')
 
     return categorized_links
 
@@ -209,7 +213,7 @@ def domains_reverse_research(subdomains, report_file_type):
     subdomain_socials_grouped = list(dict(subdomain_socials_grouped).values())
 
     sd_socials = {'Facebook': [], 'Twitter': [], 'Instagram': [], 'Telegram': [], 'TikTok': [], 'LinkedIn': [],
-                  'VKontakte': [], 'YouTube': [], 'Odnoklassniki': [], 'WeChat': []}
+                  'VKontakte': [], 'YouTube': [], 'Odnoklassniki': [], 'WeChat': [], 'X.com': []}
 
     for inner_list in subdomain_socials_grouped:
         for link in inner_list:
@@ -234,6 +238,8 @@ def domains_reverse_research(subdomains, report_file_type):
                 sd_socials['WeChat'].append(urllib.parse.unquote(link))
             elif hostname and (hostname == 'ok.ru' or hostname.endswith('.ok.ru')):
                 sd_socials['Odnoklassniki'].append(urllib.parse.unquote(link))
+            elif hostname and (hostname == 'x.com' or hostname.endswith('.x.com')):
+                sd_socials['Odnoklassniki'].append(urllib.parse.unquote(link))
 
     sd_socials = {k: list(set(v)) for k, v in sd_socials.items()}
 
@@ -242,7 +248,7 @@ def domains_reverse_research(subdomains, report_file_type):
     if not subdomain_ip:
         subdomain_ip = ["No subdomains IP's were found"]
 
-    if report_file_type == 'pdf' or report_file_type == 'html':
+    if report_file_type == 'html':
         return subdomain_mails, sd_socials, subdomain_ip
     elif report_file_type == 'xlsx':
         return subdomain_urls, subdomain_mails, subdomain_ip, sd_socials
