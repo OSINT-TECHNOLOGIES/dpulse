@@ -120,7 +120,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                        'tg_links': common_socials['Telegram'], 'tt_links': common_socials['TikTok'],
                        'li_links': common_socials['LinkedIn'], 'vk_links': common_socials['VKontakte'],
                        'yt_links': common_socials['YouTube'], 'wc_links': common_socials['WeChat'],
-                       'ok_links': common_socials['Odnoklassniki'], 'robots_txt_result': robots_txt_result,
+                       'ok_links': common_socials['Odnoklassniki'], 'xcom_links': common_socials['X.com'], 'robots_txt_result': robots_txt_result,
                        'sitemap_xml_result': sitemap_xml_result,
                        'sitemap_links': sitemap_links_status, 'web_servers': web_servers, 'cms': cms,
                        'programming_languages': programming_languages, 'web_frameworks': web_frameworks,
