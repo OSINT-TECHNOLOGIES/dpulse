@@ -33,6 +33,8 @@ def create_config():
     config['USER-AGENTS'] = {}
     for i, agent in enumerate(basic_user_agents):
         config['USER-AGENTS'][f'agent_{i + 1}'] = agent
+    config['PROXIES'] = {'proxies_file_path': 'NONE'}
+
 
     with open('service//config.ini', 'w') as configfile:
         config.write(configfile)
@@ -50,6 +52,7 @@ def read_config():
     dorking_delay = config.get('DORKING', 'dorking_delay (secs)')
     delay_step = config.get('DORKING', 'delay_step')
     user_agents = [value for key, value in config['USER-AGENTS'].items()]
+    proxies_file_path = config.get('PROXIES', 'proxies_file_path')
 
     config_values = {
         'logging_level': log_level,
@@ -57,7 +60,8 @@ def read_config():
         'wm_font': wm_font,
         'dorking_delay (secs)': dorking_delay,
         'delay_step': delay_step,
-        'user_agents': user_agents
+        'user_agents': user_agents,
+        'proxies_file_path': proxies_file_path
     }
 
     return config_values
