@@ -13,20 +13,23 @@ class ProxiesRotator:
 
     def check_proxies(self, proxies_list):
         working_proxies = []
+        print(Fore.GREEN + f'Checking {len(proxies_list)} proxies, please wait...' + Style.RESET_ALL)
         for proxy in proxies_list:
             proxies = {
-                "http": proxy,
-                "https": proxy
+                "http": proxy
             }
             try:
                 response = requests.get('https://google.com', proxies=proxies, timeout=5)
                 if response.status_code == 200:
                     working_proxies.append(proxy)
-                    print(Fore.GREEN + f"Proxy {proxy} is working" + Style.RESET_ALL)
+                    #print(Fore.GREEN + f"Proxy {proxy} is working" + Style.RESET_ALL)
                 else:
-                    print(Fore.GREEN +f"Proxy {proxy} returned status code {response.status_code}" + Style.RESET_ALL)
+                    pass
+                    #print(Fore.GREEN +f"Proxy {proxy} returned status code {response.status_code}" + Style.RESET_ALL)
             except (ProxyError, ConnectionError, Timeout):
-                print(Fore.GREEN + f"Proxy {proxy} is not working" + Style.RESET_ALL)
+                pass
+                #print(Fore.GREEN + f"Proxy {proxy} is not working" + Style.RESET_ALL)
+        print(Fore.GREEN + f'Found {len(working_proxies)} working proxies' + Style.RESET_ALL)
         return working_proxies
 
     def get_proxies(self):
