@@ -19,18 +19,18 @@ except ImportError as e:
     sys.exit()
 
 def proxy_transfer():
-    proxy_flag, proxy = proxies_rotator.check_proxy()
+    proxy_flag, proxies_list = proxies_rotator.check_proxy()
     if proxy_flag == 0:
         pass
         return proxy_flag, ""
     else:
-        return proxy_flag, proxy
+        return proxy_flag, proxies_list
 
-def solid_google_dorking(query, dorking_delay, delay_step, proxy_flag, proxy, pages=100):
+def solid_google_dorking(query, dorking_delay, delay_step, proxy_flag, proxies_list, pages=100):
     try:
         browser = mechanicalsoup.StatefulBrowser()
         if proxy_flag == 1:
-            browser.session.proxies = proxy
+            browser.session.proxies = proxies_rotator.get_random_proxy(proxies_list)
         else:
             pass
         browser.open("https://www.google.com/")
@@ -74,12 +74,12 @@ def save_results_to_txt(folderpath, table, queries, pages=10):
         with open(txt_writepath, 'w') as f:
             print(Fore.GREEN + "Started Google Dorking. Please, be patient, it may take some time")
             print(Fore.GREEN + f"{dorking_delay} seconds delay after each {delay_step} dorking requests was configured" + Style.RESET_ALL)
-            proxy_flag, proxy = proxy_transfer()
+            proxy_flag, proxies_list = proxy_transfer()
             dorked_query_counter = 0
             for i, query in enumerate(queries, start=1):
                 f.write(f"QUERY #{i}: {query}\n")
                 try:
-                    results = solid_google_dorking(query, dorking_delay, delay_step, proxy_flag, proxy, pages)
+                    results = solid_google_dorking(query, dorking_delay, delay_step, proxy_flag, proxies_list, pages)
                     if not results:
                         f.write("=> NO RESULT FOUND\n")
                         total_results.append((query, 0))
@@ -111,13 +111,13 @@ def transfer_results_to_xlsx(table, queries, pages=10):
     delay_step = int(config_values['delay_step'])
     print(Fore.GREEN + "Started Google Dorking. Please, be patient, it may take some time")
     print(Fore.GREEN + f"{dorking_delay} seconds delay after each {delay_step} dorking requests was configured" + Style.RESET_ALL)
-    proxy_flag, proxy = proxy_transfer()
+    proxy_flag, proxies_list = proxy_transfer()
     dorked_query_counter = 0
     total_dorks_amount = len(queries)
     dorking_return_list = []
     for i, query in enumerate(queries, start=1):
         dorking_return_list.append(f"QUERY #{i}: {query}\n")
-        results = solid_google_dorking(query, dorking_delay, delay_step, proxy_flag, proxy)
+        results = solid_google_dorking(query, dorking_delay, delay_step, proxy_flag, proxies_list)
         if not results:
             dorking_return_list.append("NO RESULT FOUND\n")
         else:
