@@ -19,12 +19,13 @@ except ImportError as e:
     sys.exit()
 
 def proxy_transfer():
-    proxy_flag, proxies_list = proxies_rotator.check_proxy()
+    proxy_flag, proxies_list = proxies_rotator.get_proxies()
     if proxy_flag == 0:
         pass
         return proxy_flag, ""
     else:
-        return proxy_flag, proxies_list
+        working_proxies = proxies_rotator.check_proxies(proxies_list)
+        return proxy_flag, working_proxies
 
 def solid_google_dorking(query, dorking_delay, delay_step, proxy_flag, proxies_list, pages=100):
     try:
