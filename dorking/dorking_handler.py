@@ -99,7 +99,9 @@ def save_results_to_txt(folderpath, table, queries, pages=10):
         for query, count in total_results:
             if count == 0:
                 count = 'no results'
-            print(Fore.GREEN + f"[+] Found results for " + Fore.LIGHTCYAN_EX + f'{query}' + Fore.GREEN + ' query: ' + Fore.LIGHTCYAN_EX + f'{count}' + Style.RESET_ALL)
+                print(Fore.GREEN + f"[+] Found results for " + Fore.LIGHTCYAN_EX + f'{query}' + Fore.GREEN + ' query: ' + Fore.LIGHTRED_EX + f'{count}' + Style.RESET_ALL)
+            else:
+                print(Fore.GREEN + f"[+] Found results for " + Fore.LIGHTCYAN_EX + f'{query}' + Fore.GREEN + ' query: ' + Fore.LIGHTCYAN_EX + f'{count}' + Style.RESET_ALL)
         return f'Successfully dorked domain with {table.upper()} dorks table', txt_writepath
     except Exception as e:
         print(Fore.RED + 'Error appeared while trying to dork target. See journal for details')
