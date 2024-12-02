@@ -34,7 +34,7 @@ class ProxiesRotator:
 
     def get_proxies(self):
         if self.proxy_file_path == 'NONE':
-            print(Fore.RED + "Path to file with proxies was not set in config file. Proxification of Google Dorking won't be applied" + Style.RESET_ALL)
+            print(Fore.RED + "Path to file with proxies was not set in config file. Proxification of Google Dorking won't be applied\n" + Style.RESET_ALL)
             return 0, ""
         else:
             with open(self.proxy_file_path, 'r') as f:
