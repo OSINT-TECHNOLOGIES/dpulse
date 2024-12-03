@@ -40,10 +40,12 @@ def api_virustotal_check(domain):
         print(Fore.GREEN + f"Undetected Samples: {len(result.get('undetected_samples', []))}\n")
         print(Fore.LIGHTGREEN_EX + "-------------------------------------------------\n" + Style.RESET_ALL)
         conn.close()
+        return result.get('categories'), len(result.get('detected_urls', [])), len(result.get('detected_samples', [])), len(result.get('undetected_samples', []))
     else:
         print(Fore.RED + "Failed to get domain report\n")
         print(Fore.LIGHTGREEN_EX + "-------------------------------------------------\n" + Style.RESET_ALL)
         conn.close()
+        return 'Got no information from VirusTotal API', 'Got no information from VirusTotal API', 'Got no information from VirusTotal API', 'Got no information from VirusTotal API'
         pass
 
 
