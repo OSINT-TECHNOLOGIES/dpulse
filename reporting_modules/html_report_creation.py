@@ -71,6 +71,10 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         keywords_messages_list = data_array[42]
         dorking_status = data_array[43]
         dorking_file_path = data_array[44]
+        vt_cats = data_array[45]
+        vt_deturls = data_array[46]
+        vt_detsamples = data_array[47]
+        vt_undetsamples = data_array[48]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
@@ -133,7 +137,8 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                        'tags': tags, 'vulns': vulns, 'a_tsm': total_socials, 'pagesearch_ui_mark': pagesearch_ui_mark,
                        'dorking_status': dorking_status,
                        'add_dsi': add_dsi, 'ps_s': accessible_subdomains, 'ps_e': emails_amount, 'ps_f': files_counter, 'ps_c': cookies_counter, 'ps_a': api_keys_counter,
-                        'ps_w': website_elements_counter, 'ps_p': exposed_passwords_counter, 'ss_l': total_links_counter, 'ss_a': accessed_links_counter}
+                        'ps_w': website_elements_counter, 'ps_p': exposed_passwords_counter, 'ss_l': total_links_counter, 'ss_a': accessed_links_counter, 'vt_cats': vt_cats, 'vt_deturls': vt_deturls,
+                        'vt_detsampls': vt_detsamples, 'vt_undetsampls': vt_undetsamples}
 
         html_report_name = report_folder + '//' + casename
         if generate_report(context, html_report_name, template_path):
