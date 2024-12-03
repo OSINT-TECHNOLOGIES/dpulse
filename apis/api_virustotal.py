@@ -14,7 +14,7 @@ def check_domain(domain, api_key):
     if response.status_code == 200:
         return response.json()
     else:
-        print(f"Error: {response.status_code}")
+        print(Fore.RED + f"Error: {response.status_code}" + Style.RESET_ALL)
         return None
 
 
