@@ -218,12 +218,30 @@
 	<p><span style="color: #333333;"><strong>Alexa rank: <span style="color: #333399;">{{st_alexa}}</span><br /></strong></span></p>
 	<p><span style="color: #333333;"><strong>Apex domain: <span style="color: #333399;">{{st_apex}}</span></strong></span></p>
 	<p><span style="color: #333333;"><strong>Hostname: <span style="color: #333399;">{{st_hostname}}</span><br /></strong></span></p>
-	<p><span style="color: #333333;"><strong>IP: <span style="color: #333399;">{{st_ip}} </span></strong><strong>| Organization:</strong><strong><span style="color: #333399;"> {{st_iporg}}</span><br /></strong></span></p>
-	<p><span style="color: #333333;"><strong>MX hostnames: <span style="color: #333399;">{{st_mx}} <span style="color: #333333;">| Priority:</span> {{st_mxprior}} <span style="color: #333333;">| Organization:</span> {{st_mxorg}}</span><br /></strong></span></p>
-	<p><span style="color: #333333;"><strong>Nameserver: <span style="color: #333399;">{{st_ns}} <span style="color: #333333;">| Organization:</span> {{st_nsorg}}</span><br /></strong></span></p>
-	<p><span style="color: #333333;"><strong>Email: <span style="color: #333399;">{{st_mail}} <span style="color: #333333;">| TTL:</span> {{st_mailttl}}</span><br /></strong></span></p>
-	<p><span style="color: #333333;"><strong>Value: <span style="color: #333399;">{{st_val}}</span><br /></strong></span></p>
-	<p><span style="color: #333333;"><strong>Subdomains list: <span style="color: #333399;">{{st_subds}}</span><br /></strong></span></p>
+	<p><span style="color: #333333;"><strong>A records:<span style="color: #333399;"></span><br /></strong></span></p>
+	<ul>{% for st_ip in st_ip_combined %}
+	<li><span style="color: #333399;"><strong>=&gt; {{ st_ip }}</strong></span></li>
+	{% endfor %}</ul>
+	<p><span style="color: #333333;"><strong>MX records:<span style="color: #333399;"></span><br /></strong></span></p>
+	<ul>{% for st_mx in st_mx_combined %}
+	<li><span style="color: #333399;"><strong>=&gt; {{ st_mx }}</strong></span></li>
+	{% endfor %}</ul>
+	<p><span style="color: #333333;"><strong>NS records:<span style="color: #333399;"></span><br /></strong></span></p>
+	<ul>{% for st_ns in st_ns_combined %}
+	<li><span style="color: #333399;"><strong>=&gt; {{ st_ns }}</strong></span></li>
+	{% endfor %}</ul>
+	<p><span style="color: #333333;"><strong>SOA records:<span style="color: #333399;"></span><br /></strong></span></p>
+	<ul>{% for st_soa in st_soa_combined %}
+	<li><span style="color: #333399;"><strong>=&gt; {{ st_soa }}</strong></span></li>
+	{% endfor %}</ul>
+	<p><span style="color: #333333;"><strong>TXT records values:<span style="color: #333399;"></span><br /></strong></span></p>
+	<ul>{% for val in st_val %}
+	<li><span style="color: #333399;"><strong>=&gt; {{ val }}</strong></span></li>
+	{% endfor %}</ul>
+	<p><span style="color: #333333;"><strong>Subdomains list<span style="color: #333399;"></span><br /></strong></span></p>
+	<ul>{% for subd in st_subds %}
+	<li><span style="color: #333399;"><strong>=&gt; {{ subd }}</strong></span></li>
+	{% endfor %}</ul>
 	<p><span style="color: #333333;"><strong>&nbsp;</strong></span></p>
 	<hr />
 	<p>&nbsp;</p>
