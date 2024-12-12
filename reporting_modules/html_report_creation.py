@@ -125,7 +125,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                 else:
                     st_soa_combined = [f"Email: {record.get('soa_email', '')}, TTL={record.get('soa_ttl', '')}" for record in soa_records_list]
         else:
-            st_soa_combined = st_ns_combined = st_mx_combined = st_a_combined = ['No results because user did not selected SecurityTrails API scan']
+            st_soa_combined = st_ns_combined = st_mx_combined = st_a_combined = st_txt = st_alivesds = ['No results because user did not selected SecurityTrails API scan']
 
         pdf_templates_path = 'service//pdf_report_templates'
 
