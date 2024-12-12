@@ -90,39 +90,42 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         report_folder = report_info_array[3]
         report_ctime = report_info_array[6]
         api_scan_db = report_info_array[7]
+        used_api_flag = report_info_array[8]
 
+        if 2 in used_api_flag:
+            st_a_combined = []
+            if len(a_records_list) > 0:
+                if len(a_records_list) == 1:
+                    record = a_records_list[0]
+                    st_a_combined = [f"IPv4 address: {record.get('ip', '')}, owned by {record.get('organization', '')}"]
+                else:
+                    st_a_combined = [f"IPv4 address: {record.get('ip', '')}, owned by {record.get('organization', '')}" for record in a_records_list]
 
-        st_a_combined = []
-        if len(a_records_list) > 0:
-            if len(a_records_list) == 1:
-                record = a_records_list[0]
-                st_a_combined = [f"IPv4 address: {record.get('ip', '')}, owned by {record.get('organization', '')}"]
-            else:
-                st_a_combined = [f"IPv4 address: {record.get('ip', '')}, owned by {record.get('organization', '')}" for record in a_records_list]
+            st_mx_combined = []
+            if len(mx_records_list) > 0:
+                if len(mx_records_list) == 1:
+                    record = mx_records_list[0]
+                    st_mx_combined = [f"Hostname {record.get('mx_hostname', '')} with priority={record.get('mx_priority', '')}, owned by {record.get('mx_organization', '')}"]
+                else:
+                    st_mx_combined = [f"Hostname {record.get('mx_hostname', '')} with priority={record.get('mx_priority', '')}, owned by {record.get('mx_organization', '')}" for record in mx_records_list]
 
-        st_mx_combined = []
-        if len(mx_records_list) > 0:
-            if len(mx_records_list) == 1:
-                record = mx_records_list[0]
-                st_mx_combined = [f"Hostname {record.get('mx_hostname', '')} with priority={record.get('mx_priority', '')}, owned by {record.get('mx_organization', '')}"]
-            else:
-                st_mx_combined = [f"Hostname {record.get('mx_hostname', '')} with priority={record.get('mx_priority', '')}, owned by {record.get('mx_organization', '')}" for record in mx_records_list]
+            st_ns_combined = []
+            if len(ns_records_list) > 0:
+                if len(ns_records_list) == 1:
+                    record = ns_records_list[0]
+                    st_ns_combined = [f"Nameserver: {record.get('ns_nameserver', '')}, owned by {record.get('ns_organization', '')}"]
+                else:
+                    st_ns_combined = [f"Nameserver: {record.get('ns_nameserver', '')}, owned by {record.get('ns_organization', '')}" for record in ns_records_list]
 
-        st_ns_combined = []
-        if len(ns_records_list) > 0:
-            if len(ns_records_list) == 1:
-                record = ns_records_list[0]
-                st_ns_combined = [f"Nameserver: {record.get('ns_nameserver', '')}, owned by {record.get('ns_organization', '')}"]
-            else:
-                st_ns_combined = [f"Nameserver: {record.get('ns_nameserver', '')}, owned by {record.get('ns_organization', '')}" for record in ns_records_list]
-
-        st_soa_combined = []
-        if len(soa_records_list) > 0:
-            if len(soa_records_list) == 1:
-                record = soa_records_list[0]
-                st_soa_combined = [f"Email: {record.get('soa_email', '')}, TTL={record.get('soa_ttl', '')}"]
-            else:
-                st_soa_combined = [f"Email: {record.get('soa_email', '')}, TTL={record.get('soa_ttl', '')}" for record in soa_records_list]
+            st_soa_combined = []
+            if len(soa_records_list) > 0:
+                if len(soa_records_list) == 1:
+                    record = soa_records_list[0]
+                    st_soa_combined = [f"Email: {record.get('soa_email', '')}, TTL={record.get('soa_ttl', '')}"]
+                else:
+                    st_soa_combined = [f"Email: {record.get('soa_email', '')}, TTL={record.get('soa_ttl', '')}" for record in soa_records_list]
+        else:
+            st_soa_combined = st_ns_combined = st_mx_combined = st_a_combined = ['No results because user did not selected SecurityTrails API scan']
 
         pdf_templates_path = 'service//pdf_report_templates'
 
