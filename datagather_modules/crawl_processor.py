@@ -26,7 +26,7 @@ def whois_gather(short_domain):
         logging.info('WHOIS INFO GATHERING: OK')
         w = whois.whois(short_domain)
         if w.org is None:
-            w['org'] = 'n/a'
+            w['org'] = 'Organization name was not extracted'
             logging.info('WHOIS INFO GATHERING: OK')
         return w
     except Exception as e:
