@@ -144,13 +144,13 @@ def run():
                                         db.select_api_keys('printing')
                                         print(Fore.GREEN + "Pay attention that APIs with red-colored API Key field are unable to use!\n")
                                         to_use_api_flag = input(Fore.YELLOW + "Select APIs IDs you want to use in scan (separated by comma) >> ")
-                                        used_api_flag = [int(num) for num in to_use_api_flag.split(',')]
+                                        used_api_flag = [item.strip() for item in to_use_api_flag.split(',')]
                                         if db.check_api_keys(used_api_flag):
                                             print(Fore.GREEN + 'Found API key. Continuation')
                                         else:
                                             print(Fore.RED + "\nAPI key was not found. Check if you've entered valid API key in API Keys DB")
                                             break
-                                        used_api_ui = f'Yes, using APIs with following IDs: {','.join(str(used_api_flag))}'
+                                        used_api_ui = f'Yes, using APIs with following IDs: {", ".join(used_api_flag)}'
                                     elif api_flag.lower() == 'n':
                                         used_api_ui = 'No'
                                         used_api_flag = ['Empty']
