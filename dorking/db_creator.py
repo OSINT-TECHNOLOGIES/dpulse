@@ -34,3 +34,31 @@ def manage_dorks(db_name):
             dork = input(Fore.YELLOW + "Enter new dork >> ")
             add_dork(int(dork_id), dork)
         conn.close()
+
+def get_dorking_query(short_domain, dorking_db_path, table):
+    print(Fore.GREEN + "Getting dorking query from database")
+    try:
+        conn = sqlite3.connect(dorking_db_path)
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT dork FROM {table}")
+        rows = cursor.fetchall()
+        search_query = [row[0].format(short_domain) for row in rows]
+        conn.close()
+        return search_query
+    except Exception as e:
+        print(Fore.RED + f"Error getting dorking query: {e}")
+        return []
+        pass
+
+def get_columns_amount(dorking_db_path, table):
+    try:
+        conn = sqlite3.connect(dorking_db_path)
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT COUNT(*) FROM {table}")
+        row_count = cursor.fetchone()[0]
+    except Exception as e:
+        print(f"Error getting column count: {e}")
+        return None
+    finally:
+        conn.close()
+    return row_count

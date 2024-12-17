@@ -71,12 +71,61 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         keywords_messages_list = data_array[42]
         dorking_status = data_array[43]
         dorking_file_path = data_array[44]
+        vt_cats = data_array[45]
+        vt_deturls = data_array[46]
+        vt_detsamples = data_array[47]
+        vt_undetsamples = data_array[48]
+        st_alexa = data_array[49]
+        st_apex = data_array[50]
+        st_hostname = data_array[51]
+        st_alivesds = data_array[52]
+        st_txt = data_array[53]
+        a_records_list = data_array[54]
+        mx_records_list = data_array[55]
+        ns_records_list = data_array[56]
+        soa_records_list = data_array[57]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
         report_folder = report_info_array[3]
         report_ctime = report_info_array[6]
         api_scan_db = report_info_array[7]
+        used_api_flag = report_info_array[8]
+
+        if 2 in used_api_flag:
+            st_a_combined = []
+            if len(a_records_list) > 0:
+                if len(a_records_list) == 1:
+                    record = a_records_list[0]
+                    st_a_combined = [f"IPv4 address: {record.get('ip', '')}, owned by {record.get('organization', '')}"]
+                else:
+                    st_a_combined = [f"IPv4 address: {record.get('ip', '')}, owned by {record.get('organization', '')}" for record in a_records_list]
+
+            st_mx_combined = []
+            if len(mx_records_list) > 0:
+                if len(mx_records_list) == 1:
+                    record = mx_records_list[0]
+                    st_mx_combined = [f"Hostname {record.get('mx_hostname', '')} with priority={record.get('mx_priority', '')}, owned by {record.get('mx_organization', '')}"]
+                else:
+                    st_mx_combined = [f"Hostname {record.get('mx_hostname', '')} with priority={record.get('mx_priority', '')}, owned by {record.get('mx_organization', '')}" for record in mx_records_list]
+
+            st_ns_combined = []
+            if len(ns_records_list) > 0:
+                if len(ns_records_list) == 1:
+                    record = ns_records_list[0]
+                    st_ns_combined = [f"Nameserver: {record.get('ns_nameserver', '')}, owned by {record.get('ns_organization', '')}"]
+                else:
+                    st_ns_combined = [f"Nameserver: {record.get('ns_nameserver', '')}, owned by {record.get('ns_organization', '')}" for record in ns_records_list]
+
+            st_soa_combined = []
+            if len(soa_records_list) > 0:
+                if len(soa_records_list) == 1:
+                    record = soa_records_list[0]
+                    st_soa_combined = [f"Email: {record.get('soa_email', '')}, TTL={record.get('soa_ttl', '')}"]
+                else:
+                    st_soa_combined = [f"Email: {record.get('soa_email', '')}, TTL={record.get('soa_ttl', '')}" for record in soa_records_list]
+        else:
+            st_soa_combined = st_ns_combined = st_mx_combined = st_a_combined = st_txt = st_alivesds = ['No results because user did not selected SecurityTrails API scan']
 
         pdf_templates_path = 'service//pdf_report_templates'
 
@@ -120,7 +169,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                        'tg_links': common_socials['Telegram'], 'tt_links': common_socials['TikTok'],
                        'li_links': common_socials['LinkedIn'], 'vk_links': common_socials['VKontakte'],
                        'yt_links': common_socials['YouTube'], 'wc_links': common_socials['WeChat'],
-                       'ok_links': common_socials['Odnoklassniki'], 'robots_txt_result': robots_txt_result,
+                       'ok_links': common_socials['Odnoklassniki'], 'xcom_links': common_socials['X.com'], 'robots_txt_result': robots_txt_result,
                        'sitemap_xml_result': sitemap_xml_result,
                        'sitemap_links': sitemap_links_status, 'web_servers': web_servers, 'cms': cms,
                        'programming_languages': programming_languages, 'web_frameworks': web_frameworks,
@@ -133,7 +182,9 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                        'tags': tags, 'vulns': vulns, 'a_tsm': total_socials, 'pagesearch_ui_mark': pagesearch_ui_mark,
                        'dorking_status': dorking_status,
                        'add_dsi': add_dsi, 'ps_s': accessible_subdomains, 'ps_e': emails_amount, 'ps_f': files_counter, 'ps_c': cookies_counter, 'ps_a': api_keys_counter,
-                        'ps_w': website_elements_counter, 'ps_p': exposed_passwords_counter, 'ss_l': total_links_counter, 'ss_a': accessed_links_counter}
+                        'ps_w': website_elements_counter, 'ps_p': exposed_passwords_counter, 'ss_l': total_links_counter, 'ss_a': accessed_links_counter, 'vt_cats': vt_cats, 'vt_deturls': vt_deturls,
+                        'vt_detsampls': vt_detsamples, 'vt_undetsampls': vt_undetsamples, 'st_alexa': st_alexa, 'st_apex': st_apex, 'st_hostname': st_hostname, 'st_ip_combined': st_a_combined, 'st_val': st_txt, 'st_subds': st_alivesds, 'st_mx_combined': st_mx_combined,
+                        'st_ns_combined': st_ns_combined, 'st_soa_combined': st_soa_combined}
 
         html_report_name = report_folder + '//' + casename
         if generate_report(context, html_report_name, template_path):
