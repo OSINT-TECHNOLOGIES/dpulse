@@ -87,10 +87,9 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
             "WHOIS",
             "SOCIAL MEDIAS",
             "SUBDOMAINS",
-            "DNS SCAN",
-            "SSL CERTIFICATE",
-            "INTERNETDB SEARCH",
-            "WEBSITE TECHNOLOGIES",
+            "DNS & SSL",
+            "WEB INFO",
+            "PRE-PENTEST INFO",
             "DORKING RESULTS"
         ]
         sheet = wb.active
@@ -100,60 +99,65 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         bold_font = Font(bold=True)
 
         ws = wb['GENERAL INFO']
-        if pagesearch_keyword == 'n':
-            for col in ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
-                cell = f"A{col}"
-                ws[cell].font = bold_font
-        elif pagesearch_keyword == 'y':
-            for col in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']:
-                cell = f"A{col}"
-                ws[cell].font = bold_font
-        elif pagesearch_keyword == 'si':
-            for col in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']:
-                cell = f"A{col}"
-                ws[cell].font = bold_font
-        ws.column_dimensions['A'].width = 45
+        for col in ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
+            cell = f"A{col}"
+            ws[cell].font = bold_font
+        # if pagesearch_keyword == 'n':
+        #     for col in ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
+        #         cell = f"A{col}"
+        #         ws[cell].font = bold_font
+        # elif pagesearch_keyword == 'y':
+        #     for col in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']:
+        #         cell = f"A{col}"
+        #         ws[cell].font = bold_font
+        # elif pagesearch_keyword == 'si':
+        #     for col in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']:
+        #         cell = f"A{col}"
+        #         ws[cell].font = bold_font
+        ws.column_dimensions['A'].width = 60
         ws.column_dimensions['B'].width = 60
-        ws['A1'] = 'SUBDOMAINS FOUND'
-        ws['A2'] = 'SOCIAL MEDIAS FOUND'
-        ws['A3'] = 'ROBOTS EXTRACTED?'
-        ws['A4'] = 'SITEMAP.XML EXTRACTED?'
-        ws['A5'] = 'SITEMAP.XML LINKS EXTRACTED?'
-        ws['A6'] = 'DORKING STATUS'
-        ws['A7'] = 'PAGESEARCH STATUS'
-        ws['A8'] = 'REPORT CREATION TIME'
-        if pagesearch_keyword == 'y':
-            ws['A9'] = 'TOTAL SUBDOMAINS CHECKED'
-            ws['A10'] = 'AMOUNT OF ACCESSIBLE SUBDOMAINS'
-            ws['A11'] = 'AMOUNT OF ADDITIONAL EMAILS FOUND'
-            ws['A12'] = 'AMOUNT OF EXTRACTED FILES'
-            ws['A13'] = 'FOUND COOKIES WITH VALUES'
-            ws['A14'] = 'FOUND API VALUES'
-            ws['A15'] = 'FOUND DIFFERENT WEB PAGE ELEMENTS'
-            ws['A16'] = 'FOUND EXPOSED PASSWORDS'
-            ws['B9'] = subdomains_amount
-            ws['B10'] = accessible_subdomains
-            ws['B11'] = emails_amount
-            ws['B12'] = files_counter
-            ws['B13'] = cookies_counter
-            ws['B14'] = api_keys_counter
-            ws['B15'] = website_elements_counter
-            ws['B16'] = exposed_passwords_counter
-        elif pagesearch_keyword == 'si':
-            ws['A9'] = 'TOTAL LINKS CHECKED'
-            ws['A10'] = 'AMOUNT OF ACCESSIBLE LINKS'
-            ws['A11'] = 'AMOUNT OF ADDITIONAL EMAILS FOUND'
-            ws['B9'] = total_links_counter
-            ws['B10'] = accessed_links_counter
-            ws['B11'] = emails_amount
-        ws['B1'] = subdomains_amount
-        ws['B2'] = total_socials
-        ws['B3'] = robots_txt_result
-        ws['B4'] = sitemap_xml_result
-        ws['B5'] = sitemap_links_status
-        ws['B6'] = dorking_status
-        ws['B7'] = pagesearch_ui_mark
-        ws['B8'] = report_ctime
+        ws['A1'] = 'TARGET DOMAIN'
+        ws['A2'] = 'TOTAL SUBDOMAINS FOUND'
+        ws['A3'] = 'TOTAL SOCIAL MEDIAS LINKS FOUND'
+        ws['A4'] = 'STATUS OF ROBOTS.TXT EXTRACTION'
+        ws['A5'] = 'STATUS OF SITEMAP.XML EXTRACTION'
+        ws['A6'] = 'STATUS OF SITEMAP.XML LINKS EXTRACTION'
+        ws['A7'] = 'GOOGLE DORKING STATUS'
+        ws['A8'] = 'PAGESEARCH CONDUCTION'
+        ws['A9'] = 'REPORT CREATION TIME'
+        # if pagesearch_keyword == 'y':
+        #     ws['A9'] = 'TOTAL SUBDOMAINS CHECKED'
+        #     ws['A10'] = 'AMOUNT OF ACCESSIBLE SUBDOMAINS'
+        #     ws['A11'] = 'AMOUNT OF ADDITIONAL EMAILS FOUND'
+        #     ws['A12'] = 'AMOUNT OF EXTRACTED FILES'
+        #     ws['A13'] = 'FOUND COOKIES WITH VALUES'
+        #     ws['A14'] = 'FOUND API VALUES'
+        #     ws['A15'] = 'FOUND DIFFERENT WEB PAGE ELEMENTS'
+        #     ws['A16'] = 'FOUND EXPOSED PASSWORDS'
+        #     ws['B9'] = subdomains_amount
+        #     ws['B10'] = accessible_subdomains
+        #     ws['B11'] = emails_amount
+        #     ws['B12'] = files_counter
+        #     ws['B13'] = cookies_counter
+        #     ws['B14'] = api_keys_counter
+        #     ws['B15'] = website_elements_counter
+        #     ws['B16'] = exposed_passwords_counter
+        # elif pagesearch_keyword == 'si':
+        #     ws['A9'] = 'TOTAL LINKS CHECKED'
+        #     ws['A10'] = 'AMOUNT OF ACCESSIBLE LINKS'
+        #     ws['A11'] = 'AMOUNT OF ADDITIONAL EMAILS FOUND'
+        #     ws['B9'] = total_links_counter
+        #     ws['B10'] = accessed_links_counter
+        #     ws['B11'] = emails_amount
+        ws['B1'] = short_domain
+        ws['B2'] = subdomains_amount
+        ws['B3'] = total_socials
+        ws['B4'] = robots_txt_result
+        ws['B5'] = sitemap_xml_result
+        ws['B6'] = sitemap_links_status
+        ws['B7'] = dorking_status
+        ws['B8'] = pagesearch_ui_mark
+        ws['B9'] = report_ctime
 
         ws = wb['WHOIS']
         for col in ['1', '2', '3', '4', '5', '6', '7', '8']:
@@ -226,7 +230,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
             ws[f"J{i + 2}"] = wc_links[i]
 
         ws = wb['SUBDOMAINS']
-        ws['A1'] = 'FOUNDED SUBDOMAINS'
+        ws['A1'] = 'FOUND SUBDOMAINS'
         ws['B1'] = 'SUBDOMAIN IP ADDRESSES (NOT CORRELATED)'
         ws['C1'] = 'SUBDOMAIN EMAILS (NOT CORRELATED)'
         for col in ['A', 'B', 'C']:
@@ -245,73 +249,66 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
             logging.error(f'ERROR WHEN WRITING INFORMATION IN XLSX REPORT. REASON: {e}')
             pass
 
-        ws = wb['DNS SCAN']
-        ws['A1'] = 'NAME SERVERS'
-        ws['A2'] = 'MX ADDRESSES'
-        for col in ['1', '2']:
+        ws = wb['DNS & SSL']
+        for col in ['1', '2', '3', '4', '5', '6', '7', '8']:
             cell = f"A{col}"
             ws[cell].font = bold_font
-        ws.column_dimensions['A'].width = 45
+        ws.column_dimensions['A'].width = 60
         ws.column_dimensions['B'].width = 60
+        ws['A1'] = '(DNS) NAME SERVERS'
+        ws['A2'] = '(DNS) MX ADDRESSES'
+        ws['A3'] = '(SSL) ISSUER'
+        ws['A4'] = '(SSL) SUBJECT'
+        ws['A5'] = '(SSL) NOT BEFORE'
+        ws['A6'] = '(SSL) NOT AFTER'
+        ws['A7'] = '(SSL) CERTIFICATE NAME'
+        ws['A8'] = '(SSL) CERTIFICATE SERIAL NUMBER'
         ws['B1'] = ', '.join(res['name_servers'])
         ws['B2'] = mx_records
+        ws['B3'] = issuer
+        ws['B4'] = subject
+        ws['B5'] = notBefore
+        ws['B6'] = notAfter
+        ws['B7'] = commonName
+        ws['B8'] = serialNumber
 
-        ws = wb['SSL CERTIFICATE']
-        ws['A1'] = 'ISSUER'
-        ws['A2'] = 'SUBJECT'
-        ws['A3'] = 'NOT BEFORE'
-        ws['A4'] = 'NOT AFTER'
-        ws['A5'] = 'CERTIFICATE NAME'
-        ws['A6'] = 'CERTIFICATE SERIAL NUMBER'
-        for col in ['1', '2', '3', '4', '5', '6']:
+        ws = wb['WEB INFO']
+        for col in ['1', '2', '3', '4', '5', '6', '7', '8']:
             cell = f"A{col}"
             ws[cell].font = bold_font
-        ws.column_dimensions['A'].width = 45
-        ws.column_dimensions['B'].width = 60
-        ws['B1'] = issuer
-        ws['B2'] = subject
-        ws['B3'] = notBefore
-        ws['B4'] = notAfter
-        ws['B5'] = commonName
-        ws['B6'] = serialNumber
-
-        ws = wb['INTERNETDB SEARCH']
-        ws['A1'] = 'OPEN PORTS'
-        ws['A2'] = 'HOSTNAMES'
-        ws['A3'] = 'TAGS'
-        ws['A4'] = 'CPEs'
-        ws['I1'] = 'POTENTIAL VULNERABILITIES'
-        for col in ['1', '2', '3', '4']:
-            cell = f"A{col}"
-            ws[cell].font = bold_font
-        ws['I1'].font = bold_font
-        ws.column_dimensions['A'].width = 45
-        ws.column_dimensions['B'].width = 60
-        ws['B1'] = ', '.join(str(item) for item in ports)
-        ws['B2'] = ', '.join(str(item) for item in hostnames)
-        ws['B3'] = ', '.join(str(item) for item in tags)
-        ws['B4'] = ', '.join(str(item) for item in cpes)
-        for i in range(len(vulns)):
-            ws[f"I{i + 2}"] = str(vulns[i])
-
-        ws = wb['WEBSITE TECHNOLOGIES']
         ws['A1'] = 'WEB SERVERS'
         ws['A2'] = 'CMS'
         ws['A3'] = 'USED PROGRAMMING LANGUAGES'
         ws['A4'] = 'USED WEB FRAMEWORKS'
         ws['A5'] = 'ANALYTICS SERVICE'
         ws['A6'] = 'USED JAVASCRIPT FRAMEWORKS'
-        for col in ['1', '2', '3', '4', '5', '6']:
-            cell = f"A{col}"
-            ws[cell].font = bold_font
-        ws.column_dimensions['A'].width = 45
-        ws.column_dimensions['B'].width = 60
+        ws['A7'] = 'TAGS'
+        ws['A8'] = 'CPEs'
         ws['B1'] = ', '.join(web_servers)
         ws['B2'] = ', '.join(cms)
         ws['B3'] = ', '.join(programming_languages)
         ws['B4'] = ', '.join(web_frameworks)
         ws['B5'] = ', '.join(analytics)
         ws['B6'] = ', '.join(javascript_frameworks)
+        ws['B7'] = ', '.join(str(item) for item in tags)
+        ws['B8'] = ', '.join(str(item) for item in cpes)
+
+        ws = wb['PRE-PENTEST INFO']
+        ws['A1'] = 'OPEN PORTS'
+        ws['A2'] = 'HOSTNAMES'
+        ws['F1'] = 'POTENTIAL VULNERABILITIES'
+        for col in ['1', '2']:
+            cell = f"A{col}"
+            ws[cell].font = bold_font
+        ws['F1'].font = bold_font
+        ws.column_dimensions['A'].width = 45
+        ws.column_dimensions['B'].width = 60
+        ws['B1'] = ', '.join(str(item) for item in ports)
+        ws['B2'] = ', '.join(str(item) for item in hostnames)
+        # ws['B3'] = ', '.join(str(item) for item in tags)
+        # ws['B4'] = ', '.join(str(item) for item in cpes)
+        for i in range(len(vulns)):
+            ws[f"F{i + 2}"] = str(vulns[i])
 
         ws = wb['DORKING RESULTS']
         ws.column_dimensions['A'].width = 80
