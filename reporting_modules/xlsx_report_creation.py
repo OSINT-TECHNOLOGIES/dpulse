@@ -90,7 +90,11 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
             "DNS & SSL",
             "WEB INFO",
             "PRE-PENTEST INFO",
-            "DORKING RESULTS"
+            "DORKING RESULTS",
+            "PAGESEARCH",
+            "PAGESEARCH (SI)",
+            "VIRUSTOTAL API",
+            "SECURITYTRAILS API"
         ]
         sheet = wb.active
         sheet.title = sheet_names[0]
@@ -314,6 +318,27 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws.column_dimensions['A'].width = 80
         for i in range(len(dorking_results)):
             ws[f"A{i + 1}"] = str(dorking_results[i])
+
+        ws = wb['PAGESEARCH']
+        for col in ['1', '2', '3', '4', '5', '6', '7']:
+            cell = f"A{col}"
+            ws[cell].font = bold_font
+        ws.column_dimensions['A'].width = 45
+        ws.column_dimensions['B'].width = 60
+        ws['A1'] = 'ACCESSIBLE SUBDOMAINS'
+        ws['A2'] = 'ADDITIONAL EMAILS FOUND'
+        ws['A3'] = 'FOUND DOCUMENTS'
+        ws['A4'] = 'FOUND COOKIES'
+        ws['A5'] = 'FOUND API KEYS'
+        ws['A6'] = 'WEB ELEMENTS FOUND'
+        ws['A7'] = 'FOUND EXPOSED PASSWORDS'
+        ws['B1'] = accessible_subdomains
+        ws['B2'] = emails_amount
+        ws['B3'] = files_counter
+        ws['B4'] = cookies_counter
+        ws['B5'] = api_keys_counter
+        ws['B6'] = website_elements_counter
+        ws['B7'] = exposed_passwords_counter
 
         report_file = report_folder + "//" + casename
         wb.save(report_file)
