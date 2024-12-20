@@ -365,10 +365,10 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         for i in range(len(vulns)):
             ws[f"F{i + 2}"] = str(vulns[i])
 
-        # ws = wb['DORKING RESULTS']
-        # ws.column_dimensions['A'].width = 80
-        # for i, item in enumerate(cleaned_dorking, start=2):
-        #     ws[f"A{i}"] = str(item)
+        ws = wb['DORKING RESULTS']
+        ws.column_dimensions['A'].width = 80
+        for i, item in enumerate(cleaned_dorking, start=2):
+            ws[f"A{i}"] = str(item)
 
         ws = wb['PAGESEARCH']
         for col in ['1', '2', '3', '4', '5', '6', '7']:
