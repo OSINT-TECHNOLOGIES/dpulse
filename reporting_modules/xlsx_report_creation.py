@@ -13,6 +13,7 @@ try:
     from openpyxl.styles import Font
     from colorama import Fore, Style
     import sqlite3
+    from urllib.parse import unquote
 except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
@@ -60,14 +61,64 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         total_links_counter = data_array[40]
         accessed_links_counter = data_array[41]
         #keywords_messages_list = data_array[42]
-        dorking_results = data_array[43]
+        cleaned_dorking = data_array[42]
+        vt_cats = data_array[43]
+        vt_deturls = data_array[44]
+        vt_detsamples = data_array[45]
+        vt_undetsamples = data_array[46]
+        st_alexa = data_array[47]
+        st_apex = data_array[48]
+        st_hostname = data_array[49]
+        st_alivesds = data_array[50]
+        st_txt = data_array[51]
+        a_records_list = data_array[52]
+        mx_records_list = data_array[53]
+        ns_records_list = data_array[54]
+        soa_records_list = data_array[55]
+
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
         report_folder = report_info_array[3]
         report_ctime = report_info_array[6]
         api_scan_db = report_info_array[7]
+        used_api_flag = report_info_array[8]
         os.makedirs(report_folder, exist_ok=True)
+
+        if 2 in used_api_flag:
+            st_a_combined = []
+            if len(a_records_list) > 0:
+                if len(a_records_list) == 1:
+                    record = a_records_list[0]
+                    st_a_combined = [f"IPv4 address: {record.get('ip', '')}, owned by {record.get('organization', '')}"]
+                else:
+                    st_a_combined = [f"IPv4 address: {record.get('ip', '')}, owned by {record.get('organization', '')}" for record in a_records_list]
+
+            st_mx_combined = []
+            if len(mx_records_list) > 0:
+                if len(mx_records_list) == 1:
+                    record = mx_records_list[0]
+                    st_mx_combined = [f"Hostname {record.get('mx_hostname', '')} with priority={record.get('mx_priority', '')}, owned by {record.get('mx_organization', '')}"]
+                else:
+                    st_mx_combined = [f"Hostname {record.get('mx_hostname', '')} with priority={record.get('mx_priority', '')}, owned by {record.get('mx_organization', '')}" for record in mx_records_list]
+
+            st_ns_combined = []
+            if len(ns_records_list) > 0:
+                if len(ns_records_list) == 1:
+                    record = ns_records_list[0]
+                    st_ns_combined = [f"Nameserver: {record.get('ns_nameserver', '')}, owned by {record.get('ns_organization', '')}"]
+                else:
+                    st_ns_combined = [f"Nameserver: {record.get('ns_nameserver', '')}, owned by {record.get('ns_organization', '')}" for record in ns_records_list]
+
+            st_soa_combined = []
+            if len(soa_records_list) > 0:
+                if len(soa_records_list) == 1:
+                    record = soa_records_list[0]
+                    st_soa_combined = [f"Email: {record.get('soa_email', '')}, TTL={record.get('soa_ttl', '')}"]
+                else:
+                    st_soa_combined = [f"Email: {record.get('soa_email', '')}, TTL={record.get('soa_ttl', '')}" for record in soa_records_list]
+        else:
+            st_soa_combined = st_ns_combined = st_mx_combined = st_a_combined = st_txt = st_alivesds = ['No results because user did not selected SecurityTrails API scan']
 
         if len(ps_emails_return) > 0:
             subdomain_mails += ps_emails_return
@@ -159,7 +210,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['B4'] = robots_txt_result
         ws['B5'] = sitemap_xml_result
         ws['B6'] = sitemap_links_status
-        ws['B7'] = dorking_status
+        #ws['B7'] = dorking_status
         ws['B8'] = pagesearch_ui_mark
         ws['B9'] = report_ctime
 
@@ -314,10 +365,10 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         for i in range(len(vulns)):
             ws[f"F{i + 2}"] = str(vulns[i])
 
-        ws = wb['DORKING RESULTS']
-        ws.column_dimensions['A'].width = 80
-        for i in range(len(dorking_results)):
-            ws[f"A{i + 1}"] = str(dorking_results[i])
+        # ws = wb['DORKING RESULTS']
+        # ws.column_dimensions['A'].width = 80
+        # for i, item in enumerate(cleaned_dorking, start=2):
+        #     ws[f"A{i}"] = str(item)
 
         ws = wb['PAGESEARCH']
         for col in ['1', '2', '3', '4', '5', '6', '7']:
@@ -339,6 +390,71 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['B5'] = api_keys_counter
         ws['B6'] = website_elements_counter
         ws['B7'] = exposed_passwords_counter
+
+        ws = wb['PAGESEARCH (SI)']
+        for col in ['1', '2']:
+            cell = f"A{col}"
+            ws[cell].font = bold_font
+        ws.column_dimensions['A'].width = 45
+        ws.column_dimensions['B'].width = 60
+        ws['A1'] = 'TOTAL LINKS AMOUNT'
+        ws['A2'] = 'AMOUNT OF ACCESSED LINKS'
+        ws['B1'] = total_links_counter
+        ws['B2'] = accessed_links_counter
+
+        ws = wb['VIRUSTOTAL API']
+        for col in ['1', '2', '3', '4']:
+            cell = f"A{col}"
+            ws[cell].font = bold_font
+        ws.column_dimensions['A'].width = 45
+        ws.column_dimensions['B'].width = 60
+        ws['A1'] = 'CATEGORIES'
+        ws['A2'] = 'DETECTED URLS'
+        ws['A3'] = 'DETECTED SAMPLES'
+        ws['A4'] = 'UNDETECTED SAMPLES'
+        ws['B1'] = vt_cats
+        ws['B2'] = vt_deturls
+        ws['B3'] = vt_detsamples
+        ws['B4'] = vt_undetsamples
+
+        ws = wb['SECURITYTRAILS API']
+        for col in ['1', '2', '3']:
+            cell = f"A{col}"
+            ws[cell].font = bold_font
+        ws.column_dimensions['A'].width = 45
+        ws.column_dimensions['B'].width = 60
+        ws['A1'] = 'ALEXA RANK'
+        ws['A2'] = 'APEX DOMAIN'
+        ws['A3'] = 'HOSTNAME'
+        ws['E1'] = 'A RECORDS'
+        ws['F1'] = 'MX RECORDS'
+        ws['G1'] = 'NS RECORDS'
+        ws['H1'] = 'SOA RECORDS'
+        ws['I1'] = 'TXT RECORDS'
+        ws['J1'] = 'SUBDOMAINS LIST'
+        ws['E1'].font = ws['F1'].font = ws['G1'].font = ws['H1'].font = ws['I1'].font = ws['J1'].font = bold_font
+        ws['B1'] = st_alexa
+        ws['B2'] = st_apex
+        ws['B3'] = st_hostname
+
+        for i in range(len(st_a_combined)):
+            ws[f"E{i + 1}"] = str(st_a_combined[i])
+
+        for i in range(len(st_mx_combined)):
+            ws[f"F{i + 1}"] = str(st_mx_combined[i])
+
+        for i in range(len(st_ns_combined)):
+            ws[f"G{i + 1}"] = str(st_ns_combined[i])
+
+        for i in range(len(st_soa_combined)):
+            ws[f"H{i + 1}"] = str(st_soa_combined[i])
+
+        for i in range(len(st_txt)):
+            ws[f"I{i + 1}"] = str(st_txt[i])
+
+        for i in range(len(st_alivesds)):
+            ws[f"J{i + 1}"] = str(st_alivesds[i])
+
 
         report_file = report_folder + "//" + casename
         wb.save(report_file)
