@@ -147,13 +147,17 @@ class DataProcessing():
             api_scan_db = []
             if used_api_flag != ['Empty']:
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: API SCANNING]\n" + Style.RESET_ALL)
-                if 1 in used_api_flag:
+                if '1' in used_api_flag:
                     vt_cats, vt_deturls, vt_detsamples, vt_undetsamples = api_virustotal_check(short_domain)
                     api_scan_db.append('VirusTotal')
-                if 2 in used_api_flag:
+                if '2' in used_api_flag:
                     st_alexa, st_apex, st_hostname, st_alivesds, st_txt, a_records_list, mx_records_list, ns_records_list, soa_records_list = api_securitytrails_check(short_domain)
                     api_scan_db.append('SecurityTrails')
-                print(Fore.LIGHTMAGENTA_EX + f"[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
+                if '1' not in used_api_flag:
+                    vt_cats = vt_deturls = vt_detsamples = vt_undetsamples = 'No results because user did not selected VirusTotal API scan'
+                if '2' not in used_api_flag:
+                    st_alexa = st_apex = st_hostname = st_alivesds = st_txt = a_records_list = mx_records_list = ns_records_list = soa_records_list = 'No results because user did not selected SecurityTrails API scan'
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
             else:
                 vt_cats = vt_deturls = vt_detsamples = vt_undetsamples = 'No results because user did not selected VirusTotal API scan'
                 st_alexa = st_apex = st_hostname = st_alivesds = st_txt = a_records_list = mx_records_list = ns_records_list = soa_records_list = 'No results because user did not selected SecurityTrails API scan'
@@ -219,15 +223,15 @@ class DataProcessing():
             api_scan_db = []
             if used_api_flag != ['Empty']:
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: API SCANNING]\n" + Style.RESET_ALL)
-                if 1 in used_api_flag:
+                if '1' in used_api_flag:
                     vt_cats, vt_deturls, vt_detsamples, vt_undetsamples = api_virustotal_check(short_domain)
                     api_scan_db.append('VirusTotal')
-                if 2 in used_api_flag:
+                if '2' in used_api_flag:
                     st_alexa, st_apex, st_hostname, st_alivesds, st_txt, a_records_list, mx_records_list, ns_records_list, soa_records_list = api_securitytrails_check(short_domain)
                     api_scan_db.append('SecurityTrails')
-                if 1 not in used_api_flag:
+                if '1' not in used_api_flag:
                     vt_cats = vt_deturls = vt_detsamples = vt_undetsamples = 'No results because user did not selected VirusTotal API scan'
-                if 2 not in used_api_flag:
+                if '2' not in used_api_flag:
                     st_alexa = st_apex = st_hostname = st_alivesds = st_txt = a_records_list = mx_records_list = ns_records_list = soa_records_list = 'No results because user did not selected SecurityTrails API scan'
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
             else:
