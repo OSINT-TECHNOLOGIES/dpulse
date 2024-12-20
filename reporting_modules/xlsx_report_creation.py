@@ -131,6 +131,16 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
             for email in subdomain_mails:
                 new_emails = email.split(', ')
                 subdomain_mails_cleaned.extend(new_emails)
+        else:
+            subdomain_mails = list(set(subdomain_mails))
+            subdomain_mails_cleaned = []
+            substrings = ['m=Base64', 'Ë','Á','Æ','Å','Ä','Ò','Á','ó','ð','É','ë','â']
+            for substring in substrings:
+                if any(substring in s for s in subdomain_mails):
+                    subdomain_mails.remove(next(s for s in subdomain_mails if substring in s))
+            for email in subdomain_mails:
+                new_emails = email.split(', ')
+                subdomain_mails_cleaned.extend(new_emails)
 
         wb = openpyxl.Workbook()
         sheet_names = [
