@@ -341,6 +341,8 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         for col in ['1', '2', '3', '4', '5', '6', '7', '8']:
             cell = f"A{col}"
             ws[cell].font = bold_font
+        ws.column_dimensions['A'].width = 35
+        ws.column_dimensions['B'].width = 60
         ws['A1'] = 'WEB SERVERS'
         ws['A2'] = 'CMS'
         ws['A3'] = 'USED PROGRAMMING LANGUAGES'
@@ -431,8 +433,14 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         for col in ['1', '2', '3']:
             cell = f"A{col}"
             ws[cell].font = bold_font
-        ws.column_dimensions['A'].width = 45
+        ws.column_dimensions['A'].width = 18
         ws.column_dimensions['B'].width = 60
+        ws.column_dimensions['E'].width = 70
+        ws.column_dimensions['F'].width = 70
+        ws.column_dimensions['G'].width = 70
+        ws.column_dimensions['H'].width = 70
+        ws.column_dimensions['I'].width = 70
+        ws.column_dimensions['J'].width = 70
         ws['A1'] = 'ALEXA RANK'
         ws['A2'] = 'APEX DOMAIN'
         ws['A3'] = 'HOSTNAME'
@@ -448,22 +456,22 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['B3'] = st_hostname
 
         for i in range(len(st_a_combined)):
-            ws[f"E{i + 1}"] = str(st_a_combined[i])
+            ws[f"E{i + 2}"] = str(st_a_combined[i])
 
         for i in range(len(st_mx_combined)):
-            ws[f"F{i + 1}"] = str(st_mx_combined[i])
+            ws[f"F{i + 2}"] = str(st_mx_combined[i])
 
         for i in range(len(st_ns_combined)):
-            ws[f"G{i + 1}"] = str(st_ns_combined[i])
+            ws[f"G{i + 2}"] = str(st_ns_combined[i])
 
         for i in range(len(st_soa_combined)):
-            ws[f"H{i + 1}"] = str(st_soa_combined[i])
+            ws[f"H{i + 2}"] = str(st_soa_combined[i])
 
         for i in range(len(st_txt)):
-            ws[f"I{i + 1}"] = str(st_txt[i])
+            ws[f"I{i + 2}"] = str(st_txt[i])
 
         for i in range(len(st_alivesds)):
-            ws[f"J{i + 1}"] = str(st_alivesds[i])
+            ws[f"J{i + 2}"] = str(st_alivesds[i])
 
 
         report_file = report_folder + "//" + casename
