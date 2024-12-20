@@ -85,7 +85,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         used_api_flag = report_info_array[8]
         os.makedirs(report_folder, exist_ok=True)
 
-        if 2 in used_api_flag:
+        if '2' in used_api_flag:
             st_a_combined = []
             if len(a_records_list) > 0:
                 if len(a_records_list) == 1:
