@@ -60,7 +60,6 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         exposed_passwords_counter = data_array[39]
         total_links_counter = data_array[40]
         accessed_links_counter = data_array[41]
-        #keywords_messages_list = data_array[42]
         cleaned_dorking = data_array[42]
         vt_cats = data_array[43]
         vt_deturls = data_array[44]
@@ -167,18 +166,6 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         for col in ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
             cell = f"A{col}"
             ws[cell].font = bold_font
-        # if pagesearch_keyword == 'n':
-        #     for col in ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
-        #         cell = f"A{col}"
-        #         ws[cell].font = bold_font
-        # elif pagesearch_keyword == 'y':
-        #     for col in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']:
-        #         cell = f"A{col}"
-        #         ws[cell].font = bold_font
-        # elif pagesearch_keyword == 'si':
-        #     for col in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']:
-        #         cell = f"A{col}"
-        #         ws[cell].font = bold_font
         ws.column_dimensions['A'].width = 60
         ws.column_dimensions['B'].width = 60
         ws['A1'] = 'TARGET DOMAIN'
@@ -190,37 +177,12 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws['A7'] = 'GOOGLE DORKING STATUS'
         ws['A8'] = 'PAGESEARCH CONDUCTION'
         ws['A9'] = 'REPORT CREATION TIME'
-        # if pagesearch_keyword == 'y':
-        #     ws['A9'] = 'TOTAL SUBDOMAINS CHECKED'
-        #     ws['A10'] = 'AMOUNT OF ACCESSIBLE SUBDOMAINS'
-        #     ws['A11'] = 'AMOUNT OF ADDITIONAL EMAILS FOUND'
-        #     ws['A12'] = 'AMOUNT OF EXTRACTED FILES'
-        #     ws['A13'] = 'FOUND COOKIES WITH VALUES'
-        #     ws['A14'] = 'FOUND API VALUES'
-        #     ws['A15'] = 'FOUND DIFFERENT WEB PAGE ELEMENTS'
-        #     ws['A16'] = 'FOUND EXPOSED PASSWORDS'
-        #     ws['B9'] = subdomains_amount
-        #     ws['B10'] = accessible_subdomains
-        #     ws['B11'] = emails_amount
-        #     ws['B12'] = files_counter
-        #     ws['B13'] = cookies_counter
-        #     ws['B14'] = api_keys_counter
-        #     ws['B15'] = website_elements_counter
-        #     ws['B16'] = exposed_passwords_counter
-        # elif pagesearch_keyword == 'si':
-        #     ws['A9'] = 'TOTAL LINKS CHECKED'
-        #     ws['A10'] = 'AMOUNT OF ACCESSIBLE LINKS'
-        #     ws['A11'] = 'AMOUNT OF ADDITIONAL EMAILS FOUND'
-        #     ws['B9'] = total_links_counter
-        #     ws['B10'] = accessed_links_counter
-        #     ws['B11'] = emails_amount
         ws['B1'] = short_domain
         ws['B2'] = subdomains_amount
         ws['B3'] = total_socials
         ws['B4'] = robots_txt_result
         ws['B5'] = sitemap_xml_result
         ws['B6'] = sitemap_links_status
-        #ws['B7'] = dorking_status
         ws['B8'] = pagesearch_ui_mark
         ws['B9'] = report_ctime
 
@@ -372,8 +334,6 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
         ws.column_dimensions['B'].width = 60
         ws['B1'] = ', '.join(str(item) for item in ports)
         ws['B2'] = ', '.join(str(item) for item in hostnames)
-        # ws['B3'] = ', '.join(str(item) for item in tags)
-        # ws['B4'] = ', '.join(str(item) for item in cpes)
         for i in range(len(vulns)):
             ws[f"F{i + 2}"] = str(vulns[i])
 
@@ -457,19 +417,14 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
 
         for i in range(len(st_a_combined)):
             ws[f"E{i + 2}"] = str(st_a_combined[i])
-
         for i in range(len(st_mx_combined)):
             ws[f"F{i + 2}"] = str(st_mx_combined[i])
-
         for i in range(len(st_ns_combined)):
             ws[f"G{i + 2}"] = str(st_ns_combined[i])
-
         for i in range(len(st_soa_combined)):
             ws[f"H{i + 2}"] = str(st_soa_combined[i])
-
         for i in range(len(st_txt)):
             ws[f"I{i + 2}"] = str(st_txt[i])
-
         for i in range(len(st_alivesds)):
             ws[f"J{i + 2}"] = str(st_alivesds[i])
 
