@@ -1,4 +1,4 @@
-Jinja2==3.1.4
+Jinja2>=3.1.5
 MarkupSafe==2.1.5
 beautifulsoup4==4.12.2
 certifi>=2024.07.04

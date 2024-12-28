@@ -54,7 +54,7 @@ def get_ssl_certificate(short_domain, port=443):
     except (ssl.CertificateError, ssl.SSLError, socket.gaierror, ConnectionRefusedError) as e:
         print(Fore.RED + "Error while gathering info about SSL certificate. See journal for details")
         logging.error(f'SSL CERTIFICATE GATHERING: ERROR. REASON: {e}')
-        issuer = subject = notBefore = notAfter = commonName = serialNumber = ["No information about SSL certificate was gathered"]
+        issuer = subject = notBefore = notAfter = commonName = serialNumber = "No information about SSL certificate was gathered"
         return issuer, subject, notBefore, notAfter, commonName, serialNumber
 
 def query_internetdb(ip, report_file_extension):
