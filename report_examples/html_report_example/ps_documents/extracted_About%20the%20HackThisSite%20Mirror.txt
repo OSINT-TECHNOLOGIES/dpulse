@@ -1,0 +1,28 @@
+-=- What is the HackThisSite Mirror? -=-
+
+HackThisSite may from time to time mirror things we think are deserving of our
+bandwidth and maintenance, simply because of a belief in the cause or a general
+liking of the data and its producers.
+
+
+-=- Will you mirror my data? -=-
+
+You are more than welcome to request mirroring by emailing us at
+admin - at - hackthissite - dot - org, but we will NOT guarantee anything!
+Our bandwidth and time is precious, and just because you think your data is
+well-deserving of our attention, does not mean we will think the same.
+
+
+-=- What do you generally mirror? -=-
+
+HackThisSite will mirror projects we are involved with, or have a vested
+interest in.  For example, we are affiliated with Hackbloc, which produces
+the HackThisZine periodical.  Due to this, we mirror their publications.
+Other such examples could someday include FreeBSD, nginx, Asterisk, UnrealIRC,
+among others, since these are all projects whose benefits we reap.
+
+
+-=- What are your mirror specifications? -=-
+
+mirror.hackthissite.org is hosted on a dedicated server in Europe with
+redundant drives and a 1 Gbps connection.
