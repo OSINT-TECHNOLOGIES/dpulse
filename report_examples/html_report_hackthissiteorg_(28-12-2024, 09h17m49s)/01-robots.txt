@@ -1,3 +1,0 @@
-User-agent: *
-Disallow: /missions/
-Disallow: /killing/all/humans/
