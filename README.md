@@ -28,7 +28,7 @@
 | --- | --- |
 | What is DPULSE? | [See "About DPULSE" page](https://github.com/OSINT-TECHNOLOGIES/dpulse?tab=readme-ov-file#about-dpulse) |
 | Where I can find some demo and use-cases? | [See "Demo and use-cases" page](https://github.com/OSINT-TECHNOLOGIES/dpulse?tab=readme-ov-file#dpulse-demo-and-use-cases) |
-| I want to read project documentation | [See DPULSE wiki](https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-WIKI) |
+| I want to read project documentation | [See DPULSE Readthedocs Page](https://dpulse.readthedocs.io) |
 | I want to see project roadmap and future development plans | [See DPULSE roadmap](https://github.com/users/OSINT-TECHNOLOGIES/projects/1) |
 
 ## What to download?
