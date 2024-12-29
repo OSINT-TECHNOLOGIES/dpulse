@@ -13,4 +13,4 @@ python:
     - requirements: requirements.txt
 
 mkdocs:
-  configuration: docs/dpulse-docs/docs/mkdocs.yml
+  configuration: docs/dpulse-docs/mkdocs.yml
