@@ -186,5 +186,13 @@ Example of custom Dorking DB generator interaction is shown below:
 
 ![customdork](https://github.com/user-attachments/assets/8f3e8ca5-feec-4bf5-add8-048f54931b67)
 
+In result, new .db file will appear in dorking folder, which can be selected later to use in scan:
+
+![dorking_customdbresult](https://github.com/user-attachments/assets/0cd4facc-215b-4e56-ab56-aa23cb5136db)
+
+And how it looks inside:
+
+![look_inside](https://github.com/user-attachments/assets/023467c2-008b-451f-8e14-88b7e54a8c3c)
+
 
 
