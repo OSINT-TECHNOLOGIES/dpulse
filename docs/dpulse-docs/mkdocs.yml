@@ -10,5 +10,7 @@ nav:
   - Built-in automatic Dorking: dorking.md
   - Built-in API scanning: api.md
   - Reports types: reporting.md
+  - Reports storage database: report_storage.md
+  - Demo and use-cases: demo.md
   - Contact developer: contact_dev.md
 
