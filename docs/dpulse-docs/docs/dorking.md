@@ -176,6 +176,15 @@ site:{} inurl:panel
 
 ## Creating custom Dorking database
 
-DPULSE allows you to create your own custom Google Dorking database
+DPULSE allows you to create your own custom Google Dorking database. You can do it using DPULSE CLI by selecting menus as shown below:
+
+![dorking_start](https://github.com/user-attachments/assets/fc8fe1ba-1845-46d1-a9b9-d09d3dc03ce6)
+
+After you select this menu point you will be welcomed with custom Dorking DB generator. It's very simple to use. First you should enter your new custom Dorking DB name without any extensions. Then you'll be prompted to enter id of your first dork (first id in custom DB is always 1, and every next dork gives +1 to id) and dork itself. There's a rule DPULSE requires from you when inputting dorks: when it comes to define domain in dork, put {} instead of it so the program code will replace these brackets with actual domain you'll enter lately.
+
+Example of custom Dorking DB generator interaction is shown below:
+
+![customdork](https://github.com/user-attachments/assets/8f3e8ca5-feec-4bf5-add8-048f54931b67)
+
 
 
