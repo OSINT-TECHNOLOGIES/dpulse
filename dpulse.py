@@ -236,22 +236,7 @@ def run():
                 elif choice_dorking == '2':
                     continue
             elif choice == "6":
-                cli.print_help_menu()
-                choice_help = input(Fore.YELLOW + "Enter your choice >> ")
-                if choice_help == '1':
-                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse')
-                elif choice_help == '2':
-                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-WIKI')
-                elif choice_help == '3':
-                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/How-to-correctly-input-your-targets-address-in-DPULSE')
-                elif choice_help == '4':
-                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-PageSearch-function-guide')
-                elif choice_help == '5':
-                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-report-storage-database')
-                elif choice_help == '6':
-                    continue
-                else:
-                    print(Fore.RED + "\nInvalid menu item. Please select between existing menu items")
+                webbrowser.open('https://dpulse.readthedocs.io/en/latest/')
 
             elif choice == '5':
                 cli.api_manager()
@@ -298,7 +283,7 @@ def run():
                 db.db_creation('report_storage.db')
                 print('\n')
                 choice_db = input(Fore.YELLOW + "Enter your choice >> ")
-                if choice_db == '1':
+                if choice_db == "1":
                     db.db_select()
                 elif choice_db == "2":
                     if db.db_select() is None:
@@ -315,7 +300,6 @@ def run():
                             print(Fore.RED + "Report with the same recreated folder already exists. Please check its content or delete it and try again" + Style.RESET_ALL)
                         except Exception as e:
                             print(Fore.RED + "Error appeared when trying to recreate report from DB. See journal for details" + Style.RESET_ALL)
-
                 elif choice_db == "3":
                     print(Fore.GREEN + "\nDatabase connection is successfully closed")
                     continue
