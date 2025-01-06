@@ -8,7 +8,6 @@ sys.path.append('apis//api_keys.db')
 def db_connect():
     sqlite_connection = sqlite3.connect('report_storage.db')
     cursor = sqlite_connection.cursor()
-    print(Fore.GREEN + "Successfully established SQLite3 DB connection")
     return cursor, sqlite_connection
 
 def db_creation(db_path):
@@ -49,6 +48,7 @@ def db_select():
             select_query = "SELECT creation_date, report_file_extension, target, id, comment, dorks_results, robots_text, sitemap_text, sitemap_file, api_scan FROM report_storage;"
             cursor.execute(select_query)
             records = cursor.fetchall()
+            print(Fore.LIGHTMAGENTA_EX + "\n[DATABASE'S CONTENT]\n" + Style.RESET_ALL)
             for row in records:
                 dorks_presence = robots_presence = sitemap_presence = "None"
                 if len(row[4]) > 1:
@@ -64,11 +64,26 @@ def db_select():
     else:
         print(Fore.RED + 'No data found in report storage database')
         sqlite_connection.close()
-        return None
+    return cursor, sqlite_connection
+
+def db_select_silent():
+    cursor, sqlite_connection = db_connect()
+    if_rows = "SELECT * FROM report_storage"
+    cursor.execute(if_rows)
+    rows = cursor.fetchall()
+    if rows:
+        try:
+            select_query = "SELECT creation_date, report_file_extension, target, id, comment, dorks_results, robots_text, sitemap_text, sitemap_file, api_scan FROM report_storage;"
+            cursor.execute(select_query)
+            #records = cursor.fetchall()
+        except sqlite3.Error as e:
+            sqlite_connection.close()
+    else:
+        sqlite_connection.close()
     return cursor, sqlite_connection
 
 def db_report_recreate(extracted_folder_name, id_to_extract):
-    cursor, sqlite_connection = db_select()
+    cursor, sqlite_connection = db_select_silent()
     cursor.execute("SELECT report_content FROM report_storage WHERE id=?", (id_to_extract,))
     try:
         blob = cursor.fetchone()
