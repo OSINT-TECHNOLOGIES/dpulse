@@ -52,9 +52,8 @@ As you can see, there are menu points for both seeing DB content and recreating 
 
 Report recreating process is shown below:
 
+![rsdb4](https://github.com/user-attachments/assets/d7af9b03-703e-46b2-846b-05d99b33b900)
 
+And that's how recreated report looks like inside:
 
-
-
-
-
+![rsdb5](https://github.com/user-attachments/assets/799d45cb-bc51-43ca-8b06-14e236d21912)
