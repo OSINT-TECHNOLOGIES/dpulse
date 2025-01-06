@@ -31,7 +31,7 @@ class Menu:
         print(Fore.CYAN + "3. Dorking module manager")
         print(Fore.CYAN + "4. Report storage DB manager")
         print(Fore.CYAN + "5. API modules manager")
-        print(Fore.CYAN + "6. Help")
+        print(Fore.CYAN + "6. Help (browser will be opened!)")
         print(Fore.LIGHTRED_EX + "7. Exit DPULSE" + Style.RESET_ALL + '\n')
 
     def print_settings_menu(self):
@@ -41,16 +41,6 @@ class Menu:
         print(Fore.CYAN + "2. Edit config file")
         print(Fore.CYAN + "3. Clear journal content")
         print(Fore.LIGHTRED_EX + "4. Return to main menu" + Style.RESET_ALL + '\n')
-
-    def print_help_menu(self):
-        print(Fore.MAGENTA + Back.WHITE + '[HELP MENU]' + Style.RESET_ALL)
-        print(Fore.BLACK + Back.WHITE + '\nBe advised that choosing any of points below will open your web browser!' + Style.RESET_ALL)
-        print(Fore.CYAN + "1. Open DPULSE repository")
-        print(Fore.CYAN + "2. Open DPULSE wiki")
-        print(Fore.CYAN + "3. How to correctly input your targets in DPULSE")
-        print(Fore.CYAN + "4. PageSearch user guide")
-        print(Fore.CYAN + "5. Report storage database user guide")
-        print(Fore.LIGHTRED_EX + "6. Return to main menu" + Style.RESET_ALL + '\n')
 
     def print_db_menu(self):
         print('\n')
