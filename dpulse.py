@@ -286,20 +286,16 @@ def run():
                 if choice_db == "1":
                     db.db_select()
                 elif choice_db == "2":
-                    if db.db_select() is None:
-                        pass
-                    else:
-                        print(Fore.LIGHTMAGENTA_EX + "\n[DATABASE'S CONTENT]\n" + Style.RESET_ALL)
-                        db.db_select()
-                        id_to_extract = int(input(Fore.YELLOW + "\nEnter report ID you want to extract >> "))
-                        extracted_folder_name = 'report_recreated_ID#{}'.format(id_to_extract)
-                        try:
-                            os.makedirs(extracted_folder_name)
-                            db.db_report_recreate(extracted_folder_name, id_to_extract)
-                        except FileExistsError:
-                            print(Fore.RED + "Report with the same recreated folder already exists. Please check its content or delete it and try again" + Style.RESET_ALL)
-                        except Exception as e:
-                            print(Fore.RED + "Error appeared when trying to recreate report from DB. See journal for details" + Style.RESET_ALL)
+                    db.db_select()
+                    id_to_extract = int(input(Fore.YELLOW + "\nEnter report ID you want to extract >> "))
+                    extracted_folder_name = 'report_recreated_ID#{}'.format(id_to_extract)
+                    try:
+                        os.makedirs(extracted_folder_name)
+                        db.db_report_recreate(extracted_folder_name, id_to_extract)
+                    except FileExistsError:
+                        print(Fore.RED + "Report with the same recreated folder already exists. Please check its content or delete it and try again" + Style.RESET_ALL)
+                    except Exception as e:
+                        print(Fore.RED + "Error appeared when trying to recreate report from DB. See journal for details" + Style.RESET_ALL)
                 elif choice_db == "3":
                     print(Fore.GREEN + "\nDatabase connection is successfully closed")
                     continue
