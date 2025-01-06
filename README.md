@@ -20,6 +20,8 @@
 
 > Attention! DPULSE is a research tool. It is not intended for criminal activities! Use DPULSE only on allowed domains and for legal purposes!
 
+> Please, before creating an issue or DMing developer about DPULSE, make sure that your problem or question is not covered with [DPULSE documentation](https://dpulse.readthedocs.io)
+
 # Repository map
 
 ## What to visit?
