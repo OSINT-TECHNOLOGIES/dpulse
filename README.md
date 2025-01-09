@@ -200,7 +200,7 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 
 ### [by @hdH4dg8](https://x.com/hdH4dg8/status/1876106586869104906?t=Awfas25ukXkblPRt4krSzA&s=19)
 
-### [by @@wy88215534](https://x.com/wy88215534/status/1876522251828494794?t=cmwoNCDZv0kMEDMKokcVFA&s=19)
+### [by @wy88215534](https://x.com/wy88215534/status/1876522251828494794?t=cmwoNCDZv0kMEDMKokcVFA&s=19)
 
 ## Facebook mentions:
 
