@@ -10,12 +10,17 @@ def db_connect():
     cursor = sqlite_connection.cursor()
     return cursor, sqlite_connection
 
-def db_creation(db_path):
+def check_rsdb_presence(db_path):
     if not os.path.exists(db_path):
         print(Fore.RED + "Report storage database was not found. DPULSE will create it in a second" + Style.RESET_ALL)
-        cursor, sqlite_connection = db_connect()
-        create_table_sql = """
-        CREATE TABLE "report_storage" (
+        return False
+    else:
+        return True
+
+def db_creation(db_path):
+    cursor, sqlite_connection = db_connect()
+    create_table_sql = """
+    CREATE TABLE "report_storage" (
             "id" INTEGER NOT NULL UNIQUE,
             "report_file_extension" TEXT NOT NULL, 
             "report_content" BLOB NOT NULL,
@@ -30,15 +35,12 @@ def db_creation(db_path):
             PRIMARY KEY("id" AUTOINCREMENT)
         );
         """
-        cursor.execute(create_table_sql)
-        sqlite_connection.commit()
-        sqlite_connection.close()
-        print(Fore.GREEN + "Successfully created report storage database" + Style.RESET_ALL)
-    else:
-        print(Fore.GREEN + "Report storage database presence: OK" + Style.RESET_ALL)
+    cursor.execute(create_table_sql)
+    sqlite_connection.commit()
+    sqlite_connection.close()
 
 def db_select():
-    db_creation('report_storage.db')
+    #db_creation('report_storage.db')
     cursor, sqlite_connection = db_connect()
     if_rows = "SELECT * FROM report_storage"
     cursor.execute(if_rows)
@@ -58,13 +60,16 @@ def db_select():
                 if len(row[6]) > 1:
                     sitemap_presence = "In DB"
                 print(Fore.LIGHTBLUE_EX + f"Case ID: {row[3]} | Case name: {row[2]} | Case file extension: {row[1]} | Case comment: {row[4]} | Case creation date: {row[0]} | Dorking: {dorks_presence} | robots.txt: {robots_presence} | sitemap.xml: {sitemap_presence} | API scan: {row[-1]}" + Style.RESET_ALL)
+                data_presence_flag = True
         except sqlite3.Error as e:
             print(Fore.RED + "Failed to see storage database's content. Reason: {}".format(e))
             sqlite_connection.close()
+            data_presence_flag = False
     else:
         print(Fore.RED + 'No data found in report storage database')
         sqlite_connection.close()
-    return cursor, sqlite_connection
+        data_presence_flag = False
+    return cursor, sqlite_connection, data_presence_flag
 
 def db_select_silent():
     cursor, sqlite_connection = db_connect()
