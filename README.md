@@ -1,7 +1,8 @@
 # DPULSE - Domain Public Data Collection Service 
 
+
 <p align="center">
-  <img src="https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/fed8d368-7309-4aaa-a82e-2f0b277122de">
+  <img src="https://github.com/user-attachments/assets/412c86bf-959e-4a97-a5f5-598a93e3e478">
 </p>
 
 <p align="center">
