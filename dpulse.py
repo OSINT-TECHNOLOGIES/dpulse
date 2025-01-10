@@ -25,7 +25,12 @@ from data_assembler import DataProcessing
 from logs_processing import logging
 from db_creator import get_columns_amount
 
-db.db_creation('report_storage.db')
+rsdb_presence = db.check_rsdb_presence('report_storage.db')
+if rsdb_presence is True:
+    print(Fore.GREEN + "Report storage database presence: OK" + Style.RESET_ALL)
+else:
+    db.db_creation('report_storage.db')
+    print(Fore.GREEN + "Successfully created report storage database" + Style.RESET_ALL)
 
 dorks_files_check()
 
@@ -280,22 +285,30 @@ def run():
             elif choice == "4":
                 cli.print_db_menu()
                 print('\n')
-                db.db_creation('report_storage.db')
+                rsdb_presence = db.check_rsdb_presence('report_storage.db')
+                if rsdb_presence is True:
+                    print(Fore.GREEN + "Report storage database presence: OK" + Style.RESET_ALL)
+                else:
+                    db.db_creation('report_storage.db')
+                    print(Fore.GREEN + "Successfully created report storage database" + Style.RESET_ALL)
                 print('\n')
                 choice_db = input(Fore.YELLOW + "Enter your choice >> ")
                 if choice_db == "1":
-                    db.db_select()
+                    cursor, sqlite_connection, data_presence_flag = db.db_select()
                 elif choice_db == "2":
-                    db.db_select()
-                    id_to_extract = int(input(Fore.YELLOW + "\nEnter report ID you want to extract >> "))
-                    extracted_folder_name = 'report_recreated_ID#{}'.format(id_to_extract)
-                    try:
-                        os.makedirs(extracted_folder_name)
-                        db.db_report_recreate(extracted_folder_name, id_to_extract)
-                    except FileExistsError:
-                        print(Fore.RED + "Report with the same recreated folder already exists. Please check its content or delete it and try again" + Style.RESET_ALL)
-                    except Exception as e:
-                        print(Fore.RED + "Error appeared when trying to recreate report from DB. See journal for details" + Style.RESET_ALL)
+                    cursor, sqlite_connection, data_presence_flag = db.db_select()
+                    if data_presence_flag is True:
+                        id_to_extract = int(input(Fore.YELLOW + "\nEnter report ID you want to extract >> "))
+                        extracted_folder_name = 'report_recreated_ID#{}'.format(id_to_extract)
+                        try:
+                            os.makedirs(extracted_folder_name)
+                            db.db_report_recreate(extracted_folder_name, id_to_extract)
+                        except FileExistsError:
+                            print(Fore.RED + "Report with the same recreated folder already exists. Please check its content or delete it and try again" + Style.RESET_ALL)
+                        except Exception as e:
+                            print(Fore.RED + "Error appeared when trying to recreate report from DB. See journal for details" + Style.RESET_ALL)
+                    else:
+                        pass
                 elif choice_db == "3":
                     print(Fore.GREEN + "\nDatabase connection is successfully closed")
                     continue
