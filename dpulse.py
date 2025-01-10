@@ -245,8 +245,7 @@ def run():
 
             elif choice == '5':
                 cli.api_manager()
-                print('\n')
-                choice_api = input(Fore.YELLOW + "Enter your choice >> ")
+                choice_api = input(Fore.YELLOW + "\nEnter your choice >> ")
                 if choice_api == '1':
                     print(Fore.GREEN + "\nSupported APIs and your keys:\n")
                     cursor, conn = db.select_api_keys('updating')
@@ -284,14 +283,12 @@ def run():
 
             elif choice == "4":
                 cli.print_db_menu()
-                print('\n')
                 rsdb_presence = db.check_rsdb_presence('report_storage.db')
                 if rsdb_presence is True:
-                    print(Fore.GREEN + "Report storage database presence: OK" + Style.RESET_ALL)
+                    print(Fore.GREEN + "\nReport storage database presence: OK\n" + Style.RESET_ALL)
                 else:
                     db.db_creation('report_storage.db')
                     print(Fore.GREEN + "Successfully created report storage database" + Style.RESET_ALL)
-                print('\n')
                 choice_db = input(Fore.YELLOW + "Enter your choice >> ")
                 if choice_db == "1":
                     cursor, sqlite_connection, data_presence_flag = db.db_select()
