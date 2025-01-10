@@ -53,8 +53,7 @@ class Menu:
         print('\n')
         print(Fore.MAGENTA + Back.WHITE + '[DORKING DB MANAGER]' + Style.RESET_ALL)
         print(Fore.CYAN + "1. Generate custom Dorking DB")
-        print(Fore.LIGHTRED_EX + "2. Return to main menu" + Style.RESET_ALL)
-        print('\n')
+        print(Fore.LIGHTRED_EX + "2. Return to main menu\n" + Style.RESET_ALL)
 
     def api_manager(self):
         print('\n')
@@ -73,8 +72,7 @@ def print_prescan_summary(short_domain, report_filetype, pagesearch_ui_mark, dor
     print(Fore.GREEN + "Case comment: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + case_comment + Style.RESET_ALL + "\n")
 
 def print_api_db_msg():
-    print('\n')
-    print(Fore.GREEN + "You've entered custom Dorking DB generator!\n" + Style.RESET_ALL)
+    print(Fore.GREEN + "\nYou've entered custom Dorking DB generator!\n" + Style.RESET_ALL)
     print(Fore.GREEN + "Remember some rules in order to successfully create your custom Dorking DB:" + Style.RESET_ALL)
     print(Fore.GREEN + "[1] - dork_id variable must be unique, starting with 1 and then +1 every new dork" + Style.RESET_ALL)
     print(Fore.GREEN + "[2] - When it comes to define domain in dork, put {} in it\n" + Style.RESET_ALL)
