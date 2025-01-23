@@ -40,7 +40,6 @@ def db_creation(db_path):
     sqlite_connection.close()
 
 def db_select():
-    #db_creation('report_storage.db')
     cursor, sqlite_connection = db_connect()
     if_rows = "SELECT * FROM report_storage"
     cursor.execute(if_rows)
@@ -80,7 +79,6 @@ def db_select_silent():
         try:
             select_query = "SELECT creation_date, report_file_extension, target, id, comment, dorks_results, robots_text, sitemap_text, sitemap_file, api_scan FROM report_storage;"
             cursor.execute(select_query)
-            #records = cursor.fetchall()
         except sqlite3.Error as e:
             sqlite_connection.close()
     else:
