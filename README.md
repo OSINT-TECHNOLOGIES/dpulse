@@ -152,7 +152,7 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 
 ### You can start DPULSE and see the main menu on the screen using one of the recommended commands in DPULSE root folder. Don't forget to install all requirements before starting DPULSE
 
-![dpulse_start](https://github.com/user-attachments/assets/49cb476c-d9a5-4ff6-999f-afa0badf0e0d)
+![dpulse_start](https://github.com/user-attachments/assets/9ec0ab73-2206-4d38-bae6-e88656e17f95)
 
 ### After choosing first menu point, you will be able to enter target's URL and case comment, and then you will see scanning progress
 
