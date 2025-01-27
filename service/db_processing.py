@@ -8,15 +8,19 @@ sys.path.append('apis//api_keys.db')
 def db_connect():
     sqlite_connection = sqlite3.connect('report_storage.db')
     cursor = sqlite_connection.cursor()
-    print(Fore.GREEN + "Successfully established SQLite3 DB connection")
     return cursor, sqlite_connection
 
-def db_creation(db_path):
+def check_rsdb_presence(db_path):
     if not os.path.exists(db_path):
         print(Fore.RED + "Report storage database was not found. DPULSE will create it in a second" + Style.RESET_ALL)
-        cursor, sqlite_connection = db_connect()
-        create_table_sql = """
-        CREATE TABLE "report_storage" (
+        return False
+    else:
+        return True
+
+def db_creation(db_path):
+    cursor, sqlite_connection = db_connect()
+    create_table_sql = """
+    CREATE TABLE "report_storage" (
             "id" INTEGER NOT NULL UNIQUE,
             "report_file_extension" TEXT NOT NULL, 
             "report_content" BLOB NOT NULL,
@@ -31,15 +35,11 @@ def db_creation(db_path):
             PRIMARY KEY("id" AUTOINCREMENT)
         );
         """
-        cursor.execute(create_table_sql)
-        sqlite_connection.commit()
-        sqlite_connection.close()
-        print(Fore.GREEN + "Successfully created report storage database" + Style.RESET_ALL)
-    else:
-        print(Fore.GREEN + "Report storage database presence: OK" + Style.RESET_ALL)
+    cursor.execute(create_table_sql)
+    sqlite_connection.commit()
+    sqlite_connection.close()
 
 def db_select():
-    db_creation('report_storage.db')
     cursor, sqlite_connection = db_connect()
     if_rows = "SELECT * FROM report_storage"
     cursor.execute(if_rows)
@@ -49,6 +49,7 @@ def db_select():
             select_query = "SELECT creation_date, report_file_extension, target, id, comment, dorks_results, robots_text, sitemap_text, sitemap_file, api_scan FROM report_storage;"
             cursor.execute(select_query)
             records = cursor.fetchall()
+            print(Fore.LIGHTMAGENTA_EX + "\n[DATABASE'S CONTENT]\n" + Style.RESET_ALL)
             for row in records:
                 dorks_presence = robots_presence = sitemap_presence = "None"
                 if len(row[4]) > 1:
@@ -58,17 +59,34 @@ def db_select():
                 if len(row[6]) > 1:
                     sitemap_presence = "In DB"
                 print(Fore.LIGHTBLUE_EX + f"Case ID: {row[3]} | Case name: {row[2]} | Case file extension: {row[1]} | Case comment: {row[4]} | Case creation date: {row[0]} | Dorking: {dorks_presence} | robots.txt: {robots_presence} | sitemap.xml: {sitemap_presence} | API scan: {row[-1]}" + Style.RESET_ALL)
+                data_presence_flag = True
         except sqlite3.Error as e:
             print(Fore.RED + "Failed to see storage database's content. Reason: {}".format(e))
             sqlite_connection.close()
+            data_presence_flag = False
     else:
         print(Fore.RED + 'No data found in report storage database')
         sqlite_connection.close()
-        return None
+        data_presence_flag = False
+    return cursor, sqlite_connection, data_presence_flag
+
+def db_select_silent():
+    cursor, sqlite_connection = db_connect()
+    if_rows = "SELECT * FROM report_storage"
+    cursor.execute(if_rows)
+    rows = cursor.fetchall()
+    if rows:
+        try:
+            select_query = "SELECT creation_date, report_file_extension, target, id, comment, dorks_results, robots_text, sitemap_text, sitemap_file, api_scan FROM report_storage;"
+            cursor.execute(select_query)
+        except sqlite3.Error as e:
+            sqlite_connection.close()
+    else:
+        sqlite_connection.close()
     return cursor, sqlite_connection
 
 def db_report_recreate(extracted_folder_name, id_to_extract):
-    cursor, sqlite_connection = db_select()
+    cursor, sqlite_connection = db_select_silent()
     cursor.execute("SELECT report_content FROM report_storage WHERE id=?", (id_to_extract,))
     try:
         blob = cursor.fetchone()

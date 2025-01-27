@@ -20,8 +20,8 @@ class Menu:
         fig = Figlet(font=wm_font)
         print('\n')
         self.console.print(fig.renderText('DPULSE'), style=preview_style)
-        print(Fore.MAGENTA + Style.BRIGHT + '[DPULSE-CLI] - [v1.1.6 stable] - [OSINT-TECHNOLOGIES]\n' + Style.RESET_ALL)
-        print(Fore.MAGENTA + Style.BRIGHT + 'Visit our pages:\nhttps://github.com/OSINT-TECHNOLOGIES\nhttps://pypi.org/project/dpulse/' + Style.RESET_ALL)
+        print(Fore.MAGENTA + Style.BRIGHT + '[DPULSE-CLI] - [v1.2 stable] - [OSINT-TECHNOLOGIES]\n' + Style.RESET_ALL)
+        print(Fore.MAGENTA + Style.BRIGHT + '[Visit our pages]\nGitHub repository: https://github.com/OSINT-TECHNOLOGIES\nPyPi page: https://pypi.org/project/dpulse/\nDocumentation: https://dpulse.readthedocs.io' + Style.RESET_ALL)
 
     def print_main_menu(self):
         print('\n')
@@ -31,7 +31,7 @@ class Menu:
         print(Fore.CYAN + "3. Dorking module manager")
         print(Fore.CYAN + "4. Report storage DB manager")
         print(Fore.CYAN + "5. API modules manager")
-        print(Fore.CYAN + "6. Help")
+        print(Fore.CYAN + "6. Help (browser will be opened!)")
         print(Fore.LIGHTRED_EX + "7. Exit DPULSE" + Style.RESET_ALL + '\n')
 
     def print_settings_menu(self):
@@ -41,16 +41,6 @@ class Menu:
         print(Fore.CYAN + "2. Edit config file")
         print(Fore.CYAN + "3. Clear journal content")
         print(Fore.LIGHTRED_EX + "4. Return to main menu" + Style.RESET_ALL + '\n')
-
-    def print_help_menu(self):
-        print(Fore.MAGENTA + Back.WHITE + '[HELP MENU]' + Style.RESET_ALL)
-        print(Fore.BLACK + Back.WHITE + '\nBe advised that choosing any of points below will open your web browser!' + Style.RESET_ALL)
-        print(Fore.CYAN + "1. Open DPULSE repository")
-        print(Fore.CYAN + "2. Open DPULSE wiki")
-        print(Fore.CYAN + "3. How to correctly input your targets in DPULSE")
-        print(Fore.CYAN + "4. PageSearch user guide")
-        print(Fore.CYAN + "5. Report storage database user guide")
-        print(Fore.LIGHTRED_EX + "6. Return to main menu" + Style.RESET_ALL + '\n')
 
     def print_db_menu(self):
         print('\n')
@@ -63,8 +53,7 @@ class Menu:
         print('\n')
         print(Fore.MAGENTA + Back.WHITE + '[DORKING DB MANAGER]' + Style.RESET_ALL)
         print(Fore.CYAN + "1. Generate custom Dorking DB")
-        print(Fore.LIGHTRED_EX + "2. Return to main menu" + Style.RESET_ALL)
-        print('\n')
+        print(Fore.LIGHTRED_EX + "2. Return to main menu\n" + Style.RESET_ALL)
 
     def api_manager(self):
         print('\n')
@@ -83,8 +72,7 @@ def print_prescan_summary(short_domain, report_filetype, pagesearch_ui_mark, dor
     print(Fore.GREEN + "Case comment: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + case_comment + Style.RESET_ALL + "\n")
 
 def print_api_db_msg():
-    print('\n')
-    print(Fore.GREEN + "You've entered custom Dorking DB generator!\n" + Style.RESET_ALL)
+    print(Fore.GREEN + "\nYou've entered custom Dorking DB generator!\n" + Style.RESET_ALL)
     print(Fore.GREEN + "Remember some rules in order to successfully create your custom Dorking DB:" + Style.RESET_ALL)
     print(Fore.GREEN + "[1] - dork_id variable must be unique, starting with 1 and then +1 every new dork" + Style.RESET_ALL)
     print(Fore.GREEN + "[2] - When it comes to define domain in dork, put {} in it\n" + Style.RESET_ALL)

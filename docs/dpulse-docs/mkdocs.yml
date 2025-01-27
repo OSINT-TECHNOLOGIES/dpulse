@@ -1,0 +1,15 @@
+site_name: DPULSE Docs
+theme:
+  name: readthedocs
+nav:
+  - Home: index.md
+  - Getting started: getting_started.md
+  - Basic scan: basic_scan.md
+  - PageSearch: pagesearch.md
+  - PageSearch Sitemap Inspection: pagesearch_sitemap.md
+  - Built-in automatic Dorking: dorking.md
+  - Built-in API scanning: api.md
+  - Reporting and report types: reporting.md
+  - Demo and use-cases: demo.md
+  - Contact developer: contact_dev.md
+

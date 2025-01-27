@@ -25,7 +25,12 @@ from data_assembler import DataProcessing
 from logs_processing import logging
 from db_creator import get_columns_amount
 
-db.db_creation('report_storage.db')
+rsdb_presence = db.check_rsdb_presence('report_storage.db')
+if rsdb_presence is True:
+    print(Fore.GREEN + "Report storage database presence: OK" + Style.RESET_ALL)
+else:
+    db.db_creation('report_storage.db')
+    print(Fore.GREEN + "Successfully created report storage database" + Style.RESET_ALL)
 
 dorks_files_check()
 
@@ -236,27 +241,11 @@ def run():
                 elif choice_dorking == '2':
                     continue
             elif choice == "6":
-                cli.print_help_menu()
-                choice_help = input(Fore.YELLOW + "Enter your choice >> ")
-                if choice_help == '1':
-                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse')
-                elif choice_help == '2':
-                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-WIKI')
-                elif choice_help == '3':
-                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/How-to-correctly-input-your-targets-address-in-DPULSE')
-                elif choice_help == '4':
-                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-PageSearch-function-guide')
-                elif choice_help == '5':
-                    webbrowser.open('https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-report-storage-database')
-                elif choice_help == '6':
-                    continue
-                else:
-                    print(Fore.RED + "\nInvalid menu item. Please select between existing menu items")
+                webbrowser.open('https://dpulse.readthedocs.io/en/latest/')
 
             elif choice == '5':
                 cli.api_manager()
-                print('\n')
-                choice_api = input(Fore.YELLOW + "Enter your choice >> ")
+                choice_api = input(Fore.YELLOW + "\nEnter your choice >> ")
                 if choice_api == '1':
                     print(Fore.GREEN + "\nSupported APIs and your keys:\n")
                     cursor, conn = db.select_api_keys('updating')
@@ -294,18 +283,18 @@ def run():
 
             elif choice == "4":
                 cli.print_db_menu()
-                print('\n')
-                db.db_creation('report_storage.db')
-                print('\n')
+                rsdb_presence = db.check_rsdb_presence('report_storage.db')
+                if rsdb_presence is True:
+                    print(Fore.GREEN + "\nReport storage database presence: OK\n" + Style.RESET_ALL)
+                else:
+                    db.db_creation('report_storage.db')
+                    print(Fore.GREEN + "Successfully created report storage database" + Style.RESET_ALL)
                 choice_db = input(Fore.YELLOW + "Enter your choice >> ")
-                if choice_db == '1':
-                    db.db_select()
+                if choice_db == "1":
+                    cursor, sqlite_connection, data_presence_flag = db.db_select()
                 elif choice_db == "2":
-                    if db.db_select() is None:
-                        pass
-                    else:
-                        print(Fore.LIGHTMAGENTA_EX + "\n[DATABASE'S CONTENT]\n" + Style.RESET_ALL)
-                        db.db_select()
+                    cursor, sqlite_connection, data_presence_flag = db.db_select()
+                    if data_presence_flag is True:
                         id_to_extract = int(input(Fore.YELLOW + "\nEnter report ID you want to extract >> "))
                         extracted_folder_name = 'report_recreated_ID#{}'.format(id_to_extract)
                         try:
@@ -315,7 +304,8 @@ def run():
                             print(Fore.RED + "Report with the same recreated folder already exists. Please check its content or delete it and try again" + Style.RESET_ALL)
                         except Exception as e:
                             print(Fore.RED + "Error appeared when trying to recreate report from DB. See journal for details" + Style.RESET_ALL)
-
+                    else:
+                        pass
                 elif choice_db == "3":
                     print(Fore.GREEN + "\nDatabase connection is successfully closed")
                     continue

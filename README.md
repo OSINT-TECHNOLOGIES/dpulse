@@ -1,7 +1,7 @@
 # DPULSE - Domain Public Data Collection Service 
 
 <p align="center">
-  <img src="https://github.com/OSINT-TECHNOLOGIES/dpulse/assets/77023667/fed8d368-7309-4aaa-a82e-2f0b277122de">
+  <img src="https://github.com/user-attachments/assets/e49c764a-5039-4a54-b002-6b625f0b371b">
 </p>
 
 <p align="center">
@@ -20,15 +20,16 @@
 
 > Attention! DPULSE is a research tool. It is not intended for criminal activities! Use DPULSE only on allowed domains and for legal purposes!
 
+> Please, before creating an issue or DMing developer about DPULSE, make sure that your problem or question is not covered with [DPULSE documentation](https://dpulse.readthedocs.io)
+
 # Repository map
 
 ## What to visit?
 
 | What do you want to see? | Link |
 | --- | --- |
-| What is DPULSE? | [See "About DPULSE" page](https://github.com/OSINT-TECHNOLOGIES/dpulse?tab=readme-ov-file#about-dpulse) |
-| Where I can find some demo and use-cases? | [See "Demo and use-cases" page](https://github.com/OSINT-TECHNOLOGIES/dpulse?tab=readme-ov-file#dpulse-demo-and-use-cases) |
-| I want to read project documentation | [See DPULSE wiki](https://github.com/OSINT-TECHNOLOGIES/dpulse/wiki/DPULSE-WIKI) |
+| I want to read project documentation | [See DPULSE Readthedocs Page](https://dpulse.readthedocs.io) |
+| I want to see developer's contacts | [See "Contact developer" page on Readthedocs](https://dpulse.readthedocs.io/en/latest/contact_dev/#) |
 | I want to see project roadmap and future development plans | [See DPULSE roadmap](https://github.com/users/OSINT-TECHNOLOGIES/projects/1) |
 
 ## What to download?
@@ -36,16 +37,10 @@
 | Your expectations | Version and link for you |
 | --- | --- |
 | I want to use only tested and stable version of DPULSE | [DPULSE stable ZIP archive](https://github.com/OSINT-TECHNOLOGIES/dpulse/archive/refs/heads/main.zip) |
-| I don't mind to use DPULSE with latest changes and you're OK with bugs and issues  | [DPULSE rolling ZIP archive](https://github.com/OSINT-TECHNOLOGIES/dpulse/archive/refs/heads/rolling.zip) |
+| I don't mind to use DPULSE with latest changes and I'm OK with bugs and issues  | [DPULSE rolling ZIP archive](https://github.com/OSINT-TECHNOLOGIES/dpulse/archive/refs/heads/rolling.zip) |
 | I want to use only one specific version of DPULSE  | [See DPULSE releases page](https://github.com/OSINT-TECHNOLOGIES/dpulse/releases) |
 | I want to see more detailed installation instructions | [See DPULSE installation guides](https://github.com/OSINT-TECHNOLOGIES/dpulse?tab=readme-ov-file#how-to-install-and-run-dpulse)
 
-## How can I contact the developer? 
-
-| Reasons to contact | Links & addresses |
-| --- | --- |
-| I want to talk with developer in person  | DM to osint.technologies@gmail.com |
-| I want to report some bug or issue, or maybe I have some good idea for developer  | [Make a new issue page](https://github.com/OSINT-TECHNOLOGIES/dpulse/issues/new/choose) |
 
 # About DPULSE
 
@@ -157,11 +152,11 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 
 ### You can start DPULSE and see the main menu on the screen using one of the recommended commands in DPULSE root folder. Don't forget to install all requirements before starting DPULSE
 
-![dpulse_start](https://github.com/user-attachments/assets/49cb476c-d9a5-4ff6-999f-afa0badf0e0d)
+![dpulse_start](https://github.com/user-attachments/assets/9ec0ab73-2206-4d38-bae6-e88656e17f95)
 
 ### After choosing first menu point, you will be able to enter target's URL and case comment, and then you will see scanning progress
 
-![dpulse_running](https://github.com/user-attachments/assets/9a3cd8c2-3281-4d58-b12e-91ced6dbbd91)
+![dpulse_bs](https://github.com/user-attachments/assets/b0ad7827-6dac-4f82-a369-4447a0e1c878)
 
 ### Finally, DPULSE will create report folder which contains case name (basically URL of target), date and time of scan. All report folders are contained in DPULSE root folder
 
@@ -193,6 +188,12 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 ### [by @DailyOsint](https://x.com/DailyOsint/status/1823013991951523997?t=Fr-oDCZ2pFmFJpUT3BKl5A&s=19)
 
 ### [by @UndeadSec](https://x.com/UndeadSec/status/1827692406797689032)
+
+### [by @akaclandestine](https://x.com/akaclandestine/status/1875980998418002151?t=Ac-fZ9oe2FLKkTTCClss8g&s=19)
+
+### [by @hdH4dg8](https://x.com/hdH4dg8/status/1876106586869104906?t=Awfas25ukXkblPRt4krSzA&s=19)
+
+### [by @wy88215534](https://x.com/wy88215534/status/1876522251828494794?t=cmwoNCDZv0kMEDMKokcVFA&s=19)
 
 ## Facebook mentions:
 

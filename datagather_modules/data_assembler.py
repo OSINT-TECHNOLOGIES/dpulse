@@ -81,7 +81,12 @@ class DataProcessing():
         print(Fore.GREEN + 'Processing subdomain gathering' + Style.RESET_ALL)
         subdomains, subdomains_amount = cp.subdomains_gather(url, short_domain)
         print(Fore.GREEN + 'Processing social medias gathering' + Style.RESET_ALL)
-        social_medias = cp.sm_gather(url)
+        try:
+            social_medias = cp.sm_gather(url)
+        except:
+            print(Fore.RED + "Social medias were not gathered because of error" + Style.RESET_ALL)
+            social_medias = ['Social medias were not extracted because of error']
+            pass
         print(Fore.GREEN + 'Processing subdomain analysis' + Style.RESET_ALL)
         if report_file_type == 'xlsx':
             subdomain_urls, subdomain_mails, subdomain_ip, sd_socials = cp.domains_reverse_research(subdomains, report_file_type)
@@ -164,17 +169,8 @@ class DataProcessing():
                 api_scan_db.append('No')
                 pass
 
-            #data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
-            #               subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
-            #               robots_txt_result, sitemap_xml_result, sitemap_links_status,
-            #               web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks, ports,
-            #               hostnames, cpes, tags, vulns, common_socials, total_socials, ps_emails_return,
-            #               accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
-            #               website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, dorking_status, dorking_results, vt_cats,
-            #               vt_deturls, vt_detsamples, vt_undetsamples]
 
             cleaned_dorking = [item.strip() for item in dorking_results if item.strip()]
-            #print(cleaned_dorking)
 
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
