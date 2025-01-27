@@ -173,7 +173,7 @@ def domains_reverse_research(subdomains, report_file_type):
         for subdomain in subdomains:
             subdomain_url = "http://" + subdomain + "/"
             subdomain_urls.append(subdomain_url)
-    except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError) as e:
+    except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout) as e:
         print(Fore.RED + "Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error won't be included in report. See journal for details" + Style.RESET_ALL)
         logging.error(f'SUBDOMAINS URL FORMING: ERROR. REASON: {e}')
         pass
@@ -183,7 +183,7 @@ def domains_reverse_research(subdomains, report_file_type):
             subdomains_ip = ip_gather(subdomain)
             subdomain_ip.append(subdomains_ip)
             subdomain_ip = list(set(subdomain_ip))
-    except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError) as e:
+    except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout) as e:
         print(Fore.RED + "Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error won't be included in report. See journal for details" + Style.RESET_ALL)
         logging.error(f'SUBDOMAINS IP GATHERING: ERROR. REASON: {e}')
         pass
@@ -194,7 +194,7 @@ def domains_reverse_research(subdomains, report_file_type):
             subdomain_mails.append(subdomain_mail)
             subdomain_social = sm_gather(subdomain_url)
             subdomain_socials.append(subdomain_social)
-    except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError) as e:
+    except (socket.gaierror, requests.exceptions.SSLError, requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout) as e:
         print(Fore.RED + "Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error won't be included in report. See journal for details" + Style.RESET_ALL)
         logging.error(f'SUBDOMAINS MAIL/SOCIALS GATHERING: ERROR. REASON: {e}')
         pass
