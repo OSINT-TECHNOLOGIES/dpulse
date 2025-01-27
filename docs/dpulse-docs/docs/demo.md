@@ -8,7 +8,7 @@ Yes, starting DPULSE is as simple as that. Don't forget to install all requireme
 
 ![dpulse_start](https://github.com/user-attachments/assets/9ec0ab73-2206-4d38-bae6-e88656e17f95) 
 
-## Demo №2. DPULSE scan workflow
+## Demo №2. DPULSE basic scan workflow
 
 Here you can see complete process of DPULSE basic scan from the beginning to the end. Remember that sometimes your scan might not be ideal and errors may appear. However, they will not interrupt scanning process, but will only affect the number and variety of results in the final report.
 
