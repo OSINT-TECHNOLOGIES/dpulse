@@ -81,7 +81,12 @@ class DataProcessing():
         print(Fore.GREEN + 'Processing subdomain gathering' + Style.RESET_ALL)
         subdomains, subdomains_amount = cp.subdomains_gather(url, short_domain)
         print(Fore.GREEN + 'Processing social medias gathering' + Style.RESET_ALL)
-        social_medias = cp.sm_gather(url)
+        try:
+            social_medias = cp.sm_gather(url)
+        except:
+            print(Fore.RED + "Social medias were not gathered because of error" + Style.RESET_ALL)
+            social_medias = ['Social medias were not extracted because of error']
+            pass
         print(Fore.GREEN + 'Processing subdomain analysis' + Style.RESET_ALL)
         if report_file_type == 'xlsx':
             subdomain_urls, subdomain_mails, subdomain_ip, sd_socials = cp.domains_reverse_research(subdomains, report_file_type)
