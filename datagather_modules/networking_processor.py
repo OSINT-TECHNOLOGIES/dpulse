@@ -51,7 +51,7 @@ def get_ssl_certificate(short_domain, port=443):
         commonName = str(cert['issuer'][2][0][1]) + ', version: ' + str(cert['version'])
         serialNumber = cert['serialNumber']
         return issuer, subject, notBefore, notAfter, commonName, serialNumber
-    except (ssl.CertificateError, ssl.SSLError, socket.gaierror, ConnectionRefusedError) as e:
+    except Exception as e:
         print(Fore.RED + "Error while gathering info about SSL certificate. See journal for details")
         logging.error(f'SSL CERTIFICATE GATHERING: ERROR. REASON: {e}')
         issuer = subject = notBefore = notAfter = commonName = serialNumber = "No information about SSL certificate was gathered"
