@@ -164,10 +164,9 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 
 
 # Tasks to complete before new release
-- [x] Rework Google Dorking module in separate mode
-- [x] Rework Google Dorks list into separate databases with different pre-configured dorks for various purposes
-- [x] Allow user to create their own dorks DB
-- [x] Add separate API search mode with different free APIs
+- [ ] Add web pages snapshoting (with screenshots)
+- [ ] Add web pages snapshoting (with web pages copying as HTML objects)
+- [ ] Add web pages snapshoting (with Wayback Machine)
       
 # DPULSE mentions in social medias
 
