@@ -156,7 +156,7 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 
 ### After choosing first menu point, you will be able to enter target's URL and case comment, and then you will see scanning progress
 
-![dpulse_running](https://github.com/user-attachments/assets/9a3cd8c2-3281-4d58-b12e-91ced6dbbd91)
+![dpulse_bs](https://github.com/user-attachments/assets/b0ad7827-6dac-4f82-a369-4447a0e1c878)
 
 ### Finally, DPULSE will create report folder which contains case name (basically URL of target), date and time of scan. All report folders are contained in DPULSE root folder
 
