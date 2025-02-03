@@ -30,6 +30,7 @@ def create_config():
     config['LOGGING'] = {'log_level': 'info'}
     config['CLI VISUAL'] = {'preview_color': 'red', 'font': 'slant'}
     config['DORKING'] = {'dorking_delay (secs)': '2', 'delay_step': '5'}
+    config['SNAPSHOTTING'] = {'installed_browser': 'firefox'}
     config['USER-AGENTS'] = {}
     for i, agent in enumerate(basic_user_agents):
         config['USER-AGENTS'][f'agent_{i + 1}'] = agent
@@ -53,6 +54,7 @@ def read_config():
     delay_step = config.get('DORKING', 'delay_step')
     user_agents = [value for key, value in config['USER-AGENTS'].items()]
     proxies_file_path = config.get('PROXIES', 'proxies_file_path')
+    installed_browser = config.get('SNAPSHOTTING', 'installed_browser')
 
     config_values = {
         'logging_level': log_level,
@@ -61,7 +63,8 @@ def read_config():
         'dorking_delay (secs)': dorking_delay,
         'delay_step': delay_step,
         'user_agents': user_agents,
-        'proxies_file_path': proxies_file_path
+        'proxies_file_path': proxies_file_path,
+        'installed_browser': installed_browser
     }
 
     return config_values
