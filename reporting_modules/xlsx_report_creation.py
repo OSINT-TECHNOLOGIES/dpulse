@@ -18,7 +18,7 @@ except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
 
-def create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_keyword, end):
+def create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_keyword, end, snapshotting_ui_mark):
     try:
         ip = data_array[0]
         res = data_array[1]
