@@ -10,6 +10,8 @@ nav:
   - Built-in automatic Dorking: dorking.md
   - Built-in API scanning: api.md
   - Reporting and report types: reporting.md
+  - Configuration file: config.md
+  - Logging: logging.md
   - Demo and use-cases: demo.md
   - Contact developer: contact_dev.md
 
