@@ -172,6 +172,8 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 
 ## Mention on OSINT/Infosec related websites:
 
+### [Mention on darkwebinformer.com](https://darkwebinformer.com/dpulse-tool-for-complex-approach-to-domain-osint/)
+
 ### [Mention on osinttools.io](https://osinttools.io/tools/dpulse/)
 
 ## X.com mentions:
