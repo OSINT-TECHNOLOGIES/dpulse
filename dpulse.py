@@ -7,6 +7,7 @@ sys.path.append('service')
 sys.path.append('reporting_modules')
 sys.path.append('dorking')
 sys.path.append('apis')
+sys.path.append('snapshotting')
 
 from config_processing import create_config, check_cfg_presence, read_config, print_and_return_config
 
@@ -52,7 +53,7 @@ config_values = read_config()
 cli = cli_init.Menu()
 cli.welcome_menu()
 
-def process_report(report_filetype, short_domain, url, case_comment, keywords_list, keywords_flag, dorking_flag, used_api_flag, pagesearch_flag, pagesearch_ui_mark, spinner_thread):
+def process_report(report_filetype, short_domain, url, case_comment, keywords_list, keywords_flag, dorking_flag, used_api_flag, pagesearch_flag, pagesearch_ui_mark, spinner_thread, snapshotting_flag, snapshotting_ui_mark):
     import xlsx_report_creation as xlsx_rc
     import html_report_creation as html_rc
     from misc import time_processing
@@ -60,16 +61,16 @@ def process_report(report_filetype, short_domain, url, case_comment, keywords_li
     try:
         start = time()
         if pagesearch_flag in ['y', 'si']:
-            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag)
+            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag, snapshotting_flag)
         else:
-            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower(), used_api_flag)
+            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower(), used_api_flag, snapshotting_flag)
         end = time() - start
         endtime_string = time_processing(end)
 
         if report_filetype == 'xlsx':
-            xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag, endtime_string)
+            xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag, endtime_string, snapshotting_ui_mark)
         elif report_filetype == 'html':
-            html_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag, endtime_string)
+            html_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag, endtime_string, snapshotting_ui_mark)
     finally:
         spinner_thread.do_run = False
         spinner_thread.join()
@@ -162,6 +163,7 @@ def run():
                                     else:
                                         print(Fore.RED + "\nInvalid API usage mode" + Style.RESET_ALL)
                                         break
+                                    snapshotting_flag = input(Fore.YELLOW + "Select Snapshotting mode [S(creenshot)/N (for None)] >> ")
                                     if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n' or pagesearch_flag.lower() == 'si':
                                         if pagesearch_flag.lower() == "n":
                                             pagesearch_ui_mark = 'No'
@@ -190,14 +192,25 @@ def run():
                                                 row_count = get_columns_amount(f'dorking//{custom_db_name}.db', 'dorks')
                                                 dorking_ui_mark = f'Yes, Custom table dorking ({row_count} dorks)'
                                                 dorking_flag = str(dorking_flag.lower() + f"+{custom_db_name}.db")
-                                        cli_init.print_prescan_summary(short_domain, report_filetype.upper(), pagesearch_ui_mark, dorking_ui_mark, used_api_ui, case_comment)
+                                        if snapshotting_flag.lower() not in ['s', 'p', 'w', 'n']:
+                                            print(Fore.RED + "\nInvalid Snapshotting mode. Please select mode among S/P/W or N")
+                                            break
+                                        else:
+                                            snapshotting_ui_mark = 'No'
+                                            if snapshotting_flag.lower() == 's':
+                                                snapshotting_ui_mark = "Yes, domain's main page snapshotting as a screenshot"
+                                            elif snapshotting_flag.lower() == 'p': # not supported at the moment
+                                                snapshotting_ui_mark = "Yes, domain's main page snapshotting as a .HTML file"
+                                            elif snapshotting_flag.lower() == 'w': # not supported at the moment
+                                                snapshotting_ui_mark = "Yes, domain's main page snapshotting using Wayback Machine"
+                                        cli_init.print_prescan_summary(short_domain, report_filetype.upper(), pagesearch_ui_mark, dorking_ui_mark, used_api_ui, case_comment, snapshotting_ui_mark)
                                         print(Fore.LIGHTMAGENTA_EX + "[BASIC SCAN START]\n" + Style.RESET_ALL)
                                         spinner_thread = ProgressBar()
                                         spinner_thread.start()
                                         if report_filetype.lower() in ['xlsx', 'html']:
                                             process_report(report_filetype, short_domain, url, case_comment,
                                                            keywords_list, keywords_flag, dorking_flag, used_api_flag,
-                                                           pagesearch_flag, pagesearch_ui_mark, spinner_thread)
+                                                           pagesearch_flag, pagesearch_ui_mark, spinner_thread, snapshotting_flag, snapshotting_ui_mark)
                                     else:
                                         print(Fore.RED + "\nUnsupported PageSearch mode. Please choose between Y, N or SI")
 
