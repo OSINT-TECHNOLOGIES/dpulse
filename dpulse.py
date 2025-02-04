@@ -53,7 +53,7 @@ config_values = read_config()
 cli = cli_init.Menu()
 cli.welcome_menu()
 
-def process_report(report_filetype, short_domain, url, case_comment, keywords_list, keywords_flag, dorking_flag, used_api_flag, pagesearch_flag, pagesearch_ui_mark, spinner_thread, snapshotting_flag, snapshotting_ui_mark):
+def process_report(report_filetype, short_domain, url, case_comment, keywords_list, keywords_flag, dorking_flag, used_api_flag, pagesearch_flag, pagesearch_ui_mark, spinner_thread, snapshotting_flag, snapshotting_ui_mark, username):
     import xlsx_report_creation as xlsx_rc
     import html_report_creation as html_rc
     from misc import time_processing
@@ -61,9 +61,9 @@ def process_report(report_filetype, short_domain, url, case_comment, keywords_li
     try:
         start = time()
         if pagesearch_flag in ['y', 'si']:
-            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag, snapshotting_flag)
+            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag, snapshotting_flag, username)
         else:
-            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower(), used_api_flag, snapshotting_flag)
+            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower(), used_api_flag, snapshotting_flag, username)
         end = time() - start
         endtime_string = time_processing(end)
 
@@ -150,6 +150,8 @@ def run():
                                         print(Fore.GREEN + "Pay attention that APIs with red-colored API Key field are unable to use!\n")
                                         to_use_api_flag = input(Fore.YELLOW + "Select APIs IDs you want to use in scan (separated by comma) >> ")
                                         used_api_flag = [item.strip() for item in to_use_api_flag.split(',')]
+                                        if '3' in used_api_flag:
+                                            username = input(Fore.YELLOW + "If you know some username from this domain, please enter it here (or N if not) >> " + Style.RESET_ALL)
                                         if db.check_api_keys(used_api_flag):
                                             print(Fore.GREEN + 'Found API key. Continuation')
                                         else:
@@ -159,6 +161,7 @@ def run():
                                     elif api_flag.lower() == 'n':
                                         used_api_ui = 'No'
                                         used_api_flag = ['Empty']
+                                        username = None
                                         pass
                                     else:
                                         print(Fore.RED + "\nInvalid API usage mode" + Style.RESET_ALL)
@@ -210,7 +213,7 @@ def run():
                                         if report_filetype.lower() in ['xlsx', 'html']:
                                             process_report(report_filetype, short_domain, url, case_comment,
                                                            keywords_list, keywords_flag, dorking_flag, used_api_flag,
-                                                           pagesearch_flag, pagesearch_ui_mark, spinner_thread, snapshotting_flag, snapshotting_ui_mark)
+                                                           pagesearch_flag, pagesearch_ui_mark, spinner_thread, snapshotting_flag, snapshotting_ui_mark, username)
                                     else:
                                         print(Fore.RED + "\nUnsupported PageSearch mode. Please choose between Y, N or SI")
 
