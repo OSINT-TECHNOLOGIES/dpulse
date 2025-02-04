@@ -11,6 +11,7 @@ from pagesearch_main import normal_search, sitemap_inspection_search
 from logs_processing import logging
 from api_virustotal import api_virustotal_check
 from api_securitytrails import api_securitytrails_check
+from api_hudsonrock import api_hudsonrock_check, api_hudsonrock_get
 from db_creator import get_dorking_query
 from screen_snapshotting import take_screenshot
 from config_processing import read_config
@@ -72,7 +73,7 @@ class DataProcessing():
         os.makedirs(report_folder, exist_ok=True)
         return casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, files_ctime, report_ctime
 
-    def data_gathering(self, short_domain, url, report_file_type, pagesearch_flag, keywords, keywords_flag, dorking_flag, used_api_flag, snapshotting_flag):
+    def data_gathering(self, short_domain, url, report_file_type, pagesearch_flag, keywords, keywords_flag, dorking_flag, used_api_flag, snapshotting_flag, username):
         casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, ctime, report_ctime = self.report_preprocessing(short_domain, report_file_type)
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} STARTS HERE')
         print(Fore.GREEN + "Started scanning domain" + Style.RESET_ALL)
@@ -162,6 +163,14 @@ class DataProcessing():
                 if '2' in used_api_flag:
                     st_alexa, st_apex, st_hostname, st_alivesds, st_txt, a_records_list, mx_records_list, ns_records_list, soa_records_list = api_securitytrails_check(short_domain)
                     api_scan_db.append('SecurityTrails')
+                if '3' in used_api_flag:
+                    if username.lower() == 'n':
+                        username = None
+                        api_hudsonrock_check(short_domain, ip, mails, username)
+                        api_scan_db.append('HudsonRock')
+                    else:
+                        api_hudsonrock_check(short_domain, ip, mails, username)
+                        api_scan_db.append('HudsonRock')
                 if '1' not in used_api_flag:
                     vt_cats = vt_deturls = vt_detsamples = vt_undetsamples = 'No results because user did not selected VirusTotal API scan'
                 if '2' not in used_api_flag:
@@ -239,6 +248,14 @@ class DataProcessing():
                 if '2' in used_api_flag:
                     st_alexa, st_apex, st_hostname, st_alivesds, st_txt, a_records_list, mx_records_list, ns_records_list, soa_records_list = api_securitytrails_check(short_domain)
                     api_scan_db.append('SecurityTrails')
+                if '3' in used_api_flag:
+                    if username.lower() == 'n':
+                        username = None
+                        api_hudsonrock_check(short_domain, ip, mails, username)
+                        api_scan_db.append('HudsonRock')
+                    else:
+                        api_hudsonrock_check(short_domain, ip, mails, username)
+                        api_scan_db.append('HudsonRock')
                 if '1' not in used_api_flag:
                     vt_cats = vt_deturls = vt_detsamples = vt_undetsamples = 'No results because user did not selected VirusTotal API scan'
                 if '2' not in used_api_flag:
