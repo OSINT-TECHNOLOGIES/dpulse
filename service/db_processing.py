@@ -133,6 +133,14 @@ def insert_blob(report_file_type, pdf_blob, db_casename, creation_date, case_com
             api_scan_insert = 'VirusTotal'
         elif 'SecurityTrails' in api_scan_db:
             api_scan_insert = 'SecurityTrails'
+        elif 'HudsonRock' in api_scan_db:
+            api_scan_insert = 'HudsonRock'
+        elif 'VirusTotal' and 'HudsonRock' in api_scan_db:
+            api_scan_insert = 'VirusTotal and HudsonRock'
+        elif 'SecurityTrails' and 'HudsonRock' in api_scan_db:
+            api_scan_insert = 'SecurityTrails and HudsonRock'
+        elif 'VirusTotal' and 'SecurityTrails' and 'HudsonRock' in api_scan_db:
+            api_scan_insert = 'SecurityTrails, HudsonRock and VirusTotal'
 
         sqlite_insert_blob_query = """INSERT INTO report_storage
                                   (report_file_extension, report_content, creation_date, target, comment, sitemap_file, robots_text, sitemap_text, dorks_results, api_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
