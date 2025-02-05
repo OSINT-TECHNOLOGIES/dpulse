@@ -2,10 +2,10 @@
 
 Currently DPULSE supports two third-party APIs: 
 
-* SecurityTrails API (securitytrails.com) for deep subdomains and DNS enumeration
-* VirusTotal API (virustotal.com) for brief domain information gathering
+* SecurityTrails API (securitytrails.com) for deep subdomains and DNS enumeration (this API requires key)
+* VirusTotal API (virustotal.com) for brief domain information gathering (this API requires key)
 
-## SecurityTrails API 
+## SecurityTrails API (key required)
 
 SecurityTrails API is used to gather information about a specified domain. It retrieves various types of DNS records, subdomains, and other details. SecurityTrails API in DPULSE returns these details about target domain:
 
@@ -16,7 +16,7 @@ SecurityTrails API is used to gather information about a specified domain. It re
 * All subdomains list
 * Alive (pingable) subdomains list
 
-## VirusTotal API
+## VirusTotal API (key required)
 
 VirusTotal API is used to interact with the VirusTotal service programmatically and analyze files and URLs using multiple antivirus engines and website scanners, providing insights into whether they are malicious. VirusTotal API in DPULSE returns these details about target domain:
 
