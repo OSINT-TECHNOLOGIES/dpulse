@@ -165,7 +165,7 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 
 # Tasks to complete before new release
 - [x] Add web pages snapshoting (with screenshots)
-- [ ] Add web pages snapshoting (with web pages copying as HTML objects)
+- [x] Add web pages snapshoting (with web pages copying as HTML objects)
 - [ ] Add web pages snapshoting (with Wayback Machine)
       
 # DPULSE mentions in social medias
