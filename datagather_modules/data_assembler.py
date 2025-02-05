@@ -15,7 +15,7 @@ from api_hudsonrock import api_hudsonrock_check, api_hudsonrock_get
 from db_creator import get_dorking_query
 from screen_snapshotting import take_screenshot
 from config_processing import read_config
-
+from html_snapshotting import save_page_as_html
 try:
     import requests
     from datetime import datetime
@@ -181,13 +181,14 @@ class DataProcessing():
                 st_alexa = st_apex = st_hostname = st_alivesds = st_txt = a_records_list = mx_records_list = ns_records_list = soa_records_list = 'No results because user did not selected SecurityTrails API scan'
                 api_scan_db.append('No')
                 pass
-
             if snapshotting_flag.lower() in ['s', 'p', 'w']:
                 config_values = read_config()
                 installed_browser = config_values['installed_browser']
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: PAGE SNAPSHOTTING]\n" + Style.RESET_ALL)
                 if snapshotting_flag.lower() == 's':
                     take_screenshot(installed_browser, url, report_folder + '//screensnapshot.png')
+                elif snapshotting_flag.lower() == 'p':
+                    save_page_as_html(url, report_folder + '//domain_html_copy.html')
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: PAGE SNAPSHOTTING]\n" + Style.RESET_ALL)
             else:
                 pass
@@ -272,6 +273,8 @@ class DataProcessing():
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: PAGE SNAPSHOTTING]\n" + Style.RESET_ALL)
                 if snapshotting_flag.lower() == 's':
                     take_screenshot(installed_browser, url, report_folder + '//screensnapshot.png')
+                elif snapshotting_flag.lower() == 'p':
+                    save_page_as_html(url, report_folder + '//domain_html_copy.html')
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: PAGE SNAPSHOTTING]\n" + Style.RESET_ALL)
             else:
                 pass
