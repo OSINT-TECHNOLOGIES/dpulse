@@ -2,10 +2,12 @@ import sys
 
 sys.path.append('service')
 sys.path.append('service//pdf_report_templates')
+sys.path.append('apis')
 
 from logs_processing import logging
 import db_processing as db
 import files_processing as fp
+from api_hudsonrock import hudsonrock_html_prep
 
 try:
     from datetime import datetime
@@ -13,6 +15,7 @@ try:
     import os
     from colorama import Fore, Style
     import sqlite3
+    import re
 except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
@@ -84,6 +87,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         mx_records_list = data_array[55]
         ns_records_list = data_array[56]
         soa_records_list = data_array[57]
+        hudsonrock_output = data_array[58]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
@@ -91,6 +95,8 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         report_ctime = report_info_array[6]
         api_scan_db = report_info_array[7]
         used_api_flag = report_info_array[8]
+
+        hudsonrock_output = hudsonrock_html_prep(hudsonrock_output)
 
         if '2' in used_api_flag:
             st_a_combined = []
@@ -184,7 +190,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                        'add_dsi': add_dsi, 'ps_s': accessible_subdomains, 'ps_e': emails_amount, 'ps_f': files_counter, 'ps_c': cookies_counter, 'ps_a': api_keys_counter,
                         'ps_w': website_elements_counter, 'ps_p': exposed_passwords_counter, 'ss_l': total_links_counter, 'ss_a': accessed_links_counter, 'vt_cats': vt_cats, 'vt_deturls': vt_deturls,
                         'vt_detsampls': vt_detsamples, 'vt_undetsampls': vt_undetsamples, 'st_alexa': st_alexa, 'st_apex': st_apex, 'st_hostname': st_hostname, 'st_ip_combined': st_a_combined, 'st_val': st_txt, 'st_subds': st_alivesds, 'st_mx_combined': st_mx_combined,
-                        'st_ns_combined': st_ns_combined, 'st_soa_combined': st_soa_combined}
+                        'st_ns_combined': st_ns_combined, 'st_soa_combined': st_soa_combined, 'hudsonrock_output': hudsonrock_output}
 
         html_report_name = report_folder + '//' + casename
         if generate_report(context, html_report_name, template_path):
