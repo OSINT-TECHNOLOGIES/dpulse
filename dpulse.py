@@ -166,7 +166,7 @@ def run():
                                     else:
                                         print(Fore.RED + "\nInvalid API usage mode" + Style.RESET_ALL)
                                         break
-                                    snapshotting_flag = input(Fore.YELLOW + "Select Snapshotting mode [S(creenshot)/N (for None)] >> ")
+                                    snapshotting_flag = input(Fore.YELLOW + "Select Snapshotting mode [S(creenshot)/P(age Copy)/N (for None)] >> ")
                                     if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n' or pagesearch_flag.lower() == 'si':
                                         if pagesearch_flag.lower() == "n":
                                             pagesearch_ui_mark = 'No'
@@ -202,7 +202,7 @@ def run():
                                             snapshotting_ui_mark = 'No'
                                             if snapshotting_flag.lower() == 's':
                                                 snapshotting_ui_mark = "Yes, domain's main page snapshotting as a screenshot"
-                                            elif snapshotting_flag.lower() == 'p': # not supported at the moment
+                                            elif snapshotting_flag.lower() == 'p':
                                                 snapshotting_ui_mark = "Yes, domain's main page snapshotting as a .HTML file"
                                             elif snapshotting_flag.lower() == 'w': # not supported at the moment
                                                 snapshotting_ui_mark = "Yes, domain's main page snapshotting using Wayback Machine"
