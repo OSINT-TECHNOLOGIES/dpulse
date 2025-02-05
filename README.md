@@ -14,8 +14,7 @@
 </p>
 
 <p align="center">
-<img alt="Static Badge" src="https://img.shields.io/badge/supports-virustotal_api-red?style=for-the-badge"> <img alt="Static Badge" src="https://img.shields.io/badge/supports-securitytrails_api-red?style=for-the-badge">
-
+<img alt="Static Badge" src="https://img.shields.io/badge/supports-virustotal_api (key required)-red?style=for-the-badge"> <img alt="Static Badge" src="https://img.shields.io/badge/supports-securitytrails_api (key required)-red?style=for-the-badge"> 
 </p>
 
 > Attention! DPULSE is a research tool. It is not intended for criminal activities! Use DPULSE only on allowed domains and for legal purposes!
