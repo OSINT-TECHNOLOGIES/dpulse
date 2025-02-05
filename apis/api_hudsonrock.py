@@ -1,5 +1,19 @@
 import requests
 from colorama import Fore, Style
+import re
+
+def hudsonrock_html_prep(formatted_output):
+    formatted_output = re.sub(r'\x1b\[([0-9,A-Z]{1,2}(;[0-9]{1,2})?(;[0-9]{3})?)?[m|K]?', '', formatted_output)
+
+    start_marker = "===== HUDSONROCK API SCAN SUMMARY ====="
+    end_marker = "=== EMAIL DATA ==="
+
+    start_index = formatted_output.find(start_marker)
+    end_index = formatted_output.find(end_marker)
+
+    if start_index != -1 and end_index != -1:
+        formatted_output = formatted_output[:start_index] + formatted_output[end_index:]
+    return formatted_output
 
 def api_hudsonrock_get(email=None, username=None, domain=None, ip=None):
     base_url = "https://cavalier.hudsonrock.com/api/json/v2/osint-tools/"
@@ -159,3 +173,4 @@ def api_hudsonrock_check(domain, ip, email, username):
         format_section('IP Data', results['ip'])
 
     print(formatted_output)
+    return formatted_output
