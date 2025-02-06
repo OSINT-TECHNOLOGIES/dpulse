@@ -190,7 +190,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                        'add_dsi': add_dsi, 'ps_s': accessible_subdomains, 'ps_e': emails_amount, 'ps_f': files_counter, 'ps_c': cookies_counter, 'ps_a': api_keys_counter,
                         'ps_w': website_elements_counter, 'ps_p': exposed_passwords_counter, 'ss_l': total_links_counter, 'ss_a': accessed_links_counter, 'vt_cats': vt_cats, 'vt_deturls': vt_deturls,
                         'vt_detsampls': vt_detsamples, 'vt_undetsampls': vt_undetsamples, 'st_alexa': st_alexa, 'st_apex': st_apex, 'st_hostname': st_hostname, 'st_ip_combined': st_a_combined, 'st_val': st_txt, 'st_subds': st_alivesds, 'st_mx_combined': st_mx_combined,
-                        'st_ns_combined': st_ns_combined, 'st_soa_combined': st_soa_combined, 'hudsonrock_output': hudsonrock_output}
+                        'st_ns_combined': st_ns_combined, 'st_soa_combined': st_soa_combined, 'hudsonrock_output': hudsonrock_output, "snapshotting_ui_mark": snapshotting_ui_mark}
 
         html_report_name = report_folder + '//' + casename
         if generate_report(context, html_report_name, template_path):
