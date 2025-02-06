@@ -121,8 +121,8 @@ def run():
                             if report_filetype.lower() not in ['xlsx', 'html']:
                                 print(Fore.RED + '\nYou need to choose between XLSX or HTML report file types')
                             else:
-                                print(Fore.GREEN + "[!] SI mode suppose you to have sitemap_links.txt file in report folder [!]\n[!] It'll visit every link from this file [!]")
-                                pagesearch_flag = input(Fore.YELLOW + "Would you like to use PageSearch function? [Y/SI/N (for No)] >> ")
+                                #print(Fore.GREEN + "[!] SI mode suppose you to have sitemap_links.txt file in report folder [!]\n[!] It'll visit every link from this file [!]")
+                                pagesearch_flag = input(Fore.YELLOW + "Would you like to use PageSearch function? [Y/N (for No)] >> ")
                                 if pagesearch_flag.lower() == 'y':
                                     keywords_input = input(Fore.YELLOW + "Enter keywords (separate by comma) to search in files during PageSearch process (or write N if you don't need it) >> ")
                                     if keywords_input.lower() != "n":
@@ -138,9 +138,9 @@ def run():
                                 elif pagesearch_flag.lower() == 'n':
                                     keywords_list = None
                                     keywords_flag = 0
-                                elif pagesearch_flag.lower() == 'si':
-                                    keywords_list = None
-                                    keywords_flag = 0
+                                #elif pagesearch_flag.lower() == 'si':
+                                    #keywords_list = None
+                                    #keywords_flag = 0
                                 if report_filetype.lower() == 'xlsx' or report_filetype.lower() == 'html':
                                     dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/Admins/Web/Custom/N (for None)] >> ")
                                     api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N (for No)] >> ")
@@ -169,13 +169,13 @@ def run():
                                         print(Fore.RED + "\nInvalid API usage mode" + Style.RESET_ALL)
                                         break
                                     snapshotting_flag = input(Fore.YELLOW + "Select Snapshotting mode [S(creenshot)/P(age Copy)/N (for None)] >> ")
-                                    if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n' or pagesearch_flag.lower() == 'si':
+                                    if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n':# or pagesearch_flag.lower() == 'si':
                                         if pagesearch_flag.lower() == "n":
                                             pagesearch_ui_mark = 'No'
                                         elif pagesearch_flag.lower() == 'y' and keywords_flag == 1:
                                             pagesearch_ui_mark = f'Yes, with {keywords_list} keywords search'
-                                        elif pagesearch_flag.lower() == 'si':
-                                            pagesearch_ui_mark = 'Yes, in Sitemap Inspection mode'
+                                        #elif pagesearch_flag.lower() == 'si':
+                                            #pagesearch_ui_mark = 'Yes, in Sitemap Inspection mode'
                                         else:
                                             pagesearch_ui_mark = 'Yes, without keywords search'
                                         if dorking_flag.lower() not in ['basic', 'iot', 'n', 'admins', 'files', 'web', 'custom']:
@@ -217,7 +217,7 @@ def run():
                                                            keywords_list, keywords_flag, dorking_flag, used_api_flag,
                                                            pagesearch_flag, pagesearch_ui_mark, spinner_thread, snapshotting_flag, snapshotting_ui_mark, username)
                                     else:
-                                        print(Fore.RED + "\nUnsupported PageSearch mode. Please choose between Y, N or SI")
+                                        print(Fore.RED + "\nUnsupported PageSearch mode. Please choose between Y or N")
 
             elif choice == "2":
                 import configparser
