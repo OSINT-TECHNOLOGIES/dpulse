@@ -158,7 +158,7 @@ class DataProcessing():
             if used_api_flag != ['Empty']:
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: API SCANNING]\n" + Style.RESET_ALL)
                 if '1' in used_api_flag:
-                    vt_cats, vt_deturls, vt_detsamples, vt_undetsamples = api_virustotal_check(short_domain)
+                    virustotal_output = api_virustotal_check(short_domain)
                     api_scan_db.append('VirusTotal')
                 if '2' in used_api_flag:
                     st_alexa, st_apex, st_hostname, st_alivesds, st_txt, a_records_list, mx_records_list, ns_records_list, soa_records_list = api_securitytrails_check(short_domain)
@@ -172,14 +172,14 @@ class DataProcessing():
                         hudsonrock_output = api_hudsonrock_check(short_domain, ip, mails, username)
                         api_scan_db.append('HudsonRock')
                 if '1' not in used_api_flag:
-                    vt_cats = vt_deturls = vt_detsamples = vt_undetsamples = 'No results because user did not selected VirusTotal API scan'
+                    virustotal_output = 'No results because user did not selected VirusTotal API scan'
                 if '2' not in used_api_flag:
                     st_alexa = st_apex = st_hostname = st_alivesds = st_txt = a_records_list = mx_records_list = ns_records_list = soa_records_list = 'No results because user did not selected SecurityTrails API scan'
                 if '3' not in used_api_flag:
                     hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
             else:
-                vt_cats = vt_deturls = vt_detsamples = vt_undetsamples = 'No results because user did not selected VirusTotal API scan'
+                virustotal_output = 'No results because user did not selected VirusTotal API scan'
                 st_alexa = st_apex = st_hostname = st_alivesds = st_txt = a_records_list = mx_records_list = ns_records_list = soa_records_list = 'No results because user did not selected SecurityTrails API scan'
                 hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
                 api_scan_db.append('No')
@@ -196,7 +196,6 @@ class DataProcessing():
             else:
                 pass
 
-
             cleaned_dorking = [item.strip() for item in dorking_results if item.strip()]
 
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
@@ -206,7 +205,7 @@ class DataProcessing():
                           hostnames, cpes, tags, vulns, common_socials, total_socials, ps_emails_return,
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
                           website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, cleaned_dorking,
-                          vt_cats, vt_deturls, vt_detsamples, vt_undetsamples, st_alexa, st_apex, st_hostname, st_alivesds, st_txt, a_records_list, mx_records_list, ns_records_list, soa_records_list,
+                          virustotal_output, vt_deturls, vt_detsamples, vt_undetsamples, st_alexa, st_apex, st_hostname, st_alivesds, st_txt, a_records_list, mx_records_list, ns_records_list, soa_records_list,
                           hudsonrock_output]
 
         elif report_file_type == 'html':
@@ -248,7 +247,7 @@ class DataProcessing():
             if used_api_flag != ['Empty']:
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: API SCANNING]\n" + Style.RESET_ALL)
                 if '1' in used_api_flag:
-                    vt_cats, vt_deturls, vt_detsamples, vt_undetsamples = api_virustotal_check(short_domain)
+                    virustotal_output = api_virustotal_check(short_domain)
                     api_scan_db.append('VirusTotal')
                 if '2' in used_api_flag:
                     st_alexa, st_apex, st_hostname, st_alivesds, st_txt, a_records_list, mx_records_list, ns_records_list, soa_records_list = api_securitytrails_check(short_domain)
@@ -262,14 +261,14 @@ class DataProcessing():
                         hudsonrock_output = api_hudsonrock_check(short_domain, ip, mails, username)
                         api_scan_db.append('HudsonRock')
                 if '1' not in used_api_flag:
-                    vt_cats = vt_deturls = vt_detsamples = vt_undetsamples = 'No results because user did not selected VirusTotal API scan'
+                    virustotal_output = 'No results because user did not selected VirusTotal API scan'
                 if '2' not in used_api_flag:
                     st_alexa = st_apex = st_hostname = st_alivesds = st_txt = a_records_list = mx_records_list = ns_records_list = soa_records_list = 'No results because user did not selected SecurityTrails API scan'
                 if '3' not in used_api_flag:
                     hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
             else:
-                vt_cats = vt_deturls = vt_detsamples = vt_undetsamples = 'No results because user did not selected VirusTotal API scan'
+                virustotal_output = 'No results because user did not selected VirusTotal API scan'
                 st_alexa = st_apex = st_hostname = st_alivesds = st_txt = a_records_list = mx_records_list = ns_records_list = soa_records_list = 'No results because user did not selected SecurityTrails API scan'
                 hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
                 api_scan_db.append('No')
@@ -293,7 +292,7 @@ class DataProcessing():
                           hostnames, cpes, tags, vulns, common_socials, total_socials, ps_emails_return,
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
                           website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, keywords_messages_list, dorking_status, dorking_file_path,
-                          vt_cats, vt_deturls, vt_detsamples, vt_undetsamples, st_alexa, st_apex, st_hostname, st_alivesds, st_txt, a_records_list, mx_records_list, ns_records_list, soa_records_list,
+                          virustotal_output, st_alexa, st_apex, st_hostname, st_alivesds, st_txt, a_records_list, mx_records_list, ns_records_list, soa_records_list,
                           hudsonrock_output]
 
         report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime, api_scan_db, used_api_flag]
