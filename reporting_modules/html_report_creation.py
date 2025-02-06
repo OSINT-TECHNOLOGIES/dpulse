@@ -8,6 +8,7 @@ from logs_processing import logging
 import db_processing as db
 import files_processing as fp
 from api_hudsonrock import hudsonrock_html_prep
+from api_virustotal import virustotal_html_prep
 
 try:
     from datetime import datetime
@@ -74,20 +75,20 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         keywords_messages_list = data_array[42]
         dorking_status = data_array[43]
         dorking_file_path = data_array[44]
-        vt_cats = data_array[45]
-        vt_deturls = data_array[46]
-        vt_detsamples = data_array[47]
-        vt_undetsamples = data_array[48]
-        st_alexa = data_array[49]
-        st_apex = data_array[50]
-        st_hostname = data_array[51]
-        st_alivesds = data_array[52]
-        st_txt = data_array[53]
-        a_records_list = data_array[54]
-        mx_records_list = data_array[55]
-        ns_records_list = data_array[56]
-        soa_records_list = data_array[57]
-        hudsonrock_output = data_array[58]
+        virustotal_output = data_array[45]
+        #vt_deturls = data_array[46]
+        #vt_detsamples = data_array[47]
+        #vt_undetsamples = data_array[48]
+        st_alexa = data_array[46]
+        st_apex = data_array[47]
+        st_hostname = data_array[48]
+        st_alivesds = data_array[49]
+        st_txt = data_array[50]
+        a_records_list = data_array[51]
+        mx_records_list = data_array[52]
+        ns_records_list = data_array[53]
+        soa_records_list = data_array[54]
+        hudsonrock_output = data_array[55]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
@@ -97,6 +98,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         used_api_flag = report_info_array[8]
 
         hudsonrock_output = hudsonrock_html_prep(hudsonrock_output)
+        virustotal_output = virustotal_html_prep(virustotal_output)
 
         if '2' in used_api_flag:
             st_a_combined = []
@@ -188,9 +190,9 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                        'tags': tags, 'vulns': vulns, 'a_tsm': total_socials, 'pagesearch_ui_mark': pagesearch_ui_mark,
                        'dorking_status': dorking_status,
                        'add_dsi': add_dsi, 'ps_s': accessible_subdomains, 'ps_e': emails_amount, 'ps_f': files_counter, 'ps_c': cookies_counter, 'ps_a': api_keys_counter,
-                        'ps_w': website_elements_counter, 'ps_p': exposed_passwords_counter, 'ss_l': total_links_counter, 'ss_a': accessed_links_counter, 'vt_cats': vt_cats, 'vt_deturls': vt_deturls,
-                        'vt_detsampls': vt_detsamples, 'vt_undetsampls': vt_undetsamples, 'st_alexa': st_alexa, 'st_apex': st_apex, 'st_hostname': st_hostname, 'st_ip_combined': st_a_combined, 'st_val': st_txt, 'st_subds': st_alivesds, 'st_mx_combined': st_mx_combined,
-                        'st_ns_combined': st_ns_combined, 'st_soa_combined': st_soa_combined, 'hudsonrock_output': hudsonrock_output, "snapshotting_ui_mark": snapshotting_ui_mark}
+                        'ps_w': website_elements_counter, 'ps_p': exposed_passwords_counter, 'ss_l': total_links_counter, 'ss_a': accessed_links_counter, 'st_alexa': st_alexa, 'st_apex': st_apex, 'st_hostname': st_hostname, 'st_ip_combined': st_a_combined, 'st_val': st_txt, 'st_subds': st_alivesds, 'st_mx_combined': st_mx_combined,
+                        'st_ns_combined': st_ns_combined, 'st_soa_combined': st_soa_combined, 'hudsonrock_output': hudsonrock_output, "snapshotting_ui_mark": snapshotting_ui_mark,
+                        'virustotal_output': virustotal_output}
 
         html_report_name = report_folder + '//' + casename
         if generate_report(context, html_report_name, template_path):
