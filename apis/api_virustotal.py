@@ -6,14 +6,12 @@ import re
 def check_domain(domain, api_key):
     api_key = api_key.strip()
     api_key = re.sub(r'[\s\u200B\uFEFF]+', '', api_key)
-    print(Fore.GREEN + "Prepared and cleaned-up API key" + Style.RESET_ALL)
 
     url = f"https://www.virustotal.com/api/v3/domains/{domain}"
     headers = {
         "x-apikey": api_key
     }
     response = requests.get(url, headers=headers)
-    print(Fore.GREEN + "Status:", response.status_code)
     print(Fore.GREEN + "Answer:", response.text)
     try:
         return response.json()
