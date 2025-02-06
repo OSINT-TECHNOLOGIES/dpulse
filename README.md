@@ -66,16 +66,14 @@ DPULSE is a software solution for conducting OSINT research in relation to a cer
    - documents, config files, databases files (and PageSearch can download them!)
    - specified words by user in PDF files
 
-3. ***PageSearch Sitemap inspection scan:*** sitemap links crawler which starts in addition to basic scan and which can find even more e-mails
-
-4. ***Dorking scan:*** extended domain research function with prepared Google Dorking databases for different purposes, such as:
+3. ***Dorking scan:*** extended domain research function with prepared Google Dorking databases for different purposes, such as:
    - IoT dorking
    - files dorking
    - admin panels dorking
    - web elements dorking
    - Moreover, this mode allows you to create your own custom Google Dorking database
 
-6. ***API scan:*** extended domain research function with prepared functions for 3rd party APIs usage. Currently DPULSE supports these API:
+4. ***API scan:*** extended domain research function with prepared functions for 3rd party APIs usage. Currently DPULSE supports these API:
     - VirusTotal API (for brief domain information gathering)
     - SecurityTrails API (deep subdomains and DNS enumeration)
 
