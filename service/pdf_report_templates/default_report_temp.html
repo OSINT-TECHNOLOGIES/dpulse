@@ -212,35 +212,9 @@
 	<p><span style="color: #333333;"><strong>&nbsp;</strong></span></p>
 	<hr />
 	<p>&nbsp;</p>
-	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333; text-decoration: underline;"><strong>SECURITY TRAILS API SCAN RESULTS</strong></span></span></h3>
+	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333; text-decoration: underline;"><strong>SECURITYTRAILS API SCAN RESULTS</strong></span></span></h3>
 	<p>&nbsp;</p>
-	<p><span style="color: #333333;"><strong>Alexa rank: <span style="color: #333399;">{{st_alexa}}</span><br /></strong></span></p>
-	<p><span style="color: #333333;"><strong>Apex domain: <span style="color: #333399;">{{st_apex}}</span></strong></span></p>
-	<p><span style="color: #333333;"><strong>Hostname: <span style="color: #333399;">{{st_hostname}}</span><br /></strong></span></p>
-	<p><span style="color: #333333;"><strong>A records:<span style="color: #333399;"></span><br /></strong></span></p>
-	<ul>{% for st_ip in st_ip_combined %}
-	<li><span style="color: #333399;"><strong>=&gt; {{ st_ip }}</strong></span></li>
-	{% endfor %}</ul>
-	<p><span style="color: #333333;"><strong>MX records:<span style="color: #333399;"></span><br /></strong></span></p>
-	<ul>{% for st_mx in st_mx_combined %}
-	<li><span style="color: #333399;"><strong>=&gt; {{ st_mx }}</strong></span></li>
-	{% endfor %}</ul>
-	<p><span style="color: #333333;"><strong>NS records:<span style="color: #333399;"></span><br /></strong></span></p>
-	<ul>{% for st_ns in st_ns_combined %}
-	<li><span style="color: #333399;"><strong>=&gt; {{ st_ns }}</strong></span></li>
-	{% endfor %}</ul>
-	<p><span style="color: #333333;"><strong>SOA records:<span style="color: #333399;"></span><br /></strong></span></p>
-	<ul>{% for st_soa in st_soa_combined %}
-	<li><span style="color: #333399;"><strong>=&gt; {{ st_soa }}</strong></span></li>
-	{% endfor %}</ul>
-	<p><span style="color: #333333;"><strong>TXT records values:<span style="color: #333399;"></span><br /></strong></span></p>
-	<ul>{% for val in st_val %}
-	<li><span style="color: #333399;"><strong>=&gt; {{ val }}</strong></span></li>
-	{% endfor %}</ul>
-	<p><span style="color: #333333;"><strong>Subdomains list<span style="color: #333399;"></span><br /></strong></span></p>
-	<ul>{% for subd in st_subds %}
-	<li><span style="color: #333399;"><strong>=&gt; {{ subd }}</strong></span></li>
-	{% endfor %}</ul>
+	<pre style="color: #333399;">{{ securitytrails_output }}</pre>
 	<p><span style="color: #333333;"><strong>&nbsp;</strong></span></p>
 	<hr />
 	<p>&nbsp;</p>
