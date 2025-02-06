@@ -9,6 +9,7 @@ import db_processing as db
 import files_processing as fp
 from api_hudsonrock import hudsonrock_html_prep
 from api_virustotal import virustotal_html_prep
+from api_securitytrails import securitytrails_html_prep
 
 try:
     from datetime import datetime
@@ -79,16 +80,16 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         #vt_deturls = data_array[46]
         #vt_detsamples = data_array[47]
         #vt_undetsamples = data_array[48]
-        st_alexa = data_array[46]
-        st_apex = data_array[47]
-        st_hostname = data_array[48]
-        st_alivesds = data_array[49]
-        st_txt = data_array[50]
-        a_records_list = data_array[51]
-        mx_records_list = data_array[52]
-        ns_records_list = data_array[53]
-        soa_records_list = data_array[54]
-        hudsonrock_output = data_array[55]
+        securitytrails_output = data_array[46]
+        #st_apex = data_array[47]
+        #st_hostname = data_array[48]
+        #st_alivesds = data_array[49]
+        #st_txt = data_array[50]
+        #a_records_list = data_array[51]
+        #mx_records_list = data_array[52]
+        #ns_records_list = data_array[53]
+        #soa_records_list = data_array[54]
+        hudsonrock_output = data_array[47]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
@@ -99,41 +100,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
 
         hudsonrock_output = hudsonrock_html_prep(hudsonrock_output)
         virustotal_output = virustotal_html_prep(virustotal_output)
-
-        if '2' in used_api_flag:
-            st_a_combined = []
-            if len(a_records_list) > 0:
-                if len(a_records_list) == 1:
-                    record = a_records_list[0]
-                    st_a_combined = [f"IPv4 address: {record.get('ip', '')}, owned by {record.get('organization', '')}"]
-                else:
-                    st_a_combined = [f"IPv4 address: {record.get('ip', '')}, owned by {record.get('organization', '')}" for record in a_records_list]
-
-            st_mx_combined = []
-            if len(mx_records_list) > 0:
-                if len(mx_records_list) == 1:
-                    record = mx_records_list[0]
-                    st_mx_combined = [f"Hostname {record.get('mx_hostname', '')} with priority={record.get('mx_priority', '')}, owned by {record.get('mx_organization', '')}"]
-                else:
-                    st_mx_combined = [f"Hostname {record.get('mx_hostname', '')} with priority={record.get('mx_priority', '')}, owned by {record.get('mx_organization', '')}" for record in mx_records_list]
-
-            st_ns_combined = []
-            if len(ns_records_list) > 0:
-                if len(ns_records_list) == 1:
-                    record = ns_records_list[0]
-                    st_ns_combined = [f"Nameserver: {record.get('ns_nameserver', '')}, owned by {record.get('ns_organization', '')}"]
-                else:
-                    st_ns_combined = [f"Nameserver: {record.get('ns_nameserver', '')}, owned by {record.get('ns_organization', '')}" for record in ns_records_list]
-
-            st_soa_combined = []
-            if len(soa_records_list) > 0:
-                if len(soa_records_list) == 1:
-                    record = soa_records_list[0]
-                    st_soa_combined = [f"Email: {record.get('soa_email', '')}, TTL={record.get('soa_ttl', '')}"]
-                else:
-                    st_soa_combined = [f"Email: {record.get('soa_email', '')}, TTL={record.get('soa_ttl', '')}" for record in soa_records_list]
-        else:
-            st_soa_combined = st_ns_combined = st_mx_combined = st_a_combined = st_txt = st_alivesds = ['No results because user did not selected SecurityTrails API scan']
+        securitytrails_output = securitytrails_html_prep(securitytrails_output)
 
         pdf_templates_path = 'service//pdf_report_templates'
 
@@ -190,9 +157,8 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                        'tags': tags, 'vulns': vulns, 'a_tsm': total_socials, 'pagesearch_ui_mark': pagesearch_ui_mark,
                        'dorking_status': dorking_status,
                        'add_dsi': add_dsi, 'ps_s': accessible_subdomains, 'ps_e': emails_amount, 'ps_f': files_counter, 'ps_c': cookies_counter, 'ps_a': api_keys_counter,
-                        'ps_w': website_elements_counter, 'ps_p': exposed_passwords_counter, 'ss_l': total_links_counter, 'ss_a': accessed_links_counter, 'st_alexa': st_alexa, 'st_apex': st_apex, 'st_hostname': st_hostname, 'st_ip_combined': st_a_combined, 'st_val': st_txt, 'st_subds': st_alivesds, 'st_mx_combined': st_mx_combined,
-                        'st_ns_combined': st_ns_combined, 'st_soa_combined': st_soa_combined, 'hudsonrock_output': hudsonrock_output, "snapshotting_ui_mark": snapshotting_ui_mark,
-                        'virustotal_output': virustotal_output}
+                        'ps_w': website_elements_counter, 'ps_p': exposed_passwords_counter, 'ss_l': total_links_counter, 'ss_a': accessed_links_counter, 'hudsonrock_output': hudsonrock_output, "snapshotting_ui_mark": snapshotting_ui_mark,
+                        'virustotal_output': virustotal_output, 'securitytrails_output': securitytrails_output}
 
         html_report_name = report_folder + '//' + casename
         if generate_report(context, html_report_name, template_path):
