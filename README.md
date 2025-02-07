@@ -14,8 +14,7 @@
 </p>
 
 <p align="center">
-<img alt="Static Badge" src="https://img.shields.io/badge/supports-virustotal_api-red?style=for-the-badge"> <img alt="Static Badge" src="https://img.shields.io/badge/supports-securitytrails_api-red?style=for-the-badge">
-
+<img alt="Static Badge" src="https://img.shields.io/badge/supports-virustotal_api (key required)-red?style=for-the-badge"> <img alt="Static Badge" src="https://img.shields.io/badge/supports-securitytrails_api (key required)-red?style=for-the-badge"> <img alt="Static Badge" src="https://img.shields.io/badge/supports-hudsonrock_api (no key required)-red?style=for-the-badge"> 
 </p>
 
 > Attention! DPULSE is a research tool. It is not intended for criminal activities! Use DPULSE only on allowed domains and for legal purposes!
@@ -58,7 +57,7 @@ DPULSE is a software solution for conducting OSINT research in relation to a cer
    - CPEs, used web-technologies and so on
    - It also can download sitemap.xml and robots.txt files from a domain
      
-2. ***PageSearch standard scan:*** extended subdomains deep search function, which starts in addition to basic scan and which can find:
+2. ***PageSearch scan:*** extended subdomains deep search function, which starts in addition to basic scan and which can find:
    - more e-mail addresses
    - API keys
    - exposed passwords
@@ -67,18 +66,17 @@ DPULSE is a software solution for conducting OSINT research in relation to a cer
    - documents, config files, databases files (and PageSearch can download them!)
    - specified words by user in PDF files
 
-3. ***PageSearch Sitemap inspection scan:*** sitemap links crawler which starts in addition to basic scan and which can find even more e-mails
-
-4. ***Dorking scan:*** extended domain research function with prepared Google Dorking databases for different purposes, such as:
+3. ***Dorking scan:*** extended domain research function with prepared Google Dorking databases for different purposes, such as:
    - IoT dorking
    - files dorking
    - admin panels dorking
    - web elements dorking
    - Moreover, this mode allows you to create your own custom Google Dorking database
 
-6. ***API scan:*** extended domain research function with prepared functions for 3rd party APIs usage. Currently DPULSE supports these API:
+4. ***API scan:*** extended domain research function with prepared functions for 3rd party APIs usage. Currently DPULSE supports these API:
     - VirusTotal API (for brief domain information gathering)
     - SecurityTrails API (deep subdomains and DNS enumeration)
+    - HudsonRock API (for querying a database with exposed computers which were compromised through global info-stealer campaigns)
 
 Finally, DPULSE compiles all found data into an easy-to-read HTML or XLSX report by category. It also saves all information about scan in local report storage database, which can be restored later.
 
@@ -164,8 +162,8 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 
 
 # Tasks to complete before new release
-- [ ] Add web pages snapshoting (with screenshots)
-- [ ] Add web pages snapshoting (with web pages copying as HTML objects)
+- [x] Add web pages snapshoting (with screenshots)
+- [x] Add web pages snapshoting (with web pages copying as HTML objects)
 - [ ] Add web pages snapshoting (with Wayback Machine)
       
 # DPULSE mentions in social medias

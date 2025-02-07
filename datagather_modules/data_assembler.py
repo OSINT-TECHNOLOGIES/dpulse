@@ -2,15 +2,20 @@ import sys
 sys.path.append('service')
 sys.path.append('pagesearch')
 sys.path.append('dorking')
+sys.path.append('snapshotting')
 
 import crawl_processor as cp
 import dorking_handler as dp
 import networking_processor as np
-from pagesearch_main import normal_search, sitemap_inspection_search
+from pagesearch_main import normal_search
 from logs_processing import logging
 from api_virustotal import api_virustotal_check
 from api_securitytrails import api_securitytrails_check
+from api_hudsonrock import api_hudsonrock_check, api_hudsonrock_get
 from db_creator import get_dorking_query
+from screen_snapshotting import take_screenshot
+from config_processing import read_config
+from html_snapshotting import save_page_as_html
 
 try:
     import requests
@@ -20,6 +25,7 @@ try:
     from colorama import Fore, Style
     import webbrowser
     import sqlite3
+    import configparser
 except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
@@ -68,7 +74,7 @@ class DataProcessing():
         os.makedirs(report_folder, exist_ok=True)
         return casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, files_ctime, report_ctime
 
-    def data_gathering(self, short_domain, url, report_file_type, pagesearch_flag, keywords, keywords_flag, dorking_flag, used_api_flag):
+    def data_gathering(self, short_domain, url, report_file_type, pagesearch_flag, keywords, keywords_flag, dorking_flag, used_api_flag, snapshotting_flag, username):
         casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, ctime, report_ctime = self.report_preprocessing(short_domain, report_file_type)
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} STARTS HERE')
         print(Fore.GREEN + "Started scanning domain" + Style.RESET_ALL)
@@ -130,11 +136,11 @@ class DataProcessing():
                     accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 'No results because no subdomains were found'
                     ps_emails_return = ""
                     pass
-            elif pagesearch_flag.lower() == 'si':
-                print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
-                ps_emails_return, total_links_counter, accessed_links_counter, emails_amount = sitemap_inspection_search(report_folder)
-                accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = "No results because Sitemap Inspection mode does not gather these categories"
-                print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
+            #elif pagesearch_flag.lower() == 'si':
+                #print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
+                #ps_emails_return, total_links_counter, accessed_links_counter, emails_amount = sitemap_inspection_search(report_folder)
+                #accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = "No results because Sitemap Inspection mode does not gather these categories"
+                #print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
             elif pagesearch_flag.lower() == 'n':
                 ps_emails_return = ""
                 accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = "No results because user did not selected PageSearch for this scan"
@@ -153,22 +159,43 @@ class DataProcessing():
             if used_api_flag != ['Empty']:
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: API SCANNING]\n" + Style.RESET_ALL)
                 if '1' in used_api_flag:
-                    vt_cats, vt_deturls, vt_detsamples, vt_undetsamples = api_virustotal_check(short_domain)
+                    virustotal_output = api_virustotal_check(short_domain)
                     api_scan_db.append('VirusTotal')
                 if '2' in used_api_flag:
-                    st_alexa, st_apex, st_hostname, st_alivesds, st_txt, a_records_list, mx_records_list, ns_records_list, soa_records_list = api_securitytrails_check(short_domain)
+                    securitytrails_output = api_securitytrails_check(short_domain)
                     api_scan_db.append('SecurityTrails')
+                if '3' in used_api_flag:
+                    if username.lower() == 'n':
+                        username = None
+                        hudsonrock_output = api_hudsonrock_check(short_domain, ip, mails, username)
+                        api_scan_db.append('HudsonRock')
+                    else:
+                        hudsonrock_output = api_hudsonrock_check(short_domain, ip, mails, username)
+                        api_scan_db.append('HudsonRock')
                 if '1' not in used_api_flag:
-                    vt_cats = vt_deturls = vt_detsamples = vt_undetsamples = 'No results because user did not selected VirusTotal API scan'
+                    virustotal_output = 'No results because user did not selected VirusTotal API scan'
                 if '2' not in used_api_flag:
-                    st_alexa = st_apex = st_hostname = st_alivesds = st_txt = a_records_list = mx_records_list = ns_records_list = soa_records_list = 'No results because user did not selected SecurityTrails API scan'
+                    securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
+                if '3' not in used_api_flag:
+                    hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
             else:
-                vt_cats = vt_deturls = vt_detsamples = vt_undetsamples = 'No results because user did not selected VirusTotal API scan'
-                st_alexa = st_apex = st_hostname = st_alivesds = st_txt = a_records_list = mx_records_list = ns_records_list = soa_records_list = 'No results because user did not selected SecurityTrails API scan'
+                virustotal_output = 'No results because user did not selected VirusTotal API scan'
+                securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
+                hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
                 api_scan_db.append('No')
                 pass
-
+            if snapshotting_flag.lower() in ['s', 'p', 'w']:
+                config_values = read_config()
+                installed_browser = config_values['installed_browser']
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: PAGE SNAPSHOTTING]\n" + Style.RESET_ALL)
+                if snapshotting_flag.lower() == 's':
+                    take_screenshot(installed_browser, url, report_folder + '//screensnapshot.png')
+                elif snapshotting_flag.lower() == 'p':
+                    save_page_as_html(url, report_folder + '//domain_html_copy.html')
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: PAGE SNAPSHOTTING]\n" + Style.RESET_ALL)
+            else:
+                pass
 
             cleaned_dorking = [item.strip() for item in dorking_results if item.strip()]
 
@@ -179,7 +206,7 @@ class DataProcessing():
                           hostnames, cpes, tags, vulns, common_socials, total_socials, ps_emails_return,
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
                           website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, cleaned_dorking,
-                          vt_cats, vt_deturls, vt_detsamples, vt_undetsamples, st_alexa, st_apex, st_hostname, st_alivesds, st_txt, a_records_list, mx_records_list, ns_records_list, soa_records_list]
+                          virustotal_output, securitytrails_output, hudsonrock_output]
 
         elif report_file_type == 'html':
             if pagesearch_flag.lower() == 'y':
@@ -197,11 +224,11 @@ class DataProcessing():
                     accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 'No results because no subdomains were found'
                     keywords_messages_list = ['No data was gathered because no subdomains were found']
                     pass
-            elif pagesearch_flag.lower() == 'si':
-                print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
-                ps_emails_return, total_links_counter, accessed_links_counter, emails_amount = sitemap_inspection_search(report_folder)
-                accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = keywords_messages_list = "No results because Sitemap Inspection mode does not gather these categories"
-                print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
+            #elif pagesearch_flag.lower() == 'si':
+                #print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
+                #ps_emails_return, total_links_counter, accessed_links_counter, emails_amount = sitemap_inspection_search(report_folder)
+                #accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = keywords_messages_list = "No results because Sitemap Inspection mode does not gather these categories"
+                #print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
             elif pagesearch_flag.lower() == 'n':
                 accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = keywords_messages_list = "No results because user did not selected PageSearch for this scan"
                 ps_emails_return = ""
@@ -220,22 +247,43 @@ class DataProcessing():
             if used_api_flag != ['Empty']:
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: API SCANNING]\n" + Style.RESET_ALL)
                 if '1' in used_api_flag:
-                    vt_cats, vt_deturls, vt_detsamples, vt_undetsamples = api_virustotal_check(short_domain)
+                    virustotal_output = api_virustotal_check(short_domain)
                     api_scan_db.append('VirusTotal')
                 if '2' in used_api_flag:
-                    st_alexa, st_apex, st_hostname, st_alivesds, st_txt, a_records_list, mx_records_list, ns_records_list, soa_records_list = api_securitytrails_check(short_domain)
+                    securitytrails_output = api_securitytrails_check(short_domain)
                     api_scan_db.append('SecurityTrails')
+                if '3' in used_api_flag:
+                    if username.lower() == 'n':
+                        username = None
+                        hudsonrock_output = api_hudsonrock_check(short_domain, ip, mails, username)
+                        api_scan_db.append('HudsonRock')
+                    else:
+                        hudsonrock_output = api_hudsonrock_check(short_domain, ip, mails, username)
+                        api_scan_db.append('HudsonRock')
                 if '1' not in used_api_flag:
-                    vt_cats = vt_deturls = vt_detsamples = vt_undetsamples = 'No results because user did not selected VirusTotal API scan'
+                    virustotal_output = 'No results because user did not selected VirusTotal API scan'
                 if '2' not in used_api_flag:
-                    st_alexa = st_apex = st_hostname = st_alivesds = st_txt = a_records_list = mx_records_list = ns_records_list = soa_records_list = 'No results because user did not selected SecurityTrails API scan'
+                    securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
+                if '3' not in used_api_flag:
+                    hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
             else:
-                vt_cats = vt_deturls = vt_detsamples = vt_undetsamples = 'No results because user did not selected VirusTotal API scan'
-                st_alexa = st_apex = st_hostname = st_alivesds = st_txt = a_records_list = mx_records_list = ns_records_list = soa_records_list = 'No results because user did not selected SecurityTrails API scan'
+                virustotal_output = 'No results because user did not selected VirusTotal API scan'
+                securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
+                hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
                 api_scan_db.append('No')
                 pass
-
+            if snapshotting_flag.lower() in ['s', 'p', 'w']:
+                config_values = read_config()
+                installed_browser = config_values['installed_browser']
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: PAGE SNAPSHOTTING]\n" + Style.RESET_ALL)
+                if snapshotting_flag.lower() == 's':
+                    take_screenshot(installed_browser, url, report_folder + '//screensnapshot.png')
+                elif snapshotting_flag.lower() == 'p':
+                    save_page_as_html(url, report_folder + '//domain_html_copy.html')
+                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: PAGE SNAPSHOTTING]\n" + Style.RESET_ALL)
+            else:
+                pass
 
             data_array = [ip, res, mails, subdomains, subdomains_amount, social_medias, subdomain_mails, sd_socials,
                           subdomain_ip, issuer, subject, notBefore, notAfter, commonName, serialNumber, mx_records,
@@ -244,7 +292,7 @@ class DataProcessing():
                           hostnames, cpes, tags, vulns, common_socials, total_socials, ps_emails_return,
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
                           website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, keywords_messages_list, dorking_status, dorking_file_path,
-                          vt_cats, vt_deturls, vt_detsamples, vt_undetsamples, st_alexa, st_apex, st_hostname, st_alivesds, st_txt, a_records_list, mx_records_list, ns_records_list, soa_records_list]
+                          virustotal_output, securitytrails_output, hudsonrock_output]
 
         report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime, api_scan_db, used_api_flag]
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} ENDS HERE')

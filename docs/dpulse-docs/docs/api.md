@@ -2,10 +2,11 @@
 
 Currently DPULSE supports two third-party APIs: 
 
-* SecurityTrails API (securitytrails.com) for deep subdomains and DNS enumeration
-* VirusTotal API (virustotal.com) for brief domain information gathering
+* SecurityTrails API (securitytrails.com) for deep subdomains and DNS enumeration (this API requires key)
+* VirusTotal API (virustotal.com) for brief domain information gathering (this API requires key)
+* HudsonRock API (hudsonrock.com) for querying domain through a database of over 30,821,440 computers which were compromised through global info-stealer campaigns performed by threat actors (this API does not require key)
 
-## SecurityTrails API 
+## SecurityTrails API (key required)
 
 SecurityTrails API is used to gather information about a specified domain. It retrieves various types of DNS records, subdomains, and other details. SecurityTrails API in DPULSE returns these details about target domain:
 
@@ -16,7 +17,7 @@ SecurityTrails API is used to gather information about a specified domain. It re
 * All subdomains list
 * Alive (pingable) subdomains list
 
-## VirusTotal API
+## VirusTotal API (key required)
 
 VirusTotal API is used to interact with the VirusTotal service programmatically and analyze files and URLs using multiple antivirus engines and website scanners, providing insights into whether they are malicious. VirusTotal API in DPULSE returns these details about target domain:
 
@@ -24,6 +25,10 @@ VirusTotal API is used to interact with the VirusTotal service programmatically 
 * Detected samples
 * Undetected samples
 * Detected URLs
+
+## HudsonRock API (no key required)
+
+HudsonRock Cavalier API is based on forensic technologies and operational knowhow developed at the IDF’s 8200 Unit to counter nation-state adversaries and professional threat-actors. It is a unique cybercrime intelligence data source composed of millions of machines compromised in global malware spreading campaigns. 
 
 ## API Keys database
 

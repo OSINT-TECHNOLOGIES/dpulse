@@ -22,10 +22,10 @@
 	<p style="text-align: center;"><span style="color: #333333;"><strong><span style="color: #333333;">8. Dorking queries and results links <span style="color: #ff0000;">(if was selected)</span></span><span style="text-decoration: underline; color: #333333;"><br /></span></strong></span></p>
 	<p style="text-align: center;"><span style="color: #333333;"><strong><span style="color: #333333;"><span style="color: #ff0000;"><span style="text-decoration: underline; color: #800000;">[PAGESEARCH SCAN INFO]</span></span></span></strong></span></p>
 	<p style="text-align: center;"><span style="color: #333333;"><strong><span style="color: #333333;"><span style="color: #333333;">9. PageSearch results <span style="color: #ff0000;">(if was selected)</span><br /></span></span></strong></span></p>
-	<p style="text-align: center;"><span style="color: #333333;"><strong>10. PageSearch Sitemap Inspection results <span style="color: #ff0000;">(if was selected)</span></strong></span></p>
 	<p style="text-align: center;"><span style="color: #333333;"><strong><span style="color: #333333;"><span style="color: #ff0000;"><span style="text-decoration: underline; color: #800000;">[API SCAN INFO]</span></span></span></strong></span></p>
-	<p style="text-align: center;"><span style="color: #333333;"><strong>11. VirusTotal API scan results <span style="color: #ff0000;">(if was selected)</span></strong></span></p>
-	<p style="text-align: center;"><span style="color: #333333;"><strong>12. SecurityTrails API scan results <span style="color: #ff0000;">(if was selected)</span></strong></span></p>
+	<p style="text-align: center;"><span style="color: #333333;"><strong>10. VirusTotal API scan results <span style="color: #ff0000;">(if was selected)</span></strong></span></p>
+	<p style="text-align: center;"><span style="color: #333333;"><strong>11. SecurityTrails API scan results <span style="color: #ff0000;">(if was selected)</span></strong></span></p>
+	<p style="text-align: center;"><span style="color: #333333;"><strong>12. HudsonRock API scan results <span style="color: #ff0000;">(if was selected)</span></strong></span></p>
 	<p>&nbsp;</p>
 	<hr />
 	<div class="notranslate" style="all: initial;">&nbsp;</div>
@@ -37,6 +37,7 @@
 	<p><span style="color: #333333;"><strong>Status of sitemap.xml links extraction: <span style="color: #333399;">{{sitemap_links}}</span></strong></span></p>
 	<p><span style="color: #333333;"><strong>Google Dorking status: <span style="color: #333399;">{{dorking_status}}</span></strong></span></p>
 	<p><span style="color: #333333;"><strong>PageSearch conduction: <span style="color: #333399;">{{pagesearch_ui_mark}}</span></strong></span></p>
+	<p><span style="color: #333333;"><strong>Snapshotting conduction: <span style="color: #333399;">{{snapshotting_ui_mark}}</span></strong></span></p>
 	<p><span style="color: #333333;"><strong>Report creation time: <span style="color: #333399;">{{ctime}}</span></strong></span></p>
 	<p>&nbsp;</p>
 	<hr />
@@ -197,51 +198,21 @@
 	<p>&nbsp;</p>
 	<hr />
 	<div class="notranslate" style="all: initial;">&nbsp;</div>
-	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333; text-decoration: underline;"><strong>PAGESEARCH SITEMAP INSPECTION RESULTS</strong></span></span></h3>
-	<p>&nbsp;</p>
-	<p><span style="color: #333333;"><strong>Total links amount: <span style="color: #333399;">{{ss_l}}</span><br /></strong></span></p>
-	<p><span style="color: #333333;"><strong>Amount of accessed links: <span style="color: #333399;">{{ss_a}}</span></strong></span></p>
-	<p><span style="color: #333333;"><strong>&nbsp;</strong></span></p>
-	<hr />
-	<p>&nbsp;</p>
 	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333; text-decoration: underline;"><strong>VIRUSTOTAL API SCAN RESULTS</strong></span></span></h3>
 	<p>&nbsp;</p>
-	<p><span style="color: #333333;"><strong>Categories: <span style="color: #333399;">{{vt_cats}}</span><br /></strong></span></p>
-	<p><span style="color: #333333;"><strong>Detected URLs: <span style="color: #333399;">{{vt_deturls}}</span><br /></strong></span></p>
-	<p><span style="color: #333333;"><strong>Detected samples: <span style="color: #333399;">{{vt_detsampls}}</span><br /></strong></span></p>
-	<p><span style="color: #333333;"><strong>Undetected samples: <span style="color: #333399;">{{vt_undetsampls}}</span><br /></strong></span></p>
+	<pre style="color: #333399;">{{ virustotal_output }}</pre>
 	<p><span style="color: #333333;"><strong>&nbsp;</strong></span></p>
 	<hr />
 	<p>&nbsp;</p>
-	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333; text-decoration: underline;"><strong>SECURITY TRAILS API SCAN RESULTS</strong></span></span></h3>
+	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333; text-decoration: underline;"><strong>SECURITYTRAILS API SCAN RESULTS</strong></span></span></h3>
 	<p>&nbsp;</p>
-	<p><span style="color: #333333;"><strong>Alexa rank: <span style="color: #333399;">{{st_alexa}}</span><br /></strong></span></p>
-	<p><span style="color: #333333;"><strong>Apex domain: <span style="color: #333399;">{{st_apex}}</span></strong></span></p>
-	<p><span style="color: #333333;"><strong>Hostname: <span style="color: #333399;">{{st_hostname}}</span><br /></strong></span></p>
-	<p><span style="color: #333333;"><strong>A records:<span style="color: #333399;"></span><br /></strong></span></p>
-	<ul>{% for st_ip in st_ip_combined %}
-	<li><span style="color: #333399;"><strong>=&gt; {{ st_ip }}</strong></span></li>
-	{% endfor %}</ul>
-	<p><span style="color: #333333;"><strong>MX records:<span style="color: #333399;"></span><br /></strong></span></p>
-	<ul>{% for st_mx in st_mx_combined %}
-	<li><span style="color: #333399;"><strong>=&gt; {{ st_mx }}</strong></span></li>
-	{% endfor %}</ul>
-	<p><span style="color: #333333;"><strong>NS records:<span style="color: #333399;"></span><br /></strong></span></p>
-	<ul>{% for st_ns in st_ns_combined %}
-	<li><span style="color: #333399;"><strong>=&gt; {{ st_ns }}</strong></span></li>
-	{% endfor %}</ul>
-	<p><span style="color: #333333;"><strong>SOA records:<span style="color: #333399;"></span><br /></strong></span></p>
-	<ul>{% for st_soa in st_soa_combined %}
-	<li><span style="color: #333399;"><strong>=&gt; {{ st_soa }}</strong></span></li>
-	{% endfor %}</ul>
-	<p><span style="color: #333333;"><strong>TXT records values:<span style="color: #333399;"></span><br /></strong></span></p>
-	<ul>{% for val in st_val %}
-	<li><span style="color: #333399;"><strong>=&gt; {{ val }}</strong></span></li>
-	{% endfor %}</ul>
-	<p><span style="color: #333333;"><strong>Subdomains list<span style="color: #333399;"></span><br /></strong></span></p>
-	<ul>{% for subd in st_subds %}
-	<li><span style="color: #333399;"><strong>=&gt; {{ subd }}</strong></span></li>
-	{% endfor %}</ul>
+	<pre style="color: #333399;">{{ securitytrails_output }}</pre>
+	<p><span style="color: #333333;"><strong>&nbsp;</strong></span></p>
+	<hr />
+	<p>&nbsp;</p>
+	<h3 style="text-align: center;"><span style="text-decoration: underline;"><span style="color: #333333; text-decoration: underline;"><strong>HUDSONROCK API SCAN RESULTS</strong></span></span></h3>
+	<p>&nbsp;</p>
+	<pre style="color: #333399;">{{ hudsonrock_output }}</pre>
 	<p><span style="color: #333333;"><strong>&nbsp;</strong></span></p>
 	<hr />
 	<p>&nbsp;</p>

@@ -20,7 +20,7 @@ class Menu:
         fig = Figlet(font=wm_font)
         print('\n')
         self.console.print(fig.renderText('DPULSE'), style=preview_style)
-        print(Fore.MAGENTA + Style.BRIGHT + '[DPULSE-CLI] - [v1.2 stable] - [OSINT-TECHNOLOGIES]\n' + Style.RESET_ALL)
+        print(Fore.MAGENTA + Style.BRIGHT + '[DPULSE-CLI] - [v1.2.1 rolling] - [OSINT-TECHNOLOGIES]\n' + Style.RESET_ALL)
         print(Fore.MAGENTA + Style.BRIGHT + '[Visit our pages]\nGitHub repository: https://github.com/OSINT-TECHNOLOGIES\nPyPi page: https://pypi.org/project/dpulse/\nDocumentation: https://dpulse.readthedocs.io' + Style.RESET_ALL)
 
     def print_main_menu(self):
@@ -62,13 +62,14 @@ class Menu:
         print(Fore.CYAN + "2. Restore reference API Keys DB")
         print(Fore.LIGHTRED_EX + "3. Return to main menu" + Style.RESET_ALL)
 
-def print_prescan_summary(short_domain, report_filetype, pagesearch_ui_mark, dorking_ui_mark, used_api_ui, case_comment):
+def print_prescan_summary(short_domain, report_filetype, pagesearch_ui_mark, dorking_ui_mark, used_api_ui, case_comment, snapshotting_ui_mark):
     print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
     print(Fore.GREEN + "Determined target: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + short_domain + Style.RESET_ALL)
     print(Fore.GREEN + "Report type: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + report_filetype.lower() + Style.RESET_ALL)
     print(Fore.GREEN + "PageSearch conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + pagesearch_ui_mark + Style.RESET_ALL)
     print(Fore.GREEN + "Dorking conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + dorking_ui_mark + Style.RESET_ALL)
     print(Fore.GREEN + "APIs scan: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + used_api_ui + Style.RESET_ALL)
+    print(Fore.GREEN + "Snapshotting conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + snapshotting_ui_mark + Style.RESET_ALL)
     print(Fore.GREEN + "Case comment: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + case_comment + Style.RESET_ALL + "\n")
 
 def print_api_db_msg():
