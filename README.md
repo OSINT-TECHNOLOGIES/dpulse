@@ -76,6 +76,7 @@ DPULSE is a software solution for conducting OSINT research in relation to a cer
 4. ***API scan:*** extended domain research function with prepared functions for 3rd party APIs usage. Currently DPULSE supports these API:
     - VirusTotal API (for brief domain information gathering)
     - SecurityTrails API (deep subdomains and DNS enumeration)
+    - HudsonRock API (for querying a database with exposed computers which were compromised through global info-stealer campaigns)
 
 Finally, DPULSE compiles all found data into an easy-to-read HTML or XLSX report by category. It also saves all information about scan in local report storage database, which can be restored later.
 
