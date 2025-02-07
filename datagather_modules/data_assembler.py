@@ -7,7 +7,7 @@ sys.path.append('snapshotting')
 import crawl_processor as cp
 import dorking_handler as dp
 import networking_processor as np
-from pagesearch_main import normal_search, sitemap_inspection_search
+from pagesearch_main import normal_search
 from logs_processing import logging
 from api_virustotal import api_virustotal_check
 from api_securitytrails import api_securitytrails_check
@@ -16,6 +16,7 @@ from db_creator import get_dorking_query
 from screen_snapshotting import take_screenshot
 from config_processing import read_config
 from html_snapshotting import save_page_as_html
+
 try:
     import requests
     from datetime import datetime
@@ -135,11 +136,11 @@ class DataProcessing():
                     accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 'No results because no subdomains were found'
                     ps_emails_return = ""
                     pass
-            elif pagesearch_flag.lower() == 'si':
-                print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
-                ps_emails_return, total_links_counter, accessed_links_counter, emails_amount = sitemap_inspection_search(report_folder)
-                accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = "No results because Sitemap Inspection mode does not gather these categories"
-                print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
+            #elif pagesearch_flag.lower() == 'si':
+                #print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
+                #ps_emails_return, total_links_counter, accessed_links_counter, emails_amount = sitemap_inspection_search(report_folder)
+                #accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = "No results because Sitemap Inspection mode does not gather these categories"
+                #print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
             elif pagesearch_flag.lower() == 'n':
                 ps_emails_return = ""
                 accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = "No results because user did not selected PageSearch for this scan"
@@ -223,11 +224,11 @@ class DataProcessing():
                     accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 'No results because no subdomains were found'
                     keywords_messages_list = ['No data was gathered because no subdomains were found']
                     pass
-            elif pagesearch_flag.lower() == 'si':
-                print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
-                ps_emails_return, total_links_counter, accessed_links_counter, emails_amount = sitemap_inspection_search(report_folder)
-                accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = keywords_messages_list = "No results because Sitemap Inspection mode does not gather these categories"
-                print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
+            #elif pagesearch_flag.lower() == 'si':
+                #print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
+                #ps_emails_return, total_links_counter, accessed_links_counter, emails_amount = sitemap_inspection_search(report_folder)
+                #accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = keywords_messages_list = "No results because Sitemap Inspection mode does not gather these categories"
+                #print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
             elif pagesearch_flag.lower() == 'n':
                 accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = keywords_messages_list = "No results because user did not selected PageSearch for this scan"
                 ps_emails_return = ""
