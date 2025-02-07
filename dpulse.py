@@ -115,11 +115,11 @@ def run():
                                 print(Fore.RED + "Entered domain is not accessible. Scan is impossible" + Style.RESET_ALL)
                                 break
                             case_comment = input(Fore.YELLOW + "Enter case comment >> ")
-                            report_filetype = input(Fore.YELLOW + "Enter report file extension [XLSX/HTML] >> ")
+                            report_filetype = input(Fore.YELLOW + "Enter report file extension [HTML] >> ")
                             if not report_filetype:
                                 print(Fore.RED + "\nReport filetype cannot be empty")
-                            if report_filetype.lower() not in ['xlsx', 'html']:
-                                print(Fore.RED + '\nYou need to choose between XLSX or HTML report file types')
+                            if report_filetype.lower() not in ['html']: # temporarily disabled since v1.2.1 (['xlsx', 'html'])
+                                print(Fore.RED + '\nTemporarily you have to choose only HTML report file type')
                             else:
                                 #print(Fore.GREEN + "[!] SI mode suppose you to have sitemap_links.txt file in report folder [!]\n[!] It'll visit every link from this file [!]")
                                 pagesearch_flag = input(Fore.YELLOW + "Would you like to use PageSearch function? [Y/N (for No)] >> ")
@@ -141,7 +141,7 @@ def run():
                                 #elif pagesearch_flag.lower() == 'si':
                                     #keywords_list = None
                                     #keywords_flag = 0
-                                if report_filetype.lower() == 'xlsx' or report_filetype.lower() == 'html':
+                                if report_filetype.lower() == 'html': #report_filetype.lower() == 'xlsx' or (temporarily disabled xlsx reporting)
                                     dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/Admins/Web/Custom/N (for None)] >> ")
                                     api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N (for No)] >> ")
                                     if api_flag.lower() == 'y':
@@ -212,7 +212,7 @@ def run():
                                         print(Fore.LIGHTMAGENTA_EX + "[BASIC SCAN START]\n" + Style.RESET_ALL)
                                         spinner_thread = ProgressBar()
                                         spinner_thread.start()
-                                        if report_filetype.lower() in ['xlsx', 'html']:
+                                        if report_filetype.lower() in ['html']: # ['xlsx'] temporarily disabled
                                             process_report(report_filetype, short_domain, url, case_comment,
                                                            keywords_list, keywords_flag, dorking_flag, used_api_flag,
                                                            pagesearch_flag, pagesearch_ui_mark, spinner_thread, snapshotting_flag, snapshotting_ui_mark, username)
