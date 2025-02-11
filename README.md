@@ -168,11 +168,11 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
       
 # DPULSE mentions in social medias
 
-## Mention on OSINT/Infosec related websites:
+## Honorable mentions:
 
-### [Mention on darkwebinformer.com](https://darkwebinformer.com/dpulse-tool-for-complex-approach-to-domain-osint/)
+### [The very first mention on cybersecurity related website (DarkWebInformer)](https://darkwebinformer.com/dpulse-tool-for-complex-approach-to-domain-osint/)
 
-### [Mention on osinttools.io](https://osinttools.io/tools/dpulse/)
+### [The very first mention from cybercrime intelligence company (HudsonRock)](https://www.linkedin.com/feed/update/urn:li:share:7294336938495385600/)
 
 ## X.com mentions:
 
