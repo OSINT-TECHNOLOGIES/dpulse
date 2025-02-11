@@ -162,7 +162,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
 
         html_report_name = report_folder + '//' + casename
         if generate_report(context, html_report_name, template_path):
-            print(Fore.GREEN + "HTML report for {} case was created at {}".format(''.join(short_domain), report_ctime) + Style.RESET_ALL)
+            print(Fore.GREEN + "HTML report for {} case was created at {}".format(short_domain, report_ctime) + Style.RESET_ALL)
             print(Fore.GREEN + f"Scan elapsed time: {end}" + Style.RESET_ALL)
 
         if dorking_status != 'Google Dorking mode was not selected for this scan':
