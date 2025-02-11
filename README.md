@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-<img alt="Static Badge" src="https://img.shields.io/badge/v1.2-CURRENT%20STABLE%20VERSION?style=for-the-badge&label=CURRENT%20STABLE%20VERSION&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/v1.2.1-red?style=for-the-badge&logo=f&label=CURRENT%20ROLLING%20VERSION">
+<img alt="Static Badge" src="https://img.shields.io/badge/v1.2.1-CURRENT%20STABLE%20VERSION?style=for-the-badge&label=CURRENT%20STABLE%20VERSION&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/v1.2.2-red?style=for-the-badge&logo=f&label=CURRENT%20ROLLING%20VERSION">
 <img alt="Static Badge" src="https://img.shields.io/badge/DOMAIN_OSINT-CATEGORY?style=for-the-badge&label=TOOL%20CATEGORY&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/CLI-CATEGORY?style=for-the-badge&label=interface%20type&color=red">
 </p>
 
@@ -168,11 +168,11 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
       
 # DPULSE mentions in social medias
 
-## Mention on OSINT/Infosec related websites:
+## Honorable mentions:
 
-### [Mention on darkwebinformer.com](https://darkwebinformer.com/dpulse-tool-for-complex-approach-to-domain-osint/)
+### [The very first mention on cybersecurity related website (DarkWebInformer)](https://darkwebinformer.com/dpulse-tool-for-complex-approach-to-domain-osint/)
 
-### [Mention on osinttools.io](https://osinttools.io/tools/dpulse/)
+### [The very first mention from cybercrime intelligence company (HudsonRock)](https://www.linkedin.com/feed/update/urn:li:share:7294336938495385600/)
 
 ## X.com mentions:
 
