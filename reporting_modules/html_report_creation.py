@@ -77,18 +77,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         dorking_status = data_array[43]
         dorking_file_path = data_array[44]
         virustotal_output = data_array[45]
-        #vt_deturls = data_array[46]
-        #vt_detsamples = data_array[47]
-        #vt_undetsamples = data_array[48]
         securitytrails_output = data_array[46]
-        #st_apex = data_array[47]
-        #st_hostname = data_array[48]
-        #st_alivesds = data_array[49]
-        #st_txt = data_array[50]
-        #a_records_list = data_array[51]
-        #mx_records_list = data_array[52]
-        #ns_records_list = data_array[53]
-        #soa_records_list = data_array[54]
         hudsonrock_output = data_array[47]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
@@ -164,10 +153,6 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         if generate_report(context, html_report_name, template_path):
             print(Fore.GREEN + "HTML report for {} case was created at {}".format(short_domain, report_ctime) + Style.RESET_ALL)
             print(Fore.GREEN + f"Scan elapsed time: {end}" + Style.RESET_ALL)
-
-        if dorking_status != 'Google Dorking mode was not selected for this scan':
-            with open(dorking_file_path, 'r') as df:
-                dorking_content = df.read()
         robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
         pdf_blob = fp.get_blob(html_report_name)
         db.insert_blob('HTML', pdf_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content, api_scan_db)
