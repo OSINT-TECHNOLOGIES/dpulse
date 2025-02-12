@@ -125,22 +125,13 @@ def insert_blob(report_file_type, pdf_blob, db_casename, creation_date, case_com
         sqlite_connection = sqlite3.connect('report_storage.db')
         cursor = sqlite_connection.cursor()
         print(Fore.GREEN + "Connected to report storage database")
-        if 'No' in api_scan_db:
+        apis = [api for api in ['VirusTotal', 'SecurityTrails', 'HudsonRock'] if api in api_scan_db]
+        if len(apis) == 0:
             api_scan_insert = 'No'
-        elif 'VirusTotal' and 'SecurityTrails' in api_scan_db:
-            api_scan_insert = 'VirusTotal and SecurityTrails'
-        elif 'VirusTotal' in api_scan_db:
-            api_scan_insert = 'VirusTotal'
-        elif 'SecurityTrails' in api_scan_db:
-            api_scan_insert = 'SecurityTrails'
-        elif 'HudsonRock' in api_scan_db:
-            api_scan_insert = 'HudsonRock'
-        elif 'VirusTotal' and 'HudsonRock' in api_scan_db:
-            api_scan_insert = 'VirusTotal and HudsonRock'
-        elif 'SecurityTrails' and 'HudsonRock' in api_scan_db:
-            api_scan_insert = 'SecurityTrails and HudsonRock'
-        elif 'VirusTotal' and 'SecurityTrails' and 'HudsonRock' in api_scan_db:
-            api_scan_insert = 'SecurityTrails, HudsonRock and VirusTotal'
+        elif len(apis) == 1:
+            api_scan_insert = apis[0]
+        else:
+            api_scan_insert = ', '.join(apis[:-1]) + ' and ' + apis[-1]
 
         sqlite_insert_blob_query = """INSERT INTO report_storage
                                   (report_file_extension, report_content, creation_date, target, comment, sitemap_file, robots_text, sitemap_text, dorks_results, api_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
