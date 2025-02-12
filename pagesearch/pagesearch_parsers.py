@@ -74,11 +74,13 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
     exposed_passwords_counter = 0
     api_keys_counter = 0
     cookies_counter = 0
+    tried_subdomains_counter = 0
 
     for url in subdomains_list:
         try:
             logging.info('ACCESSING SUBDOMAIN (PAGESEARCH): OK')
             response = requests.get('http://' + url)
+            tried_subdomains_counter += 1
             if response.status_code == 200:
                 accessible_subdomains += 1
                 soup = BeautifulSoup(response.content, 'html.parser')
@@ -99,6 +101,7 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
             customization_input = soup.find('input', {'name': 'language'})
             passwords = soup.find_all('input', {'type': 'password'})
             print(Fore.LIGHTGREEN_EX + "-------------------------------------------------" + Style.RESET_ALL)
+            print(Fore.GREEN + "Page number: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{tried_subdomains_counter}/{len(subdomains_list)}" + Style.RESET_ALL)
             print(Fore.GREEN + "Page URL: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{url}" + Style.RESET_ALL)
             print(Fore.GREEN + "Page title: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{title}" + Style.RESET_ALL)
             print(Fore.GREEN + "Found e-mails: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{', '.join(emails)}" + Style.RESET_ALL)
