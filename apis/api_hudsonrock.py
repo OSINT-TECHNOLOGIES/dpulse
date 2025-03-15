@@ -110,7 +110,7 @@ def api_hudsonrock_check(domain, ip, email, username):
                     formatted_output += f" {Fore.GREEN}| URL:{Style.RESET_ALL} {Fore.LIGHTCYAN_EX}{url_data.get('url', 'N/A')}{Style.RESET_ALL}"
                     formatted_output += f" {Fore.GREEN}| Occurrence:{Style.RESET_ALL} {Fore.LIGHTCYAN_EX}{url_data.get('occurrence', 'N/A')}{Style.RESET_ALL}\n"
             else:
-                formatted_output += f"{Fore.RED}No employee URLs available.{Style.RESET_ALL}\n"
+                formatted_output += f"{Fore.RED}No employee URLs available{Style.RESET_ALL}\n"
             formatted_output += f"\n{Fore.GREEN}Sample Client URLs:{Style.RESET_ALL}\n"
             clients = data.get('data', {}).get('clients_urls', [])
             if clients:
@@ -119,7 +119,7 @@ def api_hudsonrock_check(domain, ip, email, username):
                     formatted_output += f" {Fore.GREEN}| URL:{Style.RESET_ALL} {Fore.LIGHTCYAN_EX}{url_data.get('url', 'N/A')}{Style.RESET_ALL}"
                     formatted_output += f" {Fore.GREEN}| Occurrence:{Style.RESET_ALL} {Fore.LIGHTCYAN_EX}{url_data.get('occurrence', 'N/A')}{Style.RESET_ALL}\n"
             else:
-                formatted_output += f"{Fore.LIGHTCYAN_EX}No client URLs available.{Style.RESET_ALL}\n"
+                formatted_output += f"{Fore.RED}No client URLs available{Style.RESET_ALL}\n"
 
         elif title == 'IP Data':
             formatted_output += f"{Fore.GREEN}Message:{Style.RESET_ALL} {Fore.LIGHTCYAN_EX}{data.get('message', 'No message available')}{Style.RESET_ALL}\n"
