@@ -110,7 +110,6 @@ def check_domain_securitytrails(domain, api_key):
     else:
         formatted_output += (f"{Fore.RED}Error while gathering subdomains: {subdomains_response.status_code}{Style.RESET_ALL}\n")
 
-    formatted_output += Fore.LIGHTBLUE_EX + "\n=== END OF SECURITYTRAILS API REPORT ===\n" + Style.RESET_ALL
     return formatted_output
 
 
