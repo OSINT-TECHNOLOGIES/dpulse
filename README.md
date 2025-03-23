@@ -112,7 +112,9 @@ After installation, you simply start DPULSE using `poetry run python dpulse.py`
 
 Just download DPULSE using fast-access links at the top of the README:
 
-![изображение](https://github.com/user-attachments/assets/bd1d9627-950b-40d4-91c4-6751476d7b65)
+![image](https://github.com/user-attachments/assets/9ec2d2d7-706f-4385-9594-54e0cc72c695)
+
+Decide what version you want to download and use basing on your expectations like stability, support, functionality and so on
 
 Then just unpack downloaded archive, open terminal in DPULSE root folder and use `pip install -r requirements.txt` command to install requirements. Then type `python dpulse.py` in terminal, and that's where program starts.
 
