@@ -44,7 +44,7 @@ try:
     import threading
     from time import sleep, time
 except ImportError as e:
-    print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
+    print(Fore.RED + f"Import error appeared. Reason: {e}" + Style.RESET_ALL)
     sys.exit()
 
 data_processing = DataProcessing()
@@ -68,9 +68,9 @@ def process_report(report_filetype, short_domain, url, case_comment, keywords_li
         endtime_string = time_processing(end)
 
         if report_filetype == 'xlsx':
-            xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag, endtime_string, snapshotting_ui_mark)
+            xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, endtime_string, snapshotting_ui_mark)
         elif report_filetype == 'html':
-            html_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_flag, endtime_string, snapshotting_ui_mark)
+            html_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, endtime_string, snapshotting_ui_mark)
     finally:
         spinner_thread.do_run = False
         spinner_thread.join()
@@ -118,7 +118,7 @@ def run():
                             report_filetype = input(Fore.YELLOW + "Enter report file extension [HTML] >> ")
                             if not report_filetype:
                                 print(Fore.RED + "\nReport filetype cannot be empty")
-                            if report_filetype.lower() not in ['html']: # temporarily disabled since v1.2.1 (['xlsx', 'html'])
+                            if report_filetype.lower() not in ['html', 'xlsx']: # temporarily disabled since v1.2.1 (['xlsx', 'html'])
                                 print(Fore.RED + '\nTemporarily you have to choose only HTML report file type')
                             else:
                                 pagesearch_flag = input(Fore.YELLOW + "Would you like to use PageSearch function? [Y/N (for No)] >> ")
@@ -137,7 +137,7 @@ def run():
                                 elif pagesearch_flag.lower() == 'n':
                                     keywords_list = None
                                     keywords_flag = 0
-                                if report_filetype.lower() == 'html': #report_filetype.lower() == 'xlsx' or (temporarily disabled xlsx reporting)
+                                if report_filetype.lower() == 'html' or report_filetype.lower() == 'xlsx':
                                     dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/Admins/Web/Custom/N (for None)] >> ")
                                     api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N (for No)] >> ")
                                     if api_flag.lower() == 'y':
@@ -206,7 +206,7 @@ def run():
                                         print(Fore.LIGHTMAGENTA_EX + "[BASIC SCAN START]\n" + Style.RESET_ALL)
                                         spinner_thread = ProgressBar()
                                         spinner_thread.start()
-                                        if report_filetype.lower() in ['html']: # ['xlsx'] temporarily disabled
+                                        if report_filetype.lower() in ['html', 'xlsx']:
                                             process_report(report_filetype, short_domain, url, case_comment,
                                                            keywords_list, keywords_flag, dorking_flag, used_api_flag,
                                                            pagesearch_flag, pagesearch_ui_mark, spinner_thread, snapshotting_flag, snapshotting_ui_mark, username)
@@ -308,7 +308,7 @@ def run():
                     cursor, sqlite_connection, data_presence_flag = db.db_select()
                     if data_presence_flag is True:
                         id_to_extract = int(input(Fore.YELLOW + "\nEnter report ID you want to extract >> "))
-                        extracted_folder_name = 'report_recreated_ID#{}'.format(id_to_extract)
+                        extracted_folder_name = f'report_recreated_ID#{id_to_extract}'
                         try:
                             os.makedirs(extracted_folder_name)
                             db.db_report_recreate(extracted_folder_name, id_to_extract)
