@@ -18,7 +18,7 @@ except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
 
-def create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, pagesearch_keyword, end, snapshotting_ui_mark):
+def create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, end, snapshotting_ui_mark):
     ip = data_array[0]
     res = data_array[1]
     subdomains = data_array[3]
@@ -332,7 +332,6 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
     ws['B5'] = api_keys_counter
     ws['B6'] = website_elements_counter
     ws['B7'] = exposed_passwords_counter
-
 
     report_file = report_folder + "//" + casename
     wb.save(report_file)
