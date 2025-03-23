@@ -115,10 +115,10 @@ def run():
                                 print(Fore.RED + "Entered domain is not accessible. Scan is impossible" + Style.RESET_ALL)
                                 break
                             case_comment = input(Fore.YELLOW + "Enter case comment >> ")
-                            report_filetype = input(Fore.YELLOW + "Enter report file extension [HTML] >> ")
+                            report_filetype = input(Fore.YELLOW + "Enter report file extension [HTML/XLSX] >> ")
                             if not report_filetype:
                                 print(Fore.RED + "\nReport filetype cannot be empty")
-                            if report_filetype.lower() not in ['html', 'xlsx']: # temporarily disabled since v1.2.1 (['xlsx', 'html'])
+                            if report_filetype.lower() not in ['html', 'xlsx']:
                                 print(Fore.RED + '\nTemporarily you have to choose only HTML report file type')
                             else:
                                 pagesearch_flag = input(Fore.YELLOW + "Would you like to use PageSearch function? [Y/N (for No)] >> ")
