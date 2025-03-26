@@ -1,3 +1,7 @@
+## System requirements
+
+DPULSE is a Python-based tool, so its basic requirement is installed Python. The most stable and tested versions are Python 3.10, 3.11 and 3.12. Other versions may decrease stability or even lead to problem with starting DPULSE because of used dependencies. It is also strongly recommended to have a high-speed and stable internet connection for stable work of such functions as Dorking scan and PageSearch which actively use web resources scraping. Also you need to install some Python packages using requirements.txt file or Poetry dependencies manager
+
 ## Installing DPULSE
 
 You can install DPULSE in several ways, use the way you like the most. But since DPULSE repository is using Poetry to manage dependencies, it is higly recommended to install and start DPULSE using Poetry, especially on Linux systems where a lot of Python packages which DPULSE requires are preinstalled. More information about Poetry you can find on [Poetry official documentation page](https://python-poetry.org/docs/#ci-recommendations)
