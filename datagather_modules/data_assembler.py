@@ -7,11 +7,11 @@ sys.path.append('snapshotting')
 import crawl_processor as cp
 import dorking_handler as dp
 import networking_processor as np
-from pagesearch_main import normal_search
+from pagesearch_parsers import subdomains_parser
 from logs_processing import logging
 from api_virustotal import api_virustotal_check
 from api_securitytrails import api_securitytrails_check
-from api_hudsonrock import api_hudsonrock_check, api_hudsonrock_get
+from api_hudsonrock import api_hudsonrock_check
 from db_creator import get_dorking_query
 from screen_snapshotting import take_screenshot
 from config_processing import read_config
@@ -20,10 +20,8 @@ from html_snapshotting import save_page_as_html
 try:
     import requests
     from datetime import datetime
-    import jinja2
     import os
     from colorama import Fore, Style
-    import webbrowser
     import sqlite3
     import configparser
 except ImportError as e:
@@ -78,31 +76,31 @@ class DataProcessing():
         casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, ctime, report_ctime = self.report_preprocessing(short_domain, report_file_type)
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} STARTS HERE')
         print(Fore.GREEN + "Started scanning domain" + Style.RESET_ALL)
-        print(Fore.GREEN + "Getting domain IP address" + Style.RESET_ALL)
+        print(Fore.GREEN + "[1/11] Getting domain IP address" + Style.RESET_ALL)
         ip = cp.ip_gather(short_domain)
-        print(Fore.GREEN + 'Gathering WHOIS information' + Style.RESET_ALL)
+        print(Fore.GREEN + '[2/11] Gathering WHOIS information' + Style.RESET_ALL)
         res = cp.whois_gather(short_domain)
-        print(Fore.GREEN + 'Processing e-mails gathering' + Style.RESET_ALL)
+        print(Fore.GREEN + '[3/11] Processing e-mails gathering' + Style.RESET_ALL)
         mails = cp.contact_mail_gather(url)
-        print(Fore.GREEN + 'Processing subdomain gathering' + Style.RESET_ALL)
+        print(Fore.GREEN + '[4/11] Processing subdomain gathering' + Style.RESET_ALL)
         subdomains, subdomains_amount = cp.subdomains_gather(url, short_domain)
-        print(Fore.GREEN + 'Processing social medias gathering' + Style.RESET_ALL)
+        print(Fore.GREEN + '[5/11] Processing social medias gathering' + Style.RESET_ALL)
         try:
             social_medias = cp.sm_gather(url)
         except:
             print(Fore.RED + "Social medias were not gathered because of error" + Style.RESET_ALL)
             social_medias = ['Social medias were not extracted because of error']
             pass
-        print(Fore.GREEN + 'Processing subdomain analysis' + Style.RESET_ALL)
+        print(Fore.GREEN + '[6/11] Processing subdomain analysis' + Style.RESET_ALL)
         if report_file_type == 'xlsx':
             subdomain_urls, subdomain_mails, subdomain_ip, sd_socials = cp.domains_reverse_research(subdomains, report_file_type)
         elif report_file_type == 'html':
             subdomain_mails, sd_socials, subdomain_ip = cp.domains_reverse_research(subdomains, report_file_type)
-        print(Fore.GREEN + 'Processing SSL certificate gathering' + Style.RESET_ALL)
+        print(Fore.GREEN + '[7/11] Processing SSL certificate gathering' + Style.RESET_ALL)
         issuer, subject, notBefore, notAfter, commonName, serialNumber = np.get_ssl_certificate(short_domain)
-        print(Fore.GREEN + 'Processing DNS records gathering' + Style.RESET_ALL)
+        print(Fore.GREEN + '[8/11] Processing DNS records gathering' + Style.RESET_ALL)
         mx_records = np.get_dns_info(short_domain, report_file_type)
-        print(Fore.GREEN + 'Extracting robots.txt and sitemap.xml' + Style.RESET_ALL)
+        print(Fore.GREEN + '[9/11] Extracting robots.txt and sitemap.xml' + Style.RESET_ALL)
         robots_txt_result = np.get_robots_txt(short_domain, robots_filepath)
         sitemap_xml_result = np.get_sitemap_xml(short_domain, sitemap_filepath)
         if report_file_type == 'html':
@@ -114,9 +112,9 @@ class DataProcessing():
                 sitemap_links_status = 'Sitemap links were not parsed'
                 pass
 
-        print(Fore.GREEN + 'Gathering info about website technologies' + Style.RESET_ALL)
+        print(Fore.GREEN + '[10/11] Gathering info about website technologies' + Style.RESET_ALL)
         web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks = np.get_technologies(url)
-        print(Fore.GREEN + 'Processing Shodan InternetDB search' + Style.RESET_ALL)
+        print(Fore.GREEN + '[11/11] Processing Shodan InternetDB search' + Style.RESET_ALL)
         ports, hostnames, cpes, tags, vulns = np.query_internetdb(ip, report_file_type)
         common_socials = {key: social_medias.get(key, []) + sd_socials.get(key, []) for key in set(social_medias) | set(sd_socials)}
         for key in common_socials:
@@ -128,7 +126,7 @@ class DataProcessing():
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
-                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, keywords_messages_list = normal_search(to_search_array, report_folder, keywords, keywords_flag)
+                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, keywords_messages_list = subdomains_parser(to_search_array[0], report_folder, keywords, keywords_flag)
                     total_links_counter = accessed_links_counter = "No results because PageSearch does not gather these categories"
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH]\n" + Style.RESET_ALL)
                 else:
@@ -136,11 +134,6 @@ class DataProcessing():
                     accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 'No results because no subdomains were found'
                     ps_emails_return = ""
                     pass
-            #elif pagesearch_flag.lower() == 'si':
-                #print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
-                #ps_emails_return, total_links_counter, accessed_links_counter, emails_amount = sitemap_inspection_search(report_folder)
-                #accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = "No results because Sitemap Inspection mode does not gather these categories"
-                #print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
             elif pagesearch_flag.lower() == 'n':
                 ps_emails_return = ""
                 accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = "No results because user did not selected PageSearch for this scan"
@@ -213,7 +206,7 @@ class DataProcessing():
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
-                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, keywords_messages_list = normal_search(to_search_array, report_folder, keywords, keywords_flag)
+                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, keywords_messages_list = subdomains_parser(to_search_array[0], report_folder, keywords, keywords_flag)
                     total_links_counter = accessed_links_counter = "No results because PageSearch does not gather these categories"
                     if len(keywords_messages_list) == 0:
                         keywords_messages_list = ['No keywords were found']
@@ -224,11 +217,6 @@ class DataProcessing():
                     accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 'No results because no subdomains were found'
                     keywords_messages_list = ['No data was gathered because no subdomains were found']
                     pass
-            #elif pagesearch_flag.lower() == 'si':
-                #print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
-                #ps_emails_return, total_links_counter, accessed_links_counter, emails_amount = sitemap_inspection_search(report_folder)
-                #accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = keywords_messages_list = "No results because Sitemap Inspection mode does not gather these categories"
-                #print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH SITEMAP INSPECTION]\n" + Style.RESET_ALL)
             elif pagesearch_flag.lower() == 'n':
                 accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = keywords_messages_list = "No results because user did not selected PageSearch for this scan"
                 ps_emails_return = ""

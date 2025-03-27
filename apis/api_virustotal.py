@@ -55,7 +55,6 @@ def check_domain(domain, api_key):
                 formatted_output += f"\n{Fore.GREEN}{category.title()} ({len(engines)}):{Style.RESET_ALL}\n"
                 for engine in sorted(engines):
                     formatted_output += f"{Fore.LIGHTCYAN_EX}- {engine}{Style.RESET_ALL}\n"
-        formatted_output += f"\n{Fore.LIGHTBLUE_EX}=== END OF VIRUSTOTAL API REPORT ==={Style.RESET_ALL}\n"
         print(formatted_output)
         return formatted_output
     except Exception as e:

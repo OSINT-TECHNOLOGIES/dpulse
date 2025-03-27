@@ -88,17 +88,7 @@ Since DPULSE repository is using Poetry* to manage dependencies, it is higly rec
 
 _* Poetry is a tool for dependency management and packaging in Python. It can be simply installed everywhere using `pip install poetry` command, but more instructions you can find on [Poetry official documentation page](https://python-poetry.org/docs/#ci-recommendations)_
 
-### <ins>First way (the simplest way)</ins>
-
-Just download DPULSE using fast-access links at the top of the README:
-
-![изображение](https://github.com/user-attachments/assets/bd1d9627-950b-40d4-91c4-6751476d7b65)
-
-Then just unpack downloaded archive, open terminal in DPULSE root folder and use `pip install -r requirements.txt` command to install requirements. Then type `python dpulse.py` in terminal, and that's where program starts.
-
-If `pip install -r requirements.txt` doesn't work, then just use `poetry install` command. After that, start DPULSE with `poetry run python dpulse.py`
-
-### <ins>Second way (the most correct way)</ins>
+### <ins>First way (recommended way, using Poetry)</ins>
 
 Use this set of commands to install DPULSE stable versions:
 
@@ -117,6 +107,18 @@ Use this set of commands to install DPULSE rolling versions:
   ```
 
 After installation, you simply start DPULSE using `poetry run python dpulse.py`
+
+### <ins>Second way (recommended way, without using Poetry)</ins>
+
+Just download DPULSE using fast-access links at the top of the README:
+
+![image](https://github.com/user-attachments/assets/9ec2d2d7-706f-4385-9594-54e0cc72c695)
+
+Decide what version you want to download and use basing on your expectations like stability, support, functionality and so on
+
+Then just unpack downloaded archive, open terminal in DPULSE root folder and use `pip install -r requirements.txt` command to install requirements. Then type `python dpulse.py` in terminal, and that's where program starts.
+
+If `pip install -r requirements.txt` doesn't work, then just use `poetry install` command. After that, start DPULSE with `poetry run python dpulse.py`
 
 ## _Other ways_
 
