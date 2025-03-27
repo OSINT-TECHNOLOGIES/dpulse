@@ -11,7 +11,7 @@ from pagesearch_main import normal_search
 from logs_processing import logging
 from api_virustotal import api_virustotal_check
 from api_securitytrails import api_securitytrails_check
-from api_hudsonrock import api_hudsonrock_check, api_hudsonrock_get
+from api_hudsonrock import api_hudsonrock_check
 from db_creator import get_dorking_query
 from screen_snapshotting import take_screenshot
 from config_processing import read_config
@@ -20,10 +20,8 @@ from html_snapshotting import save_page_as_html
 try:
     import requests
     from datetime import datetime
-    import jinja2
     import os
     from colorama import Fore, Style
-    import webbrowser
     import sqlite3
     import configparser
 except ImportError as e:
