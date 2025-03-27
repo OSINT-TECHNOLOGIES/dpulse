@@ -63,6 +63,7 @@ def clean_bad_pdfs(ps_docs_path):
         print(Fore.GREEN + "Corrupted PDF files were not found" + Style.RESET_ALL)
 
 def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
+    print(Fore.GREEN + "Conducting PageSearch. Please, be patient, it may take a long time\n" + Style.RESET_ALL)
     ps_docs_path = report_folder + '//ps_documents'
     if not os.path.exists(ps_docs_path):
         os.makedirs(ps_docs_path)
