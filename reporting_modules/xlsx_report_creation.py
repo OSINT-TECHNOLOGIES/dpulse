@@ -312,6 +312,7 @@ def create_report(short_domain, url, case_comment, data_array, report_info_array
     for i, item in enumerate(cleaned_dorking, start=2):
         ws[f"A{i}"] = str(item)
 
+
     ws = wb['PAGESEARCH']
     for col in ['1', '2', '3', '4', '5', '6', '7']:
         cell = f"A{col}"
