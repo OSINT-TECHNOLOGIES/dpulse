@@ -7,7 +7,7 @@ sys.path.append('snapshotting')
 import crawl_processor as cp
 import dorking_handler as dp
 import networking_processor as np
-from pagesearch_main import normal_search
+from pagesearch_parsers import subdomains_parser
 from logs_processing import logging
 from api_virustotal import api_virustotal_check
 from api_securitytrails import api_securitytrails_check
@@ -126,7 +126,7 @@ class DataProcessing():
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
-                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, keywords_messages_list = normal_search(to_search_array, report_folder, keywords, keywords_flag)
+                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, keywords_messages_list = subdomains_parser(to_search_array[0], report_folder, keywords, keywords_flag)
                     total_links_counter = accessed_links_counter = "No results because PageSearch does not gather these categories"
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH]\n" + Style.RESET_ALL)
                 else:
@@ -206,7 +206,7 @@ class DataProcessing():
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
-                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, keywords_messages_list = normal_search(to_search_array, report_folder, keywords, keywords_flag)
+                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, keywords_messages_list = subdomains_parser(to_search_array[0], report_folder, keywords, keywords_flag)
                     total_links_counter = accessed_links_counter = "No results because PageSearch does not gather these categories"
                     if len(keywords_messages_list) == 0:
                         keywords_messages_list = ['No keywords were found']
