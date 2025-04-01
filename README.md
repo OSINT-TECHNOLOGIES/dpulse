@@ -78,6 +78,10 @@ DPULSE is a software solution for conducting OSINT research in relation to a cer
     - SecurityTrails API (deep subdomains and DNS enumeration)
     - HudsonRock API (for querying a database with exposed computers which were compromised through global info-stealer campaigns)
 
+5. ***Web-pages snapshoting:*** extended functionality which allows to save web-pages copies in different forms:
+    - Screenshot snapshotting (saves domain's main page in form of screenshot)
+    - HTML snapshotting (saves domain's main page in form of HTML file)
+
 Finally, DPULSE compiles all found data into an easy-to-read HTML or XLSX report by category. It also saves all information about scan in local report storage database, which can be restored later.
 
 # How to install and run DPULSE
