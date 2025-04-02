@@ -27,6 +27,7 @@ def create_config():
     ]
 
     config = configparser.ConfigParser()
+    config['HTML_REPORTING'] = {'template': 'default'}
     config['LOGGING'] = {'log_level': 'info'}
     config['CLI VISUAL'] = {'preview_color': 'red', 'font': 'slant'}
     config['DORKING'] = {'dorking_delay (secs)': '2', 'delay_step': '5'}
@@ -56,6 +57,7 @@ def read_config():
     proxies_file_path = config.get('PROXIES', 'proxies_file_path')
     installed_browser = config.get('SNAPSHOTTING', 'installed_browser')
     opera_browser_path = config.get('SNAPSHOTTING', 'opera_browser_path')
+    html_report_template = config.get('HTML_REPORTING', 'template')
 
 
     config_values = {
@@ -67,7 +69,8 @@ def read_config():
         'user_agents': user_agents,
         'proxies_file_path': proxies_file_path,
         'installed_browser': installed_browser,
-        'opera_browser_path': opera_browser_path
+        'opera_browser_path': opera_browser_path,
+        'template': html_report_template
     }
 
     return config_values
