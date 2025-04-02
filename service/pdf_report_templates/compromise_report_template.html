@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        h3 { text-align: center; margin-top: 20px; }
+        pre { background: #f8f8f8; padding: 5px; border: 1px solid #ddd; }
+        .section { margin: 10px 40px; }
+    </style>
+</head>
+<body>
+
+<h3>OPEN SOURCE RESEARCH REPORT</h3>
+<p><b>Organization:</b> {{org}}</p>
+<hr />
+
+<h3>TABLE OF CONTENTS</h3>
+<div class="section">
+  <p>1. General scan information</p>
+  <p>2. WHOIS information</p>
+  <p>3. Social medias links</p>
+  <p>4. Subdomains information</p>
+  <p>5. DNS & SSL information</p>
+  <p>6. Services & frameworks</p>
+  <p>7. Basic pre-pentest information</p>
+  <p>8. Dorking scan info</p>
+  <p>9. PageSearch results</p>
+  <p>10. API scan results</p>
+</div>
+<hr />
+
+<h3>GENERAL SCAN INFO</h3>
+<div class="section">
+  <p><b>Total subdomains:</b> {{a_tsf}}</p>
+  <p><b>Social media links:</b> {{a_tsm}}</p>
+  <pre>Robots.txt: {{robots_txt_result}}
+Sitemap.xml: {{sitemap_xml_result}}
+Dorking: {{dorking_status}}</pre>
+</div>
+<hr />
+
+<h3>WHOIS INFORMATION</h3>
+<div class="section">
+  <p><b>Domain:</b> {{sh_domain}} <b>URL:</b> {{full_url}}</p>
+  <pre>IP: {{ip_address}}
+Registrar: {{registrar}}
+Dates: {{creation_date}} → {{expiration_date}}</pre>
+</div>
+<hr />
+
+<h3>SOCIAL MEDIAS</h3>
+<div class="section">
+  <p><b>Facebook:</b></p><pre>{% for l in fb_links %}⇒ {{ l }}{% endfor %}</pre>
+  <p><b>Twitter/X:</b></p><pre>{% for l in tw_links+xcom_links %}⇒ {{ l }}{% endfor %}</pre>
+  <p><b>Instagram:</b></p><pre>{% for l in inst_links %}⇒ {{ l }}{% endfor %}</pre>
+</div>
+<hr />
+
+<h3>SUBDOMAINS</h3>
+<div class="section">
+  <p><b>Found subdomains:</b></p><pre>{% for sd in subdomains %}⇒ {{ sd }}{% endfor %}</pre>
+  <p><b>IPs:</b></p><pre>{% for sdip in subdomain_ip %}⇒ {{ sdip }}{% endfor %}</pre>
+</div>
+<hr />
+
+<h3>DNS/SSL</h3>
+<div class="section">
+  <pre>NS: {{name_servers}}
+MX: {{mx_records}}
+SSL Issuer: {{issuer}}
+NotBefore: {{notBefore}}
+NotAfter: {{notAfter}}</pre>
+</div>
+<hr />
+
+<h3>SERVICES</h3>
+<div class="section">
+  <p><b>Web servers:</b></p><pre>{% for ws in web_servers %}⇒ {{ ws }}{% endfor %}</pre>
+  <p><b>CMS:</b></p><pre>{% for cm in cms %}⇒ {{ cm }}{% endfor %}</pre>
+  <p><b>Languages:</b></p><pre>{% for pl in programming_languages %}⇒ {{ pl }}{% endfor %}</pre>
+</div>
+<hr />
+
+<h3>BASIC PRE-PENTEST</h3>
+<div class="section">
+  <p><b>Open ports:</b></p><pre>{% for op in ports %}⇒ {{ op }}{% endfor %}</pre>
+  <p><b>Vulnerabilities:</b></p><pre>{% for vuln in vulns %}⇒ {{ vuln }}{% endfor %}</pre>
+</div>
+<hr />
+
+<h3>DORKING SCAN</h3>
+<div class="section"><pre>{{ add_dsi | safe }}</pre></div>
+<hr />
+
+<h3>PAGESEARCH</h3>
+<div class="section">
+  <pre>Subdomains: {{ps_s}}
+Emails: {{ps_e}}
+Documents: {{ps_f}}
+…</pre>
+</div>
+<hr />
+
+<h3>VIRUSTOTAL</h3>
+<div class="section"><pre>{{ virustotal_output }}</pre></div>
+<h3>SECURITYTRAILS</h3>
+<div class="section"><pre>{{ securitytrails_output }}</pre></div>
+<h3>HUDSONROCK</h3>
+<div class="section"><pre>{{ hudsonrock_output }}</pre></div>
+<hr />
+
+<p style="text-align:center;">Created by DPULSE (OSINT-TECHNOLOGIES)</p>
+<p style="text-align:center;">
+  <a href="https://github.com/OSINT-TECHNOLOGIES">GitHub</a> |
+  <a href="https://pypi.org/project/dpulse/">PyPI</a>
+</p>
+
+</body>
+</html>

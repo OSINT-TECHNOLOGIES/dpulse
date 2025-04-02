@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: monospace; font-size: 0.9em; }
+        pre { margin: 0; white-space: pre-wrap; }
+        h3 { font-family: sans-serif; text-align: center; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<h3>OPEN SOURCE RESEARCH REPORT</h3>
+<pre>Organization: {{org}}</pre>
+<hr />
+
+<h3>TABLE OF CONTENTS</h3>
+<pre>
+1. General info
+2. WHOIS
+3. Social medias
+4. Subdomains
+5. DNS/SSL
+6. Services
+7. Pre-pentest
+8. Dorking
+9. PageSearch
+10. APIs
+</pre>
+<hr />
+
+<h3>GENERAL SCAN INFO</h3>
+<pre>
+Subdomains:  {{a_tsf}}
+Social:      {{a_tsm}}
+Robots.txt:  {{robots_txt_result}}
+Sitemap.xml: {{sitemap_xml_result}}
+Sitemap links: {{sitemap_links}}
+Dorking:     {{dorking_status}}
+PageSearch:  {{pagesearch_ui_mark}}
+Snapshotting: {{snapshotting_ui_mark}}
+Report time: {{ctime}}
+</pre>
+<hr />
+
+<h3>WHOIS INFORMATION</h3>
+<pre>
+Domain:     {{sh_domain}}
+URL:        {{full_url}}
+IP:         {{ip_address}}
+Registrar:  {{registrar}}
+Created:    {{creation_date}}
+Expires:    {{expiration_date}}
+Emails:     {{mails}}
+</pre>
+<hr />
+
+<h3>SOCIAL MEDIAS SEARCH RESULTS</h3>
+<pre>
+FACEBOOK:
+{% for link in fb_links %}⇒ {{ link }}{% endfor %}
+TWITTER/X:
+{% for link in tw_links+xcom_links %}⇒ {{ link }}{% endfor %}
+INSTAGRAM:
+{% for link in inst_links %}⇒ {{ link }}{% endfor %}
+TELEGRAM:
+{% for link in tg_links %}⇒ {{ link }}{% endfor %}
+TIKTOK:
+{% for link in tt_links %}⇒ {{ link }}{% endfor %}
+LINKEDIN:
+{% for link in li_links %}⇒ {{ link }}{% endfor %}
+VKONTAKTE:
+{% for link in vk_links %}⇒ {{ link }}{% endfor %}
+YOUTUBE:
+{% for link in yt_links %}⇒ {{ link }}{% endfor %}
+ODNOKLASSNIKI:
+{% for link in ok_links %}⇒ {{ link }}{% endfor %}
+WECHAT:
+{% for link in wc_links %}⇒ {{ link }}{% endfor %}
+</pre>
+<hr />
+
+<h3>SUBDOMAINS ANALYSIS RESULTS</h3>
+<pre>
+FOUND SUBDOMAINS:
+{% for sd in subdomains %}⇒ {{ sd }}{% endfor %}
+IPs:
+{% for sdip in subdomain_ip %}⇒ {{ sdip }}{% endfor %}
+Emails:
+{% for smails in subdomain_mails %}⇒ {{ smails }}{% endfor %}
+</pre>
+<hr />
+
+<h3>DNS & SSL INFORMATION</h3>
+<pre>
+NAME SERVERS: {{name_servers}}
+MX RECORDS:  {{mx_records}}
+SSL ISSUER:  {{issuer}}
+SUBJECT:     {{subject}}
+NOT BEFORE:  {{notBefore}}
+NOT AFTER:   {{notAfter}}
+COMMON NAME: {{commonName}}
+SERIAL:      {{serialNumber}}
+</pre>
+<hr />
+
+<h3>SERVICES & FRAMEWORKS INFORMATION</h3>
+<pre>
+WEB SERVERS:
+{% for ws in web_servers %}⇒ {{ ws }}{% endfor %}
+CMS:
+{% for cm in cms %}⇒ {{ cm }}{% endfor %}
+PROGRAMMING LANGUAGES:
+{% for pl in programming_languages %}⇒ {{ pl }}{% endfor %}
+WEB FRAMEWORKS:
+{% for wf in web_frameworks %}⇒ {{ wf }}{% endfor %}
+ANALYTICS:
+{% for analytic in analytics %}⇒ {{ analytic }}{% endfor %}
+JS FRAMEWORKS:
+{% for jsf in javascript_frameworks %}⇒ {{ jsf }}{% endfor %}
+TAGS:
+{% for tag in tags %}⇒ {{ tag }}{% endfor %}
+CPE:
+{% for cpe in cpes %}⇒ {{ cpe }}{% endfor %}
+</pre>
+<hr />
+
+<h3>BASIC PRE-PENTEST INFORMATION</h3>
+<pre>
+OPEN PORTS:
+{% for op in ports %}⇒ {{ op }}{% endfor %}
+HOSTNAMES:
+{% for hn in hostnames %}⇒ {{ hn }}{% endfor %}
+POTENTIAL VULNERABILITIES:
+{% for vuln in vulns %}⇒ {{ vuln }}{% endfor %}
+</pre>
+<hr />
+
+<h3>DORKING SCAN INFO</h3>
+<pre>{{ add_dsi | safe }}</pre>
+<hr />
+
+<h3>PAGESEARCH RESULTS</h3>
+<pre>
+SUBDOMAINS FOUND: {{ps_s}}
+EMAILS FOUND:    {{ps_e}}
+DOCUMENTS:       {{ps_f}}
+COOKIES:         {{ps_c}}
+API KEYS:        {{ps_a}}
+WEB ELEMENTS:    {{ps_w}}
+PASSWORDS:       {{ps_p}}
+</pre>
+<hr />
+
+<h3>VIRUSTOTAL API SCAN RESULTS</h3>
+<pre>{{ virustotal_output }}</pre>
+<hr />
+
+<h3>SECURITYTRAILS API SCAN RESULTS</h3>
+<pre>{{ securitytrails_output }}</pre>
+<hr />
+
+<h3>HUDSONROCK API SCAN RESULTS</h3>
+<pre>{{ hudsonrock_output }}</pre>
+<hr />
+
+<pre>
+Created by DPULSE (OSINT-TECHNOLOGIES)
+GitHub:  https://github.com/OSINT-TECHNOLOGIES
+PyPI:    https://pypi.org/project/dpulse/
+</pre>
+
+</body>
+</html>
