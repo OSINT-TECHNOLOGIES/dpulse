@@ -2,10 +2,17 @@ import requests
 import os
 import time
 from colorama import Fore, Style
+import sys
+from config_processing import read_config
 
+sys.path.append('service')
 CDX_API = "http://web.archive.org/cdx/search/cdx"
-RETRIES = 3
-PAUSE_BETWEEN_REQUESTS = 2  # seconds
+
+def get_values_from_config():
+    config_values = read_config()
+    retries = int(config_values['wayback_retries_amount'])
+    pause_between_requests = int(config_values['wayback_requests_pause'])
+    return retries, pause_between_requests
 
 def get_snapshots(url, from_date, to_date):
     params = {
@@ -23,7 +30,8 @@ def get_snapshots(url, from_date, to_date):
     data = response.json()
     return data[1:]
 
-def snapshot_enum(snapshot_storage_folder, timestamp, original_url, index, retries=RETRIES):
+def snapshot_enum(snapshot_storage_folder, timestamp, original_url, index):
+    retries, _ = get_values_from_config()
     archive_url = f"https://web.archive.org/web/{timestamp}id_/{original_url}"
     for attempt in range(1, retries + 1):
         try:
@@ -42,6 +50,7 @@ def snapshot_enum(snapshot_storage_folder, timestamp, original_url, index, retri
     return False
 
 def download_snapshot(short_domain, from_date, end_date, report_folder):
+    _, pause_between_requests = get_values_from_config()
     snapshot_storage_folder = report_folder + '//wayback_snapshots'
     os.makedirs(snapshot_storage_folder, exist_ok=True)
     snapshots = get_snapshots(short_domain, from_date, end_date)
@@ -57,5 +66,5 @@ def download_snapshot(short_domain, from_date, end_date, report_folder):
         return
     for i, (timestamp, original_url, *_) in enumerate(html_snapshots):
         snapshot_enum(snapshot_storage_folder, timestamp, original_url, i)
-        time.sleep(PAUSE_BETWEEN_REQUESTS)
+        time.sleep(pause_between_requests)
     print(Fore.GREEN + "\nFinished downloading HTML snapshots" + Style.RESET_ALL)
