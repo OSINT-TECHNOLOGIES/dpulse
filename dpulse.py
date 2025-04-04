@@ -53,7 +53,7 @@ config_values = read_config()
 cli = cli_init.Menu()
 cli.welcome_menu()
 
-def process_report(report_filetype, short_domain, url, case_comment, keywords_list, keywords_flag, dorking_flag, used_api_flag, pagesearch_flag, pagesearch_ui_mark, spinner_thread, snapshotting_flag, snapshotting_ui_mark, username):
+def process_report(report_filetype, short_domain, url, case_comment, keywords_list, keywords_flag, dorking_flag, used_api_flag, pagesearch_flag, pagesearch_ui_mark, spinner_thread, snapshotting_flag, snapshotting_ui_mark, username, from_date, end_date):
     import xlsx_report_creation as xlsx_rc
     import html_report_creation as html_rc
     from misc import time_processing
@@ -61,9 +61,9 @@ def process_report(report_filetype, short_domain, url, case_comment, keywords_li
     try:
         start = time()
         if pagesearch_flag in ['y', 'si']:
-            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag, snapshotting_flag, username)
+            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag, snapshotting_flag, username, from_date, end_date)
         else:
-            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower(), used_api_flag, snapshotting_flag, username)
+            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower(), used_api_flag, snapshotting_flag, username, from_date, end_date)
         end = time() - start
         endtime_string = time_processing(end)
 
@@ -164,7 +164,7 @@ def run():
                                     else:
                                         print(Fore.RED + "\nInvalid API usage mode" + Style.RESET_ALL)
                                         break
-                                    snapshotting_flag = input(Fore.YELLOW + "Select Snapshotting mode [S(creenshot)/P(age Copy)/N (for None)] >> ")
+                                    snapshotting_flag = input(Fore.YELLOW + "Select Snapshotting mode [S(creenshot)/P(age Copy)/W(ayback Machine)/N (for None)] >> ")
                                     if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n':
                                         if pagesearch_flag.lower() == "n":
                                             pagesearch_ui_mark = 'No'
@@ -196,11 +196,16 @@ def run():
                                             break
                                         else:
                                             snapshotting_ui_mark = 'No'
+                                            from_date = end_date = 'N'
                                             if snapshotting_flag.lower() == 's':
+                                                from_date = end_date = 'N'
                                                 snapshotting_ui_mark = "Yes, domain's main page snapshotting as a screenshot"
                                             elif snapshotting_flag.lower() == 'p':
+                                                from_date = end_date = 'N'
                                                 snapshotting_ui_mark = "Yes, domain's main page snapshotting as a .HTML file"
                                             elif snapshotting_flag.lower() == 'w': # not supported at the moment
+                                                from_date = str(input('Enter start date (YYYYMMDD format): '))
+                                                end_date = str(input('Enter end date (YYYYMMDD format): '))
                                                 snapshotting_ui_mark = "Yes, domain's main page snapshotting using Wayback Machine"
                                         cli_init.print_prescan_summary(short_domain, report_filetype.upper(), pagesearch_ui_mark, dorking_ui_mark, used_api_ui, case_comment, snapshotting_ui_mark)
                                         print(Fore.LIGHTMAGENTA_EX + "[BASIC SCAN START]\n" + Style.RESET_ALL)
@@ -209,7 +214,7 @@ def run():
                                         if report_filetype.lower() in ['html', 'xlsx']:
                                             process_report(report_filetype, short_domain, url, case_comment,
                                                            keywords_list, keywords_flag, dorking_flag, used_api_flag,
-                                                           pagesearch_flag, pagesearch_ui_mark, spinner_thread, snapshotting_flag, snapshotting_ui_mark, username)
+                                                           pagesearch_flag, pagesearch_ui_mark, spinner_thread, snapshotting_flag, snapshotting_ui_mark, username, from_date, end_date)
                                     else:
                                         print(Fore.RED + "\nUnsupported PageSearch mode. Please choose between Y or N")
 
