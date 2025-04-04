@@ -79,8 +79,9 @@ DPULSE is a software solution for conducting OSINT research in relation to a cer
     - HudsonRock API (for querying a database with exposed computers which were compromised through global info-stealer campaigns)
 
 5. ***Web-pages snapshoting:*** extended functionality which allows to save web-pages copies in different forms:
-    - Screenshot snapshotting (saves domain's main page in form of screenshot)
-    - HTML snapshotting (saves domain's main page in form of HTML file)
+    - Screenshot snapshotting (saves target domain's page in form of screenshot)
+    - HTML snapshotting (saves target domain'spage in form of HTML file)
+    - Wayback Machine snapshotting (saves every version of target domain's page within a user-defined time period)
 
 Finally, DPULSE compiles all found data into an easy-to-read HTML or XLSX report by category. It also saves all information about scan in local report storage database, which can be restored later.
 
@@ -170,7 +171,7 @@ If you have problems with starting installer.sh, you should try to use `dos2unix
 # Tasks to complete before new release
 - [x] Add web pages snapshoting (with screenshots)
 - [x] Add web pages snapshoting (with web pages copying as HTML objects)
-- [ ] Add web pages snapshoting (with Wayback Machine)
+- [x] Add web pages snapshoting (with Wayback Machine)
       
 # DPULSE mentions in social medias
 
