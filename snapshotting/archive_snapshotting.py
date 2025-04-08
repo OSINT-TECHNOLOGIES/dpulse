@@ -65,6 +65,6 @@ def download_snapshot(short_domain, from_date, end_date, report_folder):
         print(Fore.RED + "No HTML snapshots available for download." + Style.RESET_ALL)
         return
     for i, (timestamp, original_url, *_) in enumerate(html_snapshots):
-        snapshot_enum(snapshot_storage_folder, timestamp, original_url, i)
+        snapshot_enum(snapshot_storage_folder, timestamp, original_url, i+1)
         time.sleep(pause_between_requests)
     print(Fore.GREEN + "\nFinished downloading HTML snapshots" + Style.RESET_ALL)
