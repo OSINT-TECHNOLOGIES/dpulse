@@ -16,6 +16,7 @@ from db_creator import get_dorking_query
 from screen_snapshotting import take_screenshot
 from config_processing import read_config
 from html_snapshotting import save_page_as_html
+from archive_snapshotting import download_snapshot
 
 try:
     import requests
@@ -72,7 +73,7 @@ class DataProcessing():
         os.makedirs(report_folder, exist_ok=True)
         return casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, files_ctime, report_ctime
 
-    def data_gathering(self, short_domain, url, report_file_type, pagesearch_flag, keywords, keywords_flag, dorking_flag, used_api_flag, snapshotting_flag, username):
+    def data_gathering(self, short_domain, url, report_file_type, pagesearch_flag, keywords, keywords_flag, dorking_flag, used_api_flag, snapshotting_flag, username, from_date, end_date):
         casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, ctime, report_ctime = self.report_preprocessing(short_domain, report_file_type)
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} STARTS HERE')
         print(Fore.GREEN + "Started scanning domain" + Style.RESET_ALL)
@@ -186,6 +187,8 @@ class DataProcessing():
                     take_screenshot(installed_browser, url, report_folder + '//screensnapshot.png')
                 elif snapshotting_flag.lower() == 'p':
                     save_page_as_html(url, report_folder + '//domain_html_copy.html')
+                elif snapshotting_flag.lower() == 'w':
+                    download_snapshot(short_domain, from_date, end_date, report_folder)
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: PAGE SNAPSHOTTING]\n" + Style.RESET_ALL)
             else:
                 pass
@@ -269,6 +272,8 @@ class DataProcessing():
                     take_screenshot(installed_browser, url, report_folder + '//screensnapshot.png')
                 elif snapshotting_flag.lower() == 'p':
                     save_page_as_html(url, report_folder + '//domain_html_copy.html')
+                elif snapshotting_flag.lower() == 'w':
+                    download_snapshot(short_domain, from_date, end_date, report_folder)
                 print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: PAGE SNAPSHOTTING]\n" + Style.RESET_ALL)
             else:
                 pass
