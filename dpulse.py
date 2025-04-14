@@ -12,7 +12,7 @@ sys.path.append('snapshotting')
 from config_processing import create_config, check_cfg_presence, read_config, print_and_return_config
 
 cfg_presence = check_cfg_presence()
-if cfg_presence is True:
+if cfg_presence:
     print(Fore.GREEN + "Global config file presence: OK" + Style.RESET_ALL)
 else:
     print(Fore.RED + "Global config file presence: NOT OK")
@@ -27,7 +27,7 @@ from logs_processing import logging
 from db_creator import get_columns_amount
 
 rsdb_presence = db.check_rsdb_presence('report_storage.db')
-if rsdb_presence is True:
+if rsdb_presence:
     print(Fore.GREEN + "Report storage database presence: OK" + Style.RESET_ALL)
 else:
     db.db_creation('report_storage.db')
@@ -91,7 +91,7 @@ def run():
     while True:
         try:
             cli.print_main_menu()
-            domain_patter = r'^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$'
+            domain_patter = r'^(?!\-)(?:[a-zA-Z0-9\-]{1,63}\.)+[a-zA-Z]{2,}$'
             choice = input(Fore.YELLOW + "Enter your choice >> ")
             if choice == "1":
                 from misc import domain_precheck
