@@ -62,3 +62,18 @@ As you can see, config file built with sections, which represent separated DPULS
 [USER-AGENTS] is section for user-agents list, which is used in Google Dorking (user-agents are randomly swapped in process)
 
 [PROXIES] is section for configuring proxies usage in Dorking, and it's only parameter - proxies_file_path - used to determine path to .txt file (path should be full with //-style slashes) which contains list of proxies (one proxy per row)
+
+## Editing configuration file
+
+First step in editing configuration file will be main menu of DPULSE. Here you should find 2nd menu point and select it like that:
+
+![config1](https://github.com/user-attachments/assets/d4eda335-102c-4dc6-ab5d-206ac01202d8)
+
+Then Setting menu will pop-out. Here you will find two menu points related to config. First is "Print current config file" and second is "Edit config file". You can see them in the image below:
+
+![config2](https://github.com/user-attachments/assets/035e5a94-ca5f-43ca-89c7-8fca36048243)
+
+If you select "Print current config file", you will see config file content in DPULSE CLI, just like that:
+
+![config3](https://github.com/user-attachments/assets/a86ee852-0b2c-4c83-9a48-bca7499c4671)
+
