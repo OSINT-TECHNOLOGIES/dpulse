@@ -60,3 +60,5 @@ As you can see, config file built with sections, which represent separated DPULS
 [SNAPSHOTTING] is section for snapshotting process configuration. It's parameters are installed_browser (determines your installed browser to be used in screenshot snapshotting), opera_browser_path (path to opera.exe, only in case if you want to use this browser for screenshot snapshotting), wayback_retries (determines amount of retries for getting exact Wayback snapshot in case of errors) and wayback_req_pause (determines pause in seconds between requests to Wayback archive)
 
 [USER-AGENTS] is section for user-agents list, which is used in Google Dorking (user-agents are randomly swapped in process)
+
+[PROXIES] is section for configuring proxies usage in Dorking, and it's only parameter - proxies_file_path - used to determine path to .txt file (path should be full with //-style slashes) which contains list of proxies (one proxy per row)
