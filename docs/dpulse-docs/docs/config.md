@@ -77,3 +77,8 @@ If you select "Print current config file", you will see config file content in D
 
 ![config3](https://github.com/user-attachments/assets/a86ee852-0b2c-4c83-9a48-bca7499c4671)
 
+If you select "Edit config file" you will see current config file's content and you will be prompted to enter section and parameter to update, and, then, some new value for that:
+
+![config4](https://github.com/user-attachments/assets/b522f2d8-e05e-43a5-968e-b0306ad1de2e)
+
+
