@@ -12,7 +12,7 @@ There are five built-in levels of the log message which are supported in DPULSE:
 - Error (tells that due to a more serious problem, the software has not been able to perform some function)
 - Critical (tells serious error, indicating that the program itself may be unable to continue running)
 
-You can use these levels according to your needs by editing the configuration file. You can read more about changing configuration parameters in 'Configuration file' paragraph.
+You can use these levels according to your needs by editing the configuration file. You can read more about changing configuration parameters in "Configuration file" paragraph.
 
 ## How it looks like in practice
 
