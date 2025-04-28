@@ -147,7 +147,7 @@ def run():
                                         to_use_api_flag = input(Fore.YELLOW + "Select APIs IDs you want to use in scan (separated by comma) >> ")
                                         used_api_flag = [item.strip() for item in to_use_api_flag.split(',')]
                                         if '3' in used_api_flag:
-                                            username = input(Fore.YELLOW + "If you know some username from this domain, please enter it here (or N if not) >> " + Style.RESET_ALL)
+                                            username = input(Fore.YELLOW + "If you know some username from this domain, please enter it here (or N if not) >> ")
                                         else:
                                             username = None
                                         if db.check_api_keys(used_api_flag):
