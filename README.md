@@ -1,7 +1,7 @@
 # DPULSE - Domain Public Data Collection Service 
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/e49c764a-5039-4a54-b002-6b625f0b371b">
+  <img src="https://github.com/user-attachments/assets/949c332b-790e-49da-81a3-a7cf21e9ddf2">
 </p>
 
 <p align="center">
