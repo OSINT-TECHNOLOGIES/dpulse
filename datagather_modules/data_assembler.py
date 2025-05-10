@@ -104,14 +104,11 @@ class DataProcessing():
         print(Fore.GREEN + '[9/11] Extracting robots.txt and sitemap.xml' + Style.RESET_ALL)
         robots_txt_result = np.get_robots_txt(short_domain, robots_filepath)
         sitemap_xml_result = np.get_sitemap_xml(short_domain, sitemap_filepath)
-        if report_file_type == 'html':
+        try:
             sitemap_links_status = np.extract_links_from_sitemap(sitemap_links_filepath, sitemap_filepath)
-        elif report_file_type == 'xlsx':
-            try:
-                sitemap_links_status = np.extract_links_from_sitemap(sitemap_links_filepath, sitemap_filepath)
-            except Exception:
-                sitemap_links_status = 'Sitemap links were not parsed'
-                pass
+        except Exception:
+            sitemap_links_status = 'Sitemap links were not parsed'
+            pass
 
         print(Fore.GREEN + '[10/11] Gathering info about website technologies' + Style.RESET_ALL)
         web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks = np.get_technologies(url)

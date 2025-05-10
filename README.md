@@ -1,7 +1,7 @@
 # DPULSE - Domain Public Data Collection Service 
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/e49c764a-5039-4a54-b002-6b625f0b371b">
+  <img src="https://github.com/user-attachments/assets/949c332b-790e-49da-81a3-a7cf21e9ddf2">
 </p>
 
 <p align="center">
@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-<img alt="Static Badge" src="https://img.shields.io/badge/v1.2.3-CURRENT%20STABLE%20VERSION?style=for-the-badge&label=CURRENT%20STABLE%20VERSION&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/v1.3-red?style=for-the-badge&logo=f&label=CURRENT%20ROLLING%20VERSION">
+<img alt="Static Badge" src="https://img.shields.io/badge/v1.3-CURRENT%20STABLE%20VERSION?style=for-the-badge&label=CURRENT%20STABLE%20VERSION&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/NONE-red?style=for-the-badge&logo=f&label=CURRENT%20ROLLING%20VERSION">
 <img alt="Static Badge" src="https://img.shields.io/badge/DOMAIN_OSINT-CATEGORY?style=for-the-badge&label=TOOL%20CATEGORY&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/CLI-CATEGORY?style=for-the-badge&label=interface%20type&color=red">
 </p>
 

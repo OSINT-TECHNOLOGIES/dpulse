@@ -12,7 +12,7 @@ sys.path.append('snapshotting')
 from config_processing import create_config, check_cfg_presence, read_config, print_and_return_config
 
 cfg_presence = check_cfg_presence()
-if cfg_presence is True:
+if cfg_presence:
     print(Fore.GREEN + "Global config file presence: OK" + Style.RESET_ALL)
 else:
     print(Fore.RED + "Global config file presence: NOT OK")
@@ -27,7 +27,7 @@ from logs_processing import logging
 from db_creator import get_columns_amount
 
 rsdb_presence = db.check_rsdb_presence('report_storage.db')
-if rsdb_presence is True:
+if rsdb_presence:
     print(Fore.GREEN + "Report storage database presence: OK" + Style.RESET_ALL)
 else:
     db.db_creation('report_storage.db')
@@ -91,7 +91,7 @@ def run():
     while True:
         try:
             cli.print_main_menu()
-            domain_patter = r'^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$'
+            domain_patter = r'^(?!\-)(?:[a-zA-Z0-9\-]{1,63}\.)+[a-zA-Z]{2,}$'
             choice = input(Fore.YELLOW + "Enter your choice >> ")
             if choice == "1":
                 from misc import domain_precheck
@@ -147,7 +147,7 @@ def run():
                                         to_use_api_flag = input(Fore.YELLOW + "Select APIs IDs you want to use in scan (separated by comma) >> ")
                                         used_api_flag = [item.strip() for item in to_use_api_flag.split(',')]
                                         if '3' in used_api_flag:
-                                            username = input(Fore.YELLOW + "If you know some username from this domain, please enter it here (or N if not) >> " + Style.RESET_ALL)
+                                            username = input(Fore.YELLOW + "If you know some username from this domain, please enter it here (or N if not) >> ")
                                         else:
                                             username = None
                                         if db.check_api_keys(used_api_flag):
@@ -203,7 +203,7 @@ def run():
                                             elif snapshotting_flag.lower() == 'p':
                                                 from_date = end_date = 'N'
                                                 snapshotting_ui_mark = "Yes, domain's main page snapshotting as a .HTML file"
-                                            elif snapshotting_flag.lower() == 'w': # not supported at the moment
+                                            elif snapshotting_flag.lower() == 'w': 
                                                 from_date = str(input('Enter start date (YYYYMMDD format): '))
                                                 end_date = str(input('Enter end date (YYYYMMDD format): '))
                                                 snapshotting_ui_mark = "Yes, domain's main page snapshotting using Wayback Machine"
@@ -301,7 +301,7 @@ def run():
             elif choice == "4":
                 cli.print_db_menu()
                 rsdb_presence = db.check_rsdb_presence('report_storage.db')
-                if rsdb_presence is True:
+                if rsdb_presence:
                     print(Fore.GREEN + "\nReport storage database presence: OK\n" + Style.RESET_ALL)
                 else:
                     db.db_creation('report_storage.db')
@@ -311,7 +311,7 @@ def run():
                     cursor, sqlite_connection, data_presence_flag = db.db_select()
                 elif choice_db == "2":
                     cursor, sqlite_connection, data_presence_flag = db.db_select()
-                    if data_presence_flag is True:
+                    if data_presence_flag:
                         id_to_extract = int(input(Fore.YELLOW + "\nEnter report ID you want to extract >> "))
                         extracted_folder_name = f'report_recreated_ID#{id_to_extract}'
                         try:

@@ -8,6 +8,7 @@ nav:
   - PageSearch: pagesearch.md
   - Built-in automatic Dorking: dorking.md
   - Built-in API scanning: api.md
+  - Snapshotting: snapshotting.md
   - Reporting and report types: reporting.md
   - Configuration file: config.md
   - Logging: logging.md
