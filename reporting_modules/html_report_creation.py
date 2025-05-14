@@ -79,6 +79,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         virustotal_output = data_array[45]
         securitytrails_output = data_array[46]
         hudsonrock_output = data_array[47]
+        ps_string = data_array[48]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
@@ -147,7 +148,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                        'dorking_status': dorking_status,
                        'add_dsi': add_dsi, 'ps_s': accessible_subdomains, 'ps_e': emails_amount, 'ps_f': files_counter, 'ps_c': cookies_counter, 'ps_a': api_keys_counter,
                         'ps_w': website_elements_counter, 'ps_p': exposed_passwords_counter, 'ss_l': total_links_counter, 'ss_a': accessed_links_counter, 'hudsonrock_output': hudsonrock_output, "snapshotting_ui_mark": snapshotting_ui_mark,
-                        'virustotal_output': virustotal_output, 'securitytrails_output': securitytrails_output}
+                        'virustotal_output': virustotal_output, 'securitytrails_output': securitytrails_output, 'ps_string': ps_string}
 
         html_report_name = report_folder + '//' + casename
         if generate_report(context, html_report_name, template_path):
