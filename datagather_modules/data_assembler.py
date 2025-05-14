@@ -206,7 +206,17 @@ class DataProcessing():
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
-                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, keywords_messages_list = subdomains_parser(to_search_array[0], report_folder, keywords, keywords_flag)
+                    (
+                        ps_emails_return,
+                        accessible_subdomains,
+                        emails_amount,
+                        files_counter,
+                        cookies_counter,
+                        api_keys_counter,
+                        website_elements_counter,
+                        exposed_passwords_counter,
+                        keywords_messages_list
+                    ), ps_string = subdomains_parser(to_search_array[0], report_folder, keywords, keywords_flag)
                     total_links_counter = accessed_links_counter = "No results because PageSearch does not gather these categories"
                     if len(keywords_messages_list) == 0:
                         keywords_messages_list = ['No keywords were found']
@@ -282,7 +292,7 @@ class DataProcessing():
                           hostnames, cpes, tags, vulns, common_socials, total_socials, ps_emails_return,
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
                           website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, keywords_messages_list, dorking_status, dorking_file_path,
-                          virustotal_output, securitytrails_output, hudsonrock_output]
+                          virustotal_output, securitytrails_output, hudsonrock_output, ps_string]
 
         report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime, api_scan_db, used_api_flag]
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} ENDS HERE')
