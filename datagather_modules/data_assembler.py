@@ -225,11 +225,13 @@ class DataProcessing():
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
                     ps_emails_return = ""
                     accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 'No results because no subdomains were found'
+                    ps_string = 'No PageSearch listing provided because no subdomains were found'
                     keywords_messages_list = ['No data was gathered because no subdomains were found']
                     pass
             elif pagesearch_flag.lower() == 'n':
                 accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = keywords_messages_list = "No results because user did not selected PageSearch for this scan"
                 ps_emails_return = ""
+                ps_string = 'No PageSearch listing provided because user did not selected PageSearch mode for this scan'
                 pass
 
             if dorking_flag == 'n':
