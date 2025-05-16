@@ -30,13 +30,12 @@ def create_config():
     config['HTML_REPORTING'] = {'template': 'default'}
     config['LOGGING'] = {'log_level': 'info'}
     config['CLI VISUAL'] = {'preview_color': 'red', 'font': 'slant'}
-    config['DORKING'] = {'dorking_delay (secs)': '2', 'delay_step': '5'}
+    config['DORKING'] = {'dorking_delay (secs)': '2', 'delay_step': '5', 'full_path_to_browser': r'path\to\browser\for\dorking'}
     config['SNAPSHOTTING'] = {'installed_browser': 'firefox', 'opera_browser_path': 'None', 'wayback_retries': '3', 'wayback_req_pause': '2'}
     config['USER-AGENTS'] = {}
     for i, agent in enumerate(basic_user_agents):
         config['USER-AGENTS'][f'agent_{i + 1}'] = agent
     config['PROXIES'] = {'proxies_file_path': 'NONE'}
-
 
     with open('service//config.ini', 'w') as configfile:
         config.write(configfile)
@@ -60,7 +59,7 @@ def read_config():
     wayback_retries_amount = config.get('SNAPSHOTTING', 'wayback_retries')
     wayback_requests_pause = config.get('SNAPSHOTTING', 'wayback_req_pause')
     html_report_template = config.get('HTML_REPORTING', 'template')
-
+    dorking_browser = config.get('DORKING', 'full_path_to_browser')
 
     config_values = {
         'logging_level': log_level,
@@ -74,7 +73,8 @@ def read_config():
         'opera_browser_path': opera_browser_path,
         'wayback_retries_amount': wayback_retries_amount,
         'wayback_requests_pause': wayback_requests_pause,
-        'template': html_report_template
+        'template': html_report_template,
+        'dorking_browser': dorking_browser
     }
 
     return config_values
