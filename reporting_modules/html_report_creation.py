@@ -10,6 +10,7 @@ import files_processing as fp
 from api_hudsonrock import hudsonrock_html_prep
 from api_virustotal import virustotal_html_prep
 from api_securitytrails import securitytrails_html_prep
+from config_processing import read_config
 
 try:
     from datetime import datetime
@@ -92,7 +93,6 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         virustotal_output = virustotal_html_prep(virustotal_output)
         securitytrails_output = securitytrails_html_prep(securitytrails_output)
 
-        pdf_templates_path = 'service//pdf_report_templates'
 
         if len(ps_emails_return) > 0:
             subdomain_mails += ps_emails_return
@@ -116,7 +116,13 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                 new_emails = email.split(', ')
                 subdomain_mails_cleaned.extend(new_emails)
 
-        template_path = pdf_templates_path + '//default_report_temp.html'
+        pdf_templates_path = 'service//pdf_report_templates'
+        config_values = read_config()
+        selected_template = config_values['template']
+        if selected_template.lower() == 'modern':
+            template_path = pdf_templates_path + '//modern_report_template.html'
+        elif selected_template.lower() == 'legacy':
+            template_path = pdf_templates_path + '//legacy_report_template.html'
         dorking_results_path = report_folder + '//04-dorking_results.txt'
         if os.path.isfile(dorking_results_path):
             with open(dorking_results_path, 'r') as f:
