@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OSINT Report for {{ sh_domain }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono&family=Fira+Sans:wght@400;600&family=Fira+Code&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #333333;
+      --link-color: #007bff;
+      --accent-color: #333399;
+      --hr-color: #cccccc;
+      --font-main: 'Inter', sans-serif;
+      --font-code: 'Roboto Mono', monospace;
+    }
+
+    body.dark {
+      --bg-color: #1e1e1e;
+      --text-color: #cccccc;
+      --link-color: #7ca9ff;
+      --accent-color: #9db2ff;
+      --hr-color: #444444;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-main);
+      font-size: 15px;
+      line-height: 1.6;
+      background: var(--bg-color);
+      color: var(--text-color);
+      padding: 24px 24px 24px 260px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    h1, h2, h3 {
+      text-align: center;
+      font-weight: 700;
+      font-family: var(--font-main);
+      margin: 24px 0 12px;
+    }
+
+    h1 {
+      font-size: 28px;
+      text-decoration: underline;
+    }
+
+    h2 {
+      font-size: 22px;
+    }
+
+    h3 {
+      font-size: 18px;
+      text-decoration: underline;
+      margin-top: 36px;
+    }
+
+    p {
+      margin: 6px 0 12px;
+    }
+
+    ul {
+      margin: 6px 0 12px 24px;
+    }
+
+    li {
+      margin: 4px 0;
+    }
+
+    hr {
+      margin: 24px 0;
+      border: none;
+      border-top: 1px solid var(--hr-color);
+    }
+
+    .blue {
+      color: var(--accent-color);
+    }
+
+    .red {
+      color: #f00;
+    }
+
+    .maroon {
+      color: #800000;
+    }
+
+    .underline {
+      text-decoration: underline;
+    }
+
+    pre, code {
+      font-family: var(--font-code);
+      color: var(--accent-color);
+      white-space: pre-wrap;
+      margin: 12px 0;
+    }
+
+    .toc-link {
+      display: block;
+      text-align: center;
+      margin-bottom: 6px;
+      color: var(--link-color);
+      text-decoration: none;
+    }
+
+    .toc-link:hover {
+      text-decoration: underline;
+    }
+
+    .toc-section-title {
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .toc-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 240px;
+      height: 100vh;
+      overflow-y: auto;
+      background: var(--bg-color);
+      border-right: 1px solid var(--hr-color);
+      padding: 20px 10px;
+      font-family: var(--font-main);
+    }
+
+	.control-panel {
+	  position: fixed;
+	  top: 10px;
+	  right: 20px;
+	  z-index: 1000;
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center; 
+	  gap: 8px;
+	  background: var(--bg-color);
+	  padding: 10px 14px;
+	  border: 1px solid var(--hr-color);
+	  border-radius: 6px;
+	  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+	}
+
+	.theme-toggle {
+	  background: var(--bg-color);
+	  color: var(--text-color);
+	  border: 1px solid var(--hr-color);
+	  padding: 6px 12px;
+	  cursor: pointer;
+	  border-radius: 4px;
+	  font-family: var(--font-main);
+	  transition: background 0.3s, color 0.3s;
+	}
+
+	.font-select {
+	  background: var(--bg-color);
+	  color: var(--text-color);
+	  border: 1px solid var(--hr-color);
+	  padding: 6px 8px;
+	  border-radius: 4px;
+	  font-family: var(--font-main);
+	}
+
+    .back-to-top {
+      text-align: right;
+      margin-top: 16px;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    details[open] > summary::after {
+      content: " ▲";
+      float: right;
+    }
+
+    details > summary::after {
+      content: " ▼";
+      float: right;
+    }
+  </style>
+</head>
+<body id="top">
+
+<div class="control-panel">
+  <button class="theme-toggle" onclick="toggleTheme()">🌓 Theme</button>
+  <select id="fontSelect" onchange="changeFont(this.value)" class="font-select">
+    <option value="inter">Inter + Roboto Mono</option>
+    <option value="plex">IBM Plex Sans + Mono</option>
+    <option value="fira">Fira Sans + Fira Code</option>
+    <option value="grotesk">Space Grotesk + Roboto Mono</option>
+  </select>
+</div>
+
+<div class="toc-container">
+  <h2 class="underline">Table of contents</h2>
+  <a href="#general-scan-info" class="toc-link">1. General scan information</a>
+  <p class="toc-section-title maroon underline">[BASIC SCAN INFO]</p>
+  <a href="#whois-info" class="toc-link">2. WHOIS information</a>
+  <a href="#social-media-links" class="toc-link">3. Social media links</a>
+  <a href="#subdomains-info" class="toc-link">4. Subdomains</a>
+  <a href="#dns-ssl-info" class="toc-link">5. DNS & SSL</a>
+  <a href="#services-frameworks-info" class="toc-link">6. Services & Frameworks</a>
+  <a href="#pre-pentest-info" class="toc-link">7. Pre-Pentest Info</a>
+  <p class="toc-section-title maroon underline">[DORKING SCAN INFO]</p>
+  <a href="#dorking-info" class="toc-link">8. Dorking Results</a>
+  <p class="toc-section-title maroon underline">[PAGESEARCH SCAN INFO]</p>
+  <a href="#pagesearch-results" class="toc-link">9. PageSearch Results</a>
+  <p class="toc-section-title maroon underline">[API SCAN INFO]</p>
+  <a href="#virustotal-results" class="toc-link">10. VirusTotal</a>
+  <a href="#securitytrails-results" class="toc-link">11. SecurityTrails</a>
+  <a href="#hudsonrock-results" class="toc-link">12. HudsonRock</a>
+</div>
+
+<h1>Open Source Information Research Report</h1>
+<h2>{{ org }}</h2>
+<hr>
+
+<h3 id="general-scan-info">GENERAL SCAN INFORMATION</h3>
+<p>Total subdomains found: <span class="blue">{{ a_tsf }}</span></p>
+<p>Total social media links found: <span class="blue">{{ a_tsm }}</span></p>
+<p>Status of robots.txt extraction: <span class="blue">{{ robots_txt_result }}</span></p>
+<p>Status of sitemap.xml extraction: <span class="blue">{{ sitemap_xml_result }}</span></p>
+<p>Status of sitemap.xml links extraction: <span class="blue">{{ sitemap_links }}</span></p>
+<p>Google Dorking status: <span class="blue">{{ dorking_status }}</span></p>
+<p>PageSearch conduction: <span class="blue">{{ pagesearch_ui_mark }}</span></p>
+<p>Snapshotting conduction: <span class="blue">{{ snapshotting_ui_mark }}</span></p>
+<p>Report creation time: <span class="blue">{{ ctime }}</span></p>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
+<h3 id="whois-info">WHOIS INFORMATION</h3>
+<p>Domain: <span class="blue">{{ sh_domain }}</span></p>
+<p>Full URL: <a href="{{ full_url }}" target="_blank" class="blue">{{ full_url }}</a></p>
+<p>IP address: <span class="blue">{{ ip_address }}</span></p>
+<p>Registrar: <span class="blue">{{ registrar }}</span></p>
+<p>Creation date: <span class="blue">{{ creation_date }}</span></p>
+<p>Expiration date: <span class="blue">{{ expiration_date }}</span></p>
+<p>Organization name: <span class="blue">{{ org }}</span></p>
+<p>Contact e-mails: <span class="blue">{{ mails }}</span></p>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
+<h3 id="social-media-links">SOCIAL MEDIA LINKS</h3>
+<p>FACEBOOK:</p>
+<ul>
+  {% for link in fb_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p>TWITTER (+ X.com):</p>
+<ul>
+  {% for link in tw_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+  {% for link in xcom_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p>INSTAGRAM:</p>
+<ul>
+  {% for link in inst_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p>TELEGRAM:</p>
+<ul>
+  {% for link in tg_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p>TIKTOK:</p>
+<ul>
+  {% for link in tt_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p>LINKEDIN:</p>
+<ul>
+  {% for link in li_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p>VKONTAKTE:</p>
+<ul>
+  {% for link in vk_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p>YOUTUBE:</p>
+<ul>
+  {% for link in yt_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p>ODNOKLASSNIKI:</p>
+<ul>
+  {% for link in ok_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p>WECHAT:</p>
+<ul>
+  {% for link in wc_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
+<h3 id="subdomains-info">SUBDOMAINS</h3>
+<p>Found subdomains:</p>
+<ul>
+  {% for sd in subdomains %}
+    <li>⇒ <a href="https://{{ sd }}" target="_blank" class="blue">{{ sd }}</a></li>
+  {% endfor %}
+</ul>
+
+<p>Subdomains IP addresses:</p>
+<ul>
+  {% for sdip in subdomain_ip %}
+    <li class="blue">⇒ {{ sdip }}</li>
+  {% endfor %}
+</ul>
+
+<p>Subdomains e-mails:</p>
+<ul>
+  {% for smails in subdomain_mails %}
+    <li class="blue">⇒ {{ smails }}</li>
+  {% endfor %}
+</ul>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
+<h3 id="dns-ssl-info">DNS & SSL INFORMATION</h3>
+<p>(DNS) Name servers: <span class="blue">{{ name_servers }}</span></p>
+<p>(DNS) MX addresses: <span class="blue">{{ mx_records }}</span></p>
+<p>(SSL) Issuer: <span class="blue">{{ issuer }}</span></p>
+<p>(SSL) Subject: <span class="blue">{{ subject }}</span></p>
+<p>(SSL) Not before: <span class="blue">{{ notBefore }}</span></p>
+<p>(SSL) Not after: <span class="blue">{{ notAfter }}</span></p>
+<p>(SSL) Certificate name: <span class="blue">{{ commonName }}</span></p>
+<p>(SSL) Certificate serial number: <span class="blue">{{ serialNumber }}</span></p>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
+<h3 id="services-frameworks-info">SERVICES & FRAMEWORKS INFORMATION</h3>
+<p>Web servers:</p>
+<ul>
+  {% for ws in web_servers %}
+    <li class="blue">⇒ {{ ws }}</li>
+  {% endfor %}
+</ul>
+
+<p>CMS:</p>
+<ul>
+  {% for cm in cms %}
+    <li class="blue">⇒ {{ cm }}</li>
+  {% endfor %}
+</ul>
+
+<p>Used programming languages:</p>
+<ul>
+  {% for pl in programming_languages %}
+    <li class="blue">⇒ {{ pl }}</li>
+  {% endfor %}
+</ul>
+
+<p>Used web frameworks:</p>
+<ul>
+  {% for wf in web_frameworks %}
+    <li class="blue">⇒ {{ wf }}</li>
+  {% endfor %}
+</ul>
+
+<p>Analytics service:</p>
+<ul>
+  {% for analytic in analytics %}
+    <li class="blue">⇒ {{ analytic }}</li>
+  {% endfor %}
+</ul>
+
+<p>Used JavaScript frameworks:</p>
+<ul>
+  {% for jsf in javascript_frameworks %}
+    <li class="blue">⇒ {{ jsf }}</li>
+  {% endfor %}
+</ul>
+
+<p>Tags:</p>
+<ul>
+  {% for tag in tags %}
+    <li class="blue">⇒ {{ tag }}</li>
+  {% endfor %}
+</ul>
+
+<p>Common Platform Enumeration:</p>
+<ul>
+  {% for cpe in cpes %}
+    <li class="blue">⇒ {{ cpe }}</li>
+  {% endfor %}
+</ul>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
+<h3 id="pre-pentest-info">BASIC PRE-PENTEST INFORMATION</h3>
+<p>Open ports:</p>
+<ul>
+  {% for op in ports %}
+    <li class="blue">⇒ {{ op }}</li>
+  {% endfor %}
+</ul>
+
+<p>Hostnames:</p>
+<ul>
+  {% for hn in hostnames %}
+    <li class="blue">⇒ {{ hn }}</li>
+  {% endfor %}
+</ul>
+
+<p>Potential vulnerabilities:</p>
+<ul>
+  {% for vuln in vulns %}
+    <li class="blue">⇒ {{ vuln }}</li>
+  {% endfor %}
+</ul>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
+{% if add_dsi %}
+<h3 id="dorking-info">DORKING SCAN INFO</h3>
+<details>
+  <summary>Dorking Results</summary>
+  <pre>{{ add_dsi | safe }}</pre>
+</details>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+{% endif %}
+
+{% if ps_string %}
+<h3 id="pagesearch-results">PAGESEARCH RESULTS</h3>
+<p>Accessible subdomains: <span class="blue">{{ ps_s }}</span></p>
+<p>Email addresses: <span class="blue">{{ ps_e }}</span></p>
+<p>Found documents: <span class="blue">{{ ps_f }}</span></p>
+<p>Found cookies: <span class="blue">{{ ps_c }}</span></p>
+<p>Found API keys: <span class="blue">{{ ps_a }}</span></p>
+<p>Found WEB elements: <span class="blue">{{ ps_w }}</span></p>
+<p>Exposed passwords: <span class="blue">{{ ps_p }}</span></p>
+<details>
+  <summary>PageSearch Process Listing</summary>
+  <pre>{{ ps_string }}</pre>
+</details>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+{% endif %}
+
+{% if virustotal_output %}
+<h3 id="virustotal-results">VIRUSTOTAL API SCAN RESULTS</h3>
+<details>
+  <summary>VirusTotal Output</summary>
+  <pre>{{ virustotal_output | safe }}</pre>
+</details>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+{% endif %}
+
+{% if securitytrails_output %}
+<h3 id="securitytrails-results">SECURITYTRAILS API SCAN RESULTS</h3>
+<details>
+  <summary>SecurityTrails Output</summary>
+  <pre>{{ securitytrails_output | safe }}</pre>
+</details>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+{% endif %}
+
+{% if hudsonrock_output %}
+<h3 id="hudsonrock-results">HUDSONROCK API SCAN RESULTS</h3>
+<details>
+  <summary>HudsonRock Output</summary>
+  <pre>{{ hudsonrock_output | safe }}</pre>
+</details>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+{% endif %}
+
+<h3 style="text-align:center; padding-top: 10px;">Created using DPULSE software by OSINT-TECHNOLOGIES</h3>
+<p style="text-align:center;">Visit our web-pages:</p>
+<ul style="text-align:center; list-style: none; padding-left: 0;">
+  <li><a href="https://github.com/OSINT-TECHNOLOGIES" target="_blank" class="blue">https://github.com/OSINT-TECHNOLOGIES</a></li>
+  <li><a href="https://pypi.org/project/dpulse/" target="_blank" class="blue">https://pypi.org/project/dpulse/</a></li>
+</ul>
+
+<script>
+ const fontMap = {
+    inter: {
+      main: "'Inter', sans-serif",
+      code: "'Roboto Mono', monospace"
+    },
+    plex: {
+      main: "'IBM Plex Sans', sans-serif",
+      code: "'IBM Plex Mono', monospace"
+    },
+    fira: {
+      main: "'Fira Sans', sans-serif",
+      code: "'Fira Code', monospace"
+    },
+    grotesk: {
+      main: "'Space Grotesk', sans-serif",
+      code: "'Roboto Mono', monospace"
+    }
+  };
+
+  function changeFont(value) {
+    const choice = fontMap[value];
+    document.documentElement.style.setProperty('--font-main', choice.main);
+    document.documentElement.style.setProperty('--font-code', choice.code);
+    localStorage.setItem('fontChoice', value);
+  }
+
+  function toggleTheme() {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark');
+    }
+
+    const savedFont = localStorage.getItem('fontChoice') || 'inter';
+    document.getElementById('fontSelect').value = savedFont;
+    changeFont(savedFont);
+  });
+</script>
+</body>
+</html>
