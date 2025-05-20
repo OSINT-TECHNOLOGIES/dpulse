@@ -27,7 +27,7 @@ def create_config():
     ]
 
     config = configparser.ConfigParser()
-    config['HTML_REPORTING'] = {'template': 'default'}
+    config['HTML_REPORTING'] = {'template': 'modern'}
     config['LOGGING'] = {'log_level': 'info'}
     config['CLI VISUAL'] = {'preview_color': 'red', 'font': 'slant'}
     config['DORKING'] = {'dorking_delay (secs)': '2', 'delay_step': '5', 'full_path_to_browser': r'path\to\browser\for\dorking'}
