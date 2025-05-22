@@ -1,202 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OSINT Report for {{ sh_domain }}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono&family=Fira+Sans:wght@400;600&family=Fira+Code&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-color: #ffffff;
-      --text-color: #333333;
-      --link-color: #007bff;
-      --accent-color: #333399;
-      --hr-color: #cccccc;
-      --font-main: 'Inter', sans-serif;
-      --font-code: 'Roboto Mono', monospace;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>OSINT Report for {{ sh_domain }}</title>
 
-    body.dark {
-      --bg-color: #1e1e1e;
-      --text-color: #cccccc;
-      --link-color: #7ca9ff;
-      --accent-color: #9db2ff;
-      --hr-color: #444444;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono&family=Fira+Sans:wght@400;600&family=Fira+Code&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-    *, *::before, *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<style media="print">
+	@page { size: A4; margin: 20mm; }
+	body { padding:0!important; background:#fff!important; color:#000!important; }
+	.control-panel, .toc-container, .back-to-top { display:none!important; }
+	h1,h2,h3 { page-break-after:avoid; }
+	section { page-break-inside:avoid; }
+</style>
 
-    body {
-      font-family: var(--font-main);
-      font-size: 15px;
-      line-height: 1.6;
-      background: var(--bg-color);
-      color: var(--text-color);
-      padding: 24px 24px 24px 260px;
-      transition: background 0.3s, color 0.3s;
-    }
+<style>
+	:root{
+	  --bg-color:#fff;--text-color:#333;--link-color:#007bff;
+	  --accent-color:#333399;--hr-color:#ccc;
+	  --font-main:'Inter',sans-serif;--font-code:'Roboto Mono',monospace;
+	}
+	body.dark{
+	  --bg-color:#1e1e1e;--text-color:#ccc;--link-color:#7ca9ff;
+	  --accent-color:#9db2ff;--hr-color:#444;
+	}
+	*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+	html{scroll-behavior:smooth;}
 
-    h1, h2, h3 {
-      text-align: center;
-      font-weight: 700;
-      font-family: var(--font-main);
-      margin: 24px 0 12px;
-    }
-
-    h1 {
-      font-size: 28px;
-      text-decoration: underline;
-    }
-
-    h2 {
-      font-size: 22px;
-    }
-
-    h3 {
-      font-size: 18px;
-      text-decoration: underline;
-      margin-top: 36px;
-    }
-
-    p {
-      margin: 6px 0 12px;
-    }
-
-    ul {
-      margin: 6px 0 12px 24px;
-    }
-
-    li {
-      margin: 4px 0;
-    }
-
-    hr {
-      margin: 24px 0;
-      border: none;
-      border-top: 1px solid var(--hr-color);
-    }
-
-    .blue {
-      color: var(--accent-color);
-    }
-
-    .red {
-      color: #f00;
-    }
-
-    .maroon {
-      color: #800000;
-    }
-
-    .underline {
-      text-decoration: underline;
-    }
-
-    pre, code {
-      font-family: var(--font-code);
-      color: var(--accent-color);
-      white-space: pre-wrap;
-      margin: 12px 0;
-    }
-
-    .toc-link {
-      display: block;
-      text-align: center;
-      margin-bottom: 6px;
-      color: var(--link-color);
-      text-decoration: none;
-    }
-
-    .toc-link:hover {
-      text-decoration: underline;
-    }
-
-    .toc-section-title {
-      text-align: center;
-      margin-top: 10px;
-      margin-bottom: 8px;
-      font-weight: bold;
-    }
-
-    .toc-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 240px;
-      height: 100vh;
-      overflow-y: auto;
-      background: var(--bg-color);
-      border-right: 1px solid var(--hr-color);
-      padding: 20px 10px;
-      font-family: var(--font-main);
-    }
-
-	.control-panel {
-	  position: fixed;
-	  top: 10px;
-	  right: 20px;
-	  z-index: 1000;
-	  display: flex;
-	  flex-direction: column;
-	  align-items: center; 
-	  gap: 8px;
-	  background: var(--bg-color);
-	  padding: 10px 14px;
-	  border: 1px solid var(--hr-color);
-	  border-radius: 6px;
-	  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+	body{
+	  font:15px/1.6 var(--font-main);
+	  background:var(--bg-color);color:var(--text-color);
+	  padding:24px 24px 24px 260px;
+	  transition:background .3s,color .3s;
 	}
 
-	.theme-toggle {
-	  background: var(--bg-color);
-	  color: var(--text-color);
-	  border: 1px solid var(--hr-color);
-	  padding: 6px 12px;
-	  cursor: pointer;
-	  border-radius: 4px;
-	  font-family: var(--font-main);
-	  transition: background 0.3s, color 0.3s;
+	h1,h2,h3{text-align:center;font-weight:700;font-family:var(--font-main);margin:24px 0 12px;}
+	h1{font-size:28px;text-decoration:underline;}
+	h2{font-size:22px;}
+	h3{font-size:18px;text-decoration:underline;margin-top:36px;}
+
+	p{margin:6px 0 12px;}
+	ul{margin:6px 0 12px 24px;}
+	li{margin:4px 0;}
+	hr{margin:24px 0;border:none;border-top:1px solid var(--hr-color);}
+	pre,code{font-family:var(--font-code);color:var(--accent-color);white-space:pre-wrap;margin:12px 0;}
+
+	.blue{color:var(--accent-color);}
+	.red{color:#f00;}
+	.maroon{color:#800000;}
+	.underline{text-decoration:underline;}
+
+	.toc-container{
+	  position:fixed;top:0;left:0;width:240px;height:100vh;overflow-y:auto;
+	  background:var(--bg-color);border-right:1px solid var(--hr-color);
+	  padding:20px 10px;font-family:var(--font-main);
 	}
+	.toc-section-title{text-align:center;margin:10px 0 8px;font-weight:bold;}
+	.toc-link{display:block;text-align:center;margin-bottom:6px;
+			  color:var(--link-color);text-decoration:none;}
+	.toc-link:hover{text-decoration:underline;}
+	.toc-link.active{font-weight:700;background:var(--accent-color);color:#fff;border-radius:4px;}
 
-	.font-select {
-	  background: var(--bg-color);
-	  color: var(--text-color);
-	  border: 1px solid var(--hr-color);
-	  padding: 6px 8px;
-	  border-radius: 4px;
-	  font-family: var(--font-main);
+	.control-panel{
+	  position:fixed;top:10px;right:20px;z-index:1000;
+	  display:flex;flex-direction:column;align-items:center;gap:8px;
+	  background:var(--bg-color);padding:10px 14px;
+	  border:1px solid var(--hr-color);border-radius:6px;
+	  box-shadow:0 2px 6px rgba(0,0,0,.08);
 	}
+	.theme-toggle,.font-select{
+	  background:var(--bg-color);color:var(--text-color);
+	  border:1px solid var(--hr-color);border-radius:4px;
+	  font-family:var(--font-main);transition:background .3s,color .3s;
+	}
+	.theme-toggle{padding:6px 12px;cursor:pointer;}
+	.font-select{padding:6px 8px;}
+	.back-to-top{text-align:right;margin-top:16px;}
 
-    .back-to-top {
-      text-align: right;
-      margin-top: 16px;
-    }
-
-    details summary {
-      cursor: pointer;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-
-    details[open] > summary::after {
-      content: " ▲";
-      float: right;
-    }
-
-    details > summary::after {
-      content: " ▼";
-      float: right;
-    }
-  </style>
+	/* details-аккордеоны */
+	details summary{cursor:pointer;font-weight:bold;margin-bottom:6px;}
+	details[open]>summary::after{content:" ▲";float:right;}
+	details>summary::after{content:" ▼";float:right;}
+</style>
 </head>
+
 <body id="top">
 
 <div class="control-panel">
   <button class="theme-toggle" onclick="toggleTheme()">🌓 Theme</button>
+  <button id="printBtn" class="theme-toggle">🖨️ Print</button>
   <select id="fontSelect" onchange="changeFont(this.value)" class="font-select">
     <option value="inter">Inter + Roboto Mono</option>
     <option value="plex">IBM Plex Sans + Mono</option>
@@ -514,46 +408,60 @@
 </ul>
 
 <script>
- const fontMap = {
-    inter: {
-      main: "'Inter', sans-serif",
-      code: "'Roboto Mono', monospace"
-    },
-    plex: {
-      main: "'IBM Plex Sans', sans-serif",
-      code: "'IBM Plex Mono', monospace"
-    },
-    fira: {
-      main: "'Fira Sans', sans-serif",
-      code: "'Fira Code', monospace"
-    },
-    grotesk: {
-      main: "'Space Grotesk', sans-serif",
-      code: "'Roboto Mono', monospace"
-    }
-  };
+const fontMap={
+  inter:{main:"'Inter', sans-serif",code:"'Roboto Mono', monospace"},
+  plex:{main:"'IBM Plex Sans', sans-serif",code:"'IBM Plex Mono', monospace"},
+  fira:{main:"'Fira Sans', sans-serif",code:"'Fira Code', monospace"},
+  grotesk:{main:"'Space Grotesk', sans-serif",code:"'Roboto Mono', monospace"}
+};
 
-  function changeFont(value) {
-    const choice = fontMap[value];
-    document.documentElement.style.setProperty('--font-main', choice.main);
-    document.documentElement.style.setProperty('--font-code', choice.code);
-    localStorage.setItem('fontChoice', value);
-  }
+function changeFont(val){
+  const c=fontMap[val]||fontMap.inter;
+  document.documentElement.style.setProperty('--font-main',c.main);
+  document.documentElement.style.setProperty('--font-code',c.code);
+  localStorage.setItem('fontChoice',val);
+}
 
-  function toggleTheme() {
-    document.body.classList.toggle('dark');
-    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-  }
+function toggleTheme(){
+  document.body.classList.toggle('dark');
+  localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');
+}
 
-  window.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem('theme') === 'dark') {
-      document.body.classList.add('dark');
-    }
+function initActiveToc(){
+  const links=document.querySelectorAll('.toc-link[href^="#"]');
+  const sections=[...links].map(l=>document.querySelector(l.getAttribute('href'))).filter(Boolean);
+  const obs=new IntersectionObserver(ent=>{
+    ent.forEach(e=>{
+      const id=e.target.id;
+      const link=document.querySelector(`.toc-link[href="#${id}"]`);
+      if(link) e.isIntersecting?link.classList.add('active'):link.classList.remove('active');
+    });
+  },{rootMargin:'-50% 0px -50% 0px',threshold:0});
+  sections.forEach(s=>obs.observe(s));
+}
 
-    const savedFont = localStorage.getItem('fontChoice') || 'inter';
-    document.getElementById('fontSelect').value = savedFont;
-    changeFont(savedFont);
+function bindPrintPdf(){
+  const printBtn=document.getElementById('printBtn');
+  const pdfBtn=document.getElementById('pdfBtn');
+  if(printBtn) printBtn.addEventListener('click',()=>window.print());
+  if(pdfBtn) pdfBtn.addEventListener('click',()=>{
+    const el=document.querySelector('main');
+    const opt={margin:0.5,filename:`OSINT_Report_${document.title}.pdf`,
+      image:{type:'jpeg',quality:0.98},
+      html2canvas:{scale:2,useCORS:true},
+      jsPDF:{unit:'in',format:'a4',orientation:'portrait'}};
+    if(window.html2pdf) html2pdf().set(opt).from(el).save();
+    else console.error('html2pdf not loaded');
   });
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  if(localStorage.getItem('theme')==='dark') document.body.classList.add('dark');
+  const saved=localStorage.getItem('fontChoice')||'inter';
+  document.getElementById('fontSelect').value=saved;
+  changeFont(saved);
+  bindPrintPdf();
+});
 </script>
 </body>
 </html>
