@@ -118,6 +118,10 @@ class DataProcessing():
         for key in common_socials:
             common_socials[key] = list(set(common_socials[key]))
         total_socials = sum(len(values) for values in common_socials.values())
+        total_ports = len(ports)
+        total_ips = len(subdomain_ip) + 1
+        total_vulns = len(vulns)
+
         print(Fore.LIGHTMAGENTA_EX + "\n[BASIC SCAN END]\n" + Style.RESET_ALL)
         if report_file_type == 'xlsx':
             if pagesearch_flag.lower() == 'y':
@@ -294,7 +298,7 @@ class DataProcessing():
                           hostnames, cpes, tags, vulns, common_socials, total_socials, ps_emails_return,
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
                           website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, keywords_messages_list, dorking_status, dorking_file_path,
-                          virustotal_output, securitytrails_output, hudsonrock_output, ps_string]
+                          virustotal_output, securitytrails_output, hudsonrock_output, ps_string, total_ports, total_ips, total_vulns]
 
         report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime, api_scan_db, used_api_flag]
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} ENDS HERE')
