@@ -79,7 +79,6 @@
 	.font-select{padding:6px 8px;}
 	.back-to-top{text-align:right;margin-top:16px;}
 
-	/* details-аккордеоны */
 	details summary{cursor:pointer;font-weight:bold;margin-bottom:6px;}
 	details[open]>summary::after{content:" ▲";float:right;}
 	details>summary::after{content:" ▼";float:right;}
@@ -101,22 +100,23 @@
 
 <div class="toc-container">
   <h2 class="underline">Table of contents</h2>
-  <a href="#general-scan-info" class="toc-link">1. General scan information</a>
+  <a href="#general-scan-info" class="toc-link">1. General scan information</a> 
+  <a href="#general-scan-info" class="toc-link">2. General scan statistics</a> 
   <p class="toc-section-title maroon underline">[BASIC SCAN INFO]</p>
-  <a href="#whois-info" class="toc-link">2. WHOIS information</a>
-  <a href="#social-media-links" class="toc-link">3. Social media links</a>
-  <a href="#subdomains-info" class="toc-link">4. Subdomains</a>
-  <a href="#dns-ssl-info" class="toc-link">5. DNS & SSL</a>
-  <a href="#services-frameworks-info" class="toc-link">6. Services & Frameworks</a>
-  <a href="#pre-pentest-info" class="toc-link">7. Pre-Pentest Info</a>
+  <a href="#whois-info" class="toc-link">3. WHOIS information</a>
+  <a href="#social-media-links" class="toc-link">4. Social media links</a>
+  <a href="#subdomains-info" class="toc-link">5. Subdomains</a>
+  <a href="#dns-ssl-info" class="toc-link">6. DNS & SSL</a>
+  <a href="#services-frameworks-info" class="toc-link">7. Services & Frameworks</a>
+  <a href="#pre-pentest-info" class="toc-link">8. Pre-Pentest Info</a>
   <p class="toc-section-title maroon underline">[DORKING SCAN INFO]</p>
-  <a href="#dorking-info" class="toc-link">8. Dorking Results</a>
+  <a href="#dorking-info" class="toc-link">9. Dorking Results</a>
   <p class="toc-section-title maroon underline">[PAGESEARCH SCAN INFO]</p>
-  <a href="#pagesearch-results" class="toc-link">9. PageSearch Results</a>
+  <a href="#pagesearch-results" class="toc-link">10. PageSearch Results</a>
   <p class="toc-section-title maroon underline">[API SCAN INFO]</p>
-  <a href="#virustotal-results" class="toc-link">10. VirusTotal</a>
-  <a href="#securitytrails-results" class="toc-link">11. SecurityTrails</a>
-  <a href="#hudsonrock-results" class="toc-link">12. HudsonRock</a>
+  <a href="#virustotal-results" class="toc-link">11. VirusTotal</a>
+  <a href="#securitytrails-results" class="toc-link">12. SecurityTrails</a>
+  <a href="#hudsonrock-results" class="toc-link">13. HudsonRock</a>
 </div>
 
 <h1>Open Source Information Research Report</h1>
@@ -124,8 +124,6 @@
 <hr>
 
 <h3 id="general-scan-info">GENERAL SCAN INFORMATION</h3>
-<p>Total subdomains found: <span class="blue">{{ a_tsf }}</span></p>
-<p>Total social media links found: <span class="blue">{{ a_tsm }}</span></p>
 <p>Status of robots.txt extraction: <span class="blue">{{ robots_txt_result }}</span></p>
 <p>Status of sitemap.xml extraction: <span class="blue">{{ sitemap_xml_result }}</span></p>
 <p>Status of sitemap.xml links extraction: <span class="blue">{{ sitemap_links }}</span></p>
@@ -133,6 +131,16 @@
 <p>PageSearch conduction: <span class="blue">{{ pagesearch_ui_mark }}</span></p>
 <p>Snapshotting conduction: <span class="blue">{{ snapshotting_ui_mark }}</span></p>
 <p>Report creation time: <span class="blue">{{ ctime }}</span></p>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
+<h3 id="general-scan-info">GENERAL SCAN STATISTICS</h3>
+<p>Total subdomains found: <span class="blue">{{ a_tsf }}</span></p>
+<p>Total social media links found: <span class="blue">{{ a_tsm }}</span></p> 
+<p>Total emails found: <span class="blue">{{ a_temails }}</span></p> 
+<p>Total associated IP addresses found: <span class="blue">{{ a_tips }}</span></p> 
+<p>Total open ports found: <span class="blue">{{ a_tops }}</span></p> 
+<p>Total potential vulnerabilities found: <span class="blue">{{ a_tpv }}</span></p> 
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 
