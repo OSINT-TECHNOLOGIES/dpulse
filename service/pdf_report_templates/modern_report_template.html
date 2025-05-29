@@ -7,6 +7,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono&family=Fira+Sans:wght@400;600&family=Fira+Code&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style media="print">
 	@page { size: A4; margin: 20mm; }
@@ -135,13 +136,26 @@
 <hr>
 
 <h3 id="general-scan-info">GENERAL SCAN STATISTICS</h3>
-<p>Total subdomains found: <span class="blue">{{ a_tsf }}</span></p>
-<p>Total social media links found: <span class="blue">{{ a_tsm }}</span></p> 
-<p>Total emails found: <span class="blue">{{ a_temails }}</span></p> 
-<p>Total associated IP addresses found: <span class="blue">{{ a_tips }}</span></p> 
-<p>Total open ports found: <span class="blue">{{ a_tops }}</span></p> 
-<p>Total potential vulnerabilities found: <span class="blue">{{ a_tpv }}</span></p> 
-<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<div style="display: flex; align-items: flex-start; gap: 80px;">
+  <div>
+    <p>Total subdomains found: <span class="blue" id="a_tsf">{{ a_tsf }}</span></p>
+    <p>Total social media links found: <span class="blue" id="a_tsm">{{ a_tsm }}</span></p> 
+    <p>Total emails found: <span class="blue" id="a_temails">{{ a_temails }}</span></p> 
+    <p>Total associated IP addresses found: <span class="blue" id="a_tips">{{ a_tips }}</span></p> 
+    <p>Total open ports found: <span class="blue" id="a_tops">{{ a_tops }}</span></p> 
+    <p>Total potential vulnerabilities found: <span class="blue" id="a_tpv">{{ a_tpv }}</span></p> 
+    <p>Accessible subdomains (PageSearch): <span class="blue" id="ps_s">{{ ps_s }}</span></p>
+    <p>Email addresses (PageSearch): <span class="blue" id="ps_e">{{ ps_e }}</span></p>
+    <p>Found documents (PageSearch): <span class="blue" id="ps_f">{{ ps_f }}</span></p>
+    <p>Found cookies (PageSearch): <span class="blue" id="ps_c">{{ ps_c }}</span></p>
+    <p>Found API keys (PageSearch): <span class="blue" id="ps_a">{{ ps_a }}</span></p>
+    <p>Found WEB elements (PageSearch): <span class="blue" id="ps_w">{{ ps_w }}</span></p>
+    <p>Exposed passwords (PageSearch): <span class="blue" id="ps_p">{{ ps_p }}</span></p>
+  </div>
+  <div style="width: 700px; height: 700px; margin-top: 80px;">
+    <canvas id="statsChart"></canvas>
+  </div>
+</div>
 <hr>
 
 <h3 id="whois-info">WHOIS INFORMATION</h3>
@@ -363,13 +377,6 @@
 
 {% if ps_string %}
 <h3 id="pagesearch-results">PAGESEARCH RESULTS</h3>
-<p>Accessible subdomains: <span class="blue">{{ ps_s }}</span></p>
-<p>Email addresses: <span class="blue">{{ ps_e }}</span></p>
-<p>Found documents: <span class="blue">{{ ps_f }}</span></p>
-<p>Found cookies: <span class="blue">{{ ps_c }}</span></p>
-<p>Found API keys: <span class="blue">{{ ps_a }}</span></p>
-<p>Found WEB elements: <span class="blue">{{ ps_w }}</span></p>
-<p>Exposed passwords: <span class="blue">{{ ps_p }}</span></p>
 <details>
   <summary>PageSearch Process Listing</summary>
   <pre>{{ ps_string }}</pre>
@@ -469,6 +476,70 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('fontSelect').value=saved;
   changeFont(saved);
   bindPrintPdf();
+
+  if (window.Chart) { 
+    const stats = [
+      parseInt(document.getElementById('a_tsf')?.textContent) || 0,
+      parseInt(document.getElementById('a_tsm')?.textContent) || 0,
+      parseInt(document.getElementById('a_temails')?.textContent) || 0,
+      parseInt(document.getElementById('a_tips')?.textContent) || 0,
+      parseInt(document.getElementById('a_tops')?.textContent) || 0,
+      parseInt(document.getElementById('a_tpv')?.textContent) || 0,
+      parseInt(document.getElementById('ps_s')?.textContent) || 0,
+      parseInt(document.getElementById('ps_e')?.textContent) || 0,
+      parseInt(document.getElementById('ps_f')?.textContent) || 0,
+      parseInt(document.getElementById('ps_c')?.textContent) || 0,
+      parseInt(document.getElementById('ps_a')?.textContent) || 0,
+      parseInt(document.getElementById('ps_w')?.textContent) || 0,
+      parseInt(document.getElementById('ps_p')?.textContent) || 0
+    ];
+
+    const labels = [
+      'Subdomains',
+      'Social Media',
+      'Emails',
+      'IP Addresses',
+      'Open Ports',
+      'Vulnerabilities',
+      'Accessible subdomains',
+      'Email addresses',
+      'Found documents',
+      'Found cookies',
+      'Found API keys',
+      'WEB elements',
+      'Exposed passwords'
+    ];
+
+    const colors = [
+      '#4caf50', '#2196f3', '#ff9800', '#9c27b0', '#f44336', '#607d8b',
+      '#00bcd4', '#8bc34a', '#ffc107', '#e91e63', '#3f51b5', '#795548', '#9e9e9e'
+    ];
+
+    const ctx = document.getElementById('statsChart')?.getContext('2d');
+    if (ctx) {
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Count',
+            data: stats,
+            backgroundColor: colors
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+  }
 });
 </script>
 </body>
