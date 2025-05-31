@@ -41,10 +41,14 @@ def solid_google_dorking(query, proxy_flag, proxies_list, pages=1):
     result_query = []
     request_count = 0
     try:
-        config_values=read_config()
+        config_values = read_config()
         options = uc.ChromeOptions()
         options.binary_location = r"{}".format(config_values['dorking_browser'])
-        options.add_argument("--headless=new")
+        dorking_browser_mode = config_values['dorking_browser_mode']
+        if dorking_browser_mode == 'headless':
+            options.add_argument("--headless=new")
+        else:
+            pass
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--disable-blink-features=AutomationControlled")
