@@ -1,33 +1,23 @@
 import sys
-sys.path.append('service')
-sys.path.append('pagesearch')
-sys.path.append('dorking')
-sys.path.append('snapshotting')
+from datetime import datetime
+import os
+from colorama import Fore, Style
 
+sys.path.extend(['service', 'pagesearch', 'dorking', 'snapshotting'])
+
+from logs_processing import logging
+from config_processing import read_config
+from db_creator import get_dorking_query
 import crawl_processor as cp
 import dorking_handler as dp
 import networking_processor as np
 from pagesearch_parsers import subdomains_parser
-from logs_processing import logging
 from api_virustotal import api_virustotal_check
 from api_securitytrails import api_securitytrails_check
 from api_hudsonrock import api_hudsonrock_check
-from db_creator import get_dorking_query
 from screen_snapshotting import take_screenshot
-from config_processing import read_config
 from html_snapshotting import save_page_as_html
 from archive_snapshotting import download_snapshot
-
-try:
-    import requests
-    from datetime import datetime
-    import os
-    from colorama import Fore, Style
-    import sqlite3
-    import configparser
-except ImportError as e:
-    print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
-    sys.exit()
 
 def establishing_dork_db_connection(dorking_flag):
     dorking_db_paths = {
