@@ -2,14 +2,12 @@ import sys
 from random import random
 
 sys.path.append('service')
-from config_processing import read_config
 from logs_processing import logging
 from ua_rotator import user_agent_rotator
 from proxies_rotator import proxies_rotator
 
 import random
 import logging
-from colorama import Fore, Style
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -18,7 +16,6 @@ from config_processing import read_config
 try:
     import requests.exceptions
     from colorama import Fore, Style
-    import mechanicalsoup
     import re
     import requests
     import sqlite3
@@ -45,9 +42,9 @@ def solid_google_dorking(query, proxy_flag, proxies_list, pages=1):
         options = uc.ChromeOptions()
         options.binary_location = r"{}".format(config_values['dorking_browser'])
         dorking_browser_mode = config_values['dorking_browser_mode']
-        if dorking_browser_mode == 'headless':
+        if dorking_browser_mode.lower() == 'headless':
             options.add_argument("--headless=new")
-        else:
+        elif dorking_browser_mode.lower() == 'nonheadless':
             pass
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
