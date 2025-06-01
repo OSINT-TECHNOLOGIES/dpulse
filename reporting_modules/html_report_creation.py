@@ -1,4 +1,7 @@
 import sys
+import os
+from jinja2 import Environment, FileSystemLoader
+from colorama import Fore, Style
 
 sys.path.append('service')
 sys.path.append('service//pdf_report_templates')
@@ -11,17 +14,6 @@ from api_hudsonrock import hudsonrock_html_prep
 from api_virustotal import virustotal_html_prep
 from api_securitytrails import securitytrails_html_prep
 from config_processing import read_config
-
-try:
-    from datetime import datetime
-    from jinja2 import Environment, FileSystemLoader
-    import os
-    from colorama import Fore, Style
-    import sqlite3
-    import re
-except ImportError as e:
-    print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
-    sys.exit()
 
 def generate_report(data, output_file, template_path):
     env = Environment(loader=FileSystemLoader('.'))
