@@ -134,6 +134,8 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         else:
             add_dsi = 'Dorking mode was not enabled so there is no results to see'
 
+        robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
+
         context = {'sh_domain': short_domain, 'full_url': url, 'ip_address': ip, 'registrar': res['registrar'],
                        'creation_date': res['creation_date'], 'expiration_date': res['expiration_date'],
                        'name_servers': ', '.join(res['name_servers']), 'org': res['org'],
@@ -159,13 +161,12 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                        'add_dsi': add_dsi, 'ps_s': accessible_subdomains, 'ps_e': emails_amount, 'ps_f': files_counter, 'ps_c': cookies_counter, 'ps_a': api_keys_counter,
                         'ps_w': website_elements_counter, 'ps_p': exposed_passwords_counter, 'ss_l': total_links_counter, 'ss_a': accessed_links_counter, 'hudsonrock_output': hudsonrock_output, "snapshotting_ui_mark": snapshotting_ui_mark,
                         'virustotal_output': virustotal_output, 'securitytrails_output': securitytrails_output, 'ps_string': ps_string, 'a_tops': total_ports,
-                        'a_temails': total_mails, 'a_tips': total_ips, 'a_tpv': total_vulns}
+                        'a_temails': total_mails, 'a_tips': total_ips, 'a_tpv': total_vulns, 'robots_content': robots_content, 'sitemap_xml_content': sitemap_content, 'sitemap_txt_content': sitemap_links_content}
 
         html_report_name = report_folder + '//' + casename
         if generate_report(context, html_report_name, template_path):
             print(Fore.GREEN + "HTML report for {} case was created at {}".format(short_domain, report_ctime) + Style.RESET_ALL)
             print(Fore.GREEN + f"Scan elapsed time: {end}" + Style.RESET_ALL)
-        robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
         pdf_blob = fp.get_blob(html_report_name)
         db.insert_blob('HTML', pdf_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content, api_scan_db)
         if os.path.exists(report_folder + '//04-dorking_results.txt'):
