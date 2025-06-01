@@ -1,29 +1,18 @@
 import sys
-from random import random
+import random
+import time
+import os
+import logging
+from colorama import Fore, Style
+import undetected_chromedriver as uc
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 sys.path.append('service')
 from logs_processing import logging
 from ua_rotator import user_agent_rotator
 from proxies_rotator import proxies_rotator
-
-import random
-import logging
-import undetected_chromedriver as uc
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from config_processing import read_config
-
-try:
-    import requests.exceptions
-    from colorama import Fore, Style
-    import re
-    import requests
-    import sqlite3
-    import time
-    import os
-except ImportError as e:
-    print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
-    sys.exit()
 
 def proxy_transfer():
     proxy_flag, proxies_list = proxies_rotator.get_proxies()
