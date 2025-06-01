@@ -123,6 +123,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         pdf_templates_path = 'service//pdf_report_templates'
         config_values = read_config()
         selected_template = config_values['template']
+        delete_txt_files = config_values['delete_txt_files']
         if selected_template.lower() == 'modern':
             template_path = pdf_templates_path + '//modern_report_template.html'
         elif selected_template.lower() == 'legacy':
@@ -169,10 +170,21 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
             print(Fore.GREEN + f"Scan elapsed time: {end}" + Style.RESET_ALL)
         pdf_blob = fp.get_blob(html_report_name)
         db.insert_blob('HTML', pdf_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content, api_scan_db)
-        if os.path.exists(report_folder + '//04-dorking_results.txt'):
-            os.remove(report_folder + '//04-dorking_results.txt')
-        else:
+
+        if delete_txt_files.lower() == 'y':
+            files_to_remove = [
+                '04-dorking_results.txt',
+                '03-sitemap_links.txt',
+                '02-sitemap.txt',
+                '01-robots.txt'
+            ]
+            for file in files_to_remove:
+                file_path = os.path.join(report_folder, file)
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+        elif delete_txt_files.lower() == 'n':
             pass
+
     except Exception as e:
         print(Fore.RED + 'Unable to create HTML report. See journal for details')
         logging.error(f'HTML REPORT CREATION: ERROR. REASON: {e}')
