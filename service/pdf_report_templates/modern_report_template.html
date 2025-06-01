@@ -110,14 +110,15 @@
   <a href="#dns-ssl-info" class="toc-link">6. DNS & SSL</a>
   <a href="#services-frameworks-info" class="toc-link">7. Services & Frameworks</a>
   <a href="#pre-pentest-info" class="toc-link">8. Pre-Pentest Info</a>
+  <a href="#pre-pentest-info" class="toc-link">9. Website configuration files</a>
   <p class="toc-section-title maroon underline">[DORKING SCAN INFO]</p>
-  <a href="#dorking-info" class="toc-link">9. Dorking Results</a>
+  <a href="#dorking-info" class="toc-link">10. Dorking Results</a>
   <p class="toc-section-title maroon underline">[PAGESEARCH SCAN INFO]</p>
-  <a href="#pagesearch-results" class="toc-link">10. PageSearch Results</a>
+  <a href="#pagesearch-results" class="toc-link">11. PageSearch Results</a>
   <p class="toc-section-title maroon underline">[API SCAN INFO]</p>
-  <a href="#virustotal-results" class="toc-link">11. VirusTotal</a>
-  <a href="#securitytrails-results" class="toc-link">12. SecurityTrails</a>
-  <a href="#hudsonrock-results" class="toc-link">13. HudsonRock</a>
+  <a href="#virustotal-results" class="toc-link">12. VirusTotal</a>
+  <a href="#securitytrails-results" class="toc-link">13. SecurityTrails</a>
+  <a href="#hudsonrock-results" class="toc-link">14. HudsonRock</a>
 </div>
 
 <h1>Open Source Information Research Report</h1>
@@ -125,32 +126,32 @@
 <hr>
 
 <h3 id="general-scan-info">GENERAL SCAN INFORMATION</h3>
-<p>Status of robots.txt extraction: <span class="blue">{{ robots_txt_result }}</span></p>
-<p>Status of sitemap.xml extraction: <span class="blue">{{ sitemap_xml_result }}</span></p>
-<p>Status of sitemap.xml links extraction: <span class="blue">{{ sitemap_links }}</span></p>
-<p>Google Dorking status: <span class="blue">{{ dorking_status }}</span></p>
-<p>PageSearch conduction: <span class="blue">{{ pagesearch_ui_mark }}</span></p>
-<p>Snapshotting conduction: <span class="blue">{{ snapshotting_ui_mark }}</span></p>
-<p>Report creation time: <span class="blue">{{ ctime }}</span></p>
+<p><strong>Status of robots.txt extraction:</strong> <span class="blue">{{ robots_txt_result }}</span></p>
+<p><strong>Status of sitemap.xml extraction:</strong> <span class="blue">{{ sitemap_xml_result }}</span></p>
+<p><strong>Status of sitemap.xml links extraction:</strong><span class="blue">{{ sitemap_links }}</span></p>
+<p><strong>Google Dorking status:</strong> <span class="blue">{{ dorking_status }}</span></p>
+<p><strong>PageSearch conduction:</strong> <span class="blue">{{ pagesearch_ui_mark }}</span></p>
+<p><strong>Snapshotting conduction:</strong> <span class="blue">{{ snapshotting_ui_mark }}</span></p>
+<p><strong>Report creation time:</strong> <span class="blue">{{ ctime }}</span></p>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 
 <h3 id="general-scan-info">GENERAL SCAN STATISTICS</h3>
 <div style="display: flex; align-items: flex-start; gap: 80px;">
   <div>
-    <p>Total subdomains found: <span class="blue" id="a_tsf">{{ a_tsf }}</span></p>
-    <p>Total social media links found: <span class="blue" id="a_tsm">{{ a_tsm }}</span></p> 
-    <p>Total emails found: <span class="blue" id="a_temails">{{ a_temails }}</span></p> 
-    <p>Total associated IP addresses found: <span class="blue" id="a_tips">{{ a_tips }}</span></p> 
-    <p>Total open ports found: <span class="blue" id="a_tops">{{ a_tops }}</span></p> 
-    <p>Total potential vulnerabilities found: <span class="blue" id="a_tpv">{{ a_tpv }}</span></p> 
-    <p>Accessible subdomains (PageSearch): <span class="blue" id="ps_s">{{ ps_s }}</span></p>
-    <p>Email addresses (PageSearch): <span class="blue" id="ps_e">{{ ps_e }}</span></p>
-    <p>Found documents (PageSearch): <span class="blue" id="ps_f">{{ ps_f }}</span></p>
-    <p>Found cookies (PageSearch): <span class="blue" id="ps_c">{{ ps_c }}</span></p>
-    <p>Found API keys (PageSearch): <span class="blue" id="ps_a">{{ ps_a }}</span></p>
-    <p>Found WEB elements (PageSearch): <span class="blue" id="ps_w">{{ ps_w }}</span></p>
-    <p>Exposed passwords (PageSearch): <span class="blue" id="ps_p">{{ ps_p }}</span></p>
+	<p><strong>Total subdomains found:</strong> <span class="blue" id="a_tsf">{{ a_tsf }}</span></p>
+	<p><strong>Total social media links found:</strong> <span class="blue" id="a_tsm">{{ a_tsm }}</span></p> 
+	<p><strong>Total emails found:</strong> <span class="blue" id="a_temails">{{ a_temails }}</span></p> 
+	<p><strong>Total associated IP addresses found:</strong> <span class="blue" id="a_tips">{{ a_tips }}</span></p> 
+	<p><strong>Total open ports found:</strong> <span class="blue" id="a_tops">{{ a_tops }}</span></p> 
+	<p><strong>Total potential vulnerabilities found:</strong> <span class="blue" id="a_tpv">{{ a_tpv }}</span></p> 
+	<p><strong>Accessible subdomains (PageSearch):</strong> <span class="blue" id="ps_s">{{ ps_s }}</span></p>
+	<p><strong>Email addresses (PageSearch):</strong> <span class="blue" id="ps_e">{{ ps_e }}</span></p>
+	<p><strong>Found documents (PageSearch):</strong> <span class="blue" id="ps_f">{{ ps_f }}</span></p>
+	<p><strong>Found cookies (PageSearch):</strong> <span class="blue" id="ps_c">{{ ps_c }}</span></p>
+	<p><strong>Found API keys (PageSearch):</strong> <span class="blue" id="ps_a">{{ ps_a }}</span></p>
+	<p><strong>Found WEB elements (PageSearch):</strong> <span class="blue" id="ps_w">{{ ps_w }}</span></p>
+	<p><strong>Exposed passwords (PageSearch):</strong> <span class="blue" id="ps_p">{{ ps_p }}</span></p>
   </div>
   <div style="width: 700px; height: 700px; margin-top: 80px;">
     <canvas id="statsChart"></canvas>
@@ -159,26 +160,26 @@
 <hr>
 
 <h3 id="whois-info">WHOIS INFORMATION</h3>
-<p>Domain: <span class="blue">{{ sh_domain }}</span></p>
-<p>Full URL: <a href="{{ full_url }}" target="_blank" class="blue">{{ full_url }}</a></p>
-<p>IP address: <span class="blue">{{ ip_address }}</span></p>
-<p>Registrar: <span class="blue">{{ registrar }}</span></p>
-<p>Creation date: <span class="blue">{{ creation_date }}</span></p>
-<p>Expiration date: <span class="blue">{{ expiration_date }}</span></p>
-<p>Organization name: <span class="blue">{{ org }}</span></p>
-<p>Contact e-mails: <span class="blue">{{ mails }}</span></p>
+<p><strong>Domain:</strong> <span class="blue">{{ sh_domain }}</span></p>
+<p><strong>Full URL:</strong> <a href="{{ full_url }}" target="_blank" class="blue">{{ full_url }}</a></p>
+<p><strong>IP address:</strong> <span class="blue">{{ ip_address }}</span></p>
+<p><strong>Registrar:</strong> <span class="blue">{{ registrar }}</span></p>
+<p><strong>Creation date:</strong> <span class="blue">{{ creation_date }}</span></p>
+<p><strong>Expiration date:</strong> <span class="blue">{{ expiration_date }}</span></p>
+<p><strong>Organization name:</strong> <span class="blue">{{ org }}</span></p>
+<p><strong>Contact e-mails:</strong> <span class="blue">{{ mails }}</span></p>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 
 <h3 id="social-media-links">SOCIAL MEDIA LINKS</h3>
-<p>FACEBOOK:</p>
+<p><strong>FACEBOOK:</strong></p>
 <ul>
   {% for link in fb_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
 
-<p>TWITTER (+ X.com):</p>
+<p><strong>TWITTER (+ X.com):</strong></p>
 <ul>
   {% for link in tw_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
@@ -188,56 +189,56 @@
   {% endfor %}
 </ul>
 
-<p>INSTAGRAM:</p>
+<p><strong>INSTAGRAM:</strong></p>
 <ul>
   {% for link in inst_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
 
-<p>TELEGRAM:</p>
+<p><strong>TELEGRAM:</strong></p>
 <ul>
   {% for link in tg_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
 
-<p>TIKTOK:</p>
+<p><strong>TIKTOK:</strong></p>
 <ul>
   {% for link in tt_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
 
-<p>LINKEDIN:</p>
+<p><strong>LINKEDIN:</strong></p>
 <ul>
   {% for link in li_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
 
-<p>VKONTAKTE:</p>
+<p><strong>VKONTAKTE:</strong></p>
 <ul>
   {% for link in vk_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
 
-<p>YOUTUBE:</p>
+<p><strong>YOUTUBE:</strong></p>
 <ul>
   {% for link in yt_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
 
-<p>ODNOKLASSNIKI:</p>
+<p><strong>ODNOKLASSNIKI:</strong></p>
 <ul>
   {% for link in ok_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
 
-<p>WECHAT:</p>
+<p><strong>WECHAT:</strong></p>
 <ul>
   {% for link in wc_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
@@ -247,21 +248,21 @@
 <hr>
 
 <h3 id="subdomains-info">SUBDOMAINS</h3>
-<p>Found subdomains:</p>
+<p><strong>Found subdomains:</strong></p>
 <ul>
   {% for sd in subdomains %}
     <li>⇒ <a href="https://{{ sd }}" target="_blank" class="blue">{{ sd }}</a></li>
   {% endfor %}
 </ul>
 
-<p>Subdomains IP addresses:</p>
+<p><strong>Subdomains IP addresses:</strong></p>
 <ul>
   {% for sdip in subdomain_ip %}
     <li class="blue">⇒ {{ sdip }}</li>
   {% endfor %}
 </ul>
 
-<p>Subdomains e-mails:</p>
+<p><strong>Subdomains e-mails:</strong></p>
 <ul>
   {% for smails in subdomain_mails %}
     <li class="blue">⇒ {{ smails }}</li>
@@ -271,68 +272,68 @@
 <hr>
 
 <h3 id="dns-ssl-info">DNS & SSL INFORMATION</h3>
-<p>(DNS) Name servers: <span class="blue">{{ name_servers }}</span></p>
-<p>(DNS) MX addresses: <span class="blue">{{ mx_records }}</span></p>
-<p>(SSL) Issuer: <span class="blue">{{ issuer }}</span></p>
-<p>(SSL) Subject: <span class="blue">{{ subject }}</span></p>
-<p>(SSL) Not before: <span class="blue">{{ notBefore }}</span></p>
-<p>(SSL) Not after: <span class="blue">{{ notAfter }}</span></p>
-<p>(SSL) Certificate name: <span class="blue">{{ commonName }}</span></p>
-<p>(SSL) Certificate serial number: <span class="blue">{{ serialNumber }}</span></p>
+<p><strong>(DNS) Name servers:</strong> <span class="blue">{{ name_servers }}</span></p>
+<p><strong>(DNS) MX addresses:</strong> <span class="blue">{{ mx_records }}</span></p>
+<p><strong>(SSL) Issuer:</strong> <span class="blue">{{ issuer }}</span></p>
+<p><strong>(SSL) Subject:</strong> <span class="blue">{{ subject }}</span></p>
+<p><strong>(SSL) Not before:</strong> <span class="blue">{{ notBefore }}</span></p>
+<p><strong>(SSL) Not after:</strong> <span class="blue">{{ notAfter }}</span></p>
+<p><strong>(SSL) Certificate name:</strong> <span class="blue">{{ commonName }}</span></p>
+<p><strong>(SSL) Certificate serial number:</strong> <span class="blue">{{ serialNumber }}</span></p>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 
 <h3 id="services-frameworks-info">SERVICES & FRAMEWORKS INFORMATION</h3>
-<p>Web servers:</p>
+<p><strong>Web servers:</strong></p>
 <ul>
   {% for ws in web_servers %}
     <li class="blue">⇒ {{ ws }}</li>
   {% endfor %}
 </ul>
 
-<p>CMS:</p>
+<p><strong>CMS:</strong></p>
 <ul>
   {% for cm in cms %}
     <li class="blue">⇒ {{ cm }}</li>
   {% endfor %}
 </ul>
 
-<p>Used programming languages:</p>
+<p><strong>Used programming languages:</strong></p>
 <ul>
   {% for pl in programming_languages %}
     <li class="blue">⇒ {{ pl }}</li>
   {% endfor %}
 </ul>
 
-<p>Used web frameworks:</p>
+<p><strong>Used web frameworks:</strong></p>
 <ul>
   {% for wf in web_frameworks %}
     <li class="blue">⇒ {{ wf }}</li>
   {% endfor %}
 </ul>
 
-<p>Analytics service:</p>
+<p><strong>Analytics service:</strong></p>
 <ul>
   {% for analytic in analytics %}
     <li class="blue">⇒ {{ analytic }}</li>
   {% endfor %}
 </ul>
 
-<p>Used JavaScript frameworks:</p>
+<p><strong>Used JavaScript frameworks:</strong></p>
 <ul>
   {% for jsf in javascript_frameworks %}
     <li class="blue">⇒ {{ jsf }}</li>
   {% endfor %}
 </ul>
 
-<p>Tags:</p>
+<p><strong>Tags:</strong></p>
 <ul>
   {% for tag in tags %}
     <li class="blue">⇒ {{ tag }}</li>
   {% endfor %}
 </ul>
 
-<p>Common Platform Enumeration:</p>
+<p><strong>Common Platform Enumeration:</strong></p>
 <ul>
   {% for cpe in cpes %}
     <li class="blue">⇒ {{ cpe }}</li>
@@ -342,21 +343,21 @@
 <hr>
 
 <h3 id="pre-pentest-info">BASIC PRE-PENTEST INFORMATION</h3>
-<p>Open ports:</p>
+<p><strong>Open ports:</strong></p>
 <ul>
   {% for op in ports %}
     <li class="blue">⇒ {{ op }}</li>
   {% endfor %}
 </ul>
 
-<p>Hostnames:</p>
+<p><strong>Hostnames:</strong></p>
 <ul>
   {% for hn in hostnames %}
     <li class="blue">⇒ {{ hn }}</li>
   {% endfor %}
 </ul>
 
-<p>Potential vulnerabilities:</p>
+<p><strong>Potential vulnerabilities:</strong></p>
 <ul>
   {% for vuln in vulns %}
     <li class="blue">⇒ {{ vuln }}</li>
@@ -364,6 +365,26 @@
 </ul>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
+
+
+<h3 id="technical-files">WEBSITE TECHNICAL FILES</h3>
+<details>
+  <summary>robots.txt</summary>
+  <pre>{{ robots_content | safe }}</pre>
+</details>
+
+<details>
+  <summary>sitemap.xml</summary>
+  <pre>{{ sitemap_xml_content | safe }}</pre>
+</details>
+
+<details>
+  <summary>Sitemap links</summary>
+  <pre>{{ sitemap_txt_content | safe }}</pre>
+</details>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
 
 {% if add_dsi %}
 <h3 id="dorking-info">DORKING SCAN INFO</h3>
