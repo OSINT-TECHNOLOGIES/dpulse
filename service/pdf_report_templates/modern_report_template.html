@@ -89,14 +89,32 @@
 <body id="top">
 
 <div class="control-panel">
-  <button class="theme-toggle" onclick="toggleTheme()">🌓 Theme</button>
-  <button id="printBtn" class="theme-toggle">🖨️ Print</button>
+  <div style="display:flex;gap:8px;">
+    <button class="theme-toggle" onclick="toggleTheme()">🌓 Theme</button>
+    <button id="printBtn" class="theme-toggle">🖨️ Print</button>
+  </div>
+  <input type="file" id="compareFile" style="display:none" accept=".html">
+  <button class="theme-toggle" onclick="document.getElementById('compareFile').click()">🔄 Compare with report...</button>
   <select id="fontSelect" onchange="changeFont(this.value)" class="font-select">
     <option value="inter">Inter + Roboto Mono</option>
     <option value="plex">IBM Plex Sans + Mono</option>
     <option value="fira">Fira Sans + Fira Code</option>
     <option value="grotesk">Space Grotesk + Roboto Mono</option>
   </select>
+</div>
+
+<div id="splitScreen" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#fff; z-index:9999;">
+  <div style="position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:10001;font-size:15px;background:#f8f8f8;padding:4px 16px;border-radius:8px;border:1px solid #ccc;">
+    <span style="background:#d4ffd4;padding:2px 8px;border-radius:4px;">Only in base report</span>
+    <span style="background:#ffd4d4;padding:2px 8px;border-radius:4px;">Only in uploaded report</span>
+    <span style="background:#fff7b2;padding:2px 8px;border-radius:4px;">Changed</span>
+    <label style="margin-left:20px;"><input type="checkbox" id="diffOnly">Show differences</label>
+    <button onclick="closeSplitScreen()" style="margin-left:20px;">✖</button>
+  </div>
+  <div style="display:flex; width:100vw; height:100vh;">
+    <div id="leftReport" style="width:50%;height:100vh;overflow:auto;border-right:2px solid #ccc;padding:24px 12px 24px 260px;background:#f9f9f9;"></div>
+    <div id="rightReport" style="width:50%;height:100vh;overflow:auto;padding:24px 12px;background:#f4f4f4;"></div>
+  </div>
 </div>
 
 <div class="toc-container">
@@ -560,6 +578,128 @@ window.addEventListener('DOMContentLoaded',()=>{
         }
       });
     }
+  }
+});
+
+function closeSplitScreen() {
+  document.getElementById('splitScreen').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function syncScroll(el1, el2) {
+  let ignore = false;
+  el1.addEventListener('scroll', function() {
+    if (ignore) return; ignore = true;
+    el2.scrollTop = el1.scrollTop;
+    el2.scrollLeft = el1.scrollLeft;
+    ignore = false;
+  });
+  el2.addEventListener('scroll', function() {
+    if (ignore) return; ignore = true;
+    el1.scrollTop = el2.scrollTop;
+    el1.scrollLeft = el2.scrollLeft;
+    ignore = false;
+  });
+}
+
+document.getElementById('compareFile').addEventListener('change', function(e){
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    let parser = new DOMParser();
+    let rightDoc = parser.parseFromString(ev.target.result, "text/html");
+    let leftDoc = document.cloneNode(true);
+    document.getElementById('leftReport').innerHTML = '';
+    document.getElementById('rightReport').innerHTML = '';
+    let leftBody = leftDoc.body.cloneNode(true);
+    let rightBody = rightDoc.body.cloneNode(true);
+    leftBody.querySelectorAll('#splitScreen, .control-panel').forEach(e=>e.remove());
+    rightBody.querySelectorAll('#splitScreen, .control-panel').forEach(e=>e.remove());
+    document.getElementById('leftReport').appendChild(leftBody);
+    document.getElementById('rightReport').appendChild(rightBody);
+    compareReports(leftBody, rightBody);
+    document.getElementById('splitScreen').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    syncScroll(document.getElementById('leftReport'), document.getElementById('rightReport'));
+  };
+  reader.readAsText(file);
+});
+
+function compareLists(leftParent, rightParent) {
+  let leftLists = leftParent.querySelectorAll('ul');
+  let rightLists = rightParent.querySelectorAll('ul');
+  for (let i=0; i<leftLists.length; ++i) {
+    let l = leftLists[i], r = rightLists[i];
+    if (!r) continue;
+    let lItems = Array.from(l.querySelectorAll('li')).map(li=>li.textContent.trim());
+    let rItems = Array.from(r.querySelectorAll('li')).map(li=>li.textContent.trim());
+    l.querySelectorAll('li').forEach(li=>{
+      if (!rItems.includes(li.textContent.trim())) li.style.background = '#d4ffd4';
+    });
+    r.querySelectorAll('li').forEach(li=>{
+      if (!lItems.includes(li.textContent.trim())) li.style.background = '#ffd4d4';
+    });
+  }
+}
+
+function compareNums(leftParent, rightParent) {
+  let leftSpans = leftParent.querySelectorAll('span[id]');
+  let rightSpans = rightParent.querySelectorAll('span[id]');
+  for (let i=0; i<leftSpans.length; ++i) {
+    let l = leftSpans[i];
+    let r = Array.from(rightSpans).find(s=>s.id===l.id);
+    if (r) {
+      if (l.textContent.trim() !== r.textContent.trim()) {
+        l.style.background = '#fff7b2';
+        r.style.background = '#fff7b2';
+      }
+    } else {
+      l.style.background = '#d4ffd4';
+    }
+  }
+  rightSpans.forEach(r=>{
+    if (!leftParent.querySelector('span[id="'+r.id+'"]')) {
+      r.style.background = '#ffd4d4';
+    }
+  });
+}
+
+function comparePreBlocks(leftParent, rightParent) {
+  let leftPres = leftParent.querySelectorAll('details > pre');
+  let rightPres = rightParent.querySelectorAll('details > pre');
+  for (let i=0; i<leftPres.length; ++i) {
+    let l = leftPres[i], r = rightPres[i];
+    if (l && r) {
+      if (l.textContent.trim() !== r.textContent.trim()) {
+        l.style.background = '#fff7b2';
+        r.style.background = '#fff7b2';
+      }
+    } else if (l && !r) {
+      l.style.background = '#d4ffd4';
+    } else if (!l && r) {
+      r.style.background = '#ffd4d4';
+    }
+  }
+}
+
+function compareReports(leftBody, rightBody) {
+  compareLists(leftBody, rightBody);
+  compareNums(leftBody, rightBody);
+  comparePreBlocks(leftBody, rightBody);
+}
+
+document.addEventListener('change', function(e){
+  if (e.target && e.target.id === 'diffOnly') {
+    let showDiff = e.target.checked;
+    ['leftReport','rightReport'].forEach(id=>{
+      let el = document.getElementById(id);
+      el.querySelectorAll('li,span[id],pre').forEach(node=>{
+        let bg = node.style.background;
+        if (showDiff && (!bg || bg==='')) node.style.display = 'none';
+        else node.style.display = '';
+      });
+    });
   }
 });
 </script>
