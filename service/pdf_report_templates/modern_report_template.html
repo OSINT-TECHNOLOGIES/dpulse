@@ -53,10 +53,57 @@
 	.maroon{color:#800000;}
 	.underline{text-decoration:underline;}
 
-	.toc-container{
-	  position:fixed;top:0;left:0;width:240px;height:100vh;overflow-y:auto;
-	  background:var(--bg-color);border-right:1px solid var(--hr-color);
-	  padding:20px 10px;font-family:var(--font-main);
+	.toc-toggle {
+	  position: absolute;
+	  top: 10px;
+	  right: 10px;
+	  background: var(--bg-color);
+	  border: 1px solid var(--hr-color);
+	  border-radius: 4px;
+	  padding: 4px 8px;
+	  cursor: pointer;
+	  color: var(--text-color);
+	  font-family: var(--font-main);
+	  width: 30px;
+	  height: 30px;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  z-index: 1000;
+	}
+
+	.toc-container {
+	  position: fixed;
+	  top: 0;
+	  left: 0;
+	  width: 240px;
+	  height: 100vh;
+	  overflow-y: auto;
+	  background: var(--bg-color);
+	  border-right: 1px solid var(--hr-color);
+	  padding: 20px 10px;
+	  font-family: var(--font-main);
+	  transition: width 0.3s ease;
+	}
+
+	.toc-container.collapsed {
+	  width: 50px;
+	  overflow: visible;
+	}
+
+	.toc-container.collapsed .toc-section-title,
+	.toc-container.collapsed .toc-link,
+	.toc-container.collapsed h2 {
+	  opacity: 0;
+	  visibility: hidden;
+	  position: absolute;
+	  pointer-events: none;
+	}
+
+	.toc-container.collapsed .toc-toggle {
+	  right: -30px;
+	  position: absolute;
+	  top: 10px;
 	}
 	.toc-section-title{text-align:center;margin:10px 0 8px;font-weight:bold;}
 	.toc-link{display:block;text-align:center;margin-bottom:6px;
@@ -87,7 +134,6 @@
 </head>
 
 <body id="top">
-
 <div class="control-panel">
   <div style="display:flex;gap:8px;">
     <button class="theme-toggle" onclick="toggleTheme()">🌓 Theme</button>
@@ -118,6 +164,7 @@
 </div>
 
 <div class="toc-container">
+  <button class="toc-toggle" onclick="toggleToc()">≡</button>
   <h2 class="underline">Table of contents</h2>
   <a href="#general-scan-info" class="toc-link">1. General scan information</a> 
   <a href="#general-scan-info" class="toc-link">2. General scan statistics</a> 
@@ -515,6 +562,11 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('fontSelect').value=saved;
   changeFont(saved);
   bindPrintPdf();
+  const tocCollapsed = localStorage.getItem('tocCollapsed') === 'true';
+  if (tocCollapsed) {
+    document.querySelector('.toc-container').classList.add('collapsed');
+    document.body.style.paddingLeft = '60px';
+  }
 
   if (window.Chart) { 
     const stats = [
@@ -584,6 +636,20 @@ window.addEventListener('DOMContentLoaded',()=>{
 function closeSplitScreen() {
   document.getElementById('splitScreen').style.display = 'none';
   document.body.style.overflow = '';
+}
+
+function toggleToc() {
+  const toc = document.querySelector('.toc-container');
+  toc.classList.toggle('collapsed');
+  
+  const body = document.body;
+  if (toc.classList.contains('collapsed')) {
+    body.style.paddingLeft = '60px';
+  } else {
+    body.style.paddingLeft = '260px';
+  }
+  
+  localStorage.setItem('tocCollapsed', toc.classList.contains('collapsed'));
 }
 
 function syncScroll(el1, el2) {
