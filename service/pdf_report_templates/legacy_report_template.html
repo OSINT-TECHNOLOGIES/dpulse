@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OSINT report for {{ sh_domain }}</title>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+    body{
+      font:14px/1.5 "Segoe UI", Arial, sans-serif;
+      color:#333;
+      background:#fff;
+      padding:24px;
+    }
+
+    h1,h2,h3{
+      text-align:center;
+      font-weight:700;
+      margin:24px 0 12px;
+    }
+    h1{font-size:28px;text-decoration:underline;}
+    h2{font-size:22px;}
+    h3{font-size:18px;text-decoration:underline;}
+
+    p{margin:6px 0 12px;}
+    ul{margin:6px 0 12px 24px;}
+    li{margin:4px 0;}
+
+    hr{margin:24px 0;border:none;border-top:1px solid #ccc;}
+
+    .blue{color:#333399;}
+    .red{color:#f00;}
+    .maroon{color:#800000;}
+    .underline{text-decoration:underline;}
+	
+	pre.code{
+	  color:#333399;
+	  white-space:pre-wrap;   /* чтобы длинные строки переносились */
+	  font-family:Consolas, Menlo, monospace;
+	  margin:12px 0;
+	}
+  </style>
+</head>
+<body>
+
+<h1>Open Source Information Research Report</h1>
+<h2>{{ org }}</h2>
+<hr>
+<h2 class="underline">Table of contents</h2>
+<p style="text-align:center;">1. General scan information</p>
+<p style="text-align:center;" class="maroon underline">[BASIC SCAN INFO]</p>
+<p style="text-align:center;">2. WHOIS information</p>
+<p style="text-align:center;">3. Social medias links</p>
+<p style="text-align:center;">4. Subdomains information</p>
+<p style="text-align:center;">5. DNS &amp; SSL information</p>
+<p style="text-align:center;">6. Services &amp; frameworks information</p>
+<p style="text-align:center;">7. Basic pre-pentest information</p>
+<p style="text-align:center;" class="maroon underline">[DORKING SCAN INFO]</p>
+<p style="text-align:center;">8. Dorking queries and results links <span class="red">(if was selected)</span></p>
+<p style="text-align:center;" class="maroon underline">[PAGESEARCH SCAN INFO]</p>
+<p style="text-align:center;">9. PageSearch results <span class="red">(if was selected)</span></p>
+<p style="text-align:center;" class="maroon underline">[API SCAN INFO]</p>
+<p style="text-align:center;">10. VirusTotal API scan results <span class="red">(if was selected)</span></p>
+<p style="text-align:center;">11. SecurityTrails API scan results <span class="red">(if was selected)</span></p>
+<p style="text-align:center;">12. HudsonRock API scan results <span class="red">(if was selected)</span></p>
+
+<hr>
+<h3>GENERAL SCAN INFORMATION</h3>
+<p>Total subdomains found: <span class="blue">{{ a_tsf }}</span></p>
+<p>Total social media links found: <span class="blue">{{ a_tsm }}</span></p>
+<p>Status of robots.txt extraction: <span class="blue">{{ robots_txt_result }}</span></p>
+<p>Status of sitemap.xml extraction: <span class="blue">{{ sitemap_xml_result }}</span></p>
+<p>Status of sitemap.xml links extraction: <span class="blue">{{ sitemap_links }}</span></p>
+<p>Google Dorking status: <span class="blue">{{ dorking_status }}</span></p>
+<p>PageSearch conduction: <span class="blue">{{ pagesearch_ui_mark }}</span></p>
+<p>Snapshotting conduction: <span class="blue">{{ snapshotting_ui_mark }}</span></p>
+<p>Report creation time: <span class="blue">{{ ctime }}</span></p>
+
+<hr>
+<h3>WHOIS INFORMATION</h3>
+<p>Domain: <span class="blue">{{ sh_domain }}</span></p>
+<p>Full URL: <span class="blue">{{ full_url }}</span></p>
+<p>IP address: <span class="blue">{{ ip_address }}</span></p>
+<p>Registrar: <span class="blue">{{ registrar }}</span></p>
+<p>Creation date: <span class="blue">{{ creation_date }}</span></p>
+<p>Expiration date: <span class="blue">{{ expiration_date }}</span></p>
+<p>Organization name: <span class="blue">{{ org }}</span></p>
+<p>Contact e-mails: <span class="blue">{{ mails }}</span></p>
+
+<hr>
+<h3>SOCIAL MEDIAS SEARCH RESULTS</h3>
+<p>FACEBOOK:</p>
+<ul>
+  {% for link in fb_links %}
+    <li class="blue">⇒ {{ link }}</li>
+  {% endfor %}
+</ul>
+<p>TWITTER (+ X.com):</p>
+<ul>
+  {% for link in tw_links %}
+    <li class="blue">⇒ {{ link }}</li>
+  {% endfor %}
+  {% for link in xcom_links %}
+    <li class="blue">⇒ {{ link }}</li>
+  {% endfor %}
+</ul>
+<p>INSTAGRAM:</p>
+<ul>
+  {% for link in inst_links %}
+    <li class="blue">⇒ {{ link }}</li>
+  {% endfor %}
+</ul>
+<p>TELEGRAM:</p>
+<ul>
+  {% for link in tg_links %}
+    <li class="blue">⇒ {{ link }}</li>
+  {% endfor %}
+</ul>
+<p>TIKTOK:</p>
+<ul>
+  {% for link in tt_links %}
+    <li class="blue">⇒ {{ link }}</li>
+  {% endfor %}
+</ul>
+<p>LINKEDIN:</p>
+<ul>
+  {% for link in li_links %}
+    <li class="blue">⇒ {{ link }}</li>
+  {% endfor %}
+</ul>
+<p>VKONTAKTE:</p>
+<ul>
+  {% for link in vk_links %}
+    <li class="blue">⇒ {{ link }}</li>
+  {% endfor %}
+</ul>
+<p>YOUTUBE:</p>
+<ul>
+  {% for link in yt_links %}
+    <li class="blue">⇒ {{ link }}</li>
+  {% endfor %}
+</ul>
+<p>ODNOKLASSNIKI:</p>
+<ul>
+  {% for link in ok_links %}
+    <li class="blue">⇒ {{ link }}</li>
+  {% endfor %}
+</ul>
+<p>WECHAT:</p>
+<ul>
+  {% for link in wc_links %}
+    <li class="blue">⇒ {{ link }}</li>
+  {% endfor %}
+</ul>
+
+<hr>
+<h3>SUBDOMAINS ANALYSIS RESULTS</h3>
+<p>Found subdomains:</p>
+<ul>
+  {% for sd in subdomains %}
+    <li class="blue">⇒ {{ sd }}</li>
+  {% endfor %}
+</ul>
+
+<p>Subdomains IP addresses:</p>
+<ul>
+  {% for sdip in subdomain_ip %}
+    <li class="blue">⇒ {{ sdip }}</li>
+  {% endfor %}
+</ul>
+
+<p>Subdomains e-mails:</p>
+<ul>
+  {% for smails in subdomain_mails %}
+    <li class="blue">⇒ {{ smails }}</li>
+  {% endfor %}
+</ul>
+
+<hr>
+<h3>DNS &amp; SSL INFORMATION</h3>
+<p>(DNS) Name servers: <span class="blue">{{ name_servers }}</span></p>
+<p>(DNS) MX addresses: <span class="blue">{{ mx_records }}</span></p>
+<p>(SSL) Issuer: <span class="blue">{{ issuer }}</span></p>
+<p>(SSL) Subject: <span class="blue">{{ subject }}</span></p>
+<p>(SSL) Not before: <span class="blue">{{ notBefore }}</span></p>
+<p>(SSL) Not after: <span class="blue">{{ notAfter }}</span></p>
+<p>(SSL) Certificate name: <span class="blue">{{ commonName }}</span></p>
+<p>(SSL) Certificate serial number: <span class="blue">{{ serialNumber }}</span></p>
+
+<hr>
+<h3>SERVICES &amp; FRAMEWORKS INFORMATION</h3>
+<p>Web servers:</p>
+<ul>
+  {% for ws in web_servers %}
+    <li class="blue">⇒ {{ ws }}</li>
+  {% endfor %}
+</ul>
+<p>CMS:</p>
+<ul>
+  {% for cm in cms %}
+    <li class="blue">⇒ {{ cm }}</li>
+  {% endfor %}
+</ul>
+<p>Used programming languages:</p>
+<ul>
+  {% for pl in programming_languages %}
+    <li class="blue">⇒ {{ pl }}</li>
+  {% endfor %}
+</ul>
+<p>Used web frameworks:</p>
+<ul>
+  {% for wf in web_frameworks %}
+    <li class="blue">⇒ {{ wf }}</li>
+  {% endfor %}
+</ul>
+<p>Analytics service:</p>
+<ul>
+  {% for analytic in analytics %}
+    <li class="blue">⇒ {{ analytic }}</li>
+  {% endfor %}
+</ul>
+<p>Used JavaScript frameworks:</p>
+<ul>
+  {% for jsf in javascript_frameworks %}
+    <li class="blue">⇒ {{ jsf }}</li>
+  {% endfor %}
+</ul>
+<p>Tags:</p>
+<ul>
+  {% for tag in tags %}
+    <li class="blue">⇒ {{ tag }}</li>
+  {% endfor %}
+</ul>
+<p>Common Platform Enumeration:</p>
+<ul>
+  {% for cpe in cpes %}
+    <li class="blue">⇒ {{ cpe }}</li>
+  {% endfor %}
+</ul>
+
+<hr>
+<h3 class="underline">BASIC PRE-PENTEST INFORMATION</h3>
+<p>Open ports:</p>
+<ul>
+  {% for op in ports %}
+    <li class="blue">⇒ {{ op }}</li>
+  {% endfor %}
+</ul>
+<p>Hostnames:</p>
+<ul>
+  {% for hn in hostnames %}
+    <li class="blue">⇒ {{ hn }}</li>
+  {% endfor %}
+</ul>
+<p>Potential vulnerabilities:</p>
+<ul>
+  {% for vuln in vulns %}
+    <li class="blue">⇒ {{ vuln }}</li>
+  {% endfor %}
+</ul>
+
+<hr>
+<h3 class="underline">DORKING SCAN INFO</h3>
+<pre class="code">{{ add_dsi | safe }}</pre>
+
+<hr>
+<h3 class="underline">PAGESEARCH RESULTS</h3>
+<p>Amount of accessible subdomains: <span class="blue">{{ ps_s }}</span></p>
+<p>Amount of email addresses: <span class="blue">{{ ps_e }}</span></p>
+<p>Amount of found documents: <span class="blue">{{ ps_f }}</span></p>
+<p>Amount of found cookies: <span class="blue">{{ ps_c }}</span></p>
+<p>Amount of found API key: <span class="blue">{{ ps_a }}</span></p>
+<p>Amount of WEB elements found: <span class="blue">{{ ps_w }}</span></p>
+<p>Amount of exposed passwords found: <span class="blue">{{ ps_p }}</span></p>
+<p>PageSearch process listing:</p>
+<pre class="code">{{ ps_string }}</pre>
+
+<hr>
+<h3 class="underline">VIRUSTOTAL API SCAN RESULTS</h3>
+<pre class="code">{{ virustotal_output }}</pre>
+
+<hr>
+<h3 class="underline">SECURITYTRAILS API SCAN RESULTS</h3>
+<pre class="code">{{ securitytrails_output }}</pre>
+
+<hr>
+<h3 class="underline">HUDSONROCK API SCAN RESULTS</h3>
+<pre class="code">{{ hudsonrock_output }}</pre>
+
+<hr>
+<h3 style="padding-top:10px;text-align:center;">Created using DPULSE software by OSINT-TECHNOLOGIES</h3>
+
+<p>Visit our web-pages:</p>
+<ul>
+  <li class="blue">https://github.com/OSINT-TECHNOLOGIES</li>
+  <li class="blue">https://pypi.org/project/dpulse/</li>
+</ul>

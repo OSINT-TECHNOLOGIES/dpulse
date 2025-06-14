@@ -12,3 +12,4 @@ openpyxl==3.1.2
 PyMuPDF==1.24.7
 selenium==4.28.1
 webdriver-manager==4.0.2
+undetected_chromedriver==3.5.5

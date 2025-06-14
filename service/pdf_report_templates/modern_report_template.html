@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>OSINT Report for {{ sh_domain }}</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono&family=Fira+Sans:wght@400;600&family=Fira+Code&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style media="print">
+	@page { size: A4; margin: 20mm; }
+	body { padding:0!important; background:#fff!important; color:#000!important; }
+	.control-panel, .toc-container, .back-to-top { display:none!important; }
+	h1,h2,h3 { page-break-after:avoid; }
+	section { page-break-inside:avoid; }
+</style>
+
+<style>
+	:root{
+	  --bg-color:#fff;--text-color:#333;--link-color:#007bff;
+	  --accent-color:#333399;--hr-color:#ccc;
+	  --font-main:'Inter',sans-serif;--font-code:'Roboto Mono',monospace;
+	}
+	body.dark{
+	  --bg-color:#1e1e1e;--text-color:#ccc;--link-color:#7ca9ff;
+	  --accent-color:#9db2ff;--hr-color:#444;
+	}
+	*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+	html{scroll-behavior:smooth;}
+
+	body{
+	  font:15px/1.6 var(--font-main);
+	  background:var(--bg-color);color:var(--text-color);
+	  padding:24px 24px 24px 260px;
+	  transition:background .3s,color .3s;
+	}
+
+	h1,h2,h3{text-align:center;font-weight:700;font-family:var(--font-main);margin:24px 0 12px;}
+	h1{font-size:28px;text-decoration:underline;}
+	h2{font-size:22px;}
+	h3{font-size:18px;text-decoration:underline;margin-top:36px;}
+
+	p{margin:6px 0 12px;}
+	ul{margin:6px 0 12px 24px;}
+	li{margin:4px 0;}
+	hr{margin:24px 0;border:none;border-top:1px solid var(--hr-color);}
+	pre,code{font-family:var(--font-code);color:var(--accent-color);white-space:pre-wrap;margin:12px 0;}
+
+	.blue{color:var(--accent-color);}
+	.red{color:#f00;}
+	.maroon{color:#800000;}
+	.underline{text-decoration:underline;}
+	
+	.progress-bar {
+	  position: fixed;
+	  top: 0;
+	  left: 0;
+	  width: 0;
+	  height: 4px;
+	  background: var(--accent-color);
+	  z-index: 1001;
+	  transition: width 0.2s;
+	}
+
+	section {
+	  transition: transform 0.3s, opacity 0.3s;
+	}
+
+	section.active {
+	  transform: translateX(10px);
+	  border-left: 3px solid var(--accent-color);
+	  padding-left: 10px;
+	}
+
+	details {
+	  margin: 10px 0;
+	  padding: 10px;
+	  border-radius: 4px;
+	  border: 1px solid var(--hr-color);
+	  transition: all 0.3s ease;
+	}
+
+	details:hover {
+	  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+	}
+
+	details[open] {
+	  background: var(--bg-color);
+	  border-color: var(--accent-color);
+	}
+
+	details > summary {
+	  padding: 8px;
+	  cursor: pointer;
+	  user-select: none;
+	}
+
+	details > pre {
+	  margin-top: 10px;
+	  padding: 15px;
+	  border-radius: 4px;
+	  background: rgba(0,0,0,0.03);
+	}
+
+	.toc-toggle {
+	  position: absolute;
+	  top: 10px;
+	  right: 10px;
+	  background: var(--bg-color);
+	  border: 1px solid var(--hr-color);
+	  border-radius: 4px;
+	  padding: 4px 8px;
+	  cursor: pointer;
+	  color: var(--text-color);
+	  font-family: var(--font-main);
+	  width: 30px;
+	  height: 30px;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  z-index: 1000;
+	}
+
+	.toc-container {
+	  position: fixed;
+	  top: 0;
+	  left: 0;
+	  width: 240px;
+	  height: 100vh;
+	  overflow-y: auto;
+	  background: var(--bg-color);
+	  border-right: 1px solid var(--hr-color);
+	  padding: 20px 10px;
+	  font-family: var(--font-main);
+	  transition: width 0.3s ease;
+	}
+	
+
+	.toc-container.collapsed {
+	  width: 50px;
+	  overflow: visible;
+	}
+
+	.toc-container.collapsed .toc-section-title,
+	.toc-container.collapsed .toc-link,
+	.toc-container.collapsed h2 {
+	  opacity: 0;
+	  visibility: hidden;
+	  position: absolute;
+	  pointer-events: none;
+	}
+
+	.toc-container.collapsed .toc-toggle {
+	  right: -30px;
+	  position: absolute;
+	  top: 10px;
+	}
+	.toc-section-title{text-align:center;margin:10px 0 8px;font-weight:bold;}
+	.toc-link{display:block;text-align:center;margin-bottom:6px;
+			  color:var(--link-color);text-decoration:none;}
+	.toc-link:hover{text-decoration:underline;}
+	.toc-link.active{font-weight:700;background:var(--accent-color);color:#fff;border-radius:4px;}
+
+	.minimap {
+	  position: fixed;
+	  right: 20px;
+	  top: 50%;
+	  transform: translateY(-50%);
+	  width: 30px;
+	  height: 200px;
+	  background: var(--bg-color);
+	  border: 1px solid var(--hr-color);
+	  border-radius: 15px;
+	  z-index: 999;
+	  opacity: 0.7;
+	  transition: opacity 0.3s;
+	}
+
+	.minimap:hover {
+	  opacity: 1;
+	}
+
+	.minimap-content {
+	  position: absolute;
+	  top: 5px;
+	  left: 5px;
+	  right: 5px;
+	  bottom: 5px;
+	}
+
+	.minimap-section {
+	  position: absolute;
+	  left: 0;
+	  right: 0;
+	  background: var(--accent-color);
+	  border-radius: 2px;
+	}
+
+	.minimap-slider {
+	  position: absolute;
+	  left: 0;
+	  width: 100%;
+	  height: 20px;
+	  background: rgba(0,0,0,0.2);
+	  border-radius: 10px;
+	  cursor: pointer;
+	}
+	
+	.minimap.hidden {
+	  display: none;
+	}
+
+	.technical-term {
+	  text-decoration: underline dotted;
+	  cursor: help;
+	  position: relative;
+	}
+
+	.term-tooltip {
+	  position: absolute;
+	  bottom: 100%;
+	  left: 50%;
+	  transform: translateX(-50%);
+	  background: var(--accent-color);
+	  color: white;
+	  padding: 8px 12px;
+	  border-radius: 4px;
+	  font-size: 14px;
+	  white-space: nowrap;
+	  z-index: 1000;
+	  animation: fadeIn 0.3s;
+	}
+
+	@keyframes fadeIn {
+	  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+	  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+	}
+
+	.control-panel{
+	  position:fixed;top:10px;right:20px;z-index:1000;
+	  display:flex;flex-direction:column;align-items:center;gap:8px;
+	  background:var(--bg-color);padding:10px 14px;
+	  border:1px solid var(--hr-color);border-radius:6px;
+	  box-shadow:0 2px 6px rgba(0,0,0,.08);
+	}
+	.theme-toggle,.font-select{
+	  background:var(--bg-color);color:var(--text-color);
+	  border:1px solid var(--hr-color);border-radius:4px;
+	  font-family:var(--font-main);transition:background .3s,color .3s;
+	}
+	.theme-toggle{padding:6px 12px;cursor:pointer;}
+	.font-select{padding:6px 8px;}
+	.back-to-top{text-align:right;margin-top:16px;}
+
+	details summary{cursor:pointer;font-weight:bold;margin-bottom:6px;}
+	details[open]>summary::after{content:" ▲";float:right;}
+	details>summary::after{content:" ▼";float:right;}
+</style>
+</head>
+
+<body id="top">
+<div class="control-panel">
+  <div style="display:flex;gap:8px;">
+    <button class="theme-toggle" onclick="toggleTheme()">🌓 Theme</button>
+    <button id="printBtn" class="theme-toggle">🖨️ Print</button>
+  </div>
+  <input type="file" id="compareFile" style="display:none" accept=".html">
+  <button class="theme-toggle" onclick="document.getElementById('compareFile').click()">🔄 Compare with report...</button>
+  <button class="theme-toggle" onclick="toggleMinimap()">📍 Toggle Minimap</button>
+  <select id="fontSelect" onchange="changeFont(this.value)" class="font-select">
+    <option value="inter">Inter + Roboto Mono</option>
+    <option value="plex">IBM Plex Sans + Mono</option>
+    <option value="fira">Fira Sans + Fira Code</option>
+    <option value="grotesk">Space Grotesk + Roboto Mono</option>
+  </select>
+</div>
+
+<div class="progress-bar"></div>
+
+<div class="minimap">
+  <div class="minimap-content"></div>
+  <div class="minimap-slider"></div>
+</div>
+
+<div id="splitScreen" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#fff; z-index:9999;">
+  <div style="position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:10001;font-size:15px;background:#f8f8f8;padding:4px 16px;border-radius:8px;border:1px solid #ccc;">
+    <span style="background:#d4ffd4;padding:2px 8px;border-radius:4px;">Only in base report</span>
+    <span style="background:#ffd4d4;padding:2px 8px;border-radius:4px;">Only in uploaded report</span>
+    <span style="background:#fff7b2;padding:2px 8px;border-radius:4px;">Changed</span>
+    <label style="margin-left:20px;"><input type="checkbox" id="diffOnly">Show differences</label>
+    <button onclick="closeSplitScreen()" style="margin-left:20px;">✖</button>
+  </div>
+  <div style="display:flex; width:100vw; height:100vh;">
+    <div id="leftReport" style="width:50%;height:100vh;overflow:auto;border-right:2px solid #ccc;padding:24px 12px 24px 260px;background:#f9f9f9;"></div>
+    <div id="rightReport" style="width:50%;height:100vh;overflow:auto;padding:24px 12px;background:#f4f4f4;"></div>
+  </div>
+</div>
+
+<div class="toc-container">
+  <button class="toc-toggle" onclick="toggleToc()">≡</button>
+  <h2 class="underline">Table of contents</h2>
+  <a href="#general-scan-info" class="toc-link">1. General scan information</a> 
+  <a href="#general-scan-info" class="toc-link">2. General scan statistics</a> 
+  <p class="toc-section-title maroon underline">[BASIC SCAN INFO]</p>
+  <a href="#whois-info" class="toc-link">3. WHOIS information</a>
+  <a href="#social-media-links" class="toc-link">4. Social media links</a>
+  <a href="#subdomains-info" class="toc-link">5. Subdomains</a>
+  <a href="#dns-ssl-info" class="toc-link">6. DNS & SSL</a>
+  <a href="#services-frameworks-info" class="toc-link">7. Services & Frameworks</a>
+  <a href="#pre-pentest-info" class="toc-link">8. Pre-Pentest Info</a>
+  <a href="#pre-pentest-info" class="toc-link">9. Website configuration files</a>
+  <p class="toc-section-title maroon underline">[DORKING SCAN INFO]</p>
+  <a href="#dorking-info" class="toc-link">10. Dorking Results</a>
+  <p class="toc-section-title maroon underline">[PAGESEARCH SCAN INFO]</p>
+  <a href="#pagesearch-results" class="toc-link">11. PageSearch Results</a>
+  <p class="toc-section-title maroon underline">[API SCAN INFO]</p>
+  <a href="#virustotal-results" class="toc-link">12. VirusTotal</a>
+  <a href="#securitytrails-results" class="toc-link">13. SecurityTrails</a>
+  <a href="#hudsonrock-results" class="toc-link">14. HudsonRock</a>
+</div>
+
+<h1>Open Source Information Research Report</h1>
+<h2>{{ org }}</h2>
+<hr>
+
+<h3 id="general-scan-info">GENERAL SCAN INFORMATION</h3>
+<p><strong>Status of robots.txt extraction:</strong> <span class="blue">{{ robots_txt_result }}</span></p>
+<p><strong>Status of sitemap.xml extraction:</strong> <span class="blue">{{ sitemap_xml_result }}</span></p>
+<p><strong>Status of sitemap.xml links extraction:</strong><span class="blue">{{ sitemap_links }}</span></p>
+<p><strong>Google Dorking status:</strong> <span class="blue">{{ dorking_status }}</span></p>
+<p><strong>PageSearch conduction:</strong> <span class="blue">{{ pagesearch_ui_mark }}</span></p>
+<p><strong>Snapshotting conduction:</strong> <span class="blue">{{ snapshotting_ui_mark }}</span></p>
+<p><strong>Report creation time:</strong> <span class="blue">{{ ctime }}</span></p>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
+<h3 id="general-scan-info">GENERAL SCAN STATISTICS</h3>
+<div style="display: flex; align-items: flex-start; gap: 80px;">
+  <div>
+	<p><strong>Total subdomains found:</strong> <span class="blue" id="a_tsf">{{ a_tsf }}</span></p>
+	<p><strong>Total social media links found:</strong> <span class="blue" id="a_tsm">{{ a_tsm }}</span></p> 
+	<p><strong>Total emails found:</strong> <span class="blue" id="a_temails">{{ a_temails }}</span></p> 
+	<p><strong>Total associated IP addresses found:</strong> <span class="blue" id="a_tips">{{ a_tips }}</span></p> 
+	<p><strong>Total open ports found:</strong> <span class="blue" id="a_tops">{{ a_tops }}</span></p> 
+	<p><strong>Total potential vulnerabilities found:</strong> <span class="blue" id="a_tpv">{{ a_tpv }}</span></p> 
+	<p><strong>Accessible subdomains (PageSearch):</strong> <span class="blue" id="ps_s">{{ ps_s }}</span></p>
+	<p><strong>Email addresses (PageSearch):</strong> <span class="blue" id="ps_e">{{ ps_e }}</span></p>
+	<p><strong>Found documents (PageSearch):</strong> <span class="blue" id="ps_f">{{ ps_f }}</span></p>
+	<p><strong>Found cookies (PageSearch):</strong> <span class="blue" id="ps_c">{{ ps_c }}</span></p>
+	<p><strong>Found API keys (PageSearch):</strong> <span class="blue" id="ps_a">{{ ps_a }}</span></p>
+	<p><strong>Found WEB elements (PageSearch):</strong> <span class="blue" id="ps_w">{{ ps_w }}</span></p>
+	<p><strong>Exposed passwords (PageSearch):</strong> <span class="blue" id="ps_p">{{ ps_p }}</span></p>
+  </div>
+  <div style="width: 700px;">
+    <canvas id="statsChart"></canvas>
+  </div>
+</div>
+<hr>
+
+<h3 id="whois-info">WHOIS INFORMATION</h3>
+<p><strong>Domain:</strong> <span class="blue">{{ sh_domain }}</span></p>
+<p><strong>Full URL:</strong> <a href="{{ full_url }}" target="_blank" class="blue">{{ full_url }}</a></p>
+<p><strong>IP address:</strong> <span class="blue">{{ ip_address }}</span></p>
+<p><strong>Registrar:</strong> <span class="blue">{{ registrar }}</span></p>
+<p><strong>Creation date:</strong> <span class="blue">{{ creation_date }}</span></p>
+<p><strong>Expiration date:</strong> <span class="blue">{{ expiration_date }}</span></p>
+<p><strong>Organization name:</strong> <span class="blue">{{ org }}</span></p>
+<p><strong>Contact e-mails:</strong> <span class="blue">{{ mails }}</span></p>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
+<h3 id="social-media-links">SOCIAL MEDIA LINKS</h3>
+<p><strong>FACEBOOK:</strong></p>
+<ul>
+  {% for link in fb_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p><strong>TWITTER (+ X.com):</strong></p>
+<ul>
+  {% for link in tw_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+  {% for link in xcom_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p><strong>INSTAGRAM:</strong></p>
+<ul>
+  {% for link in inst_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p><strong>TELEGRAM:</strong></p>
+<ul>
+  {% for link in tg_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p><strong>TIKTOK:</strong></p>
+<ul>
+  {% for link in tt_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p><strong>LINKEDIN:</strong></p>
+<ul>
+  {% for link in li_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p><strong>VKONTAKTE:</strong></p>
+<ul>
+  {% for link in vk_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p><strong>YOUTUBE:</strong></p>
+<ul>
+  {% for link in yt_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p><strong>ODNOKLASSNIKI:</strong></p>
+<ul>
+  {% for link in ok_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+
+<p><strong>WECHAT:</strong></p>
+<ul>
+  {% for link in wc_links %}
+    <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
+<h3 id="subdomains-info">SUBDOMAINS</h3>
+<p><strong>Found subdomains:</strong></p>
+<ul>
+  {% for sd in subdomains %}
+    <li>⇒ <a href="https://{{ sd }}" target="_blank" class="blue">{{ sd }}</a></li>
+  {% endfor %}
+</ul>
+
+<p><strong>Subdomains IP addresses:</strong></p>
+<ul>
+  {% for sdip in subdomain_ip %}
+    <li class="blue">⇒ {{ sdip }}</li>
+  {% endfor %}
+</ul>
+
+<p><strong>Subdomains e-mails:</strong></p>
+<ul>
+  {% for smails in subdomain_mails %}
+    <li class="blue">⇒ {{ smails }}</li>
+  {% endfor %}
+</ul>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
+<h3 id="dns-ssl-info">DNS & SSL INFORMATION</h3>
+<p><strong>(DNS) Name servers:</strong> <span class="blue">{{ name_servers }}</span></p>
+<p><strong>(DNS) MX addresses:</strong> <span class="blue">{{ mx_records }}</span></p>
+<p><strong>(SSL) Issuer:</strong> <span class="blue">{{ issuer }}</span></p>
+<p><strong>(SSL) Subject:</strong> <span class="blue">{{ subject }}</span></p>
+<p><strong>(SSL) Not before:</strong> <span class="blue">{{ notBefore }}</span></p>
+<p><strong>(SSL) Not after:</strong> <span class="blue">{{ notAfter }}</span></p>
+<p><strong>(SSL) Certificate name:</strong> <span class="blue">{{ commonName }}</span></p>
+<p><strong>(SSL) Certificate serial number:</strong> <span class="blue">{{ serialNumber }}</span></p>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
+<h3 id="services-frameworks-info">SERVICES & FRAMEWORKS INFORMATION</h3>
+<p><strong>Web servers:</strong></p>
+<ul>
+  {% for ws in web_servers %}
+    <li class="blue">⇒ {{ ws }}</li>
+  {% endfor %}
+</ul>
+
+<p><strong>CMS:</strong></p>
+<ul>
+  {% for cm in cms %}
+    <li class="blue">⇒ {{ cm }}</li>
+  {% endfor %}
+</ul>
+
+<p><strong>Used programming languages:</strong></p>
+<ul>
+  {% for pl in programming_languages %}
+    <li class="blue">⇒ {{ pl }}</li>
+  {% endfor %}
+</ul>
+
+<p><strong>Used web frameworks:</strong></p>
+<ul>
+  {% for wf in web_frameworks %}
+    <li class="blue">⇒ {{ wf }}</li>
+  {% endfor %}
+</ul>
+
+<p><strong>Analytics service:</strong></p>
+<ul>
+  {% for analytic in analytics %}
+    <li class="blue">⇒ {{ analytic }}</li>
+  {% endfor %}
+</ul>
+
+<p><strong>Used JavaScript frameworks:</strong></p>
+<ul>
+  {% for jsf in javascript_frameworks %}
+    <li class="blue">⇒ {{ jsf }}</li>
+  {% endfor %}
+</ul>
+
+<p><strong>Tags:</strong></p>
+<ul>
+  {% for tag in tags %}
+    <li class="blue">⇒ {{ tag }}</li>
+  {% endfor %}
+</ul>
+
+<p><strong>Common Platform Enumeration:</strong></p>
+<ul>
+  {% for cpe in cpes %}
+    <li class="blue">⇒ {{ cpe }}</li>
+  {% endfor %}
+</ul>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
+<h3 id="pre-pentest-info">BASIC PRE-PENTEST INFORMATION</h3>
+<p><strong>Open ports:</strong></p>
+<ul>
+  {% for op in ports %}
+    <li class="blue">⇒ {{ op }}</li>
+  {% endfor %}
+</ul>
+
+<p><strong>Hostnames:</strong></p>
+<ul>
+  {% for hn in hostnames %}
+    <li class="blue">⇒ {{ hn }}</li>
+  {% endfor %}
+</ul>
+
+<p><strong>Potential vulnerabilities:</strong></p>
+<ul>
+  {% for vuln in vulns %}
+    <li class="blue">⇒ {{ vuln }}</li>
+  {% endfor %}
+</ul>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
+
+<h3 id="technical-files">WEBSITE TECHNICAL FILES</h3>
+<details>
+  <summary>robots.txt</summary>
+  <pre>{{ robots_content | safe }}</pre>
+</details>
+
+<details>
+  <summary>sitemap.xml</summary>
+  <pre>{{ sitemap_xml_content | safe }}</pre>
+</details>
+
+<details>
+  <summary>Sitemap links</summary>
+  <pre>{{ sitemap_txt_content | safe }}</pre>
+</details>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+
+
+{% if add_dsi %}
+<h3 id="dorking-info">DORKING SCAN INFO</h3>
+<details>
+  <summary>Dorking Results</summary>
+  <pre>{{ add_dsi | safe }}</pre>
+</details>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+{% endif %}
+
+{% if ps_string %}
+<h3 id="pagesearch-results">PAGESEARCH RESULTS</h3>
+<details>
+  <summary>PageSearch Process Listing</summary>
+  <pre>{{ ps_string }}</pre>
+</details>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+{% endif %}
+
+{% if virustotal_output %}
+<h3 id="virustotal-results">VIRUSTOTAL API SCAN RESULTS</h3>
+<details>
+  <summary>VirusTotal Output</summary>
+  <pre>{{ virustotal_output | safe }}</pre>
+</details>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+{% endif %}
+
+{% if securitytrails_output %}
+<h3 id="securitytrails-results">SECURITYTRAILS API SCAN RESULTS</h3>
+<details>
+  <summary>SecurityTrails Output</summary>
+  <pre>{{ securitytrails_output | safe }}</pre>
+</details>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+{% endif %}
+
+{% if hudsonrock_output %}
+<h3 id="hudsonrock-results">HUDSONROCK API SCAN RESULTS</h3>
+<details>
+  <summary>HudsonRock Output</summary>
+  <pre>{{ hudsonrock_output | safe }}</pre>
+</details>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
+{% endif %}
+
+<h3 style="text-align:center; padding-top: 10px;">Created using DPULSE software by OSINT-TECHNOLOGIES</h3>
+<p style="text-align:center;">Visit our web-pages:</p>
+<ul style="text-align:center; list-style: none; padding-left: 0;">
+  <li><a href="https://github.com/OSINT-TECHNOLOGIES" target="_blank" class="blue">https://github.com/OSINT-TECHNOLOGIES</a></li>
+  <li><a href="https://pypi.org/project/dpulse/" target="_blank" class="blue">https://pypi.org/project/dpulse/</a></li>
+</ul>
+
+<script>
+const fontMap = {
+  inter:{main:"'Inter', sans-serif",code:"'Roboto Mono', monospace"},
+  plex:{main:"'IBM Plex Sans', sans-serif",code:"'IBM Plex Mono', monospace"},
+  fira:{main:"'Fira Sans', sans-serif",code:"'Fira Code', monospace"},
+  grotesk:{main:"'Space Grotesk', sans-serif",code:"'Roboto Mono', monospace"}
+};
+
+function changeFont(val){
+  const c=fontMap[val]||fontMap.inter;
+  document.documentElement.style.setProperty('--font-main',c.main);
+  document.documentElement.style.setProperty('--font-code',c.code);
+  localStorage.setItem('fontChoice',val);
+}
+
+function toggleTheme(){
+  document.body.classList.toggle('dark');
+  localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');
+}
+
+function toggleToc() {
+  const toc = document.querySelector('.toc-container');
+  toc.classList.toggle('collapsed');
+  
+  const body = document.body;
+  if (toc.classList.contains('collapsed')) {
+    body.style.paddingLeft = '60px';
+  } else {
+    body.style.paddingLeft = '260px';
+  }
+  
+  localStorage.setItem('tocCollapsed', toc.classList.contains('collapsed'));
+}
+
+function toggleMinimap() {
+  const minimap = document.querySelector('.minimap');
+  minimap.classList.toggle('hidden');
+  localStorage.setItem('minimapHidden', minimap.classList.contains('hidden'));
+}
+
+function initActiveToc(){
+  const links=document.querySelectorAll('.toc-link[href^="#"]');
+  const sections=[...links].map(l=>document.querySelector(l.getAttribute('href'))).filter(Boolean);
+  const obs=new IntersectionObserver(ent=>{
+    ent.forEach(e=>{
+      const id=e.target.id;
+      const link=document.querySelector(`.toc-link[href="#${id}"]`);
+      if(link) e.isIntersecting?link.classList.add('active'):link.classList.remove('active');
+    });
+  },{rootMargin:'-50% 0px -50% 0px',threshold:0});
+  sections.forEach(s=>obs.observe(s));
+}
+
+function bindPrintPdf(){
+  const printBtn=document.getElementById('printBtn');
+  const pdfBtn=document.getElementById('pdfBtn');
+  if(printBtn) printBtn.addEventListener('click',()=>window.print());
+  if(pdfBtn) pdfBtn.addEventListener('click',()=>{
+    const el=document.querySelector('main');
+    const opt={margin:0.5,filename:`OSINT_Report_${document.title}.pdf`,
+      image:{type:'jpeg',quality:0.98},
+      html2canvas:{scale:2,useCORS:true},
+      jsPDF:{unit:'in',format:'a4',orientation:'portrait'}};
+    if(window.html2pdf) html2pdf().set(opt).from(el).save();
+    else console.error('html2pdf not loaded');
+  });
+}
+
+function closeSplitScreen() {
+  document.getElementById('splitScreen').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function syncScroll(el1, el2) {
+  let ignore = false;
+  el1.addEventListener('scroll', function() {
+    if (ignore) return; ignore = true;
+    el2.scrollTop = el1.scrollTop;
+    el2.scrollLeft = el1.scrollLeft;
+    ignore = false;
+  });
+  el2.addEventListener('scroll', function() {
+    if (ignore) return; ignore = true;
+    el1.scrollTop = el2.scrollTop;
+    el1.scrollLeft = el2.scrollLeft;
+    ignore = false;
+  });
+}
+
+function compareLists(leftParent, rightParent) {
+  let leftLists = leftParent.querySelectorAll('ul');
+  let rightLists = rightParent.querySelectorAll('ul');
+  for (let i=0; i<leftLists.length; ++i) {
+    let l = leftLists[i], r = rightLists[i];
+    if (!r) continue;
+    let lItems = Array.from(l.querySelectorAll('li')).map(li=>li.textContent.trim());
+    let rItems = Array.from(r.querySelectorAll('li')).map(li=>li.textContent.trim());
+    l.querySelectorAll('li').forEach(li=>{
+      if (!rItems.includes(li.textContent.trim())) li.style.background = '#d4ffd4';
+    });
+    r.querySelectorAll('li').forEach(li=>{
+      if (!lItems.includes(li.textContent.trim())) li.style.background = '#ffd4d4';
+    });
+  }
+}
+
+function compareNums(leftParent, rightParent) {
+  let leftSpans = leftParent.querySelectorAll('span[id]');
+  let rightSpans = rightParent.querySelectorAll('span[id]');
+  for (let i=0; i<leftSpans.length; ++i) {
+    let l = leftSpans[i];
+    let r = Array.from(rightSpans).find(s=>s.id===l.id);
+    if (r) {
+      if (l.textContent.trim() !== r.textContent.trim()) {
+        l.style.background = '#fff7b2';
+        r.style.background = '#fff7b2';
+      }
+    } else {
+      l.style.background = '#d4ffd4';
+    }
+  }
+  rightSpans.forEach(r=>{
+    if (!leftParent.querySelector('span[id="'+r.id+'"]')) {
+      r.style.background = '#ffd4d4';
+    }
+  });
+}
+
+function comparePreBlocks(leftParent, rightParent) {
+  let leftPres = leftParent.querySelectorAll('details > pre');
+  let rightPres = rightParent.querySelectorAll('details > pre');
+  for (let i=0; i<leftPres.length; ++i) {
+    let l = leftPres[i], r = rightPres[i];
+    if (l && r) {
+      if (l.textContent.trim() !== r.textContent.trim()) {
+        l.style.background = '#fff7b2';
+        r.style.background = '#fff7b2';
+      }
+    } else if (l && !r) {
+      l.style.background = '#d4ffd4';
+    } else if (!l && r) {
+      r.style.background = '#ffd4d4';
+    }
+  }
+}
+
+function compareReports(leftBody, rightBody) {
+  compareLists(leftBody, rightBody);
+  compareNums(leftBody, rightBody);
+  comparePreBlocks(leftBody, rightBody);
+}
+
+const technicalTerms = {
+  'Potential vulnerabilities': 'If you see vulnerabilities here, please, do a double check. Remember about "potential" word',
+  'Subdomains IP addresses': 'This list is not correlated with "Found subdomains" list', 
+  'Subdomains e-mails': 'This list is not correlated with "Found subdomains" list', 
+  'Tags': 'Keywords that categorize and describe various technologies or features',
+  'CMS': 'Software for managing digital content on a website',
+  'Analytics service': 'Tool that monitors and analyzes website visitor behavior, traffic sources, and user engagement metrics',
+  'Common Platform Enumeration': 'Standardized naming scheme for identifying and categorizing operating systems, applications and hardware',
+  'Hostnames': 'Hostnames are human-readable labels assigned to devices on a network',
+  'VIRUSTOTAL API SCAN RESULTS': 'See docs.virustotal.com/docs/results-reports for more details',
+  'HUDSONROCK API SCAN RESULTS': 'See docs.hudsonrock.com for more details',
+  'SECURITYTRAILS API SCAN RESULTS': 'See docs.securitytrails.com/reference for more details'
+};
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.body.innerHTML = document.body.innerHTML.replace(
+    new RegExp(`\\b(${Object.keys(technicalTerms).join('|')})\\b`, 'g'),
+    match => `<span class="technical-term" data-term="${match}">${match}</span>`
+  );
+
+  document.querySelectorAll('.technical-term').forEach(term => {
+    term.addEventListener('click', () => {
+      const definition = technicalTerms[term.dataset.term];
+      const tooltip = document.createElement('div');
+      tooltip.className = 'term-tooltip';
+      tooltip.textContent = definition;
+      term.appendChild(tooltip);
+      setTimeout(() => tooltip.remove(), 3000);
+    });
+  });
+
+  if(localStorage.getItem('theme')==='dark') document.body.classList.add('dark');
+  const saved=localStorage.getItem('fontChoice')||'inter';
+  document.getElementById('fontSelect').value=saved;
+  changeFont(saved);
+  bindPrintPdf();
+
+  const tocCollapsed = localStorage.getItem('tocCollapsed') === 'true';
+  if (tocCollapsed) {
+    document.querySelector('.toc-container').classList.add('collapsed');
+    document.body.style.paddingLeft = '60px';
+  }
+
+  const minimapHidden = localStorage.getItem('minimapHidden') === 'true';
+  if (minimapHidden) {
+    document.querySelector('.minimap').classList.add('hidden');
+  }
+
+  const progressBar = document.querySelector('.progress-bar');
+  const minimap = document.querySelector('.minimap');
+  const minimapContent = document.querySelector('.minimap-content');
+  const sections = document.querySelectorAll('h3');
+  
+  function updateMinimap() {
+    const totalHeight = document.documentElement.scrollHeight;
+    const viewportHeight = window.innerHeight;
+    const scrollPercentage = window.scrollY / (totalHeight - viewportHeight);
+    
+    minimapContent.innerHTML = '';
+    sections.forEach((section, index) => {
+      const rect = section.getBoundingClientRect();
+      const sectionTop = (section.offsetTop / totalHeight) * 100;
+      const sectionHeight = (rect.height / totalHeight) * 100;
+      
+      const sectionEl = document.createElement('div');
+      sectionEl.className = 'minimap-section';
+      sectionEl.style.top = sectionTop + '%';
+      sectionEl.style.height = sectionHeight + '%';
+      sectionEl.addEventListener('click', () => {
+        section.scrollIntoView({ behavior: 'smooth' });
+      });
+      minimapContent.appendChild(sectionEl);
+    });
+    
+    const slider = document.querySelector('.minimap-slider');
+    if (slider) {
+      slider.style.top = (scrollPercentage * 100) + '%';
+    }
+  }
+
+  window.addEventListener('scroll', () => {
+    const winScroll = document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    progressBar.style.width = scrolled + '%';
+    
+    const sections = document.querySelectorAll('section');
+    sections.forEach(section => {
+      const rect = section.getBoundingClientRect();
+      if (rect.top >= 0 && rect.top <= window.innerHeight / 2) {
+        section.classList.add('active');
+      } else {
+        section.classList.remove('active');
+      }
+    });
+
+    updateMinimap();
+  });
+
+  window.addEventListener('resize', updateMinimap);
+  updateMinimap();
+
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+  
+  document.querySelectorAll('details').forEach(detail => {
+    detail.addEventListener('toggle', function() {
+      if (this.open) {
+        const content = this.querySelector('pre');
+        if (content) {
+          content.style.opacity = '0';
+          content.style.transform = 'translateY(-10px)';
+          setTimeout(() => {
+            content.style.transition = 'all 0.3s ease';
+            content.style.opacity = '1';
+            content.style.transform = 'translateY(0)';
+          }, 0);
+        }
+      }
+    });
+  });
+
+  if (window.Chart) { 
+    const stats = [
+      parseInt(document.getElementById('a_tsf')?.textContent) || 0,
+      parseInt(document.getElementById('a_tsm')?.textContent) || 0,
+      parseInt(document.getElementById('a_temails')?.textContent) || 0,
+      parseInt(document.getElementById('a_tips')?.textContent) || 0,
+      parseInt(document.getElementById('a_tops')?.textContent) || 0,
+      parseInt(document.getElementById('a_tpv')?.textContent) || 0,
+      parseInt(document.getElementById('ps_s')?.textContent) || 0,
+      parseInt(document.getElementById('ps_e')?.textContent) || 0,
+      parseInt(document.getElementById('ps_f')?.textContent) || 0,
+      parseInt(document.getElementById('ps_c')?.textContent) || 0,
+      parseInt(document.getElementById('ps_a')?.textContent) || 0,
+      parseInt(document.getElementById('ps_w')?.textContent) || 0,
+      parseInt(document.getElementById('ps_p')?.textContent) || 0
+    ];
+
+    const labels = [
+      'Subdomains',
+      'Social Media', 
+      'Emails',
+      'IP Addresses',
+      'Open Ports',
+      'Vulnerabilities',
+      'Accessible subdomains',
+      'Email addresses',
+      'Found documents',
+      'Found cookies',
+      'Found API keys',
+      'WEB elements',
+      'Exposed passwords'
+    ];
+
+    const colors = [
+      '#4caf50', '#2196f3', '#ff9800', '#9c27b0', '#f44336', '#607d8b',
+      '#00bcd4', '#8bc34a', '#ffc107', '#e91e63', '#3f51b5', '#795548', '#9e9e9e'
+    ];
+
+    const ctx = document.getElementById('statsChart')?.getContext('2d');
+    if (ctx) {
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Count',
+            data: stats,
+            backgroundColor: colors
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+  }
+});
+
+document.getElementById('compareFile')?.addEventListener('change', function(e){
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    let parser = new DOMParser();
+    let rightDoc = parser.parseFromString(ev.target.result, "text/html");
+    let leftDoc = document.cloneNode(true);
+    document.getElementById('leftReport').innerHTML = '';
+    document.getElementById('rightReport').innerHTML = '';
+    let leftBody = leftDoc.body.cloneNode(true);
+    let rightBody = rightDoc.body.cloneNode(true);
+    leftBody.querySelectorAll('#splitScreen, .control-panel').forEach(e=>e.remove());
+    rightBody.querySelectorAll('#splitScreen, .control-panel').forEach(e=>e.remove());
+    document.getElementById('leftReport').appendChild(leftBody);
+    document.getElementById('rightReport').appendChild(rightBody);
+    compareReports(leftBody, rightBody);
+    document.getElementById('splitScreen').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    syncScroll(document.getElementById('leftReport'), document.getElementById('rightReport'));
+  };
+  reader.readAsText(file);
+});
+
+document.addEventListener('change', function(e){
+  if (e.target && e.target.id === 'diffOnly') {
+    let showDiff = e.target.checked;
+    ['leftReport','rightReport'].forEach(id=>{
+      let el = document.getElementById(id);
+      el.querySelectorAll('li,span[id],pre').forEach(node=>{
+        let bg = node.style.background;
+        if (showDiff && (!bg || bg==='')) node.style.display = 'none';
+        else node.style.display = '';
+      });
+    });
+  }
+});
+</script> 
+</body>
+</html>

@@ -1,21 +1,16 @@
 import sys
+import socket
+import re
+import urllib
+from collections import defaultdict
+from urllib.parse import urlparse
+import whois
+import requests
+from bs4 import BeautifulSoup
+from colorama import Fore, Style
+
 sys.path.append('service')
 from logs_processing import logging
-
-try:
-    import socket
-    import whois
-    import re
-    import requests
-    import urllib.parse
-    from colorama import Fore, Style
-    from urllib.parse import urlparse
-    from collections import defaultdict
-    from bs4 import BeautifulSoup
-    import random
-except ImportError as e:
-    print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
-    sys.exit()
 
 def ip_gather(short_domain):
     ip_address = socket.gethostbyname(short_domain)

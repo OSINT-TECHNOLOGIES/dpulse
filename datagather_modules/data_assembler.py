@@ -1,33 +1,23 @@
 import sys
-sys.path.append('service')
-sys.path.append('pagesearch')
-sys.path.append('dorking')
-sys.path.append('snapshotting')
+from datetime import datetime
+import os
+from colorama import Fore, Style
 
+sys.path.extend(['service', 'pagesearch', 'dorking', 'snapshotting'])
+
+from logs_processing import logging
+from config_processing import read_config
+from db_creator import get_dorking_query
 import crawl_processor as cp
 import dorking_handler as dp
 import networking_processor as np
 from pagesearch_parsers import subdomains_parser
-from logs_processing import logging
 from api_virustotal import api_virustotal_check
 from api_securitytrails import api_securitytrails_check
 from api_hudsonrock import api_hudsonrock_check
-from db_creator import get_dorking_query
 from screen_snapshotting import take_screenshot
-from config_processing import read_config
 from html_snapshotting import save_page_as_html
 from archive_snapshotting import download_snapshot
-
-try:
-    import requests
-    from datetime import datetime
-    import os
-    from colorama import Fore, Style
-    import sqlite3
-    import configparser
-except ImportError as e:
-    print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
-    sys.exit()
 
 def establishing_dork_db_connection(dorking_flag):
     dorking_db_paths = {
@@ -118,6 +108,10 @@ class DataProcessing():
         for key in common_socials:
             common_socials[key] = list(set(common_socials[key]))
         total_socials = sum(len(values) for values in common_socials.values())
+        total_ports = len(ports)
+        total_ips = len(subdomain_ip) + 1
+        total_vulns = len(vulns)
+
         print(Fore.LIGHTMAGENTA_EX + "\n[BASIC SCAN END]\n" + Style.RESET_ALL)
         if report_file_type == 'xlsx':
             if pagesearch_flag.lower() == 'y':
@@ -206,7 +200,17 @@ class DataProcessing():
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
                     print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
-                    ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, keywords_messages_list = subdomains_parser(to_search_array[0], report_folder, keywords, keywords_flag)
+                    (
+                        ps_emails_return,
+                        accessible_subdomains,
+                        emails_amount,
+                        files_counter,
+                        cookies_counter,
+                        api_keys_counter,
+                        website_elements_counter,
+                        exposed_passwords_counter,
+                        keywords_messages_list
+                    ), ps_string = subdomains_parser(to_search_array[0], report_folder, keywords, keywords_flag)
                     total_links_counter = accessed_links_counter = "No results because PageSearch does not gather these categories"
                     if len(keywords_messages_list) == 0:
                         keywords_messages_list = ['No keywords were found']
@@ -215,11 +219,13 @@ class DataProcessing():
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
                     ps_emails_return = ""
                     accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 'No results because no subdomains were found'
+                    ps_string = 'No PageSearch listing provided because no subdomains were found'
                     keywords_messages_list = ['No data was gathered because no subdomains were found']
                     pass
             elif pagesearch_flag.lower() == 'n':
                 accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = keywords_messages_list = "No results because user did not selected PageSearch for this scan"
                 ps_emails_return = ""
+                ps_string = 'No PageSearch listing provided because user did not selected PageSearch mode for this scan'
                 pass
 
             if dorking_flag == 'n':
@@ -282,7 +288,7 @@ class DataProcessing():
                           hostnames, cpes, tags, vulns, common_socials, total_socials, ps_emails_return,
                           accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter,
                           website_elements_counter, exposed_passwords_counter, total_links_counter, accessed_links_counter, keywords_messages_list, dorking_status, dorking_file_path,
-                          virustotal_output, securitytrails_output, hudsonrock_output]
+                          virustotal_output, securitytrails_output, hudsonrock_output, ps_string, total_ports, total_ips, total_vulns]
 
         report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime, api_scan_db, used_api_flag]
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} ENDS HERE')

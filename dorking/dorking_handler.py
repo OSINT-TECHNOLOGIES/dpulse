@@ -1,22 +1,18 @@
 import sys
+import random
+import time
+import os
+import logging
+from colorama import Fore, Style
+import undetected_chromedriver as uc
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+
 sys.path.append('service')
-from config_processing import read_config
 from logs_processing import logging
 from ua_rotator import user_agent_rotator
 from proxies_rotator import proxies_rotator
-
-try:
-    import requests.exceptions
-    from colorama import Fore, Style
-    import mechanicalsoup
-    import re
-    import requests
-    import sqlite3
-    import time
-    import os
-except ImportError as e:
-    print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
-    sys.exit()
+from config_processing import read_config
 
 def proxy_transfer():
     proxy_flag, proxies_list = proxies_rotator.get_proxies()
@@ -27,44 +23,96 @@ def proxy_transfer():
         working_proxies = proxies_rotator.check_proxies(proxies_list)
         return proxy_flag, working_proxies
 
-def solid_google_dorking(query, dorking_delay, delay_step, proxy_flag, proxies_list, pages=100):
+def solid_google_dorking(query, proxy_flag, proxies_list, pages=1):
+    result_query = []
+    request_count = 0
     try:
-        browser = mechanicalsoup.StatefulBrowser()
-        if proxy_flag == 1:
-            browser.session.proxies = proxies_rotator.get_random_proxy(proxies_list)
-        else:
+        config_values = read_config()
+        options = uc.ChromeOptions()
+        options.binary_location = r"{}".format(config_values['dorking_browser'])
+        dorking_browser_mode = config_values['dorking_browser_mode']
+        if dorking_browser_mode.lower() == 'headless':
+            options.add_argument("--headless=new")
+        elif dorking_browser_mode.lower() == 'nonheadless':
             pass
-        browser.open("https://www.google.com/")
-        browser.select_form('form[action="/search"]')
-        browser["q"] = str(query)
-        browser.submit_selected(btnName="btnG")
-        result_query = []
-        request_count = 0
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-blink-features=AutomationControlled")
+        options.add_argument("--disable-infobars")
+        options.add_argument("--disable-extensions")
+        options.add_argument(f"user-agent={user_agent_rotator.get_random_user_agent()}")
+        if proxy_flag == 1:
+            proxy = proxies_rotator.get_random_proxy(proxies_list)
+            options.add_argument(f'--proxy-server={proxy["http"]}')
+        driver = uc.Chrome(options=options)
         for page in range(pages):
             try:
-                for link in browser.links():
-                    target = link.attrs['href']
-                    if (target.startswith('/url?') and not target.startswith("/url?q=http://webcache.googleusercontent.com")):
-                        target = re.sub(r"^/url\?q=([^&]*)&.*", r"\1", target)
-                        result_query.append(target)
+                driver.get("https://www.google.com")
+                time.sleep(random.uniform(2, 4))
+                try:
+                    accepted = False
+                    try:
+                        accept_btn = driver.find_element(By.XPATH, '//button[contains(text(), "Принять все") or contains(text(), "Accept all")]')
+                        driver.execute_script("arguments[0].click();", accept_btn)
+                        print(Fore.GREEN + 'Pressed "Accept all" button!' + Style.RESET_ALL)
+                        accepted = True
+                        time.sleep(random.uniform(2, 3))
+                    except:
+                        pass
+                    if not accepted:
+                        iframes = driver.find_elements(By.TAG_NAME, "iframe")
+                        for iframe in iframes:
+                            driver.switch_to.frame(iframe)
+                            try:
+                                accept_btn = driver.find_element(By.XPATH, '//button[contains(text(), "Принять все") or contains(text(), "Accept all")]')
+                                driver.execute_script("arguments[0].click();", accept_btn)
+                                print(Fore.GREEN + 'Pressed "Accept all" button!' + Style.RESET_ALL)
+                                accepted = True
+                                driver.switch_to.default_content()
+                                time.sleep(random.uniform(2, 3))
+                                break
+                            except:
+                                driver.switch_to.default_content()
+                                continue
+                        driver.switch_to.default_content()
+                    if not accepted:
+                        print(Fore.GREEN + "Google TOS button was not found. Seems good..." + Style.RESET_ALL)
+                except Exception:
+                    print(Fore.RED + f'Error with pressing "Accept all" button. Closing...' + Style.RESET_ALL)
+                    driver.save_screenshot("consent_error.png")
+                    driver.switch_to.default_content()
+                search_box = driver.find_element(By.NAME, "q")
+                for char in query:
+                    search_box.send_keys(char)
+                    time.sleep(random.uniform(0.05, 0.2))
+                time.sleep(random.uniform(0.5, 1.2))
+                search_box.send_keys(Keys.RETURN)
+                time.sleep(random.uniform(2.5, 4))
+                links = driver.find_elements(By.CSS_SELECTOR, 'a')
+                for link in links:
+                    href = link.get_attribute('href')
+                    if href and href.startswith('http') and 'google.' not in href and 'webcache.googleusercontent.com' not in href:
+                        result_query.append(href)
                         request_count += 1
-                        if request_count % delay_step == 0:
-                            time.sleep(dorking_delay)
-                browser.session.headers['User-Agent'] = user_agent_rotator.get_random_user_agent()
-                browser.follow_link(nr=page + 1)
-            except mechanicalsoup.LinkNotFoundError:
-                break
+                try:
+                    next_button = driver.find_element(By.ID, 'pnnext')
+                    next_button.click()
+                    time.sleep(random.uniform(2, 3))
+                except:
+                    break
             except Exception as e:
-                logging.error(f'DORKING PROCESSING: ERROR. REASON: {e}')
-        del result_query[-2:]
+                logging.error(f'DORKING PROCESSING (SELENIUM): ERROR. REASON: {e}')
+                continue
+        driver.quit()
+        if len(result_query) >= 2:
+            del result_query[-2:]
         return result_query
-    except requests.exceptions.ConnectionError as e:
-        print(Fore.RED + "Error while establishing connection with domain. No results will appear. See journal for details" + Style.RESET_ALL)
-        logging.error(f'DORKING PROCESSING: ERROR. REASON: {e}')
     except Exception as e:
         logging.error(f'DORKING PROCESSING: ERROR. REASON: {e}')
+        print(Fore.RED + "Error while running Selenium dorking. See journal for details." + Style.RESET_ALL)
+        return []
 
-def save_results_to_txt(folderpath, table, queries, pages=10):
+def save_results_to_txt(folderpath, table, queries, pages=1):
     try:
         config_values = read_config()
         dorking_delay = int(config_values['dorking_delay (secs)'])
@@ -80,7 +128,7 @@ def save_results_to_txt(folderpath, table, queries, pages=10):
             for i, query in enumerate(queries, start=1):
                 f.write(f"QUERY #{i}: {query}\n")
                 try:
-                    results = solid_google_dorking(query, dorking_delay, delay_step, proxy_flag, proxies_list, pages)
+                    results = solid_google_dorking(query, proxy_flag, proxies_list, pages)
                     if not results:
                         f.write("=> NO RESULT FOUND\n")
                         total_results.append((query, 0))
