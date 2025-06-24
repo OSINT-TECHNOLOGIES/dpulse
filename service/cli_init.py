@@ -29,7 +29,7 @@ class Menu:
 
         logo_panel = Panel(
             Text(fig.renderText('DPULSE'), style=preview_style),
-            box=box.DOUBLE,
+            box=box.MINIMAL,
             border_style="magenta"
         )
 
