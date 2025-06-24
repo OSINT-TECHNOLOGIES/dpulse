@@ -26,15 +26,11 @@ class Menu:
         preview_style = (config_values['preview_color']).lower()
         wm_font = (config_values['wm_font']).lower()
         fig = Figlet(font=wm_font)
-
-        logo_panel = Panel(
-            Text(fig.renderText('DPULSE'), style=preview_style),
-            box=box.MINIMAL,
-            border_style="magenta"
-        )
-
-        info_panel = Panel(
+        print('\n')
+        combined_panel = Panel(
             Text.assemble(
+                (fig.renderText('DPULSE'), preview_style),
+                ("\n", ""),
                 ("DPULSE-CLI - v1.3.2 rolling - OSINT-TECHNOLOGIES\n\n", "magenta bold"),
                 ("Visit our pages:\n", "white"),
                 ("GitHub: ", "white"), ("https://github.com/OSINT-TECHNOLOGIES\n", "blue underline"),
@@ -42,11 +38,11 @@ class Menu:
                 ("Docs: ", "white"), ("https://dpulse.readthedocs.io", "blue underline")
             ),
             title="Current version info",
+            box=box.ROUNDED,
             border_style="magenta"
         )
 
-        self.console.print(logo_panel)
-        self.console.print(info_panel)
+        self.console.print(combined_panel)
 
     def print_main_menu(self):
         table = Table(
