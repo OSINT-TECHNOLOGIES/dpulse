@@ -24,7 +24,7 @@ classifiers = [
 python = ">=3.10,<3.13"
 Jinja2 = "^3.1.6"
 beautifulsoup4 = "4.12.2"
-requests = "2.32.3"
+requests = "2.32.4"
 python-whois = "0.9.4"
 colorama = "0.4.6"
 pyfiglet = "1.0.2"
@@ -42,3 +42,4 @@ dpulse = 'dpulse.dpulse:run'
 
 [tool.poetry.group.dev.dependencies]
 deptry = "^0.23.0"
+
