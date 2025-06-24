@@ -65,7 +65,7 @@ def clean_bad_pdfs(ps_docs_path):
 def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
     report_lines: List[str] = []
     p = make_recorder(report_lines)
-    print(Fore.GREEN + "Conducting PageSearch. Please, be patient, it may take a long time\n" + Style.RESET_ALL)
+    #print(Fore.GREEN + "Conducting PageSearch. Please, be patient, it may take a long time\n" + Style.RESET_ALL)
     ps_docs_path = os.path.join(report_folder, 'ps_documents')
     if not os.path.exists(ps_docs_path):
         os.makedirs(ps_docs_path)
@@ -195,6 +195,7 @@ def subdomains_parser(subdomains_list, report_folder, keywords, keywords_flag):
         keywords_messages_list = ['No keywords were found because of None user input']
     else:
         print(Fore.GREEN + f"[+] Total {pdf_with_keywords} keywords were found in PDF files" + Style.RESET_ALL)
+    p(Fore.LIGHTGREEN_EX + "-------------------------------------------------" + Style.RESET_ALL)
 
     data_tuple = (
         ps_emails_return,

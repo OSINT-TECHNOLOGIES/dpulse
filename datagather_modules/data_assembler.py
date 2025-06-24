@@ -66,7 +66,7 @@ class DataProcessing():
     def data_gathering(self, short_domain, url, report_file_type, pagesearch_flag, keywords, keywords_flag, dorking_flag, used_api_flag, snapshotting_flag, username, from_date, end_date):
         casename, db_casename, db_creation_date, robots_filepath, sitemap_filepath, sitemap_links_filepath, report_file_type, report_folder, ctime, report_ctime = self.report_preprocessing(short_domain, report_file_type)
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} STARTS HERE')
-        print(Fore.GREEN + "Started scanning domain" + Style.RESET_ALL)
+        print(Fore.LIGHTMAGENTA_EX + "\n[STARTED BASIC DOMAIN SCAN]" + Style.RESET_ALL)
         print(Fore.GREEN + "[1/11] Getting domain IP address" + Style.RESET_ALL)
         ip = cp.ip_gather(short_domain)
         print(Fore.GREEN + '[2/11] Gathering WHOIS information' + Style.RESET_ALL)
@@ -111,16 +111,15 @@ class DataProcessing():
         total_ports = len(ports)
         total_ips = len(subdomain_ip) + 1
         total_vulns = len(vulns)
-
-        print(Fore.LIGHTMAGENTA_EX + "\n[BASIC SCAN END]\n" + Style.RESET_ALL)
+        print(Fore.LIGHTMAGENTA_EX + "[ENDED BASIC DOMAIN SCAN]\n" + Style.RESET_ALL)
         if report_file_type == 'xlsx':
             if pagesearch_flag.lower() == 'y':
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
-                    print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
+                    print(Fore.LIGHTMAGENTA_EX + "[STARTED EXTENDED DOMAIN SCAN WITH PAGESEARCH]\n" + Style.RESET_ALL)
                     ps_emails_return, accessible_subdomains, emails_amount, files_counter, cookies_counter, api_keys_counter, website_elements_counter, exposed_passwords_counter, keywords_messages_list = subdomains_parser(to_search_array[0], report_folder, keywords, keywords_flag)
                     total_links_counter = accessed_links_counter = "No results because PageSearch does not gather these categories"
-                    print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH]\n" + Style.RESET_ALL)
+                    print(Fore.LIGHTMAGENTA_EX + "[ENDED EXTENDED DOMAIN SCAN WITH PAGESEARCH]\n" + Style.RESET_ALL)
                 else:
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
                     accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 'No results because no subdomains were found'
@@ -136,13 +135,13 @@ class DataProcessing():
                 dorking_results = ['Google Dorking mode was not selected for this scan']
             else:
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + f"[STARTED EXTENDED DOMAIN SCAN WITH {dorking_flag.upper()} DORKING TABLE]\n" + Style.RESET_ALL)
                 dorking_status, dorking_results = dp.transfer_results_to_xlsx(table, get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + f"[ENDED EXTENDED DOMAIN SCAN WITH {dorking_flag.upper()} DORKING TABLE]\n" + Style.RESET_ALL)
 
             api_scan_db = []
             if used_api_flag != ['Empty']:
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: API SCANNING]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + f"[STARTED EXTENDED DOMAIN SCAN WITH 3RD PARTY API]\n" + Style.RESET_ALL)
                 if '1' in used_api_flag:
                     virustotal_output = api_virustotal_check(short_domain)
                     api_scan_db.append('VirusTotal')
@@ -163,7 +162,7 @@ class DataProcessing():
                     securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
                 if '3' not in used_api_flag:
                     hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + f"[ENDED EXTENDED DOMAIN SCAN WITH 3RD PARTY API]\n" + Style.RESET_ALL)
             else:
                 virustotal_output = 'No results because user did not selected VirusTotal API scan'
                 securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
@@ -173,14 +172,14 @@ class DataProcessing():
             if snapshotting_flag.lower() in ['s', 'p', 'w']:
                 config_values = read_config()
                 installed_browser = config_values['installed_browser']
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: PAGE SNAPSHOTTING]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + f"[STARTED DOMAIN SNAPSHOTTING]\n" + Style.RESET_ALL)
                 if snapshotting_flag.lower() == 's':
                     take_screenshot(installed_browser, url, report_folder + '//screensnapshot.png')
                 elif snapshotting_flag.lower() == 'p':
                     save_page_as_html(url, report_folder + '//domain_html_copy.html')
                 elif snapshotting_flag.lower() == 'w':
                     download_snapshot(short_domain, from_date, end_date, report_folder)
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: PAGE SNAPSHOTTING]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + f"[ENDED DOMAIN SNAPSHOTTING]\n" + Style.RESET_ALL)
             else:
                 pass
 
@@ -199,7 +198,7 @@ class DataProcessing():
             if pagesearch_flag.lower() == 'y':
                 if subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
-                    print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN START: PAGESEARCH]\n" + Style.RESET_ALL)
+                    print(Fore.LIGHTMAGENTA_EX + "[STARTED EXTENDED DOMAIN SCAN WITH PAGESEARCH]" + Style.RESET_ALL)
                     (
                         ps_emails_return,
                         accessible_subdomains,
@@ -214,7 +213,7 @@ class DataProcessing():
                     total_links_counter = accessed_links_counter = "No results because PageSearch does not gather these categories"
                     if len(keywords_messages_list) == 0:
                         keywords_messages_list = ['No keywords were found']
-                    print(Fore.LIGHTMAGENTA_EX + "\n[EXTENDED SCAN END: PAGESEARCH]\n" + Style.RESET_ALL)
+                    print(Fore.LIGHTMAGENTA_EX + "[ENDED EXTENDED DOMAIN SCAN WITH PAGESEARCH]\n" + Style.RESET_ALL)
                 else:
                     print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
                     ps_emails_return = ""
@@ -233,13 +232,13 @@ class DataProcessing():
                 dorking_file_path = 'Google Dorking mode was not selected for this scan'
             else:
                 dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + f"[STARTED EXTENDED DOMAIN SCAN WITH {dorking_flag.upper()} DORKING TABLE]" + Style.RESET_ALL)
                 dorking_status, dorking_file_path = dp.save_results_to_txt(report_folder, table, get_dorking_query(short_domain, dorking_db_path, table))
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: {dorking_flag.upper()} DORKING]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + f"[ENDED EXTENDED DOMAIN SCAN WITH {dorking_flag.upper()} DORKING TABLE]\n" + Style.RESET_ALL)
 
             api_scan_db = []
             if used_api_flag != ['Empty']:
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: API SCANNING]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + f"[STARTED EXTENDED DOMAIN SCAN WITH 3RD PARTY API]" + Style.RESET_ALL)
                 if '1' in used_api_flag:
                     virustotal_output = api_virustotal_check(short_domain)
                     api_scan_db.append('VirusTotal')
@@ -260,7 +259,7 @@ class DataProcessing():
                     securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
                 if '3' not in used_api_flag:
                     hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: API SCANNING]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + f"[ENDED EXTENDED DOMAIN SCAN WITH 3RD PARTY API]\n" + Style.RESET_ALL)
             else:
                 virustotal_output = 'No results because user did not selected VirusTotal API scan'
                 securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
@@ -270,14 +269,14 @@ class DataProcessing():
             if snapshotting_flag.lower() in ['s', 'p', 'w']:
                 config_values = read_config()
                 installed_browser = config_values['installed_browser']
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN START: PAGE SNAPSHOTTING]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + f"[STARTED DOMAIN SNAPSHOTTING]" + Style.RESET_ALL)
                 if snapshotting_flag.lower() == 's':
                     take_screenshot(installed_browser, url, report_folder + '//screensnapshot.png')
                 elif snapshotting_flag.lower() == 'p':
                     save_page_as_html(url, report_folder + '//domain_html_copy.html')
                 elif snapshotting_flag.lower() == 'w':
                     download_snapshot(short_domain, from_date, end_date, report_folder)
-                print(Fore.LIGHTMAGENTA_EX + f"\n[EXTENDED SCAN END: PAGE SNAPSHOTTING]\n" + Style.RESET_ALL)
+                print(Fore.LIGHTMAGENTA_EX + f"[ENDED DOMAIN SNAPSHOTTING]\n" + Style.RESET_ALL)
             else:
                 pass
 

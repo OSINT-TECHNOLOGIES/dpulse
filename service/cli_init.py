@@ -1,5 +1,12 @@
 import sys
 from config_processing import read_config
+from rich.panel import Panel
+from rich.table import Table
+from rich.layout import Layout
+from rich.text import Text
+from rich.prompt import Prompt
+from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich import box
 
 try:
     from colorama import Fore, Back, Style
@@ -8,6 +15,7 @@ try:
 except ImportError as e:
     print(Fore.RED + "Import error appeared. Reason: {}".format(e) + Style.RESET_ALL)
     sys.exit()
+
 
 class Menu:
     def __init__(self):
@@ -19,58 +27,173 @@ class Menu:
         wm_font = (config_values['wm_font']).lower()
         fig = Figlet(font=wm_font)
         print('\n')
-        self.console.print(fig.renderText('DPULSE'), style=preview_style)
-        print(Fore.MAGENTA + Style.BRIGHT + '[DPULSE-CLI] - [v1.3.1 stable] - [OSINT-TECHNOLOGIES]\n' + Style.RESET_ALL)
-        print(Fore.MAGENTA + Style.BRIGHT + '[Visit our pages]\nGitHub repository: https://github.com/OSINT-TECHNOLOGIES\nPyPi page: https://pypi.org/project/dpulse/\nDocumentation: https://dpulse.readthedocs.io' + Style.RESET_ALL)
+        combined_panel = Panel(
+            Text.assemble(
+                (fig.renderText('DPULSE'), preview_style),
+                ("\n", ""),
+                ("DPULSE-CLI - v1.3.2 stable - OSINT-TECHNOLOGIES\n\n", "magenta bold"),
+                ("Visit our pages:\n", "white"),
+                ("GitHub: ", "white"), ("https://github.com/OSINT-TECHNOLOGIES\n", "blue underline"),
+                ("PyPi: ", "white"), ("https://pypi.org/project/dpulse/\n", "blue underline"),
+                ("Docs: ", "white"), ("https://dpulse.readthedocs.io", "blue underline")
+            ),
+            title="Current version info",
+            box=box.ROUNDED,
+            border_style="magenta"
+        )
+
+        self.console.print(combined_panel)
 
     def print_main_menu(self):
-        print('\n')
-        print(Fore.MAGENTA + Back.WHITE + '[MAIN MENU]' + Style.RESET_ALL)
-        print(Fore.CYAN + "1. Target selection & scanning")
-        print(Fore.CYAN + "2. General settings")
-        print(Fore.CYAN + "3. Dorking module manager")
-        print(Fore.CYAN + "4. Report storage DB manager")
-        print(Fore.CYAN + "5. API modules manager")
-        print(Fore.CYAN + "6. Help (browser will be opened!)")
-        print(Fore.LIGHTRED_EX + "7. Exit DPULSE" + Style.RESET_ALL + '\n')
+        table = Table(
+            show_header=False,
+            box=box.ROUNDED,
+            border_style="magenta",
+            show_edge=False
+        )
+
+        table.add_column("Option", style="cyan", justify="right")
+        table.add_column("Description", style="white")
+        table.add_row("1.", "Target selection & scanning")
+        table.add_row("2.", "General settings")
+        table.add_row("3.", "Dorking module manager")
+        table.add_row("4.", "Report storage DB manager")
+        table.add_row("5.", "API modules manager")
+        table.add_row("6.", "Help (browser will be opened!)")
+        table.add_row("7.", "[red]Exit DPULSE[/red]")
+
+        menu_panel = Panel(
+            table,
+            title="[white on magenta]MAIN MENU[/white on magenta]",
+            border_style="magenta"
+        )
+
+        self.console.print("\n")
+        self.console.print(menu_panel)
 
     def print_settings_menu(self):
-        print('\n')
-        print(Fore.MAGENTA + Back.WHITE + '[SETTINGS MENU]' + Style.RESET_ALL)
-        print(Fore.CYAN + "1. Print current config file")
-        print(Fore.CYAN + "2. Edit config file")
-        print(Fore.CYAN + "3. Clear journal content")
-        print(Fore.LIGHTRED_EX + "4. Return to main menu" + Style.RESET_ALL + '\n')
+        table = Table(
+            show_header=False,
+            box=box.ROUNDED,
+            border_style="magenta",
+            show_edge=False
+        )
+
+        table.add_column("Option", style="cyan", justify="right")
+        table.add_column("Description", style="white")
+
+        table.add_row("1.", "Print current config file")
+        table.add_row("2.", "Edit config file")
+        table.add_row("3.", "Clear journal content")
+        table.add_row("4.", "[red]Return to main menu[/red]")
+
+        menu_panel = Panel(
+            table,
+            title="[white on magenta]SETTINGS MENU[/white on magenta]",
+            border_style="magenta"
+        )
+
+        self.console.print("\n")
+        self.console.print(menu_panel)
 
     def print_db_menu(self):
-        print('\n')
-        print(Fore.MAGENTA + Back.WHITE + '[REPORTS DATABASE MANAGER]' + Style.RESET_ALL)
-        print(Fore.CYAN + "1. Show database content")
-        print(Fore.CYAN + "2. Recreate report from database")
-        print(Fore.LIGHTRED_EX + "3. Return to main menu" + Style.RESET_ALL)
+        table = Table(
+            show_header=False,
+            box=box.ROUNDED,
+            border_style="magenta",
+            show_edge=False
+        )
+
+        table.add_column("Option", style="cyan", justify="right")
+        table.add_column("Description", style="white")
+
+        table.add_row("1.", "Show database content")
+        table.add_row("2.", "Recreate report from database")
+        table.add_row("3.", "[red]Return to main menu[/red]")
+
+        menu_panel = Panel(
+            table,
+            title="[white on magenta]REPORTS DATABASE MANAGER[/white on magenta]",
+            border_style="magenta"
+        )
+
+        self.console.print("\n")
+        self.console.print(menu_panel)
 
     def dorking_db_manager(self):
-        print('\n')
-        print(Fore.MAGENTA + Back.WHITE + '[DORKING DB MANAGER]' + Style.RESET_ALL)
-        print(Fore.CYAN + "1. Generate custom Dorking DB")
-        print(Fore.LIGHTRED_EX + "2. Return to main menu\n" + Style.RESET_ALL)
+        table = Table(
+            show_header=False,
+            box=box.ROUNDED,
+            border_style="magenta",
+            show_edge=False
+        )
+
+        table.add_column("Option", style="cyan", justify="right")
+        table.add_column("Description", style="white")
+
+        table.add_row("1.", "Generate custom Dorking DB")
+        table.add_row("2.", "[red]Return to main menu[/red]")
+
+        menu_panel = Panel(
+            table,
+            title="[white on magenta]DORKING DB MANAGER[/white on magenta]",
+            border_style="magenta"
+        )
+
+        self.console.print("\n")
+        self.console.print(menu_panel)
 
     def api_manager(self):
-        print('\n')
-        print(Fore.MAGENTA + Back.WHITE + '[API KEYS DB MANAGER]' + Style.RESET_ALL)
-        print(Fore.CYAN + "1. Add API key")
-        print(Fore.CYAN + "2. Restore reference API Keys DB")
-        print(Fore.LIGHTRED_EX + "3. Return to main menu" + Style.RESET_ALL)
+        table = Table(
+            show_header=False,
+            box=box.ROUNDED,
+            border_style="magenta",
+            show_edge=False
+        )
+
+        table.add_column("Option", style="cyan", justify="right")
+        table.add_column("Description", style="white")
+
+        table.add_row("1.", "Add API key")
+        table.add_row("2.", "Restore reference API Keys DB")
+        table.add_row("3.", "[red]Return to main menu[/red]")
+
+        menu_panel = Panel(
+            table,
+            title="[white on magenta]API KEYS DB MANAGER[/white on magenta]",
+            border_style="magenta"
+        )
+
+        self.console.print("\n")
+        self.console.print(menu_panel)
+
 
 def print_prescan_summary(short_domain, report_filetype, pagesearch_ui_mark, dorking_ui_mark, used_api_ui, case_comment, snapshotting_ui_mark):
-    print(Fore.LIGHTMAGENTA_EX + "\n[PRE-SCAN SUMMARY]\n" + Style.RESET_ALL)
-    print(Fore.GREEN + "Determined target: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + short_domain + Style.RESET_ALL)
-    print(Fore.GREEN + "Report type: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + report_filetype.lower() + Style.RESET_ALL)
-    print(Fore.GREEN + "PageSearch conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + pagesearch_ui_mark + Style.RESET_ALL)
-    print(Fore.GREEN + "Dorking conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + dorking_ui_mark + Style.RESET_ALL)
-    print(Fore.GREEN + "APIs scan: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + used_api_ui + Style.RESET_ALL)
-    print(Fore.GREEN + "Snapshotting conduction: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + snapshotting_ui_mark + Style.RESET_ALL)
-    print(Fore.GREEN + "Case comment: " + Fore.LIGHTCYAN_EX + Style.BRIGHT + case_comment + Style.RESET_ALL + "\n")
+    table = Table(
+        show_header=False,
+        box=box.ROUNDED,
+        border_style="magenta"
+    )
+
+    table.add_column("Parameter", style="green")
+    table.add_column("Value", style="cyan bold")
+
+    table.add_row("Determined target:", short_domain)
+    table.add_row("Report type:", report_filetype.lower())
+    table.add_row("PageSearch conduction:", pagesearch_ui_mark)
+    table.add_row("Dorking conduction:", dorking_ui_mark)
+    table.add_row("APIs scan:", used_api_ui)
+    table.add_row("Snapshotting conduction:", snapshotting_ui_mark)
+    table.add_row("Case comment:", case_comment)
+
+    summary_panel = Panel(
+        table,
+        title="[magenta]PRE-SCAN SUMMARY[/magenta]",
+        border_style="magenta"
+    )
+
+    Console().print("\n")
+    Console().print(summary_panel)
 
 def print_api_db_msg():
     print(Fore.GREEN + "\nYou've entered custom Dorking DB generator!\n" + Style.RESET_ALL)

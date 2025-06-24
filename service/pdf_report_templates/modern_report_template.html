@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono&family=Fira+Sans:wght@400;600&family=Fira+Code&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style media="print">
 	@page { size: A4; margin: 20mm; }
@@ -300,25 +301,53 @@
 
 <div class="toc-container">
   <button class="toc-toggle" onclick="toggleToc()">≡</button>
-  <h2 class="underline">Table of contents</h2>
-  <a href="#general-scan-info" class="toc-link">1. General scan information</a> 
-  <a href="#general-scan-info" class="toc-link">2. General scan statistics</a> 
+  <h2 class="underline"><i><style="color:#3F51B5;"></i> Table of contents</h2>
+  <a href="#general-scan-info" class="toc-link">
+    <i class="fas fa-info-circle" style="color:#2196F3;"></i> 1. General scan information
+  </a> 
+  <a href="#general-scan-info" class="toc-link">
+    <i class="fas fa-chart-bar" style="color:#4CAF50;"></i> 2. General scan statistics
+  </a> 
   <p class="toc-section-title maroon underline">[BASIC SCAN INFO]</p>
-  <a href="#whois-info" class="toc-link">3. WHOIS information</a>
-  <a href="#social-media-links" class="toc-link">4. Social media links</a>
-  <a href="#subdomains-info" class="toc-link">5. Subdomains</a>
-  <a href="#dns-ssl-info" class="toc-link">6. DNS & SSL</a>
-  <a href="#services-frameworks-info" class="toc-link">7. Services & Frameworks</a>
-  <a href="#pre-pentest-info" class="toc-link">8. Pre-Pentest Info</a>
-  <a href="#pre-pentest-info" class="toc-link">9. Website configuration files</a>
+  <a href="#whois-info" class="toc-link">
+    <i class="fas fa-id-badge" style="color:#3F51B5;"></i> 3. WHOIS information
+  </a>
+  <a href="#social-media-links" class="toc-link">
+    <i class="fas fa-hashtag" style="color:#E91E63;"></i> 4. Social media links
+  </a>
+  <a href="#subdomains-info" class="toc-link">
+    <i class="fas fa-network-wired" style="color:#9C27B0;"></i> 5. Subdomains
+  </a>
+  <a href="#dns-ssl-info" class="toc-link">
+    <i class="fas fa-shield-alt" style="color:#607D8B;"></i> 6. DNS & SSL
+  </a>
+  <a href="#services-frameworks-info" class="toc-link">
+    <i class="fas fa-cogs" style="color:#F57C00;"></i> 7. Services & Frameworks
+  </a>
+  <a href="#pre-pentest-info" class="toc-link">
+    <i class="fas fa-bug" style="color:#F44336;"></i> 8. Pre-Pentest Info
+  </a>
+  <a href="#pre-pentest-info" class="toc-link">
+    <i class="fas fa-code" style="color:#795548;"></i> 9. Website configuration files
+  </a>
   <p class="toc-section-title maroon underline">[DORKING SCAN INFO]</p>
-  <a href="#dorking-info" class="toc-link">10. Dorking Results</a>
+  <a href="#dorking-info" class="toc-link">
+    <i class="fas fa-search" style="color:#009688;"></i> 10. Dorking Results
+  </a>
   <p class="toc-section-title maroon underline">[PAGESEARCH SCAN INFO]</p>
-  <a href="#pagesearch-results" class="toc-link">11. PageSearch Results</a>
+  <a href="#pagesearch-results" class="toc-link">
+    <i class="fas fa-file-alt" style="color:#3F51B5;"></i> 11. PageSearch Results
+  </a>
   <p class="toc-section-title maroon underline">[API SCAN INFO]</p>
-  <a href="#virustotal-results" class="toc-link">12. VirusTotal</a>
-  <a href="#securitytrails-results" class="toc-link">13. SecurityTrails</a>
-  <a href="#hudsonrock-results" class="toc-link">14. HudsonRock</a>
+  <a href="#virustotal-results" class="toc-link">
+    <i class="fas fa-viruses" style="color:#D32F2F;"></i> 12. VirusTotal
+  </a>
+  <a href="#securitytrails-results" class="toc-link">
+    <i class="fas fa-map-marked-alt" style="color:#0097A7;"></i> 13. SecurityTrails
+  </a>
+  <a href="#hudsonrock-results" class="toc-link">
+    <i class="fas fa-user-secret" style="color:#7B1FA2;"></i> 14. HudsonRock
+  </a>
 </div>
 
 <h1>Open Source Information Research Report</h1>
@@ -326,33 +355,107 @@
 <hr>
 
 <h3 id="general-scan-info">GENERAL SCAN INFORMATION</h3>
-<p><strong>Status of robots.txt extraction:</strong> <span class="blue">{{ robots_txt_result }}</span></p>
-<p><strong>Status of sitemap.xml extraction:</strong> <span class="blue">{{ sitemap_xml_result }}</span></p>
-<p><strong>Status of sitemap.xml links extraction:</strong><span class="blue">{{ sitemap_links }}</span></p>
-<p><strong>Google Dorking status:</strong> <span class="blue">{{ dorking_status }}</span></p>
-<p><strong>PageSearch conduction:</strong> <span class="blue">{{ pagesearch_ui_mark }}</span></p>
-<p><strong>Snapshotting conduction:</strong> <span class="blue">{{ snapshotting_ui_mark }}</span></p>
-<p><strong>Report creation time:</strong> <span class="blue">{{ ctime }}</span></p>
+<p>
+  <strong>
+    <i class="fas fa-robot" style="color:#9C27B0;"></i> Status of robots.txt extraction:
+  </strong> 
+  <span class="blue">{{ robots_txt_result }}</span>
+</p>
+<p>
+  <strong>
+    <i class="fas fa-sitemap" style="color:#4CAF50;"></i> Status of sitemap.xml extraction:
+  </strong> 
+  <span class="blue">{{ sitemap_xml_result }}</span>
+</p>
+<p>
+  <strong>
+    <i class="fas fa-link" style="color:#2196F3;"></i> Status of sitemap.xml links extraction:
+  </strong> 
+  <span class="blue">{{ sitemap_links }}</span>
+</p>
+<p>
+  <strong>
+    <i class="fas fa-search" style="color:#F57C00;"></i> Google Dorking status:
+  </strong> 
+  <span class="blue">{{ dorking_status }}</span>
+</p>
+<p>
+  <strong>
+    <i class="fas fa-microscope" style="color:#E91E63;"></i> PageSearch conduction:
+  </strong> 
+  <span class="blue">{{ pagesearch_ui_mark }}</span>
+</p>
+<p>
+  <strong>
+    <i class="fas fa-camera" style="color:#009688;"></i> Snapshotting conduction:
+  </strong> 
+  <span class="blue">{{ snapshotting_ui_mark }}</span>
+</p>
+<p>
+  <strong>
+    <i class="fas fa-clock" style="color:#607D8B;"></i> Report creation time:
+  </strong> 
+  <span class="blue">{{ ctime }}</span>
+</p>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 
 <h3 id="general-scan-info">GENERAL SCAN STATISTICS</h3>
 <div style="display: flex; align-items: flex-start; gap: 80px;">
-  <div>
-	<p><strong>Total subdomains found:</strong> <span class="blue" id="a_tsf">{{ a_tsf }}</span></p>
-	<p><strong>Total social media links found:</strong> <span class="blue" id="a_tsm">{{ a_tsm }}</span></p> 
-	<p><strong>Total emails found:</strong> <span class="blue" id="a_temails">{{ a_temails }}</span></p> 
-	<p><strong>Total associated IP addresses found:</strong> <span class="blue" id="a_tips">{{ a_tips }}</span></p> 
-	<p><strong>Total open ports found:</strong> <span class="blue" id="a_tops">{{ a_tops }}</span></p> 
-	<p><strong>Total potential vulnerabilities found:</strong> <span class="blue" id="a_tpv">{{ a_tpv }}</span></p> 
-	<p><strong>Accessible subdomains (PageSearch):</strong> <span class="blue" id="ps_s">{{ ps_s }}</span></p>
-	<p><strong>Email addresses (PageSearch):</strong> <span class="blue" id="ps_e">{{ ps_e }}</span></p>
-	<p><strong>Found documents (PageSearch):</strong> <span class="blue" id="ps_f">{{ ps_f }}</span></p>
-	<p><strong>Found cookies (PageSearch):</strong> <span class="blue" id="ps_c">{{ ps_c }}</span></p>
-	<p><strong>Found API keys (PageSearch):</strong> <span class="blue" id="ps_a">{{ ps_a }}</span></p>
-	<p><strong>Found WEB elements (PageSearch):</strong> <span class="blue" id="ps_w">{{ ps_w }}</span></p>
-	<p><strong>Exposed passwords (PageSearch):</strong> <span class="blue" id="ps_p">{{ ps_p }}</span></p>
-  </div>
+<div>
+  <p>
+    <strong><i class="fas fa-network-wired" style="color:#3F51B5;"></i> Total subdomains found:</strong>
+    <span class="blue" id="a_tsf">{{ a_tsf }}</span>
+  </p>
+  <p>
+    <strong><i class="fas fa-hashtag" style="color:#E91E63;"></i> Total social media links found:</strong>
+    <span class="blue" id="a_tsm">{{ a_tsm }}</span>
+  </p>
+  <p>
+    <strong><i class="fas fa-envelope" style="color:#009688;"></i> Total emails found:</strong>
+    <span class="blue" id="a_temails">{{ a_temails }}</span>
+  </p>
+  <p>
+    <strong><i class="fas fa-globe" style="color:#2196F3;"></i> Total associated IP addresses found:</strong>
+    <span class="blue" id="a_tips">{{ a_tips }}</span>
+  </p>
+  <p>
+    <strong><i class="fas fa-door-open" style="color:#FB8C00;"></i> Total open ports found:</strong>
+    <span class="blue" id="a_tops">{{ a_tops }}</span>
+  </p>
+  <p>
+    <strong><i class="fas fa-bug" style="color:#F44336;"></i> Total potential vulnerabilities found:</strong>
+    <span class="blue" id="a_tpv">{{ a_tpv }}</span>
+  </p>
+  <p>
+    <strong><i class="fas fa-network-wired" style="color:#3F51B5;"></i> Accessible subdomains (PageSearch):</strong>
+    <span class="blue" id="ps_s">{{ ps_s }}</span>
+  </p>
+  <p>
+    <strong><i class="fas fa-envelope-open-text" style="color:#009688;"></i> Email addresses (PageSearch):</strong>
+    <span class="blue" id="ps_e">{{ ps_e }}</span>
+  </p>
+  <p>
+    <strong><i class="fas fa-file-alt" style="color:#607D8B;"></i> Found documents (PageSearch):</strong>
+    <span class="blue" id="ps_f">{{ ps_f }}</span>
+  </p>
+  <p>
+    <strong><i class="fas fa-cookie-bite" style="color:#6D4C41;"></i> Found cookies (PageSearch):</strong>
+    <span class="blue" id="ps_c">{{ ps_c }}</span>
+  </p>
+  <p>
+    <strong><i class="fas fa-key" style="color:#5E35B1;"></i> Found API keys (PageSearch):</strong>
+    <span class="blue" id="ps_a">{{ ps_a }}</span>
+  </p>
+  <p>
+    <strong><i class="fas fa-cube" style="color:#00ACC1;"></i> Found WEB elements (PageSearch):</strong>
+    <span class="blue" id="ps_w">{{ ps_w }}</span>
+  </p>
+  <p>
+    <strong><i class="fas fa-unlock-alt" style="color:#D32F2F;"></i> Exposed passwords (PageSearch):</strong>
+    <span class="blue" id="ps_p">{{ ps_p }}</span>
+  </p>
+</div>
   <div style="width: 700px;">
     <canvas id="statsChart"></canvas>
   </div>
@@ -360,26 +463,49 @@
 <hr>
 
 <h3 id="whois-info">WHOIS INFORMATION</h3>
-<p><strong>Domain:</strong> <span class="blue">{{ sh_domain }}</span></p>
-<p><strong>Full URL:</strong> <a href="{{ full_url }}" target="_blank" class="blue">{{ full_url }}</a></p>
-<p><strong>IP address:</strong> <span class="blue">{{ ip_address }}</span></p>
-<p><strong>Registrar:</strong> <span class="blue">{{ registrar }}</span></p>
-<p><strong>Creation date:</strong> <span class="blue">{{ creation_date }}</span></p>
-<p><strong>Expiration date:</strong> <span class="blue">{{ expiration_date }}</span></p>
-<p><strong>Organization name:</strong> <span class="blue">{{ org }}</span></p>
-<p><strong>Contact e-mails:</strong> <span class="blue">{{ mails }}</span></p>
+<p>
+  <strong><i class="fas fa-globe" style="color:#1E88E5;"></i> Domain:</strong>
+  <span class="blue">{{ sh_domain }}</span>
+</p>
+<p>
+  <strong><i class="fas fa-link" style="color:#43A047;"></i> Full URL:</strong>
+  <a href="{{ full_url }}" target="_blank" class="blue">{{ full_url }}</a>
+</p>
+<p>
+  <strong><i class="fas fa-network-wired" style="color:#E53935;"></i> IP address:</strong>
+  <span class="blue">{{ ip_address }}</span>
+</p>
+<p>
+  <strong><i class="fas fa-building" style="color:#6D4C41;"></i> Registrar:</strong>
+  <span class="blue">{{ registrar }}</span>
+</p>
+<p>
+  <strong><i class="fas fa-calendar-plus" style="color:#FB8C00;"></i> Creation date:</strong> 
+  <span class="blue">{{ creation_date }}</span>
+</p>
+<p>
+  <strong><i class="fas fa-calendar-times" style="color:#D81B60;"></i> Expiration date:</strong> 
+  <span class="blue">{{ expiration_date }}</span>
+</p>
+<p>
+  <strong><i class="fas fa-briefcase" style="color:#5E35B1;"></i> Organization name:</strong> 
+  <span class="blue">{{ org }}</span>
+</p>
+<p>
+  <strong><i class="fas fa-envelope" style="color:#00897B;"></i> Contact e-mails:</strong> 
+  <span class="blue">{{ mails }}</span>
+</p>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 
 <h3 id="social-media-links">SOCIAL MEDIA LINKS</h3>
-<p><strong>FACEBOOK:</strong></p>
+<p><strong><i class="fab fa-facebook-square" style="color:#1877f2;"></i> FACEBOOK:</strong></p>
 <ul>
   {% for link in fb_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
-
-<p><strong>TWITTER (+ X.com):</strong></p>
+<p><strong><i class="fab fa-twitter" style="color:#1da1f2;"></i> TWITTER (+ X.com):</strong></p>
 <ul>
   {% for link in tw_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
@@ -388,57 +514,49 @@
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
-
-<p><strong>INSTAGRAM:</strong></p>
+<p><strong><i class="fab fa-instagram" style="color:#e1306c;"></i> INSTAGRAM:</strong></p>
 <ul>
   {% for link in inst_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
-
-<p><strong>TELEGRAM:</strong></p>
+<p><strong><i class="fab fa-telegram" style="color:#0088cc;"></i> TELEGRAM:</strong></p>
 <ul>
   {% for link in tg_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
-
-<p><strong>TIKTOK:</strong></p>
+<p><strong><i class="fab fa-tiktok" style="color:#111;"></i> TIKTOK:</strong></p>
 <ul>
   {% for link in tt_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
-
-<p><strong>LINKEDIN:</strong></p>
+<p><strong><i class="fab fa-linkedin" style="color:#0077b5;"></i> LINKEDIN:</strong></p>
 <ul>
   {% for link in li_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
-
-<p><strong>VKONTAKTE:</strong></p>
+<p><strong><i class="fab fa-vk" style="color:#4a76a8;"></i> VKONTAKTE:</strong></p>
 <ul>
   {% for link in vk_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
-
-<p><strong>YOUTUBE:</strong></p>
+<p><strong><i class="fab fa-youtube" style="color:#ff0000;"></i> YOUTUBE:</strong></p>
 <ul>
   {% for link in yt_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
-
-<p><strong>ODNOKLASSNIKI:</strong></p>
+<p><strong><i class="fab fa-odnoklassniki" style="color:#ff8000;"></i> ODNOKLASSNIKI:</strong></p>
 <ul>
   {% for link in ok_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
   {% endfor %}
 </ul>
-
-<p><strong>WECHAT:</strong></p>
+<p><strong><i class="fab fa-weixin" style="color:#7bb32e;"></i> WECHAT:</strong></p>
 <ul>
   {% for link in wc_links %}
     <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
@@ -447,93 +565,120 @@
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 
-<h3 id="subdomains-info">SUBDOMAINS</h3>
-<p><strong>Found subdomains:</strong></p>
-<ul>
-  {% for sd in subdomains %}
-    <li>⇒ <a href="https://{{ sd }}" target="_blank" class="blue">{{ sd }}</a></li>
-  {% endfor %}
-</ul>
-
-<p><strong>Subdomains IP addresses:</strong></p>
-<ul>
-  {% for sdip in subdomain_ip %}
-    <li class="blue">⇒ {{ sdip }}</li>
-  {% endfor %}
-</ul>
-
-<p><strong>Subdomains e-mails:</strong></p>
-<ul>
-  {% for smails in subdomain_mails %}
-    <li class="blue">⇒ {{ smails }}</li>
-  {% endfor %}
-</ul>
-<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
-<hr>
-
 <h3 id="dns-ssl-info">DNS & SSL INFORMATION</h3>
-<p><strong>(DNS) Name servers:</strong> <span class="blue">{{ name_servers }}</span></p>
-<p><strong>(DNS) MX addresses:</strong> <span class="blue">{{ mx_records }}</span></p>
-<p><strong>(SSL) Issuer:</strong> <span class="blue">{{ issuer }}</span></p>
-<p><strong>(SSL) Subject:</strong> <span class="blue">{{ subject }}</span></p>
-<p><strong>(SSL) Not before:</strong> <span class="blue">{{ notBefore }}</span></p>
-<p><strong>(SSL) Not after:</strong> <span class="blue">{{ notAfter }}</span></p>
-<p><strong>(SSL) Certificate name:</strong> <span class="blue">{{ commonName }}</span></p>
-<p><strong>(SSL) Certificate serial number:</strong> <span class="blue">{{ serialNumber }}</span></p>
-<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<p>
+  <strong>
+    <i class="fas fa-server" style="color:#2196F3;"></i> (DNS) Name servers:
+  </strong> 
+  <span class="blue">{{ name_servers }}</span>
+</p>
+<p>
+  <strong>
+    <i class="fas fa-envelope-open-text" style="color:#FF9800;"></i> (DNS) MX addresses:
+  </strong> 
+  <span class="blue">{{ mx_records }}</span>
+</p>
+<p>
+  <strong>
+    <i class="fas fa-user-check" style="color:#5C6BC0;"></i> (SSL) Issuer:
+  </strong> 
+  <span class="blue">{{ issuer }}</span>
+</p>
+<p>
+  <strong>
+    <i class="fas fa-user-lock" style="color:#9C27B0;"></i> (SSL) Subject:
+  </strong> 
+  <span class="blue">{{ subject }}</span>
+</p>
+<p>
+  <strong>
+    <i class="fas fa-calendar-plus" style="color:#43A047;"></i> (SSL) Not before:
+  </strong> 
+  <span class="blue">{{ notBefore }}</span>
+</p>
+<p>
+  <strong>
+    <i class="fas fa-calendar-times" style="color:#E53935;"></i> (SSL) Not after:
+  </strong> 
+  <span class="blue">{{ notAfter }}</span>
+</p>
+<p>
+  <strong>
+    <i class="fas fa-certificate" style="color:#00ACC1;"></i> (SSL) Certificate name:
+  </strong> 
+  <span class="blue">{{ commonName }}</span>
+</p>
+<p>
+  <strong>
+    <i class="fas fa-fingerprint" style="color:#FF5722;"></i> (SSL) Certificate serial number:
+  </strong> 
+  <span class="blue">{{ serialNumber }}</span>
+</p>
+<div class="back-to-top">
+  <a href="#top" class="toc-link">↑ Back to top</a>
+</div>
 <hr>
 
 <h3 id="services-frameworks-info">SERVICES & FRAMEWORKS INFORMATION</h3>
-<p><strong>Web servers:</strong></p>
+<p>
+  <strong><i class="fas fa-server" style="color:#1976D2;"></i> Web servers:</strong>
+</p>
 <ul>
   {% for ws in web_servers %}
     <li class="blue">⇒ {{ ws }}</li>
   {% endfor %}
 </ul>
-
-<p><strong>CMS:</strong></p>
+<p>
+  <strong><i class="fas fa-tools" style="color:#F57C00;"></i> CMS:</strong>
+</p>
 <ul>
   {% for cm in cms %}
     <li class="blue">⇒ {{ cm }}</li>
   {% endfor %}
 </ul>
-
-<p><strong>Used programming languages:</strong></p>
+<p>
+  <strong><i class="fas fa-code" style="color:#43A047;"></i> Used programming languages:</strong>
+</p>
 <ul>
   {% for pl in programming_languages %}
     <li class="blue">⇒ {{ pl }}</li>
   {% endfor %}
 </ul>
-
-<p><strong>Used web frameworks:</strong></p>
+<p>
+  <strong><i class="fas fa-layer-group" style="color:#7E57C2;"></i> Used web frameworks:</strong>
+</p>
 <ul>
   {% for wf in web_frameworks %}
     <li class="blue">⇒ {{ wf }}</li>
   {% endfor %}
 </ul>
-
-<p><strong>Analytics service:</strong></p>
+<p>
+  <strong><i class="fas fa-chart-line" style="color:#00ACC1;"></i> Analytics service:</strong>
+</p>
 <ul>
   {% for analytic in analytics %}
     <li class="blue">⇒ {{ analytic }}</li>
   {% endfor %}
 </ul>
-
-<p><strong>Used JavaScript frameworks:</strong></p>
+<p>
+  <strong><i class="fab fa-js-square" style="color:#F7DF1E;"></i> Used JavaScript frameworks:</strong>
+</p>
 <ul>
   {% for jsf in javascript_frameworks %}
     <li class="blue">⇒ {{ jsf }}</li>
   {% endfor %}
 </ul>
-
-<p><strong>Tags:</strong></p>
+<p>
+  <strong><i class="fas fa-tags" style="color:#9E9E9E;"></i> Tags:</strong>
+</p>
 <ul>
   {% for tag in tags %}
     <li class="blue">⇒ {{ tag }}</li>
   {% endfor %}
 </ul>
-
-<p><strong>Common Platform Enumeration:</strong></p>
+<p>
+  <strong><i class="fas fa-boxes" style="color:#607D8B;"></i> Common Platform Enumeration:</strong>
+</p>
 <ul>
   {% for cpe in cpes %}
     <li class="blue">⇒ {{ cpe }}</li>
@@ -543,21 +688,25 @@
 <hr>
 
 <h3 id="pre-pentest-info">BASIC PRE-PENTEST INFORMATION</h3>
-<p><strong>Open ports:</strong></p>
+<p>
+  <strong><i class="fas fa-door-open" style="color:#FB8C00;"></i> Open ports:</strong>
+</p>
 <ul>
   {% for op in ports %}
     <li class="blue">⇒ {{ op }}</li>
   {% endfor %}
 </ul>
-
-<p><strong>Hostnames:</strong></p>
+<p>
+  <strong><i class="fas fa-globe" style="color:#1976D2;"></i> Hostnames:</strong>
+</p>
 <ul>
   {% for hn in hostnames %}
     <li class="blue">⇒ {{ hn }}</li>
   {% endfor %}
 </ul>
-
-<p><strong>Potential vulnerabilities:</strong></p>
+<p>
+  <strong><i class="fas fa-bug" style="color:#E53935;"></i> Potential vulnerabilities:</strong>
+</p>
 <ul>
   {% for vuln in vulns %}
     <li class="blue">⇒ {{ vuln }}</li>
@@ -566,30 +715,36 @@
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 
-
 <h3 id="technical-files">WEBSITE TECHNICAL FILES</h3>
 <details>
-  <summary>robots.txt</summary>
+  <summary>
+    <i class="fas fa-robot" style="color:#9C27B0;"></i> robots.txt
+  </summary>
   <pre>{{ robots_content | safe }}</pre>
 </details>
 
 <details>
-  <summary>sitemap.xml</summary>
+  <summary>
+    <i class="fas fa-sitemap" style="color:#4CAF50;"></i> sitemap.xml
+  </summary>
   <pre>{{ sitemap_xml_content | safe }}</pre>
 </details>
 
 <details>
-  <summary>Sitemap links</summary>
+  <summary>
+    <i class="fas fa-link" style="color:#2196F3;"></i> Sitemap links
+  </summary>
   <pre>{{ sitemap_txt_content | safe }}</pre>
 </details>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 
-
 {% if add_dsi %}
 <h3 id="dorking-info">DORKING SCAN INFO</h3>
 <details>
-  <summary>Dorking Results</summary>
+  <summary>
+    <i class="fas fa-search" style="color:#009688;"></i> Dorking Results
+  </summary>
   <pre>{{ add_dsi | safe }}</pre>
 </details>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
@@ -599,7 +754,9 @@
 {% if ps_string %}
 <h3 id="pagesearch-results">PAGESEARCH RESULTS</h3>
 <details>
-  <summary>PageSearch Process Listing</summary>
+  <summary>
+    <i class="fas fa-file-alt" style="color:#3F51B5;"></i> PageSearch Process Listing
+  </summary>
   <pre>{{ ps_string }}</pre>
 </details>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
@@ -609,7 +766,9 @@
 {% if virustotal_output %}
 <h3 id="virustotal-results">VIRUSTOTAL API SCAN RESULTS</h3>
 <details>
-  <summary>VirusTotal Output</summary>
+  <summary title="Results from VirusTotal malware analysis">
+    <i class="fas fa-viruses" style="color:#D32F2F;"></i> VirusTotal Output
+  </summary>
   <pre>{{ virustotal_output | safe }}</pre>
 </details>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
@@ -619,7 +778,9 @@
 {% if securitytrails_output %}
 <h3 id="securitytrails-results">SECURITYTRAILS API SCAN RESULTS</h3>
 <details>
-  <summary>SecurityTrails Output</summary>
+  <summary>
+    <i class="fas fa-map-marked-alt" style="color:#0097A7;"></i> SecurityTrails Output
+  </summary>
   <pre>{{ securitytrails_output | safe }}</pre>
 </details>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
@@ -629,7 +790,9 @@
 {% if hudsonrock_output %}
 <h3 id="hudsonrock-results">HUDSONROCK API SCAN RESULTS</h3>
 <details>
-  <summary>HudsonRock Output</summary>
+  <summary>
+    <i class="fas fa-user-secret" style="color:#7B1FA2;"></i> HudsonRock Output
+  </summary>
   <pre>{{ hudsonrock_output | safe }}</pre>
 </details>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>

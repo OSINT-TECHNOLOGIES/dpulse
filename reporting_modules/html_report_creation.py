@@ -88,7 +88,6 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         virustotal_output = virustotal_html_prep(virustotal_output)
         securitytrails_output = securitytrails_html_prep(securitytrails_output)
 
-
         if len(ps_emails_return) > 0:
             subdomain_mails += ps_emails_return
             subdomain_mails = list(set(subdomain_mails))

@@ -1,6 +1,7 @@
 import sys
 import os
 from colorama import Fore, Style, Back
+from rich.progress import Progress, SpinnerColumn, TextColumn
 
 sys.path.append('datagather_modules')
 sys.path.append('service')
@@ -75,24 +76,29 @@ def process_report(report_filetype, short_domain, url, case_comment, keywords_li
         spinner_thread.do_run = False
         spinner_thread.join()
 
-class ProgressBar(threading.Thread):
+
+class RichProgressBar(threading.Thread):
     def __init__(self):
-        super(ProgressBar, self).__init__()
+        super(RichProgressBar, self).__init__()
         self.do_run = True
 
     def run(self):
-        for char in itertools.cycle('|/-\\'):
-            if not self.do_run:
-                break
-            print(Fore.LIGHTMAGENTA_EX + Back.WHITE + char + Style.RESET_ALL, end='\r')
-            sleep(0.1)
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[magenta]Processing scan...[/magenta]"),
+            transient=True,
+        ) as progress:
+            task = progress.add_task("", total=None)
+            while self.do_run:
+                progress.update(task)
+                sleep(0.1)
 
 def run():
     while True:
         try:
             cli.print_main_menu()
             domain_patter = r'^(?!\-)(?:[a-zA-Z0-9\-]{1,63}\.)+[a-zA-Z]{2,}$'
-            choice = input(Fore.YELLOW + "Enter your choice >> ")
+            choice = input(Fore.YELLOW + "\nEnter your choice >> ")
             if choice == "1":
                 from misc import domain_precheck
                 print(Fore.GREEN + "\nImported and activated reporting modules" + Style.RESET_ALL)
@@ -208,8 +214,8 @@ def run():
                                                 end_date = str(input('Enter end date (YYYYMMDD format): '))
                                                 snapshotting_ui_mark = "Yes, domain's main page snapshotting using Wayback Machine"
                                         cli_init.print_prescan_summary(short_domain, report_filetype.upper(), pagesearch_ui_mark, dorking_ui_mark, used_api_ui, case_comment, snapshotting_ui_mark)
-                                        print(Fore.LIGHTMAGENTA_EX + "[BASIC SCAN START]\n" + Style.RESET_ALL)
-                                        spinner_thread = ProgressBar()
+                                        #print(Fore.LIGHTMAGENTA_EX + "[BASIC SCAN START]\n" + Style.RESET_ALL)
+                                        spinner_thread = RichProgressBar()
                                         spinner_thread.start()
                                         if report_filetype.lower() in ['html', 'xlsx']:
                                             process_report(report_filetype, short_domain, url, case_comment,
@@ -221,7 +227,7 @@ def run():
             elif choice == "2":
                 import configparser
                 cli.print_settings_menu()
-                choice_settings = input(Fore.YELLOW + "Enter your choice >> ")
+                choice_settings = input(Fore.YELLOW + "\nEnter your choice >> ")
                 if choice_settings == '1':
                     print_and_return_config()
                 elif choice_settings == '2':
@@ -249,7 +255,7 @@ def run():
                     continue
             elif choice == '3':
                 cli.dorking_db_manager()
-                choice_dorking = input(Fore.YELLOW + "Enter your choice >> ")
+                choice_dorking = input(Fore.YELLOW + "\nEnter your choice >> ")
                 if choice_dorking == '1':
                     from db_creator import manage_dorks
                     cli_init.print_api_db_msg()
