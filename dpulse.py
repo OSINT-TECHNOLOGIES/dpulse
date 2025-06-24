@@ -227,7 +227,7 @@ def run():
             elif choice == "2":
                 import configparser
                 cli.print_settings_menu()
-                choice_settings = input(Fore.YELLOW + "Enter your choice >> ")
+                choice_settings = input(Fore.YELLOW + "\nEnter your choice >> ")
                 if choice_settings == '1':
                     print_and_return_config()
                 elif choice_settings == '2':
@@ -255,7 +255,7 @@ def run():
                     continue
             elif choice == '3':
                 cli.dorking_db_manager()
-                choice_dorking = input(Fore.YELLOW + "Enter your choice >> ")
+                choice_dorking = input(Fore.YELLOW + "\nEnter your choice >> ")
                 if choice_dorking == '1':
                     from db_creator import manage_dorks
                     cli_init.print_api_db_msg()
