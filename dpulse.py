@@ -214,7 +214,7 @@ def run():
                                                 end_date = str(input('Enter end date (YYYYMMDD format): '))
                                                 snapshotting_ui_mark = "Yes, domain's main page snapshotting using Wayback Machine"
                                         cli_init.print_prescan_summary(short_domain, report_filetype.upper(), pagesearch_ui_mark, dorking_ui_mark, used_api_ui, case_comment, snapshotting_ui_mark)
-                                        print(Fore.LIGHTMAGENTA_EX + "[BASIC SCAN START]\n" + Style.RESET_ALL)
+                                        #print(Fore.LIGHTMAGENTA_EX + "[BASIC SCAN START]\n" + Style.RESET_ALL)
                                         spinner_thread = RichProgressBar()
                                         spinner_thread.start()
                                         if report_filetype.lower() in ['html', 'xlsx']:
