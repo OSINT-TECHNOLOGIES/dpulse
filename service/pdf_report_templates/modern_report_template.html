@@ -401,7 +401,6 @@
 <hr>
 
 <h3 id="general-scan-info">GENERAL SCAN STATISTICS</h3>
-<div style="display: flex; align-items: flex-start; gap: 80px;">
 <div>
   <p>
     <strong><i class="fas fa-network-wired" style="color:#3F51B5;"></i> Total subdomains found:</strong>
@@ -456,8 +455,25 @@
     <span class="blue" id="ps_p">{{ ps_p }}</span>
   </p>
 </div>
-  <div style="width: 700px;">
-    <canvas id="statsChart"></canvas>
+<div style="display: flex; align-items: flex-start; gap: 40px; margin-top: 40px; justify-content: flex-start;">
+  <div style="flex:1; max-width:500px; min-width:350px;">
+    <canvas id="statsChart" width="500" height="400"></canvas>
+  </div>
+  <div style="flex:1; max-width:400px; min-width:300px;">
+    <canvas id="socialPie" width="400" height="400"></canvas>
+    <div id="socialCounts"
+         data-fb="{{ fb_links|length }}"
+         data-tw="{{ (tw_links|length) + (xcom_links|length) }}"
+         data-inst="{{ inst_links|length }}"
+         data-tg="{{ tg_links|length }}"
+         data-tt="{{ tt_links|length }}"
+         data-li="{{ li_links|length }}"
+         data-vk="{{ vk_links|length }}"
+         data-yt="{{ yt_links|length }}"
+         data-ok="{{ ok_links|length }}"
+         data-wc="{{ wc_links|length }}"
+         style="display:none;">
+    </div>
   </div>
 </div>
 <hr>
@@ -808,35 +824,33 @@
 
 <script>
 const fontMap = {
-  inter:{main:"'Inter', sans-serif",code:"'Roboto Mono', monospace"},
-  plex:{main:"'IBM Plex Sans', sans-serif",code:"'IBM Plex Mono', monospace"},
-  fira:{main:"'Fira Sans', sans-serif",code:"'Fira Code', monospace"},
-  grotesk:{main:"'Space Grotesk', sans-serif",code:"'Roboto Mono', monospace"}
+  inter: { main: "'Inter', sans-serif", code: "'Roboto Mono', monospace" },
+  plex: { main: "'IBM Plex Sans', sans-serif", code: "'IBM Plex Mono', monospace" },
+  fira: { main: "'Fira Sans', sans-serif", code: "'Fira Code', monospace" },
+  grotesk: { main: "'Space Grotesk', sans-serif", code: "'Roboto Mono', monospace" }
 };
 
-function changeFont(val){
-  const c=fontMap[val]||fontMap.inter;
-  document.documentElement.style.setProperty('--font-main',c.main);
-  document.documentElement.style.setProperty('--font-code',c.code);
-  localStorage.setItem('fontChoice',val);
+function changeFont(val) {
+  const c = fontMap[val] || fontMap.inter;
+  document.documentElement.style.setProperty('--font-main', c.main);
+  document.documentElement.style.setProperty('--font-code', c.code);
+  localStorage.setItem('fontChoice', val);
 }
 
-function toggleTheme(){
+function toggleTheme() {
   document.body.classList.toggle('dark');
-  localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');
+  localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
 }
 
 function toggleToc() {
   const toc = document.querySelector('.toc-container');
   toc.classList.toggle('collapsed');
-  
   const body = document.body;
   if (toc.classList.contains('collapsed')) {
     body.style.paddingLeft = '60px';
   } else {
     body.style.paddingLeft = '260px';
   }
-  
   localStorage.setItem('tocCollapsed', toc.classList.contains('collapsed'));
 }
 
@@ -846,31 +860,33 @@ function toggleMinimap() {
   localStorage.setItem('minimapHidden', minimap.classList.contains('hidden'));
 }
 
-function initActiveToc(){
-  const links=document.querySelectorAll('.toc-link[href^="#"]');
-  const sections=[...links].map(l=>document.querySelector(l.getAttribute('href'))).filter(Boolean);
-  const obs=new IntersectionObserver(ent=>{
-    ent.forEach(e=>{
-      const id=e.target.id;
-      const link=document.querySelector(`.toc-link[href="#${id}"]`);
-      if(link) e.isIntersecting?link.classList.add('active'):link.classList.remove('active');
+function initActiveToc() {
+  const links = document.querySelectorAll('.toc-link[href^="#"]');
+  const sections = [...links].map(l => document.querySelector(l.getAttribute('href'))).filter(Boolean);
+  const obs = new IntersectionObserver(ent => {
+    ent.forEach(e => {
+      const id = e.target.id;
+      const link = document.querySelector(`.toc-link[href="#${id}"]`);
+      if (link) e.isIntersecting ? link.classList.add('active') : link.classList.remove('active');
     });
-  },{rootMargin:'-50% 0px -50% 0px',threshold:0});
-  sections.forEach(s=>obs.observe(s));
+  }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
+  sections.forEach(s => obs.observe(s));
 }
 
-function bindPrintPdf(){
-  const printBtn=document.getElementById('printBtn');
-  const pdfBtn=document.getElementById('pdfBtn');
-  if(printBtn) printBtn.addEventListener('click',()=>window.print());
-  if(pdfBtn) pdfBtn.addEventListener('click',()=>{
-    const el=document.querySelector('main');
-    const opt={margin:0.5,filename:`OSINT_Report_${document.title}.pdf`,
-      image:{type:'jpeg',quality:0.98},
-      html2canvas:{scale:2,useCORS:true},
-      jsPDF:{unit:'in',format:'a4',orientation:'portrait'}};
-    if(window.html2pdf) html2pdf().set(opt).from(el).save();
-    else console.error('html2pdf not loaded');
+function bindPrintPdf() {
+  const printBtn = document.getElementById('printBtn');
+  const pdfBtn = document.getElementById('pdfBtn');
+  if (printBtn) printBtn.addEventListener('click', () => window.print());
+  if (pdfBtn) pdfBtn.addEventListener('click', () => {
+    const el = document.querySelector('main');
+    const opt = {
+      margin: 0.5,
+      filename: `OSINT_Report_${document.title}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    if (window.html2pdf) html2pdf().set(opt).from(el).save();
   });
 }
 
@@ -881,13 +897,13 @@ function closeSplitScreen() {
 
 function syncScroll(el1, el2) {
   let ignore = false;
-  el1.addEventListener('scroll', function() {
+  el1.addEventListener('scroll', function () {
     if (ignore) return; ignore = true;
     el2.scrollTop = el1.scrollTop;
     el2.scrollLeft = el1.scrollLeft;
     ignore = false;
   });
-  el2.addEventListener('scroll', function() {
+  el2.addEventListener('scroll', function () {
     if (ignore) return; ignore = true;
     el1.scrollTop = el2.scrollTop;
     el1.scrollLeft = el2.scrollLeft;
@@ -898,16 +914,18 @@ function syncScroll(el1, el2) {
 function compareLists(leftParent, rightParent) {
   let leftLists = leftParent.querySelectorAll('ul');
   let rightLists = rightParent.querySelectorAll('ul');
-  for (let i=0; i<leftLists.length; ++i) {
+  for (let i = 0; i < leftLists.length; ++i) {
     let l = leftLists[i], r = rightLists[i];
     if (!r) continue;
-    let lItems = Array.from(l.querySelectorAll('li')).map(li=>li.textContent.trim());
-    let rItems = Array.from(r.querySelectorAll('li')).map(li=>li.textContent.trim());
-    l.querySelectorAll('li').forEach(li=>{
+    let lItems = Array.from(l.querySelectorAll('li')).map(li => li.textContent.trim());
+    let rItems = Array.from(r.querySelectorAll('li')).map(li => li.textContent.trim());
+    l.querySelectorAll('li').forEach(li => {
       if (!rItems.includes(li.textContent.trim())) li.style.background = '#d4ffd4';
+      else li.style.background = '';
     });
-    r.querySelectorAll('li').forEach(li=>{
+    r.querySelectorAll('li').forEach(li => {
       if (!lItems.includes(li.textContent.trim())) li.style.background = '#ffd4d4';
+      else li.style.background = '';
     });
   }
 }
@@ -915,20 +933,23 @@ function compareLists(leftParent, rightParent) {
 function compareNums(leftParent, rightParent) {
   let leftSpans = leftParent.querySelectorAll('span[id]');
   let rightSpans = rightParent.querySelectorAll('span[id]');
-  for (let i=0; i<leftSpans.length; ++i) {
+  for (let i = 0; i < leftSpans.length; ++i) {
     let l = leftSpans[i];
-    let r = Array.from(rightSpans).find(s=>s.id===l.id);
+    let r = Array.from(rightSpans).find(s => s.id === l.id);
     if (r) {
       if (l.textContent.trim() !== r.textContent.trim()) {
         l.style.background = '#fff7b2';
         r.style.background = '#fff7b2';
+      } else {
+        l.style.background = '';
+        r.style.background = '';
       }
     } else {
       l.style.background = '#d4ffd4';
     }
   }
-  rightSpans.forEach(r=>{
-    if (!leftParent.querySelector('span[id="'+r.id+'"]')) {
+  rightSpans.forEach(r => {
+    if (!leftParent.querySelector('span[id="' + r.id + '"]')) {
       r.style.background = '#ffd4d4';
     }
   });
@@ -937,12 +958,15 @@ function compareNums(leftParent, rightParent) {
 function comparePreBlocks(leftParent, rightParent) {
   let leftPres = leftParent.querySelectorAll('details > pre');
   let rightPres = rightParent.querySelectorAll('details > pre');
-  for (let i=0; i<leftPres.length; ++i) {
+  for (let i = 0; i < leftPres.length; ++i) {
     let l = leftPres[i], r = rightPres[i];
     if (l && r) {
       if (l.textContent.trim() !== r.textContent.trim()) {
         l.style.background = '#fff7b2';
         r.style.background = '#fff7b2';
+      } else {
+        l.style.background = '';
+        r.style.background = '';
       }
     } else if (l && !r) {
       l.style.background = '#d4ffd4';
@@ -960,8 +984,8 @@ function compareReports(leftBody, rightBody) {
 
 const technicalTerms = {
   'Potential vulnerabilities': 'If you see vulnerabilities here, please, do a double check. Remember about "potential" word',
-  'Subdomains IP addresses': 'This list is not correlated with "Found subdomains" list', 
-  'Subdomains e-mails': 'This list is not correlated with "Found subdomains" list', 
+  'Subdomains IP addresses': 'This list is not correlated with "Found subdomains" list',
+  'Subdomains e-mails': 'This list is not correlated with "Found subdomains" list',
   'Tags': 'Keywords that categorize and describe various technologies or features',
   'CMS': 'Software for managing digital content on a website',
   'Analytics service': 'Tool that monitors and analyzes website visitor behavior, traffic sources, and user engagement metrics',
@@ -989,9 +1013,9 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  if(localStorage.getItem('theme')==='dark') document.body.classList.add('dark');
-  const saved=localStorage.getItem('fontChoice')||'inter';
-  document.getElementById('fontSelect').value=saved;
+  if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+  const saved = localStorage.getItem('fontChoice') || 'inter';
+  document.getElementById('fontSelect').value = saved;
   changeFont(saved);
   bindPrintPdf();
 
@@ -1010,18 +1034,16 @@ window.addEventListener('DOMContentLoaded', () => {
   const minimap = document.querySelector('.minimap');
   const minimapContent = document.querySelector('.minimap-content');
   const sections = document.querySelectorAll('h3');
-  
+
   function updateMinimap() {
     const totalHeight = document.documentElement.scrollHeight;
     const viewportHeight = window.innerHeight;
     const scrollPercentage = window.scrollY / (totalHeight - viewportHeight);
-    
     minimapContent.innerHTML = '';
     sections.forEach((section, index) => {
       const rect = section.getBoundingClientRect();
       const sectionTop = (section.offsetTop / totalHeight) * 100;
       const sectionHeight = (rect.height / totalHeight) * 100;
-      
       const sectionEl = document.createElement('div');
       sectionEl.className = 'minimap-section';
       sectionEl.style.top = sectionTop + '%';
@@ -1031,7 +1053,6 @@ window.addEventListener('DOMContentLoaded', () => {
       });
       minimapContent.appendChild(sectionEl);
     });
-    
     const slider = document.querySelector('.minimap-slider');
     if (slider) {
       slider.style.top = (scrollPercentage * 100) + '%';
@@ -1043,7 +1064,6 @@ window.addEventListener('DOMContentLoaded', () => {
     const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     const scrolled = (winScroll / height) * 100;
     progressBar.style.width = scrolled + '%';
-    
     const sections = document.querySelectorAll('section');
     sections.forEach(section => {
       const rect = section.getBoundingClientRect();
@@ -1053,7 +1073,6 @@ window.addEventListener('DOMContentLoaded', () => {
         section.classList.remove('active');
       }
     });
-
     updateMinimap();
   });
 
@@ -1072,9 +1091,9 @@ window.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
-  
+
   document.querySelectorAll('details').forEach(detail => {
-    detail.addEventListener('toggle', function() {
+    detail.addEventListener('toggle', function () {
       if (this.open) {
         const content = this.querySelector('pre');
         if (content) {
@@ -1090,7 +1109,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  if (window.Chart) { 
+  if (window.Chart) {
     const stats = [
       parseInt(document.getElementById('a_tsf')?.textContent) || 0,
       parseInt(document.getElementById('a_tsm')?.textContent) || 0,
@@ -1106,10 +1125,9 @@ window.addEventListener('DOMContentLoaded', () => {
       parseInt(document.getElementById('ps_w')?.textContent) || 0,
       parseInt(document.getElementById('ps_p')?.textContent) || 0
     ];
-
     const labels = [
       'Subdomains',
-      'Social Media', 
+      'Social Media',
       'Emails',
       'IP Addresses',
       'Open Ports',
@@ -1122,12 +1140,10 @@ window.addEventListener('DOMContentLoaded', () => {
       'WEB elements',
       'Exposed passwords'
     ];
-
     const colors = [
       '#4caf50', '#2196f3', '#ff9800', '#9c27b0', '#f44336', '#607d8b',
       '#00bcd4', '#8bc34a', '#ffc107', '#e91e63', '#3f51b5', '#795548', '#9e9e9e'
     ];
-
     const ctx = document.getElementById('statsChart')?.getContext('2d');
     if (ctx) {
       new Chart(ctx, {
@@ -1152,26 +1168,80 @@ window.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
+
+    const socialDiv = document.getElementById('socialCounts');
+    const socialCounts = [
+      parseInt(socialDiv?.dataset.fb) || 0,
+      parseInt(socialDiv?.dataset.tw) || 0,
+      parseInt(socialDiv?.dataset.inst) || 0,
+      parseInt(socialDiv?.dataset.tg) || 0,
+      parseInt(socialDiv?.dataset.tt) || 0,
+      parseInt(socialDiv?.dataset.li) || 0,
+      parseInt(socialDiv?.dataset.vk) || 0,
+      parseInt(socialDiv?.dataset.yt) || 0,
+      parseInt(socialDiv?.dataset.ok) || 0,
+      parseInt(socialDiv?.dataset.wc) || 0
+    ];
+    const socialLabels = [
+      'Facebook', 'Twitter/X', 'Instagram', 'Telegram', 'TikTok',
+      'LinkedIn', 'VK', 'YouTube', 'Odnoklassniki', 'WeChat'
+    ];
+    const socialColors = [
+      '#1877f2', '#1da1f2', '#e1306c', '#0088cc', '#111',
+      '#0077b5', '#4a76a8', '#ff0000', '#ff8000', '#7bb32e'
+    ];
+    let socialPieData = [];
+    let socialPieLabels = [];
+    let socialPieColors = [];
+    for (let i = 0; i < socialCounts.length; ++i) {
+      if (socialCounts[i] > 0) {
+        socialPieData.push(socialCounts[i]);
+        socialPieLabels.push(socialLabels[i]);
+        socialPieColors.push(socialColors[i]);
+      }
+    }
+    const ctxPie = document.getElementById('socialPie')?.getContext('2d');
+    if (ctxPie && socialPieData.length > 0) {
+      new Chart(ctxPie, {
+        type: 'pie',
+        data: {
+          labels: socialPieLabels,
+          datasets: [{
+            data: socialPieData,
+            backgroundColor: socialPieColors
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { position: 'bottom' },
+            title: { display: true, text: 'Social Media Links Distribution' }
+          }
+        }
+      });
+    }
   }
 });
 
-document.getElementById('compareFile')?.addEventListener('change', function(e){
+document.getElementById('compareFile')?.addEventListener('change', function (e) {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = function(ev){
+  reader.onload = function (ev) {
     let parser = new DOMParser();
     let rightDoc = parser.parseFromString(ev.target.result, "text/html");
-    let leftDoc = document.cloneNode(true);
+    let leftBody = document.body.cloneNode(true);
+    let rightBody = rightDoc.body.cloneNode(true);
+    leftBody.querySelectorAll('#splitScreen, .control-panel').forEach(e => e.remove());
+    rightBody.querySelectorAll('#splitScreen, .control-panel').forEach(e => e.remove());
     document.getElementById('leftReport').innerHTML = '';
     document.getElementById('rightReport').innerHTML = '';
-    let leftBody = leftDoc.body.cloneNode(true);
-    let rightBody = rightDoc.body.cloneNode(true);
-    leftBody.querySelectorAll('#splitScreen, .control-panel').forEach(e=>e.remove());
-    rightBody.querySelectorAll('#splitScreen, .control-panel').forEach(e=>e.remove());
-    document.getElementById('leftReport').appendChild(leftBody);
-    document.getElementById('rightReport').appendChild(rightBody);
-    compareReports(leftBody, rightBody);
+    Array.from(leftBody.children).forEach(child => {
+      document.getElementById('leftReport').appendChild(child.cloneNode(true));
+    });
+    Array.from(rightBody.children).forEach(child => {
+      document.getElementById('rightReport').appendChild(child.cloneNode(true));
+    });
+    compareReports(document.getElementById('leftReport'), document.getElementById('rightReport'));
     document.getElementById('splitScreen').style.display = 'block';
     document.body.style.overflow = 'hidden';
     syncScroll(document.getElementById('leftReport'), document.getElementById('rightReport'));
@@ -1179,19 +1249,19 @@ document.getElementById('compareFile')?.addEventListener('change', function(e){
   reader.readAsText(file);
 });
 
-document.addEventListener('change', function(e){
+document.addEventListener('change', function (e) {
   if (e.target && e.target.id === 'diffOnly') {
     let showDiff = e.target.checked;
-    ['leftReport','rightReport'].forEach(id=>{
+    ['leftReport', 'rightReport'].forEach(id => {
       let el = document.getElementById(id);
-      el.querySelectorAll('li,span[id],pre').forEach(node=>{
+      el.querySelectorAll('li,span[id],pre').forEach(node => {
         let bg = node.style.background;
-        if (showDiff && (!bg || bg==='')) node.style.display = 'none';
+        if (showDiff && (!bg || bg === '')) node.style.display = 'none';
         else node.style.display = '';
       });
     });
   }
 });
-</script> 
+</script>
 </body>
 </html>
