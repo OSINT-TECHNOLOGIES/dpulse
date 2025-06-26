@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono&family=Fira+Sans:wght@400;600&family=Fira+Code&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style media="print">
@@ -308,45 +309,48 @@
   <a href="#general-scan-info" class="toc-link">
     <i class="fas fa-chart-bar" style="color:#4CAF50;"></i> 2. General scan statistics
   </a> 
+  <a href="#domain-infrastructure-visualisation" class="toc-link">
+    <i class="fas fa-network-wired" style="color:#FF9800;"></i> 3. Domain infrastructure visualisation
+  </a> 
   <p class="toc-section-title maroon underline">[BASIC SCAN INFO]</p>
   <a href="#whois-info" class="toc-link">
-    <i class="fas fa-id-badge" style="color:#3F51B5;"></i> 3. WHOIS information
+    <i class="fas fa-id-badge" style="color:#3F51B5;"></i> 4. WHOIS information
   </a>
   <a href="#social-media-links" class="toc-link">
-    <i class="fas fa-hashtag" style="color:#E91E63;"></i> 4. Social media links
+    <i class="fas fa-hashtag" style="color:#E91E63;"></i> 5. Social media links
   </a>
   <a href="#subdomains-info" class="toc-link">
-    <i class="fas fa-network-wired" style="color:#9C27B0;"></i> 5. Subdomains
+    <i class="fas fa-network-wired" style="color:#9C27B0;"></i> 6. Subdomains
   </a>
   <a href="#dns-ssl-info" class="toc-link">
-    <i class="fas fa-shield-alt" style="color:#607D8B;"></i> 6. DNS & SSL
+    <i class="fas fa-shield-alt" style="color:#607D8B;"></i> 7. DNS & SSL
   </a>
   <a href="#services-frameworks-info" class="toc-link">
-    <i class="fas fa-cogs" style="color:#F57C00;"></i> 7. Services & Frameworks
+    <i class="fas fa-cogs" style="color:#F57C00;"></i> 8. Services & Frameworks
   </a>
   <a href="#pre-pentest-info" class="toc-link">
-    <i class="fas fa-bug" style="color:#F44336;"></i> 8. Pre-Pentest Info
+    <i class="fas fa-bug" style="color:#F44336;"></i> 9. Pre-Pentest Info
   </a>
   <a href="#pre-pentest-info" class="toc-link">
-    <i class="fas fa-code" style="color:#795548;"></i> 9. Website configuration files
+    <i class="fas fa-code" style="color:#795548;"></i> 10. Website configuration files
   </a>
   <p class="toc-section-title maroon underline">[DORKING SCAN INFO]</p>
   <a href="#dorking-info" class="toc-link">
-    <i class="fas fa-search" style="color:#009688;"></i> 10. Dorking Results
+    <i class="fas fa-search" style="color:#009688;"></i> 11. Dorking Results
   </a>
   <p class="toc-section-title maroon underline">[PAGESEARCH SCAN INFO]</p>
   <a href="#pagesearch-results" class="toc-link">
-    <i class="fas fa-file-alt" style="color:#3F51B5;"></i> 11. PageSearch Results
+    <i class="fas fa-file-alt" style="color:#3F51B5;"></i> 12. PageSearch Results
   </a>
   <p class="toc-section-title maroon underline">[API SCAN INFO]</p>
   <a href="#virustotal-results" class="toc-link">
-    <i class="fas fa-viruses" style="color:#D32F2F;"></i> 12. VirusTotal
+    <i class="fas fa-viruses" style="color:#D32F2F;"></i> 13. VirusTotal
   </a>
   <a href="#securitytrails-results" class="toc-link">
-    <i class="fas fa-map-marked-alt" style="color:#0097A7;"></i> 13. SecurityTrails
+    <i class="fas fa-map-marked-alt" style="color:#0097A7;"></i> 14. SecurityTrails
   </a>
   <a href="#hudsonrock-results" class="toc-link">
-    <i class="fas fa-user-secret" style="color:#7B1FA2;"></i> 14. HudsonRock
+    <i class="fas fa-user-secret" style="color:#7B1FA2;"></i> 15. HudsonRock
   </a>
 </div>
 
@@ -476,6 +480,16 @@
     </div>
   </div>
 </div>
+<hr>
+
+<h3 id="domain-infrastructure-visualisation">DOMAIN INFRASTRUCTURE VISUALISATION</h3>
+<div style="text-align:left;max-width:1400px;margin:0 auto 8px;">
+  <button id="resetGraphBtn" style="margin-left:8px;">Reset graph</button>
+  <button id="expandAllBtn" disabled>Expand all nodes</button>
+  <button id="collapseBtn" disabled>Collapse selected node</button>
+</div>
+<div id="osintNetwork" style="width:100%;max-width:1400px;height:700px;border:1px solid #ccc;margin:0 auto 24px;"></div>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 
 <h3 id="whois-info">WHOIS INFORMATION</h3>
@@ -1220,46 +1234,204 @@ window.addEventListener('DOMContentLoaded', () => {
       });
     }
   }
-});
 
-document.getElementById('compareFile')?.addEventListener('change', function (e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function (ev) {
-    let parser = new DOMParser();
-    let rightDoc = parser.parseFromString(ev.target.result, "text/html");
-    let leftBody = document.body.cloneNode(true);
-    let rightBody = rightDoc.body.cloneNode(true);
-    leftBody.querySelectorAll('#splitScreen, .control-panel').forEach(e => e.remove());
-    rightBody.querySelectorAll('#splitScreen, .control-panel').forEach(e => e.remove());
-    document.getElementById('leftReport').innerHTML = '';
-    document.getElementById('rightReport').innerHTML = '';
-    Array.from(leftBody.children).forEach(child => {
-      document.getElementById('leftReport').appendChild(child.cloneNode(true));
-    });
-    Array.from(rightBody.children).forEach(child => {
-      document.getElementById('rightReport').appendChild(child.cloneNode(true));
-    });
-    compareReports(document.getElementById('leftReport'), document.getElementById('rightReport'));
-    document.getElementById('splitScreen').style.display = 'block';
-    document.body.style.overflow = 'hidden';
-    syncScroll(document.getElementById('leftReport'), document.getElementById('rightReport'));
-  };
-  reader.readAsText(file);
-});
+  if (window.vis && document.getElementById('osintNetwork')) {
+    let nodes, edges, network, expanded, initialNodes, initialEdges, selectedNode = null;
+    const domain = '{{ sh_domain }}';
+    const services = [
+      {name: 'Web servers', items: [{% for ws in web_servers %}'{{ ws }}',{% endfor %}]},
+      {name: 'CMS', items: [{% for cm in cms %}'{{ cm }}',{% endfor %}]},
+      {name: 'Used programming languages', items: [{% for pl in programming_languages %}'{{ pl }}',{% endfor %}]},
+      {name: 'Used web frameworks', items: [{% for wf in web_frameworks %}'{{ wf }}',{% endfor %}]},
+      {name: 'Analytics service', items: [{% for analytic in analytics %}'{{ analytic }}',{% endfor %}]},
+      {name: 'Used JavaScript frameworks', items: [{% for jsf in javascript_frameworks %}'{{ jsf }}',{% endfor %}]},
+      {name: 'Tags', items: [{% for tag in tags %}'{{ tag }}',{% endfor %}]},
+      {name: 'Common Platform Enumeration', items: [{% for cpe in cpes %}'{{ cpe }}',{% endfor %}]}
+    ];
+    const subdomains = [{% for sub in subdomains %}'{{ sub }}',{% endfor %}];
+    const socialGroups = [
+      {name: 'Facebook', links: [{% for link in fb_links %}'{{ link }}',{% endfor %}]},
+      {name: 'Twitter/X', links: [{% for link in tw_links %}'{{ link }}',{% endfor %}{% for link in xcom_links %}'{{ link }}',{% endfor %}]},
+      {name: 'Instagram', links: [{% for link in inst_links %}'{{ link }}',{% endfor %}]},
+      {name: 'Telegram', links: [{% for link in tg_links %}'{{ link }}',{% endfor %}]},
+      {name: 'TikTok', links: [{% for link in tt_links %}'{{ link }}',{% endfor %}]},
+      {name: 'LinkedIn', links: [{% for link in li_links %}'{{ link }}',{% endfor %}]},
+      {name: 'VK', links: [{% for link in vk_links %}'{{ link }}',{% endfor %}]},
+      {name: 'YouTube', links: [{% for link in yt_links %}'{{ link }}',{% endfor %}]},
+      {name: 'Odnoklassniki', links: [{% for link in ok_links %}'{{ link }}',{% endfor %}]},
+      {name: 'WeChat', links: [{% for link in wc_links %}'{{ link }}',{% endfor %}]}
+    ];
+    const ipAddresses = [{% for ip in ip_addresses %}'{{ ip }}',{% endfor %}];
+    const ports = [{% for op in ports %}'{{ op }}',{% endfor %}];
+    const vulns = [{% for vuln in vulns %}'{{ vuln }}',{% endfor %}];
 
-document.addEventListener('change', function (e) {
-  if (e.target && e.target.id === 'diffOnly') {
-    let showDiff = e.target.checked;
-    ['leftReport', 'rightReport'].forEach(id => {
-      let el = document.getElementById(id);
-      el.querySelectorAll('li,span[id],pre').forEach(node => {
-        let bg = node.style.background;
-        if (showDiff && (!bg || bg === '')) node.style.display = 'none';
-        else node.style.display = '';
+    function initGraph() {
+      nodes = new vis.DataSet([
+        {id: 'domain', label: domain, group: 'domain', color:'#3F51B5', level:0, size:40, borderWidth:4}
+      ]);
+      edges = new vis.DataSet([]);
+      expanded = {};
+      const firstLevel = [
+        {id: 'services', label: 'SERVICES', color:'#607D8B'},
+        {id: 'subdomains', label: 'SUBDOMAINS', color:'#2196F3'},
+        {id: 'social', label: 'SOCIALS', color:'#E91E63'},
+        {id: 'ip', label: 'IPs', color:'#009688'},
+        {id: 'ports', label: 'PORTS', color:'#FB8C00'},
+        {id: 'vulns', label: 'VULNERABILITIES', color:'#F44336'}
+      ];
+      firstLevel.forEach(n => {
+        nodes.add({id: n.id, label: n.label, group: n.id, color: n.color, level:1, size:30, borderWidth:3});
+        edges.add({from: 'domain', to: n.id});
       });
+      initialNodes = nodes.get().map(n => Object.assign({}, n));
+      initialEdges = edges.get().map(e => Object.assign({}, e));
+    }
+
+    function expandNode(nodeId) {
+      if (expanded[nodeId]) return;
+      expanded[nodeId] = true;
+      if (nodeId === 'services') {
+        services.forEach((srv, i) => {
+          const sid = 'srv_' + i;
+          nodes.add({id: sid, label: srv.name, group:'service', color:'#90caf9', level:2, parent: nodeId, size:20, borderWidth:2});
+          edges.add({from: 'services', to: sid});
+        });
+      }
+      if (nodeId.startsWith('srv_')) {
+        const idx = parseInt(nodeId.split('_')[1]);
+        services[idx].items.forEach((item, j) => {
+          const iid = nodeId + '_item_' + j;
+          nodes.add({id: iid, label: item, group:'serviceitem', color:'#b3e5fc', level:3, parent: nodeId, size:12, borderWidth:1});
+          edges.add({from: nodeId, to: iid});
+        });
+      }
+      if (nodeId === 'subdomains') {
+        subdomains.forEach((sub, i) => {
+          const sid = 'sub_' + i;
+          nodes.add({id: sid, label: sub, group:'subdomain', color:'#64b5f6', level:2, parent: nodeId, size:20, borderWidth:2});
+          edges.add({from: 'subdomains', to: sid});
+        });
+      }
+      if (nodeId === 'social') {
+        socialGroups.forEach((sg, i) => {
+          if (sg.links.length > 0) {
+            const gid = 'soc_' + i;
+            nodes.add({id: gid, label: sg.name, group:'socialgroup', color:'#f06292', level:2, parent: nodeId, size:20, borderWidth:2});
+            edges.add({from: 'social', to: gid});
+          }
+        });
+      }
+      if (nodeId.startsWith('soc_')) {
+        const idx = parseInt(nodeId.split('_')[1]);
+        socialGroups[idx].links.forEach((link, j) => {
+          const lid = nodeId + '_link_' + j;
+          nodes.add({id: lid, label: '🔗', title: link, group:'sociallink', color:'#f8bbd0', level:3, shape:'dot', parent: nodeId, size:12, borderWidth:1});
+          edges.add({from: nodeId, to: lid});
+        });
+      }
+      if (nodeId === 'ip') {
+        ipAddresses.forEach((ip, i) => {
+          const iid = 'ip_' + i;
+          nodes.add({id: iid, label: ip, group:'ip', color:'#80cbc4', level:2, parent: nodeId, size:20, borderWidth:2});
+          edges.add({from: 'ip', to: iid});
+        });
+      }
+      if (nodeId === 'ports') {
+        ports.forEach((port, i) => {
+          const pid = 'port_' + i;
+          nodes.add({id: pid, label: port, group:'port', color:'#ffe082', level:2, parent: nodeId, size:20, borderWidth:2});
+          edges.add({from: 'ports', to: pid});
+        });
+      }
+      if (nodeId === 'vulns') {
+        vulns.forEach((vuln, i) => {
+          const vid = 'vuln_' + i;
+          nodes.add({id: vid, label: vuln, group:'vuln', color:'#ef9a9a', level:2, parent: nodeId, size:20, borderWidth:2});
+          edges.add({from: 'vulns', to: vid});
+        });
+      }
+    }
+
+    function collapseNode(nodeId) {
+      let toRemove = [];
+      nodes.get().forEach(n => {
+        if (n.parent === nodeId) {
+          toRemove.push(n.id);
+          collapseNode(n.id);
+        }
+      });
+      toRemove.forEach(id => {
+        nodes.remove(id);
+        edges.get().forEach(e => {
+          if (e.from === id || e.to === id) edges.remove(e.id);
+        });
+        expanded[id] = false;
+      });
+      expanded[nodeId] = false;
+    }
+
+    function resetGraph() {
+      nodes.clear();
+      edges.clear();
+      initialNodes.forEach(n => nodes.add(Object.assign({}, n)));
+      initialEdges.forEach(e => edges.add(Object.assign({}, e)));
+      for (let k in expanded) expanded[k] = false;
+      selectedNode = null;
+      if (document.getElementById('collapseBtn')) document.getElementById('collapseBtn').disabled = true;
+    }
+
+    function expandAll() {
+      ['services','subdomains','social','ip','ports','vulns'].forEach(expandNode);
+      for (let i=0; i<services.length; ++i) expandNode('srv_'+i);
+      for (let i=0; i<socialGroups.length; ++i) expandNode('soc_'+i);
+    }
+
+    initGraph();
+
+    var container = document.getElementById('osintNetwork');
+    var data = { nodes: nodes, edges: edges };
+    var options = {
+      layout: { hierarchical: false },
+      nodes: { font: { size: 16 } },
+      physics: { stabilization: true }
+    };
+    network = new vis.Network(container, data, options);
+
+    network.on("click", function (params) {
+      if (params.nodes.length === 1) {
+        selectedNode = params.nodes[0];
+        if (document.getElementById('collapseBtn')) document.getElementById('collapseBtn').disabled = false;
+        expandNode(selectedNode);
+      } else {
+        selectedNode = null;
+        if (document.getElementById('collapseBtn')) document.getElementById('collapseBtn').disabled = true;
+      }
     });
+
+    if (document.getElementById('resetGraphBtn')) {
+      document.getElementById('resetGraphBtn').onclick = function() {
+        resetGraph();
+        network.setData({nodes: nodes, edges: edges});
+        network.fit({animation: {duration: 500, easingFunction: "easeInOutQuad"}});
+      };
+    }
+    if (document.getElementById('collapseBtn')) {
+      document.getElementById('collapseBtn').onclick = function() {
+        if (selectedNode) {
+          collapseNode(selectedNode);
+          network.setData({nodes: nodes, edges: edges});
+          document.getElementById('collapseBtn').disabled = true;
+          network.fit({animation: {duration: 500, easingFunction: "easeInOutQuad"}});
+        }
+      };
+    }
+    if (document.getElementById('expandAllBtn')) {
+      document.getElementById('expandAllBtn').onclick = function() {
+        expandAll();
+        network.setData({nodes: nodes, edges: edges});
+        network.fit({animation: {duration: 500, easingFunction: "easeInOutQuad"}});
+      };
+    }
   }
 });
 </script>
