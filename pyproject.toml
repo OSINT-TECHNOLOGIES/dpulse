@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "dpulse"
-version = "1.3.2"
+version = "1.3.3"
 description = "Convenient,fast and user-friendly collector of domain information from Open-Sources"
 authors = ["OSINT-TECHNOLOGIES <osint.technologies@gmail.com>"]
 readme = "README.md"
@@ -21,7 +21,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.13"
+python = ">=3.10,<4.0"
 Jinja2 = "^3.1.6"
 beautifulsoup4 = "4.12.2"
 requests = "2.32.4"
@@ -36,6 +36,7 @@ PyMuPDF = "1.24.7"
 selenium = "4.28.1"
 webdriver-manager = "4.0.2"
 undetected_chromedriver = "3.5.5"
+setuptools = "80.9.0"
 
 [tool.poetry.scripts]
 dpulse = 'dpulse.dpulse:run'
