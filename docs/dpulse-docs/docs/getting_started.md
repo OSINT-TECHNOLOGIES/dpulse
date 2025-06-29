@@ -99,6 +99,7 @@ After you've enter correct domain name of your target, you'll be asked to set so
 * PageSearch keywords (if previous modifier was set to Y): keywords which DPULSE will try to find in found PDF documents
 * Dorking mode: determines which Dorking database will be used during scan, but can be declined with N flag
 * Third-party APIs usage: determines which API will be used during scan, but can be declined with N flag
+* Snapshotting usage: determines which type of snapshotting will be used during scan, but can be declined with N flag
 
 Example of modifiers selection is shown below:
 
