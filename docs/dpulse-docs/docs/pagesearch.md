@@ -14,3 +14,7 @@ PageSearch returns extended information about found subdomains during basic scan
 6. Documents, config files, databases files (and PageSearch can download them!)
 7. Specified words by user in PDF files
 
+PageSearch scan example (this example is not so representative because scanned site is not an example of real domain):
+
+![pagesearch1](https://github.com/user-attachments/assets/ed91f37f-578f-462b-a464-5281dd06ba0c)
+
