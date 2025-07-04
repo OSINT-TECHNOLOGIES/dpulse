@@ -152,6 +152,38 @@
     #graph-export button { font-size: 15px; padding: 4px 10px; border-radius: 4px; border: 1px solid #ccc; background: #f5f5f5; cursor: pointer; }
     .vis-tooltip { font-size: 15px !important; }
     #osintNetwork { width:100%;max-width:1400px;height:700px;border:1px solid #ccc;margin:0 auto 24px; background: #fafaff; }
+    #osintNetwork.fullscreen {
+      position: fixed !important;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 2000;
+      background: #fafaff;
+      border: none;
+      margin: 0 !important;
+      box-shadow: none;
+    }
+    body.fullscreen-graph {
+      overflow: hidden;
+    }
+    #exitFullscreenBtn {
+      position: fixed;
+      top: 120px;
+      right: 32px;
+      z-index: 2100;
+      font-size: 20px;
+      background: #fff;
+      color: #333;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 6px 16px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      display: none;
+    }
+    #osintNetwork.fullscreen + #exitFullscreenBtn {
+      display: block;
+    }
   </style>
 </head>
 <body id="top">
@@ -363,6 +395,7 @@
 </div>
 <div id="graph-export">
   <button id="exportPngBtn" aria-label="Export PNG">Export PNG</button>
+  <button id="fullscreenGraphBtn" aria-label="Enter full screen mode">Expanded mode</button>
 </div>
 <div style="text-align:left;max-width:1400px;margin:0 auto 8px;">
   <button id="resetGraphBtn">Reset graph</button>
@@ -372,6 +405,7 @@
   <button id="unclusterBtn">Uncluster all</button>
 </div>
 <div id="osintNetwork" tabindex="0" aria-label="Domain infrastructure graph"></div>
+<button id="exitFullscreenBtn" style="display:none;">Exit graph expanded mode</button>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 
@@ -716,7 +750,6 @@
   <li><a href="https://github.com/OSINT-TECHNOLOGIES" target="_blank" class="blue">https://github.com/OSINT-TECHNOLOGIES</a></li>
   <li><a href="https://pypi.org/project/dpulse/" target="_blank" class="blue">https://pypi.org/project/dpulse/</a></li>
 </ul>
-
 <script>
   const fontMap = {
     inter: { main: "'Inter', sans-serif", code: "'Roboto Mono', monospace" },
@@ -1100,6 +1133,7 @@
         interaction: { hover: true, navigationButtons: true, keyboard: true, dragNodes: true }
       };
       network = new vis.Network(container, data, options);
+      window.network = network;
       network.on("click", function (params) {
         if (params.nodes.length === 1) {
           selectedNode = params.nodes[0];
@@ -1173,6 +1207,31 @@
       };
       loadGraphState();
       network.setData({nodes: nodes, edges: edges});
+      var graphDiv = document.getElementById('osintNetwork');
+      var btnFS = document.getElementById('fullscreenGraphBtn');
+      var btnExit = document.getElementById('exitFullscreenBtn');
+      if (graphDiv && btnFS && btnExit) {
+        btnFS.onclick = function() {
+          graphDiv.classList.add('fullscreen');
+          document.body.classList.add('fullscreen-graph');
+          btnExit.style.display = 'block';
+          if (window.network) setTimeout(() => window.network.fit(), 200);
+        };
+        btnExit.onclick = function() {
+          graphDiv.classList.remove('fullscreen');
+          document.body.classList.remove('fullscreen-graph');
+          btnExit.style.display = 'none';
+          if (window.network) setTimeout(() => window.network.fit(), 200);
+        };
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && graphDiv.classList.contains('fullscreen')) {
+            graphDiv.classList.remove('fullscreen');
+            document.body.classList.remove('fullscreen-graph');
+            btnExit.style.display = 'none';
+            if (window.network) setTimeout(() => window.network.fit(), 200);
+          }
+        });
+      }
     }
   });
 </script>
