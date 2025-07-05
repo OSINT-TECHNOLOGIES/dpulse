@@ -31,7 +31,7 @@ class Menu:
             Text.assemble(
                 (fig.renderText('DPULSE'), preview_style),
                 ("\n", ""),
-                ("DPULSE-CLI - v1.3.3 rolling - OSINT-TECHNOLOGIES\n\n", "magenta bold"),
+                ("DPULSE-CLI - v1.3.3 stable - OSINT-TECHNOLOGIES\n\n", "magenta bold"),
                 ("Visit our pages:\n", "white"),
                 ("GitHub: ", "white"), ("https://github.com/OSINT-TECHNOLOGIES\n", "blue underline"),
                 ("PyPi: ", "white"), ("https://pypi.org/project/dpulse/\n", "blue underline"),
