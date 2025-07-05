@@ -6,6 +6,10 @@ As you can understand, configuration file is a file that contains certain parame
 
 Configuration file (config.ini) located in 'serivce' folder, which is located inside DPULSE root folder. Default config.ini file generated with your first DPULSE start and it looks like that:
 ```
+[HTML_REPORTING]
+template = modern
+delete_txt_files = n
+
 [LOGGING]
 log_level = info
 
@@ -16,6 +20,8 @@ font = slant
 [DORKING]
 dorking_delay (secs) = 2
 delay_step = 5
+full_path_to_browser = path\to\browser\for\dorking
+browser_mode = nonheadless
 
 [SNAPSHOTTING]
 installed_browser = firefox
@@ -51,17 +57,23 @@ proxies_file_path = NONE
 
 As you can see, config file built with sections, which represent separated DPULSE functions. Lets describe these sections and parameters:
 
-[LOGGING] is section for log file configuration, and it's only parameter - log_level - describes log level for Python's logging library. More information about logging levels you [can find here](https://docs.python.org/3/library/logging.html#logging-levels)
-
-[CLI VISUAL] is section for command line interface configuration. It's parameters are preview_color (determines color for big DPULSE logo on start) and font (determines font for big DPULSE logo on start). More about these parameters you [can find here](http://www.figlet.org/)
-
-[DORKING] is section for dorking process configuration. It's parameters are dorking_delay (secs) (determines delay between dorking steps) and delay_step (determines how many requests will be in one step)
-
-[SNAPSHOTTING] is section for snapshotting process configuration. It's parameters are installed_browser (determines your installed browser to be used in screenshot snapshotting), opera_browser_path (path to opera.exe, only in case if you want to use this browser for screenshot snapshotting), wayback_retries (determines amount of retries for getting exact Wayback snapshot in case of errors) and wayback_req_pause (determines pause in seconds between requests to Wayback archive)
-
-[USER-AGENTS] is section for user-agents list, which is used in Google Dorking (user-agents are randomly swapped in process)
-
-[PROXIES] is section for configuring proxies usage in Dorking, and it's only parameter - proxies_file_path - used to determine path to .txt file (path should be full with //-style slashes) which contains list of proxies (one proxy per row)
+| SECTION    | PARAMETER    | POSSIBLE VALUES     | COMMENT    |
+| ------------- | ------------- | ------------- | ------------- |
+| [HTML_REPORTING] | template | modern / legacy | Determines which HTML report template should be used while creating report itself. Modern contains more features like analytics, graphs and interactive features, while legacy is not supported anymore but may be convenient choice for someone |
+| [HTML_REPORTING] | delete_txt_files | y / n | Modern HTML report template contains text boxes for the content of robots.txt and sitemap.xml files, so maybe you won't need them as .txt files. Y parameter makes DPULSE delete this files from report folder, and N parameter leave everything as is |
+| [LOGGING] | log_level | See [here](https://docs.python.org/3/library/logging.html#logging-levels) | Determines how much technical info about program's execution will be logged in journal.log file |
+| [CLI_VISUAL] | preview_color | See [here](https://pypi.org/project/colorama/) | Determines the color of DPULSE ASCII art's color |
+| [CLI_VISUAL] | font | - | - |
+| [DORKING] | dorking_delay (secs) | Any integer value >=0 | Determines how much time browser will be on pause between dorks |
+| [DORKING] | delay_step | Any integer value >0 | Determines the amount of dorks browser should handle before activating delay |
+| [DORKING] | full_path_to_browser | Full path to your browser's executable file with \ symbol as a separator | Determines which browser will be used for Dorking |
+| [DORKING] | browser_mode | headless / nonheadless | Sets which browser mode will be used during Dorking process (headless means that browser window won't be opened, so nonheadless means that browser window will be opened every new dork, and actually it gives better results with TOS and Captcha bypassing) |
+| [SNAPSHOTTING] | installed_browser | Cell 1, Row 2 | Cell 1, Row 2 |
+| [SNAPSHOTTING] | opera_browser_path | Full path to your Opera.exe / None | Enter your Opera.exe path only if you decided to use Opera for screenshot snapshotting, in other cases - leave it as None |
+| [SNAPSHOTTING] | wayback_retries | Any integer value >0 | Determines how many retries DPULSE will make before abandoning inaccessible Wayback link |
+| [SNAPSHOTTING] | wayback_req_pause | Any integer value >0 | Determines how many seconds DPULSE will wait between different retries to an inaccessible Wayback link |
+| [USER-AGENTS] | agent_N | Any default user-agent string | User-agent are used to try bypassing TOS and Captcha when Dorking domain |
+| [PROXIES] | proxies_file_path | Full path to your proxies .txt file | Determines path to .txt file with "//" symbols as a separator which contains list of proxies (one proxy per row) |
 
 ## Editing configuration file
 
