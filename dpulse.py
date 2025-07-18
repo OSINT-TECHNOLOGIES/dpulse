@@ -1,6 +1,6 @@
 import sys
 import os
-from colorama import Fore, Style, Back
+from colorama import Fore, Style
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
 sys.path.append('datagather_modules')
@@ -214,7 +214,6 @@ def run():
                                                 end_date = str(input('Enter end date (YYYYMMDD format): '))
                                                 snapshotting_ui_mark = "Yes, domain's main page snapshotting using Wayback Machine"
                                         cli_init.print_prescan_summary(short_domain, report_filetype.upper(), pagesearch_ui_mark, dorking_ui_mark, used_api_ui, case_comment, snapshotting_ui_mark)
-                                        #print(Fore.LIGHTMAGENTA_EX + "[BASIC SCAN START]\n" + Style.RESET_ALL)
                                         spinner_thread = RichProgressBar()
                                         spinner_thread.start()
                                         if report_filetype.lower() in ['html', 'xlsx']:
@@ -274,7 +273,6 @@ def run():
                     cursor, conn = db.select_api_keys('updating')
                     api_id_to_update = input(Fore.YELLOW + "Enter API's ID to update its key >> ")
                     new_api_key = input(Fore.YELLOW + "Enter new API key >> ")
-
                     try:
                         cursor.execute("""
                             UPDATE api_keys 
@@ -314,7 +312,7 @@ def run():
                     print(Fore.GREEN + "Successfully created report storage database" + Style.RESET_ALL)
                 choice_db = input(Fore.YELLOW + "Enter your choice >> ")
                 if choice_db == "1":
-                    cursor, sqlite_connection, data_presence_flag = db.db_select()
+                    db.db_select()
                 elif choice_db == "2":
                     cursor, sqlite_connection, data_presence_flag = db.db_select()
                     if data_presence_flag:
