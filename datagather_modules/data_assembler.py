@@ -121,7 +121,7 @@ class DataProcessing():
                     total_links_counter = accessed_links_counter = "No results because PageSearch does not gather these categories"
                     print(Fore.LIGHTMAGENTA_EX + "[ENDED EXTENDED DOMAIN SCAN WITH PAGESEARCH]\n" + Style.RESET_ALL)
                 else:
-                    print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
+                    print(Fore.RED + "Cant start PageSearch because no subdomains were detected\n")
                     accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 'No results because no subdomains were found'
                     ps_emails_return = ""
                     pass
@@ -215,7 +215,7 @@ class DataProcessing():
                         keywords_messages_list = ['No keywords were found']
                     print(Fore.LIGHTMAGENTA_EX + "[ENDED EXTENDED DOMAIN SCAN WITH PAGESEARCH]\n" + Style.RESET_ALL)
                 else:
-                    print(Fore.RED + "Cant start PageSearch because no subdomains were detected")
+                    print(Fore.RED + "Cant start PageSearch because no subdomains were detected\n")
                     ps_emails_return = ""
                     accessible_subdomains = files_counter = cookies_counter = api_keys_counter = website_elements_counter = exposed_passwords_counter = total_links_counter = accessed_links_counter = emails_amount = 'No results because no subdomains were found'
                     ps_string = 'No PageSearch listing provided because no subdomains were found'
