@@ -149,7 +149,7 @@ def run():
                                     if api_flag.lower() == 'y':
                                         print(Fore.GREEN + "\nSupported APIs and your keys:\n")
                                         db.select_api_keys('printing')
-                                        print(Fore.GREEN + "Pay attention that APIs with red-colored API Key field are unable to use!\n")
+                                        print(Fore.GREEN + "\nPay attention that APIs with red-colored API Key field are unable to use!\n")
                                         to_use_api_flag = input(Fore.YELLOW + "Select APIs IDs you want to use in scan (separated by comma) >> ")
                                         used_api_flag = [item.strip() for item in to_use_api_flag.split(',')]
                                         if '3' in used_api_flag:
