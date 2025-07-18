@@ -269,9 +269,9 @@ def run():
                 cli.api_manager()
                 choice_api = input(Fore.YELLOW + "\nEnter your choice >> ")
                 if choice_api == '1':
-                    print(Fore.GREEN + "\nSupported APIs and your keys:\n")
+                    #print(Fore.GREEN + "\nSupported APIs and your keys:\n")
                     cursor, conn = db.select_api_keys('updating')
-                    api_id_to_update = input(Fore.YELLOW + "Enter API's ID to update its key >> ")
+                    api_id_to_update = input(Fore.YELLOW + "\nEnter API's ID to update its key >> ")
                     new_api_key = input(Fore.YELLOW + "Enter new API key >> ")
                     try:
                         cursor.execute("""
