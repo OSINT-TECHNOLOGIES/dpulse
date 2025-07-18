@@ -147,7 +147,8 @@ def run():
                                     dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/Admins/Web/Custom/N (for None)] >> ")
                                     api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N (for No)] >> ")
                                     if api_flag.lower() == 'y':
-                                        print(Fore.GREEN + "\nSupported APIs and your keys:\n")
+                                        #print(Fore.GREEN + "\nSupported APIs and your keys:\n")
+                                        print("\n")
                                         db.select_api_keys('printing')
                                         print(Fore.GREEN + "\nPay attention that APIs with red-colored API Key field are unable to use!\n")
                                         to_use_api_flag = input(Fore.YELLOW + "Select APIs IDs you want to use in scan (separated by comma) >> ")
