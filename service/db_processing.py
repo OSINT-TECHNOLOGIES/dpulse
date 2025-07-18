@@ -192,14 +192,36 @@ def select_api_keys(mode):
     cursor = conn.cursor()
     cursor.execute("SELECT id, api_name, api_key, limitations FROM api_keys")
     rows = cursor.fetchall()
-    for row in rows:
-        if row[2] != 'YOUR_API_KEY':
-            print(Fore.LIGHTBLUE_EX + f"ID: {row[0]} | API Name: {row[1]} | API Key: {row[2]} | Limitations: {row[3]}\n" + Style.RESET_ALL)
-        else:
-            print(Fore.LIGHTBLUE_EX + f"ID: {row[0]} | API Name: {row[1]} | " + Style.RESET_ALL + Fore.RED + f"API Key: {row[2]} " + Fore.LIGHTBLUE_EX + f"| Limitations: {row[3]}\n" + Style.RESET_ALL)
+    console = Console()
+    if rows:
+        try:
+            table = Table(
+                title="[white on magenta]SUPPORTED API AND YOUR KEYS[/white on magenta]",
+                show_lines=True,
+                border_style="magenta",
+                box=box.ROUNDED
+            )
+            table.add_column("ID", style="cyan", justify="center")
+            table.add_column("API Name", style="white", justify="center")
+            table.add_column("API Key", style="white", justify="center")
+            table.add_column("Limitations", style="white", justify="center")
+            for row in rows:
+                api_key = f"[red]{row[2]}[/red]" if row[2] == "YOUR_API_KEY" else str(row[2])
+                table.add_row(
+                    str(row[0]),
+                    str(row[1]),
+                    api_key,
+                    str(row[3])
+                )
+            console.print(table)
+        except sqlite3.Error as e:
+            print(Fore.RED + "Failed to see API keys database's content. Reason: {}".format(e))
+            conn.close()
+    else:
+        print(Fore.RED + 'No data found in API keys database')
+        conn.close()
     if mode == 'printing':
         conn.close()
         return None
     else:
-        pass
         return cursor, conn
