@@ -147,7 +147,6 @@ def run():
                                     dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/Admins/Web/Custom/N (for None)] >> ")
                                     api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N (for No)] >> ")
                                     if api_flag.lower() == 'y':
-                                        #print(Fore.GREEN + "\nSupported APIs and your keys:\n")
                                         print("\n")
                                         db.select_api_keys('printing')
                                         print(Fore.GREEN + "\nPay attention that APIs with red-colored API Key field are unable to use!\n")
@@ -270,7 +269,6 @@ def run():
                 cli.api_manager()
                 choice_api = input(Fore.YELLOW + "\nEnter your choice >> ")
                 if choice_api == '1':
-                    #print(Fore.GREEN + "\nSupported APIs and your keys:\n")
                     cursor, conn = db.select_api_keys('updating')
                     api_id_to_update = input(Fore.YELLOW + "\nEnter API's ID to update its key >> ")
                     new_api_key = input(Fore.YELLOW + "Enter new API key >> ")
