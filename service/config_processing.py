@@ -30,8 +30,10 @@ def create_config():
     config['HTML_REPORTING'] = {'template': 'modern', 'delete_txt_files': 'n'}
     config['LOGGING'] = {'log_level': 'info'}
     config['CLI VISUAL'] = {'preview_color': 'red', 'font': 'slant'}
-    config['DORKING'] = {'dorking_delay (secs)': '2', 'delay_step': '5', 'full_path_to_browser': r'path\to\browser\for\dorking', 'browser_mode': 'nonheadless'}
-    config['SNAPSHOTTING'] = {'installed_browser': 'firefox', 'opera_browser_path': 'None', 'wayback_retries': '3', 'wayback_req_pause': '2'}
+    config['DORKING'] = {'dorking_delay (secs)': '2', 'delay_step': '5',
+                         'full_path_to_browser': r'path\to\browser\for\dorking', 'browser_mode': 'nonheadless'}
+    config['SNAPSHOTTING'] = {'installed_browser': 'firefox', 'opera_browser_path': 'None', 'wayback_retries': '3',
+                              'wayback_req_pause': '2'}
     config['USER-AGENTS'] = {}
     for i, agent in enumerate(basic_user_agents):
         config['USER-AGENTS'][f'agent_{i + 1}'] = agent
@@ -45,8 +47,18 @@ def check_cfg_presence():
     return cfg_presence
 
 def read_config():
+    if not check_cfg_presence():
+        create_config()
+
     config = configparser.ConfigParser()
     config.read('service//config.ini')
+
+    if not config.has_section('LOGGING'):
+        config.add_section('LOGGING')
+        config.set('LOGGING', 'log_level', 'info')
+        with open('service//config.ini', 'w') as configfile:
+            config.write(configfile)
+
     log_level = config.get('LOGGING', 'log_level')
     cli_preview_color = config.get('CLI VISUAL', 'preview_color')
     wm_font = config.get('CLI VISUAL', 'font')
@@ -84,6 +96,8 @@ def read_config():
     return config_values
 
 def print_and_return_config():
+    if not check_cfg_presence():
+        create_config()
     config = configparser.ConfigParser()
     config.read('service//config.ini')
     print(Fore.LIGHTMAGENTA_EX + "\n[CURRENT CONFIG CONTENT START]" + Style.RESET_ALL)
