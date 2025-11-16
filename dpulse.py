@@ -437,6 +437,7 @@ def bootstrap():
 
     try:
         _ = read_config()
+        print('')
     except Exception as e:
         logging.error("CONFIG READ ERROR: %s", e, exc_info=True)
         print(Fore.RED + "Failed to read config. See journal for details" + Style.RESET_ALL)
