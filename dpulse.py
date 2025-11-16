@@ -1,7 +1,15 @@
 import sys
 import os
-from colorama import Fore, Style, Back
-from rich.progress import Progress, SpinnerColumn, TextColumn
+import re
+import shutil
+import webbrowser
+from dataclasses import dataclass
+from enum import Enum
+from pathlib import Path
+from time import perf_counter
+from typing import Callable, Dict, List, Optional
+from colorama import Fore, Style
+from rich.console import Console
 
 sys.path.append('datagather_modules')
 sys.path.append('service')
@@ -11,335 +19,443 @@ sys.path.append('apis')
 sys.path.append('snapshotting')
 
 from config_processing import create_config, check_cfg_presence, read_config, print_and_return_config
-
-cfg_presence = check_cfg_presence()
-if cfg_presence:
-    print(Fore.GREEN + "Global config file presence: OK" + Style.RESET_ALL)
-else:
-    print(Fore.RED + "Global config file presence: NOT OK")
-    create_config()
-    print(Fore.GREEN + "Successfully generated global config file")
-
 import db_processing as db
 import cli_init
 from dorking_handler import dorks_files_check
 from data_assembler import DataProcessing
 from logs_processing import logging
-from db_creator import get_columns_amount
+from db_creator import get_columns_amount, manage_dorks
+from misc import domain_precheck, time_processing
 
-rsdb_presence = db.check_rsdb_presence('report_storage.db')
-if rsdb_presence:
-    print(Fore.GREEN + "Report storage database presence: OK" + Style.RESET_ALL)
-else:
-    db.db_creation('report_storage.db')
-    print(Fore.GREEN + "Successfully created report storage database" + Style.RESET_ALL)
-
-dorks_files_check()
-
-try:
-    import socket
-    import re
-    import webbrowser
-    import sqlite3
-    import itertools
-    import threading
-    from time import sleep, time
-except ImportError as e:
-    print(Fore.RED + f"Import error appeared. Reason: {e}" + Style.RESET_ALL)
-    sys.exit()
+console = Console()
+BASE_DIR = Path(__file__).resolve().parent
+CONFIG_PATH = BASE_DIR / 'service' / 'config.ini'
+DORKING_DIR = BASE_DIR / 'dorking'
+APIS_DIR = BASE_DIR / 'apis'
 
 data_processing = DataProcessing()
-config_values = read_config()
-
 cli = cli_init.Menu()
-cli.welcome_menu()
 
-def process_report(report_filetype, short_domain, url, case_comment, keywords_list, keywords_flag, dorking_flag, used_api_flag, pagesearch_flag, pagesearch_ui_mark, spinner_thread, snapshotting_flag, snapshotting_ui_mark, username, from_date, end_date):
+class ReportType(str, Enum):
+    HTML = "html"
+    XLSX = "xlsx"
+
+class SnapshotMode(str, Enum):
+    NONE = "n"
+    SCREENSHOT = "s"
+    PAGE_COPY = "p"
+    WAYBACK = "w"
+
+@dataclass
+class ScanOptions:
+    short_domain: str
+    url: str
+    case_comment: str
+    report_type: ReportType
+    page_search: bool
+    keywords: Optional[List[str]]
+    dorking_flag: str
+    used_api_ids: List[str]
+    snapshot_mode: SnapshotMode
+    username: Optional[str] = None
+    wb_from: str = 'N'
+    wb_to: str = 'N'
+    pagesearch_ui_mark: str = 'No'
+    snapshotting_ui_mark: str = 'No'
+
+def parse_bool(value: str) -> bool:
+    return value.strip().lower() in {"y", "yes", "да", "si", "1", "true", "t"}
+
+def ask_choice(prompt: str, choices: Dict[str, object], default: Optional[str] = None):
+    while True:
+        raw = input(prompt).strip().lower()
+        if not raw and default is not None:
+            if default in choices:
+                return choices[default]
+        if raw in choices:
+            return choices[raw]
+        print(Fore.RED + f"Invalid choice. Available: {', '.join(choices.keys())}" + Style.RESET_ALL)
+
+def is_valid_domain(domain: str) -> bool:
+    pattern = r"^(?!-)(?:[a-zA-Z0-9-]{1,63}\.)+[a-zA-Z]{2,}$"
+    return bool(re.match(pattern, domain))
+
+def validate_yyyymmdd(s: str) -> bool:
+    return bool(re.fullmatch(r"\d{8}", s))
+
+def sanitize_db_filename(name: str) -> str:
+    safe = os.path.basename(name).split('.')[0]
+    if not re.fullmatch(r"[a-zA-Z0-9_\-]{1,50}", safe):
+        raise ValueError("Invalid DB name")
+    return safe
+
+def compute_dorking_ui_mark(dorking_flag: str) -> str:
+    try:
+        if dorking_flag == 'n':
+            return 'No'
+        if dorking_flag.startswith('custom+'):
+            db_name = dorking_flag.split('+', 1)[1]
+            rc = get_columns_amount(str(DORKING_DIR / db_name), 'dorks')
+            return f'Yes, Custom table dorking ({rc} dorks)'
+
+        mapping = {
+            'basic': 'basic_dorking.db',
+            'iot': 'iot_dorking.db',
+            'files': 'files_dorking.db',
+            'admins': 'adminpanels_dorking.db',
+            'web': 'webstructure_dorking.db'
+        }
+        if dorking_flag in mapping:
+            db_name = mapping[dorking_flag]
+            table = f'{dorking_flag}_dorks'
+            rc = get_columns_amount(str(DORKING_DIR / db_name), table)
+            return f'Yes, {dorking_flag} dorking ({rc} dorks)'
+    except Exception as e:
+        logging.error("Failed to compute dorking UI mark: %s", e, exc_info=True)
+        return 'Dorking info unavailable'
+    return 'No'
+
+def process_report(options: ScanOptions):
     import xlsx_report_creation as xlsx_rc
     import html_report_creation as html_rc
-    from misc import time_processing
+    with console.status("[magenta]Processing scan...[/magenta]", spinner="dots"):
+        start = perf_counter()
+        pagesearch_flag_str = 'y' if options.page_search else 'n'
+        keywords_flag = 1 if (options.page_search and options.keywords and len(options.keywords) > 0) else 0
+        keywords_payload = options.keywords if options.page_search else ''
+
+        data_array, report_info_array = data_processing.data_gathering(
+            options.short_domain,
+            options.url,
+            options.report_type.value,
+            pagesearch_flag_str,
+            keywords_payload,
+            keywords_flag,
+            options.dorking_flag,
+            options.used_api_ids if options.used_api_ids else ['Empty'],
+            options.snapshot_mode.value,
+            options.username,
+            options.wb_from,
+            options.wb_to
+        )
+        end_time_str = time_processing(perf_counter() - start)
+
+    if options.report_type == ReportType.XLSX:
+        xlsx_rc.create_report(
+            options.short_domain, options.url, options.case_comment,
+            data_array, report_info_array,
+            options.pagesearch_ui_mark, end_time_str, options.snapshotting_ui_mark
+        )
+    else:
+        html_rc.report_assembling(
+            options.short_domain, options.url, options.case_comment,
+            data_array, report_info_array,
+            options.pagesearch_ui_mark, end_time_str, options.snapshotting_ui_mark
+        )
+
+def handle_scan():
+    print(Fore.GREEN + "\nImported and activated reporting modules" + Style.RESET_ALL)
+    while True:
+        short_domain = input(Fore.YELLOW + "\nEnter target's domain name (or 'back' to return to the menu) >> ").strip()
+        if short_domain.lower() == "back":
+            print(Fore.RED + "\nReturned to main menu" + Style.RESET_ALL)
+            return
+        if not short_domain:
+            print(Fore.RED + "\nEmpty domain names are not supported" + Style.RESET_ALL)
+            continue
+        if not is_valid_domain(short_domain):
+            print(Fore.RED + '\nYour string does not match domain pattern' + Style.RESET_ALL)
+            continue
+
+        url = f"http://{short_domain}/"
+        print(Fore.GREEN + 'Pinging domain...' + Style.RESET_ALL, end=' ')
+        if domain_precheck(short_domain):
+            print(Fore.GREEN + 'Entered domain is accessible. Continuation' + Style.RESET_ALL)
+            break
+        else:
+            print(Fore.RED + "Entered domain is not accessible. Scan is impossible" + Style.RESET_ALL)
+            return
+
+    case_comment = input(Fore.YELLOW + "Enter case comment >> ").strip()
+    report_type = ask_choice(
+        Fore.YELLOW + "Enter report file extension [HTML/XLSX] >> ",
+        {"html": ReportType.HTML, "xlsx": ReportType.XLSX}
+    )
+
+    page_search = parse_bool(input(Fore.YELLOW + "Would you like to use PageSearch function? [Y/N] >> "))
+    keywords = None
+    pagesearch_ui_mark = 'No'
+    if page_search:
+        keywords_input = input(Fore.YELLOW + "Enter keywords (separate by comma) (or N) >> ").strip()
+        if keywords_input.lower() != 'n':
+            keywords_list = [k.strip() for k in keywords_input.split(',') if k.strip()]
+            if not keywords_list:
+                print(Fore.RED + "\nThis field must contain at least one keyword" + Style.RESET_ALL)
+                return
+            keywords = keywords_list
+            pagesearch_ui_mark = f'Yes, with {keywords_list} keywords search'
+        else:
+            pagesearch_ui_mark = 'Yes, without keywords search'
+
+    dorking_raw = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/Admins/Web/Custom/N] >> ").strip().lower()
+    if dorking_raw in {'basic', 'iot', 'files', 'admins', 'web'}:
+        dorking_flag = dorking_raw
+    elif dorking_raw == 'custom':
+        try:
+            custom_db_name = sanitize_db_filename(input(Fore.YELLOW + "Enter your custom Dorking DB name (no extension) >> ").strip())
+        except ValueError as e:
+            print(Fore.RED + f"\n{e}" + Style.RESET_ALL)
+            return
+        dorking_flag = f'custom+{custom_db_name}.db'
+    elif dorking_raw == 'n':
+        dorking_flag = 'n'
+    else:
+        print(Fore.RED + "\nInvalid Dorking mode. Please select mode among Basic/IoT/Files/Web/Admins/Custom or N" + Style.RESET_ALL)
+        return
+
+    api_yes = parse_bool(input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N] >> "))
+    used_api_ids: List[str] = ['Empty']
+    username: Optional[str] = None
+    used_api_ui = 'No'
+    if api_yes:
+        print("\n")
+        db.select_api_keys('printing')
+        print(Fore.GREEN + "\nPay attention that APIs with red-colored API Key field are unable to use!\n" + Style.RESET_ALL)
+        to_use_api_flag = input(Fore.YELLOW + "Select APIs IDs you want to use in scan (separated by comma) >> ").strip()
+        used_api_ids = [item.strip() for item in to_use_api_flag.split(',') if item.strip().isdigit()]
+        if not used_api_ids:
+            print(Fore.RED + "\nNo valid API IDs selected" + Style.RESET_ALL)
+            return
+        if '3' in used_api_ids:
+            u = input(Fore.YELLOW + "If you know some username from this domain, please enter it here (or N if not) >> ").strip()
+            username = None if u.lower() == 'n' else u
+        if db.check_api_keys(used_api_ids):
+            print(Fore.GREEN + 'Found API key. Continuation' + Style.RESET_ALL)
+        else:
+            print(Fore.RED + "\nAPI key was not found. Check if you've entered valid API key in API Keys DB" + Style.RESET_ALL)
+            return
+        used_api_ui = f'Yes, using APIs with following IDs: {", ".join(used_api_ids)}'
+
+    snap_choice = ask_choice(
+        Fore.YELLOW + "Select Snapshotting mode [S(creenshot)/P(age Copy)/W(ayback Machine)/N] >> ",
+        {"s": SnapshotMode.SCREENSHOT, "p": SnapshotMode.PAGE_COPY, "w": SnapshotMode.WAYBACK, "n": SnapshotMode.NONE},
+        default="n"
+    )
+    snapshotting_ui_mark = 'No'
+    from_date = end_date = 'N'
+    if snap_choice == SnapshotMode.SCREENSHOT:
+        snapshotting_ui_mark = "Yes, domain's main page snapshotting as a screenshot"
+    elif snap_choice == SnapshotMode.PAGE_COPY:
+        snapshotting_ui_mark = "Yes, domain's main page snapshotting as a .HTML file"
+    elif snap_choice == SnapshotMode.WAYBACK:
+        from_date = input(Fore.YELLOW + 'Enter start date (YYYYMMDD format): ').strip()
+        end_date = input(Fore.YELLOW + 'Enter end date (YYYYMMDD format): ').strip()
+        if not (validate_yyyymmdd(from_date) and validate_yyyymmdd(end_date)):
+            print(Fore.RED + "\nInvalid date format" + Style.RESET_ALL)
+            return
+        snapshotting_ui_mark = "Yes, domain's main page snapshotting using Wayback Machine"
+
+    dorking_ui_mark = compute_dorking_ui_mark(dorking_flag)
+
+    cli_init.print_prescan_summary(
+        short_domain, report_type.value.upper(), pagesearch_ui_mark,
+        dorking_ui_mark, used_api_ui, case_comment, snapshotting_ui_mark
+    )
+
+    options = ScanOptions(
+        short_domain=short_domain,
+        url=url,
+        case_comment=case_comment,
+        report_type=report_type,
+        page_search=page_search,
+        keywords=keywords,
+        dorking_flag=dorking_flag,
+        used_api_ids=used_api_ids,
+        snapshot_mode=snap_choice,
+        username=username,
+        wb_from=from_date,
+        wb_to=end_date,
+        pagesearch_ui_mark=pagesearch_ui_mark,
+        snapshotting_ui_mark=snapshotting_ui_mark,
+    )
 
     try:
-        start = time()
-        if pagesearch_flag in ['y', 'si']:
-            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), keywords_list, keywords_flag, dorking_flag.lower(), used_api_flag, snapshotting_flag, username, from_date, end_date)
+        process_report(options)
+    except Exception as e:
+        print(Fore.RED + "Error appeared during report processing. See journal for details" + Style.RESET_ALL)
+        logging.error("PROCESS REPORT ERROR: %s", e, exc_info=True)
+
+def handle_settings():
+    cli.print_settings_menu()
+    choice_settings = input(Fore.YELLOW + "\nEnter your choice >> ").strip()
+    if choice_settings == '1':
+        print_and_return_config()
+    elif choice_settings == '2':
+        config = print_and_return_config()
+        section = input(Fore.YELLOW + "\nEnter the section you want to update >> ").strip()
+        if not config.has_section(section.upper()):
+            print(Fore.RED + "\nSection you've entered does not exist in config file. Please verify that section name is correct" + Style.RESET_ALL)
+            return
+        option = input(Fore.YELLOW + "Enter the option you want to update >> ").strip()
+        if not config.has_option(section.upper(), option):
+            print(Fore.RED + "\nOption you've entered does not exist in config file. Please verify that option name is correct" + Style.RESET_ALL)
+            return
+        value = input(Fore.YELLOW + "Enter the new value >> ").strip()
+        config.set(section.upper(), option, value)
+        with open(CONFIG_PATH, 'w') as configfile:
+            config.write(configfile)
+        print(Fore.GREEN + "\nConfiguration updated successfully" + Style.RESET_ALL)
+    elif choice_settings == '3':
+        with open('journal.log', 'w'):
+            print(Fore.GREEN + "Journal file was successfully cleared" + Style.RESET_ALL)
+    elif choice_settings == '4':
+        return
+
+def handle_dorking_db():
+    cli.dorking_db_manager()
+    choice_dorking = input(Fore.YELLOW + "\nEnter your choice >> ").strip()
+    if choice_dorking == '1':
+        cli_init.print_api_db_msg()
+        try:
+            ddb_name = sanitize_db_filename(input(Fore.YELLOW + "Enter a name for your custom Dorking DB (no extension) >> ").strip())
+        except ValueError as e:
+            print(Fore.RED + f"{e}" + Style.RESET_ALL)
+            return
+        manage_dorks(ddb_name)
+    elif choice_dorking == '2':
+        return
+
+def handle_db_menu():
+    cli.print_db_menu()
+    rsdb_presence = db.check_rsdb_presence('report_storage.db')
+    if rsdb_presence:
+        print(Fore.GREEN + "\nReport storage database presence: OK\n" + Style.RESET_ALL)
+    else:
+        db.db_creation('report_storage.db')
+        print(Fore.GREEN + "Successfully created report storage database" + Style.RESET_ALL)
+
+    choice_db = input(Fore.YELLOW + "Enter your choice >> ").strip()
+    if choice_db == "1":
+        db.db_select()
+    elif choice_db == "2":
+        cursor, sqlite_connection, data_presence_flag = db.db_select()
+        if data_presence_flag:
+            try:
+                id_to_extract_raw = input(Fore.YELLOW + "\nEnter report ID you want to extract >> ").strip()
+                if not id_to_extract_raw.isdigit():
+                    print(Fore.RED + "Report ID must be a number" + Style.RESET_ALL)
+                    return
+                id_to_extract = int(id_to_extract_raw)
+                extracted_folder_name = f'report_recreated_ID#{id_to_extract}'
+                os.makedirs(extracted_folder_name)
+                db.db_report_recreate(extracted_folder_name, id_to_extract)
+            except FileExistsError:
+                print(Fore.RED + "Report with the same recreated folder already exists. Please check its content or delete it and try again" + Style.RESET_ALL)
+            except Exception as e:
+                print(Fore.RED + "Error appeared when trying to recreate report from DB. See journal for details" + Style.RESET_ALL)
+                logging.error("REPORT RECREATE ERROR: %s", e, exc_info=True)
         else:
-            data_array, report_info_array = data_processing.data_gathering(short_domain, url, report_filetype.lower(), pagesearch_flag.lower(), '', keywords_flag, dorking_flag.lower(), used_api_flag, snapshotting_flag, username, from_date, end_date)
-        end = time() - start
-        endtime_string = time_processing(end)
+            pass
+    elif choice_db == "3":
+        print(Fore.GREEN + "\nDatabase connection is successfully closed" + Style.RESET_ALL)
+        return
 
-        if report_filetype == 'xlsx':
-            xlsx_rc.create_report(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, endtime_string, snapshotting_ui_mark)
-        elif report_filetype == 'html':
-            html_rc.report_assembling(short_domain, url, case_comment, data_array, report_info_array, pagesearch_ui_mark, endtime_string, snapshotting_ui_mark)
-    finally:
-        spinner_thread.do_run = False
-        spinner_thread.join()
+def handle_docs():
+    webbrowser.open('https://dpulse.readthedocs.io/en/latest/')
 
+def handle_api_manager():
+    cli.api_manager()
+    choice_api = input(Fore.YELLOW + "\nEnter your choice >> ").strip()
+    if choice_api == '1':
+        cursor, conn = db.select_api_keys('updating')
+        api_id_to_update = input(Fore.YELLOW + "\nEnter API's ID to update its key >> ").strip()
+        new_api_key = input(Fore.YELLOW + "Enter new API key >> ").strip()
+        try:
+            cursor.execute("UPDATE api_keys SET api_key = ? WHERE id = ?", (new_api_key, api_id_to_update))
+            conn.commit()
+            print(Fore.GREEN + "\nSuccessfully added new API key" + Style.RESET_ALL)
+        except Exception as e:
+            print(Fore.RED + "Something went wrong when adding new API key. See journal for details" + Style.RESET_ALL)
+            logging.error('API KEY ADDING: ERROR. REASON: %s', e, exc_info=True)
+        finally:
+            try:
+                conn.close()
+            except Exception:
+                pass
 
-class RichProgressBar(threading.Thread):
-    def __init__(self):
-        super(RichProgressBar, self).__init__()
-        self.do_run = True
+    elif choice_api == '2':
+        try:
+            (APIS_DIR / 'api_keys.db').unlink(missing_ok=True)
+            print(Fore.GREEN + "Deleted old API Keys DB" + Style.RESET_ALL)
+        except Exception as e:
+            print(Fore.RED + "Failed to delete old API Keys DB" + Style.RESET_ALL)
+            logging.error("DELETE API DB ERROR: %s", e, exc_info=True)
+        try:
+            shutil.copyfile(APIS_DIR / 'api_keys_reference.db', APIS_DIR / 'api_keys.db')
+            print(Fore.GREEN + "Successfully restored reference API Keys DB" + Style.RESET_ALL)
+        except FileNotFoundError:
+            print(Fore.RED + "Reference API Keys DB was not found" + Style.RESET_ALL)
+        except Exception as e:
+            print(Fore.RED + "Failed to restore API Keys DB" + Style.RESET_ALL)
+            logging.error("RESTORE API DB ERROR: %s", e, exc_info=True)
+    else:
+        return
 
-    def run(self):
-        with Progress(
-            SpinnerColumn(),
-            TextColumn("[magenta]Processing scan...[/magenta]"),
-            transient=True,
-        ) as progress:
-            task = progress.add_task("", total=None)
-            while self.do_run:
-                progress.update(task)
-                sleep(0.1)
+def handle_exit():
+    print(Fore.RED + "Exiting the program." + Style.RESET_ALL)
+    raise SystemExit
+
+HANDLERS: Dict[str, Callable[[], None]] = {
+    "1": handle_scan,
+    "2": handle_settings,
+    "3": handle_dorking_db,
+    "4": handle_db_menu,
+    "5": handle_api_manager,
+    "6": handle_docs,
+    "7": handle_exit,
+}
+
+def bootstrap():
+    cfg_presence = check_cfg_presence()
+    if cfg_presence:
+        print(Fore.GREEN + "Global config file presence: OK" + Style.RESET_ALL)
+    else:
+        print(Fore.RED + "Global config file presence: NOT OK" + Style.RESET_ALL)
+        create_config()
+        print(Fore.GREEN + "Successfully generated global config file" + Style.RESET_ALL)
+
+    rsdb_presence = db.check_rsdb_presence('report_storage.db')
+    if rsdb_presence:
+        print(Fore.GREEN + "Report storage database presence: OK" + Style.RESET_ALL)
+    else:
+        db.db_creation('report_storage.db')
+        print(Fore.GREEN + "Successfully created report storage database" + Style.RESET_ALL)
+
+    dorks_files_check()
+
+    try:
+        _ = read_config()
+        print('')
+    except Exception as e:
+        logging.error("CONFIG READ ERROR: %s", e, exc_info=True)
+        print(Fore.RED + "Failed to read config. See journal for details" + Style.RESET_ALL)
+
+    cli.welcome_menu()
 
 def run():
     while True:
         try:
             cli.print_main_menu()
-            domain_patter = r'^(?!\-)(?:[a-zA-Z0-9\-]{1,63}\.)+[a-zA-Z]{2,}$'
-            choice = input(Fore.YELLOW + "\nEnter your choice >> ")
-            if choice == "1":
-                from misc import domain_precheck
-                print(Fore.GREEN + "\nImported and activated reporting modules" + Style.RESET_ALL)
-                while True:
-                    short_domain = input(Fore.YELLOW + "\nEnter target's domain name (or 'back' to return to the menu) >> ")
-                    if short_domain.lower() == "back":
-                        print(Fore.RED + "\nReturned to main menu")
-                        break
-                    else:
-                        if not short_domain:
-                            print(Fore.RED + "\nEmpty domain names are not supported")
-                        elif re.match(domain_patter, short_domain) is None:
-                            print(Fore.RED + '\nYour string does not match domain pattern')
-                        else:
-                            url = "http://" + short_domain + "/"
-                            print(Fore.GREEN + 'Pinging domain...' + Style.RESET_ALL, end = ' ')
-                            if domain_precheck(short_domain):
-                                print(Fore.GREEN + 'Entered domain is accessible. Continuation' + Style.RESET_ALL)
-                            else:
-                                print(Fore.RED + "Entered domain is not accessible. Scan is impossible" + Style.RESET_ALL)
-                                break
-                            case_comment = input(Fore.YELLOW + "Enter case comment >> ")
-                            report_filetype = input(Fore.YELLOW + "Enter report file extension [HTML/XLSX] >> ")
-                            if not report_filetype:
-                                print(Fore.RED + "\nReport filetype cannot be empty")
-                            if report_filetype.lower() not in ['html', 'xlsx']:
-                                print(Fore.RED + '\nTemporarily you have to choose only HTML report file type')
-                            else:
-                                pagesearch_flag = input(Fore.YELLOW + "Would you like to use PageSearch function? [Y/N (for No)] >> ")
-                                if pagesearch_flag.lower() == 'y':
-                                    keywords_input = input(Fore.YELLOW + "Enter keywords (separate by comma) to search in files during PageSearch process (or write N if you don't need it) >> ")
-                                    if keywords_input.lower() != "n":
-                                        if len(keywords_input.lower()) > 0:
-                                            keywords_list = [keyword.strip() for keyword in keywords_input.split(',')]
-                                            keywords_flag = 1
-                                        else:
-                                            print(Fore.RED + "\nThis field must contain at least one keyword")
-                                            break
-                                    elif keywords_input.lower() == "n":
-                                        keywords_list = None
-                                        keywords_flag = 0
-                                elif pagesearch_flag.lower() == 'n':
-                                    keywords_list = None
-                                    keywords_flag = 0
-                                if report_filetype.lower() == 'html' or report_filetype.lower() == 'xlsx':
-                                    dorking_flag = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/Admins/Web/Custom/N (for None)] >> ")
-                                    api_flag = input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N (for No)] >> ")
-                                    if api_flag.lower() == 'y':
-                                        print(Fore.GREEN + "\nSupported APIs and your keys:\n")
-                                        db.select_api_keys('printing')
-                                        print(Fore.GREEN + "Pay attention that APIs with red-colored API Key field are unable to use!\n")
-                                        to_use_api_flag = input(Fore.YELLOW + "Select APIs IDs you want to use in scan (separated by comma) >> ")
-                                        used_api_flag = [item.strip() for item in to_use_api_flag.split(',')]
-                                        if '3' in used_api_flag:
-                                            username = input(Fore.YELLOW + "If you know some username from this domain, please enter it here (or N if not) >> ")
-                                        else:
-                                            username = None
-                                        if db.check_api_keys(used_api_flag):
-                                            print(Fore.GREEN + 'Found API key. Continuation')
-                                        else:
-                                            print(Fore.RED + "\nAPI key was not found. Check if you've entered valid API key in API Keys DB")
-                                            break
-                                        used_api_ui = f'Yes, using APIs with following IDs: {", ".join(used_api_flag)}'
-                                    elif api_flag.lower() == 'n':
-                                        used_api_ui = 'No'
-                                        used_api_flag = ['Empty']
-                                        username = None
-                                        pass
-                                    else:
-                                        print(Fore.RED + "\nInvalid API usage mode" + Style.RESET_ALL)
-                                        break
-                                    snapshotting_flag = input(Fore.YELLOW + "Select Snapshotting mode [S(creenshot)/P(age Copy)/W(ayback Machine)/N (for None)] >> ")
-                                    if pagesearch_flag.lower() == 'y' or pagesearch_flag.lower() == 'n':
-                                        if pagesearch_flag.lower() == "n":
-                                            pagesearch_ui_mark = 'No'
-                                        elif pagesearch_flag.lower() == 'y' and keywords_flag == 1:
-                                            pagesearch_ui_mark = f'Yes, with {keywords_list} keywords search'
-                                        else:
-                                            pagesearch_ui_mark = 'Yes, without keywords search'
-                                        if dorking_flag.lower() not in ['basic', 'iot', 'n', 'admins', 'files', 'web', 'custom']:
-                                            print(Fore.RED + "\nInvalid Dorking mode. Please select mode among Basic/IoT/Files/Web/Admins/Custom or N")
-                                            break
-                                        else:
-                                            dorking_ui_mark = 'No'
-                                            if dorking_flag.lower() in ('basic', 'iot', 'files', 'admins', 'web'):
-                                                db_name = {
-                                                    'basic': 'basic_dorking.db',
-                                                    'iot': 'iot_dorking.db',
-                                                    'files': 'files_dorking.db',
-                                                    'admins': 'adminpanels_dorking.db',
-                                                    'web': 'webstructure_dorking.db'}[dorking_flag.lower()]
-                                                row_count = get_columns_amount(f'dorking//{db_name}', f'{dorking_flag.lower()}_dorks')
-                                                dorking_ui_mark = f'Yes, {dorking_flag.lower().replace("_", " ")} dorking ({row_count} dorks)'
-                                            elif dorking_flag.lower() == 'custom':
-                                                custom_db_name = str(input(Fore.YELLOW + "Enter your custom Dorking DB name (without any file extensions) >> "))
-                                                row_count = get_columns_amount(f'dorking//{custom_db_name}.db', 'dorks')
-                                                dorking_ui_mark = f'Yes, Custom table dorking ({row_count} dorks)'
-                                                dorking_flag = str(dorking_flag.lower() + f"+{custom_db_name}.db")
-                                        if snapshotting_flag.lower() not in ['s', 'p', 'w', 'n']:
-                                            print(Fore.RED + "\nInvalid Snapshotting mode. Please select mode among S/P/W or N")
-                                            break
-                                        else:
-                                            snapshotting_ui_mark = 'No'
-                                            from_date = end_date = 'N'
-                                            if snapshotting_flag.lower() == 's':
-                                                from_date = end_date = 'N'
-                                                snapshotting_ui_mark = "Yes, domain's main page snapshotting as a screenshot"
-                                            elif snapshotting_flag.lower() == 'p':
-                                                from_date = end_date = 'N'
-                                                snapshotting_ui_mark = "Yes, domain's main page snapshotting as a .HTML file"
-                                            elif snapshotting_flag.lower() == 'w': 
-                                                from_date = str(input('Enter start date (YYYYMMDD format): '))
-                                                end_date = str(input('Enter end date (YYYYMMDD format): '))
-                                                snapshotting_ui_mark = "Yes, domain's main page snapshotting using Wayback Machine"
-                                        cli_init.print_prescan_summary(short_domain, report_filetype.upper(), pagesearch_ui_mark, dorking_ui_mark, used_api_ui, case_comment, snapshotting_ui_mark)
-                                        #print(Fore.LIGHTMAGENTA_EX + "[BASIC SCAN START]\n" + Style.RESET_ALL)
-                                        spinner_thread = RichProgressBar()
-                                        spinner_thread.start()
-                                        if report_filetype.lower() in ['html', 'xlsx']:
-                                            process_report(report_filetype, short_domain, url, case_comment,
-                                                           keywords_list, keywords_flag, dorking_flag, used_api_flag,
-                                                           pagesearch_flag, pagesearch_ui_mark, spinner_thread, snapshotting_flag, snapshotting_ui_mark, username, from_date, end_date)
-                                    else:
-                                        print(Fore.RED + "\nUnsupported PageSearch mode. Please choose between Y or N")
-
-            elif choice == "2":
-                import configparser
-                cli.print_settings_menu()
-                choice_settings = input(Fore.YELLOW + "\nEnter your choice >> ")
-                if choice_settings == '1':
-                    print_and_return_config()
-                elif choice_settings == '2':
-                    config = print_and_return_config()
-                    section = input(Fore.YELLOW + "\nEnter the section you want to update >> ")
-                    if not config.has_section(section.upper()):
-                        print(Fore.RED + "\nSection you've entered does not exist in config file. Please verify that section name is correct")
-                        pass
-                    else:
-                        option = input(Fore.YELLOW + "Enter the option you want to update >> ")
-                        if not config.has_option(section.upper(), option):
-                            print(Fore.RED + "\nOption you've entered does not exist in config file. Please verify that option name is correct")
-                            pass
-                        else:
-                            value = input(Fore.YELLOW + "Enter the new value >> ")
-                            config.set(section.upper(), option, value)
-                            with open('service//config.ini', 'w') as configfile:
-                                config.write(configfile)
-                            print(Fore.GREEN + "\nConfiguration updated successfully" + Style.RESET_ALL)
-                elif choice_settings == '3':
-                    with open('journal.log', 'w'):
-                        print(Fore.GREEN + "Journal file was successfully cleared" + Style.RESET_ALL)
-                        pass
-                elif choice_settings == '4':
-                    continue
-            elif choice == '3':
-                cli.dorking_db_manager()
-                choice_dorking = input(Fore.YELLOW + "\nEnter your choice >> ")
-                if choice_dorking == '1':
-                    from db_creator import manage_dorks
-                    cli_init.print_api_db_msg()
-                    ddb_name = input(Fore.YELLOW + "Enter a name for your custom Dorking DB (without any extensions) >> ")
-                    manage_dorks(ddb_name)
-                elif choice_dorking == '2':
-                    continue
-            elif choice == "6":
-                webbrowser.open('https://dpulse.readthedocs.io/en/latest/')
-
-            elif choice == '5':
-                cli.api_manager()
-                choice_api = input(Fore.YELLOW + "\nEnter your choice >> ")
-                if choice_api == '1':
-                    print(Fore.GREEN + "\nSupported APIs and your keys:\n")
-                    cursor, conn = db.select_api_keys('updating')
-                    api_id_to_update = input(Fore.YELLOW + "Enter API's ID to update its key >> ")
-                    new_api_key = input(Fore.YELLOW + "Enter new API key >> ")
-
-                    try:
-                        cursor.execute("""
-                            UPDATE api_keys 
-                            SET api_key = ? 
-                            WHERE id = ?
-                        """, (new_api_key, api_id_to_update))
-
-                        conn.commit()
-                        conn.close()
-                        print(Fore.GREEN + "\nSuccessfully added new API key" + Style.RESET_ALL)
-                    except:
-                        print(Fore.RED + "Something went wrong when adding new API key. See journal for details" + Style.RESET_ALL)
-                        logging.error(f'API KEY ADDING: ERROR. REASON: {e}')
-
-                elif choice_api == '2':
-                    import shutil
-                    try:
-                        os.remove('apis//api_keys.db')
-                        print(Fore.GREEN + "Deleted old API Keys DB")
-                    except FileNotFoundError:
-                        print(Fore.RED + "API Keys DB was not found")
-                    try:
-                        shutil.copyfile('apis//api_keys_reference.db', 'apis//api_keys.db')
-                        print(Fore.GREEN + "Successfully restored reference API Keys DB")
-                    except FileNotFoundError:
-                        print(Fore.RED + "Reference API Keys DB was not found")
-                else:
-                    continue
-
-            elif choice == "4":
-                cli.print_db_menu()
-                rsdb_presence = db.check_rsdb_presence('report_storage.db')
-                if rsdb_presence:
-                    print(Fore.GREEN + "\nReport storage database presence: OK\n" + Style.RESET_ALL)
-                else:
-                    db.db_creation('report_storage.db')
-                    print(Fore.GREEN + "Successfully created report storage database" + Style.RESET_ALL)
-                choice_db = input(Fore.YELLOW + "Enter your choice >> ")
-                if choice_db == "1":
-                    cursor, sqlite_connection, data_presence_flag = db.db_select()
-                elif choice_db == "2":
-                    cursor, sqlite_connection, data_presence_flag = db.db_select()
-                    if data_presence_flag:
-                        id_to_extract = int(input(Fore.YELLOW + "\nEnter report ID you want to extract >> "))
-                        extracted_folder_name = f'report_recreated_ID#{id_to_extract}'
-                        try:
-                            os.makedirs(extracted_folder_name)
-                            db.db_report_recreate(extracted_folder_name, id_to_extract)
-                        except FileExistsError:
-                            print(Fore.RED + "Report with the same recreated folder already exists. Please check its content or delete it and try again" + Style.RESET_ALL)
-                        except Exception as e:
-                            print(Fore.RED + "Error appeared when trying to recreate report from DB. See journal for details" + Style.RESET_ALL)
-                    else:
-                        pass
-                elif choice_db == "3":
-                    print(Fore.GREEN + "\nDatabase connection is successfully closed")
-                    continue
-            elif choice == "7":
-                print(Fore.RED + "Exiting the program." + Style.RESET_ALL)
-                break
+            choice = input(Fore.YELLOW + "\nEnter your choice >> ").strip()
+            handler = HANDLERS.get(choice)
+            if handler:
+                handler()
             else:
-                print(Fore.RED + "\nInvalid menu item. Please select between existing menu items")
+                print(Fore.RED + "\nInvalid menu item. Please select between existing menu items" + Style.RESET_ALL)
         except KeyboardInterrupt:
             print(Fore.RED + "\nDPULSE process was ended using keyboard" + Style.RESET_ALL)
             sys.exit()
 
 if __name__ == "__main__":
+    bootstrap()
     run()
