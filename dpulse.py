@@ -2,7 +2,6 @@ import sys
 import os
 import re
 import shutil
-import sqlite3
 import webbrowser
 from dataclasses import dataclass
 from enum import Enum
@@ -287,7 +286,6 @@ def handle_scan():
         logging.error("PROCESS REPORT ERROR: %s", e, exc_info=True)
 
 def handle_settings():
-    import configparser
     cli.print_settings_menu()
     choice_settings = input(Fore.YELLOW + "\nEnter your choice >> ").strip()
     if choice_settings == '1':
