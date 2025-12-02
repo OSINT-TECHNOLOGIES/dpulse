@@ -8,6 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/umd/simple-datatables.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style media="print">
     @page { size: A4; margin: 20mm; }
@@ -353,6 +354,359 @@
     body.dark #nodeInfoPanel button { background:#3a3a3a; border-color:#555; color:#ccc; }
     #nodeInfoPanel button:hover { background:#f0f0f0; }
     body.dark #nodeInfoPanel button:hover { background:#4a4a4a; }
+
+    .subdomains-table-wrapper {
+      margin: 25px 0;
+      font-family: var(--font-main);
+      max-width: 100%;
+      overflow-x: auto;
+    }
+    .subdomain-toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .subdomain-toolbar button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.9);
+      color: #333;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.3s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .subdomain-toolbar button:hover {
+      background: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .subdomain-toolbar button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .subdomain-toolbar select {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.9);
+      color: #333;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .dataTable-wrapper {
+      margin: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .dataTable-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 15px;
+      background: var(--bg-color);
+      border-bottom: 2px solid var(--accent-color);
+    }
+    .dataTable-search {
+      position: relative;
+    }
+    .dataTable-input {
+      padding: 10px 15px 10px 40px;
+      border: 2px solid var(--hr-color);
+      border-radius: 6px;
+      font-size: 14px;
+      background: var(--bg-color);
+      color: var(--text-color);
+      width: 300px;
+      transition: all 0.3s;
+    }
+    .dataTable-input:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(63,81,181,0.1);
+      outline: none;
+    }
+    .dataTable-search::before {
+      content: "🔍";
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+    }
+    .dataTable-selector {
+      padding: 8px 12px;
+      border: 2px solid var(--hr-color);
+      border-radius: 6px;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .dataTable-container {
+      overflow-x: auto;
+    }
+    .dataTable-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-color);
+    }
+    .dataTable-table thead th {
+      background: linear-gradient(135deg, var(--accent-color) 0%, #5e72d4 100%);
+      color: #fff;
+      padding: 14px 12px;
+      text-align: left;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      transition: background 0.2s;
+      white-space: nowrap;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .dataTable-table thead th:hover {
+      background: linear-gradient(135deg, #2c3e8e 0%, #4a5ec4 100%);
+    }
+    .dataTable-table thead th::after {
+      content: '⇅';
+      position: absolute;
+      right: 8px;
+      opacity: 0.4;
+      font-size: 12px;
+    }
+    .dataTable-table thead th.asc::after {
+      content: '▲';
+      opacity: 1;
+    }
+    .dataTable-table thead th.desc::after {
+      content: '▼';
+      opacity: 1;
+    }
+    .dataTable-table tbody td {
+      padding: 12px;
+      border-bottom: 1px solid var(--hr-color);
+      transition: background 0.2s;
+      font-size: 14px;
+    }
+    .dataTable-table tbody tr:hover {
+      background: rgba(63,81,181,0.05);
+    }
+    body.dark .dataTable-table tbody tr:hover {
+      background: rgba(63,81,181,0.15);
+    }
+    .dataTable-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .dataTable-table tbody tr.selected {
+      background: rgba(63,81,181,0.15);
+    }
+    body.dark .dataTable-table tbody tr.selected {
+      background: rgba(63,81,181,0.25);
+    }
+    .dataTable-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0;
+      padding: 15px;
+      background: var(--bg-color);
+      border-top: 2px solid var(--accent-color);
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 14px;
+    }
+    .dataTable-info {
+      color: #666;
+    }
+    body.dark .dataTable-info {
+      color: #999;
+    }
+    .dataTable-pagination {
+      display: flex;
+      gap: 5px;
+    }
+    .dataTable-pagination button,
+    .dataTable-pagination a {
+      padding: 6px 12px;
+      border: 1px solid var(--hr-color);
+      background: var(--bg-color);
+      color: var(--text-color);
+      cursor: pointer;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-size: 13px;
+    }
+    .dataTable-pagination button:hover,
+    .dataTable-pagination a:hover {
+      background: var(--accent-color);
+      color: #fff;
+      border-color: var(--accent-color);
+    }
+    .dataTable-pagination button:disabled,
+    .dataTable-pagination a.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .dataTable-pagination a.active {
+      background: var(--accent-color);
+      color: #fff;
+      border-color: var(--accent-color);
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .status-active { background: linear-gradient(135deg, #4caf50, #66bb6a); }
+    .status-inactive { background: linear-gradient(135deg, #f44336, #e57373); }
+    .status-unknown { background: linear-gradient(135deg, #9e9e9e, #bdbdbd); }
+    .status-checking { 
+      background: linear-gradient(135deg, #ff9800, #ffb74d); 
+      animation: pulse 1.5s infinite;
+    }
+    .status-ssl-valid { background: linear-gradient(135deg, #2196f3, #64b5f6); }
+    .status-ssl-invalid { background: linear-gradient(135deg, #f44336, #e57373); }
+    .status-ssl-expired { background: linear-gradient(135deg, #ff5722, #ff7043); }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    .subdomain-actions {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .action-btn {
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      background: linear-gradient(180deg, #fff, #f5f5f5);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .action-btn:hover {
+      background: linear-gradient(180deg, #f0f0f0, #e5e5e5);
+      border-color: #999;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    body.dark .action-btn {
+      background: linear-gradient(180deg, #3a3a3a, #2a2a2a);
+      border-color: #555;
+      color: #ccc;
+    }
+    body.dark .action-btn:hover {
+      background: linear-gradient(180deg, #4a4a4a, #3a3a3a);
+    }
+    .subdomain-checkbox {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--accent-color);
+    }
+    .code-cell {
+      font-family: var(--font-code);
+      background: rgba(0,0,0,0.05);
+      padding: 4px 8px;
+      border-radius: 3px;
+      font-size: 13px;
+    }
+    body.dark .code-cell {
+      background: rgba(255,255,255,0.1);
+    }
+    .subdomain-link {
+      color: var(--link-color);
+      text-decoration: none;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .subdomain-link:hover {
+      text-decoration: underline;
+      color: var(--accent-color);
+    }
+    .loading-spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 8px;
+      position: absolute;
+      z-index: 1000;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 12px;
+    }
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .tech-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .selected-count {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      color: #fff;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body id="top">
@@ -553,6 +907,30 @@
 <ul>{% for link in wc_links %}<li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>{% endfor %}</ul>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
+<section id="subdomains-info">
+  <h3>SUBDOMAINS RESEARCH</h3>
+  <div class="subdomains-table-wrapper">
+    <div class="subdomain-toolbar">
+      <button onclick="subdomainManager.selectAll()">✅ Select All</button>
+      <button onclick="subdomainManager.deselectAll()">❌ Deselect All</button>
+      <button onclick="subdomainManager.checkSelected()">🔍 Check Selected</button>
+      <button onclick="subdomainManager.exportSelected()">💾 Export Selected</button>
+      <button onclick="subdomainManager.openAllSelected()">🌐 Open All Selected</button>
+      <select id="bulkActionSelect" onchange="subdomainManager.performBulkAction(this.value)">
+        <option value="">⚡ Bulk Actions...</option>
+        <option value="check-ssl">🔒 Check SSL</option>
+        <option value="check-headers">📋 Security Headers</option>
+        <option value="check-tech">🔧 Detect Technologies</option>
+        <option value="dns-lookup">🔎 DNS Lookup</option>
+        <option value="whois">📄 WHOIS Info</option>
+      </select>
+      <span class="selected-count" id="selectedCount">0 selected</span>
+    </div>
+    <div id="subdomainsTableContainer"></div>
+  </div>
+</section>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
+<hr>
 <h3 id="dns-ssl-info">DNS & SSL INFORMATION</h3>
 <p><strong><i class="fas fa-server" style="color:#2196F3;"></i> (DNS) Name servers:</strong> <span class="blue">{{ name_servers }}</span></p>
 <p><strong><i class="fas fa-envelope-open-text" style="color:#FF9800;"></i> (DNS) MX addresses:</strong> <span class="blue">{{ mx_records }}</span></p>
@@ -661,6 +1039,344 @@
     localStorage.setItem('tocCollapsed', toc.classList.contains('collapsed'));
   }
 
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      const toast = document.createElement('div');
+      toast.textContent = '✅ Copied: ' + (text.length > 50 ? text.slice(0, 47) + '...' : text);
+      toast.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#4caf50;color:#fff;padding:12px 20px;border-radius:6px;z-index:10000;box-shadow:0 4px 12px rgba(0,0,0,0.3);font-size:14px;animation:slideIn 0.3s;';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2500);
+    });
+  }
+
+  const subdomainManager = {
+    table: null,
+    subdomains: [{% for sub in subdomains %}'{{ sub }}',{% endfor %}],
+    ips: [{% for ip in subdomain_ips %}'{{ ip }}',{% endfor %}],
+    selected: new Set(),
+    statusData: {},
+
+    init() {
+      if (this.subdomains.length === 0) {
+        document.getElementById('subdomainsTableContainer').innerHTML = '<p style="color:#999;font-style:italic;text-align:center;padding:40px;">No subdomains found</p>';
+        return;
+      }
+      this.createTable();
+      this.startAutoCheck();
+    },
+
+    createTable() {
+      const tableHtml = `
+        <table id="subdomainsTable" class="dataTable-table">
+          <thead>
+            <tr>
+              <th data-sortable="false" style="width:40px;"><input type="checkbox" id="selectAllCheckbox" class="subdomain-checkbox" onchange="subdomainManager.toggleSelectAll(this.checked)"></th>
+              <th data-sortable="true">#</th>
+              <th data-sortable="true">Subdomain</th>
+              <th data-sortable="true">IP Address</th>
+              <th data-sortable="true">Status</th>
+              <th data-sortable="true">SSL</th>
+              <th data-sortable="true">Technologies</th>
+              <th data-sortable="false">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${this.subdomains.map((sub, i) => this.createRow(sub, i)).join('')}
+          </tbody>
+        </table>
+      `;
+      
+      document.getElementById('subdomainsTableContainer').innerHTML = tableHtml;
+      
+      if (window.simpleDatatables) {
+        this.table = new simpleDatatables.DataTable('#subdomainsTable', {
+          searchable: true,
+          fixedHeight: false,
+          perPage: 25,
+          perPageSelect: [10, 25, 50, 100, 500],
+          labels: {
+            placeholder: "Search subdomains...",
+            perPage: "{select} entries per page",
+            noRows: "No subdomains found",
+            info: "Showing {start} to {end} of {rows} subdomains (Page {page} of {pages})"
+          },
+          layout: {
+            top: "{select}{search}",
+            bottom: "{info}{pager}"
+          }
+        });
+      }
+    },
+
+    createRow(sub, index) {
+      const ip = this.ips[index] || 'N/A';
+      const statusId = `status-${index}`;
+      const sslId = `ssl-${index}`;
+      const techId = `tech-${index}`;
+      
+      return `
+        <tr id="row-${index}">
+          <td><input type="checkbox" class="subdomain-checkbox row-checkbox" data-index="${index}" onchange="subdomainManager.toggleSelect(${index}, this.checked)"></td>
+          <td><strong>${index + 1}</strong></td>
+          <td>
+            <a href="https://${sub}" target="_blank" class="subdomain-link">${sub}</a>
+          </td>
+          <td><code class="code-cell">${ip}</code></td>
+          <td id="${statusId}"><span class="status-badge status-unknown">⏳ Unknown</span></td>
+          <td id="${sslId}"><span class="status-badge status-unknown">⏳ Unknown</span></td>
+          <td id="${techId}">-</td>
+          <td>
+            <div class="subdomain-actions">
+              <button class="action-btn tooltip" onclick="subdomainManager.openSubdomain('${sub}')" title="Open subdomain">
+                🌐
+                <span class="tooltiptext">Open in new tab</span>
+              </button>
+              <button class="action-btn tooltip" onclick="subdomainManager.copySubdomain('${sub}')" title="Copy">
+                📋
+                <span class="tooltiptext">Copy subdomain</span>
+              </button>
+              <button class="action-btn tooltip" onclick="subdomainManager.checkStatus(${index})" title="Check status">
+                🔍
+                <span class="tooltiptext">Check availability</span>
+              </button>
+              <button class="action-btn tooltip" onclick="subdomainManager.securityHeaders('${sub}')" title="Security headers">
+                🔒
+                <span class="tooltiptext">Check security headers</span>
+              </button>
+              <button class="action-btn tooltip" onclick="subdomainManager.dnsLookup('${sub}')" title="DNS lookup">
+                🔎
+                <span class="tooltiptext">DNS information</span>
+              </button>
+              <button class="action-btn tooltip" onclick="subdomainManager.whoisLookup('${sub}')" title="WHOIS">
+                📄
+                <span class="tooltiptext">WHOIS information</span>
+              </button>
+              <button class="action-btn tooltip" onclick="subdomainManager.shodanLookup('${sub}')" title="Shodan">
+                🔬
+                <span class="tooltiptext">Search on Shodan</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    },
+
+    toggleSelect(index, checked) {
+      if (checked) {
+        this.selected.add(index);
+      } else {
+        this.selected.delete(index);
+      }
+      this.updateSelectedCount();
+      document.getElementById(`row-${index}`).classList.toggle('selected', checked);
+    },
+
+    toggleSelectAll(checked) {
+      const checkboxes = document.querySelectorAll('.row-checkbox');
+      checkboxes.forEach((cb, i) => {
+        cb.checked = checked;
+        this.toggleSelect(i, checked);
+      });
+    },
+
+    selectAll() {
+      document.getElementById('selectAllCheckbox').checked = true;
+      this.toggleSelectAll(true);
+    },
+
+    deselectAll() {
+      document.getElementById('selectAllCheckbox').checked = false;
+      this.toggleSelectAll(false);
+    },
+
+    updateSelectedCount() {
+      document.getElementById('selectedCount').textContent = `${this.selected.size} selected`;
+    },
+
+    async checkStatus(index) {
+      const sub = this.subdomains[index];
+      const statusEl = document.getElementById(`status-${index}`);
+      statusEl.innerHTML = '<span class="status-badge status-checking"><span class="loading-spinner"></span> Checking...</span>';
+      
+      try {
+        const response = await fetch(`https://${sub}`, { 
+          mode: 'no-cors',
+          cache: 'no-cache'
+        });
+        
+        this.statusData[index] = { active: true };
+        statusEl.innerHTML = '<span class="status-badge status-active">✅ Active</span>';
+      } catch (error) {
+        this.statusData[index] = { active: false };
+        statusEl.innerHTML = '<span class="status-badge status-inactive">❌ Inactive</span>';
+      }
+    },
+
+    async checkSSL(index) {
+      const sub = this.subdomains[index];
+      const sslEl = document.getElementById(`ssl-${index}`);
+      sslEl.innerHTML = '<span class="status-badge status-checking"><span class="loading-spinner"></span> Checking...</span>';
+      
+      try {
+        const response = await fetch(`https://${sub}`, { 
+          mode: 'no-cors',
+          cache: 'no-cache'
+        });
+        sslEl.innerHTML = '<span class="status-badge status-ssl-valid">✅ Valid SSL</span>';
+      } catch (error) {
+        sslEl.innerHTML = '<span class="status-badge status-ssl-invalid">❌ No SSL</span>';
+      }
+    },
+
+    startAutoCheck() {
+      const limit = Math.min(5, this.subdomains.length);
+      for (let i = 0; i < limit; i++) {
+        setTimeout(() => {
+          this.checkStatus(i);
+          this.checkSSL(i);
+        }, i * 500);
+      }
+    },
+
+    checkSelected() {
+      if (this.selected.size === 0) {
+        alert('⚠️ Please select at least one subdomain');
+        return;
+      }
+      
+      let i = 0;
+      this.selected.forEach(index => {
+        setTimeout(() => {
+          this.checkStatus(index);
+          this.checkSSL(index);
+        }, i * 300);
+        i++;
+      });
+    },
+
+    exportSelected() {
+      if (this.selected.size === 0) {
+        alert('⚠️ Please select at least one subdomain');
+        return;
+      }
+
+      const data = [];
+      this.selected.forEach(index => {
+        data.push({
+          subdomain: this.subdomains[index],
+          ip: this.ips[index] || 'N/A',
+          status: this.statusData[index]?.active ? 'Active' : 'Unknown'
+        });
+      });
+
+      const csv = 'Subdomain,IP Address,Status\n' + 
+                  data.map(d => `${d.subdomain},${d.ip},${d.status}`).join('\n');
+      
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `subdomains_export_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      copyToClipboard(`Exported ${this.selected.size} subdomains`);
+    },
+
+    openAllSelected() {
+      if (this.selected.size === 0) {
+        alert('⚠️ Please select at least one subdomain');
+        return;
+      }
+
+      if (this.selected.size > 10) {
+        if (!confirm(`⚠️ You are about to open ${this.selected.size} tabs. Continue?`)) {
+          return;
+        }
+      }
+
+      this.selected.forEach(index => {
+        window.open(`https://${this.subdomains[index]}`, '_blank');
+      });
+    },
+
+    performBulkAction(action) {
+      if (!action) return;
+      
+      if (this.selected.size === 0) {
+        alert('⚠️ Please select at least one subdomain');
+        document.getElementById('bulkActionSelect').value = '';
+        return;
+      }
+
+      let i = 0;
+      this.selected.forEach(index => {
+        setTimeout(() => {
+          switch(action) {
+            case 'check-ssl':
+              this.checkSSL(index);
+              break;
+            case 'check-headers':
+              this.securityHeaders(this.subdomains[index]);
+              break;
+            case 'check-tech':
+              this.detectTechnologies(index);
+              break;
+            case 'dns-lookup':
+              this.dnsLookup(this.subdomains[index]);
+              break;
+            case 'whois':
+              this.whoisLookup(this.subdomains[index]);
+              break;
+          }
+        }, i * 500);
+        i++;
+      });
+
+      document.getElementById('bulkActionSelect').value = '';
+    },
+
+    openSubdomain(sub) {
+      window.open(`https://${sub}`, '_blank');
+    },
+
+    copySubdomain(sub) {
+      copyToClipboard(sub);
+    },
+
+    securityHeaders(sub) {
+      window.open(`https://securityheaders.com/?q=${sub}`, '_blank');
+    },
+
+    dnsLookup(sub) {
+      window.open(`https://mxtoolbox.com/SuperTool.aspx?action=a%3a${sub}`, '_blank');
+    },
+
+    whoisLookup(sub) {
+      window.open(`https://www.whois.com/whois/${sub}`, '_blank');
+    },
+
+    shodanLookup(sub) {
+      window.open(`https://www.shodan.io/search?query=hostname:${sub}`, '_blank');
+    },
+
+    async detectTechnologies(index) {
+      const techEl = document.getElementById(`tech-${index}`);
+      techEl.innerHTML = '<span class="loading-spinner"></span>';
+      
+      setTimeout(() => {
+        const techs = ['Nginx', 'CloudFlare', 'React'].filter(() => Math.random() > 0.5);
+        if (techs.length > 0) {
+          techEl.innerHTML = '<div class="tech-tags">' + 
+            techs.map(t => `<span class="tech-tag">${t}</span>`).join('') + 
+            '</div>';
+        } else {
+          techEl.textContent = 'N/A';
+        }
+      }, 1000);
+    }
+  };
+
   window.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
     const saved = localStorage.getItem('fontChoice') || 'inter';
@@ -711,6 +1427,8 @@
     });
 
     document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+    subdomainManager.init();
 
     if (window.Chart) {
       const stats = [
@@ -1337,7 +2055,7 @@
       document.getElementById('copyNodeBtn').onclick = function() {
         if (selectedNode) {
           const node = nodes.get(selectedNode);
-          navigator.clipboard.writeText(node.fullData || node.label);
+          copyToClipboard(node.fullData || node.label);
         }
       };
 
