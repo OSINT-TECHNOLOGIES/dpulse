@@ -12,178 +12,347 @@
   <style media="print">
     @page { size: A4; margin: 20mm; }
     body { padding:0!important; background:#fff!important; color:#000!important; }
-    .control-panel, .toc-container, .back-to-top { display:none!important; }
+    .control-panel, .toc-container, .back-to-top, #graph-filters, #graph-search, #graph-export, #graph-stats, #nodeInfoPanel, #graphContextMenu { display:none!important; }
     h1,h2,h3 { page-break-after:avoid; }
     section { page-break-inside:avoid; }
   </style>
   <style>
-    :root{
-      --bg-color:#fff;--text-color:#333;--link-color:#007bff;
-      --accent-color:#333399;--hr-color:#ccc;
-      --font-main:'Inter',sans-serif;--font-code:'Roboto Mono',monospace;
+    :root {
+      --bg-color:#fff;
+      --text-color:#333;
+      --link-color:#007bff;
+      --accent-color:#333399;
+      --hr-color:#ccc;
+      --font-main:'Inter',sans-serif;
+      --font-code:'Roboto Mono',monospace;
     }
-    body.dark{
-      --bg-color:#1e1e1e;--text-color:#ccc;--link-color:#7ca9ff;
-      --accent-color:#9db2ff;--hr-color:#444;
+    body.dark {
+      --bg-color:#1e1e1e;
+      --text-color:#ccc;
+      --link-color:#7ca9ff;
+      --accent-color:#9db2ff;
+      --hr-color:#444;
     }
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-    html{scroll-behavior:smooth;}
-    body{
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
       font:15px/1.6 var(--font-main);
-      background:var(--bg-color);color:var(--text-color);
+      background:var(--bg-color);
+      color:var(--text-color);
       padding:24px 24px 24px 260px;
       transition:background .3s,color .3s;
     }
-    h1,h2,h3{text-align:center;font-weight:700;font-family:var(--font-main);margin:24px 0 12px;}
-    h1{font-size:28px;text-decoration:underline;}
-    h2{font-size:22px;}
-    h3{font-size:18px;text-decoration:underline;margin-top:36px;}
-    p{margin:6px 0 12px;}
-    ul{margin:6px 0 12px 24px;}
-    li{margin:4px 0;}
-    hr{margin:24px 0;border:none;border-top:1px solid var(--hr-color);}
-    pre,code{font-family:var(--font-code);color:var(--accent-color);white-space:pre-wrap;margin:12px 0;}
-    .blue{color:var(--accent-color);}
-    .red{color:#f00;}
-    .maroon{color:#800000;}
-    .underline{text-decoration:underline;}
+    h1,h2,h3 { text-align:center; font-weight:700; font-family:var(--font-main); margin:24px 0 12px; }
+    h1 { font-size:28px; text-decoration:underline; }
+    h2 { font-size:22px; }
+    h3 { font-size:18px; text-decoration:underline; margin-top:36px; }
+    p { margin:6px 0 12px; }
+    ul { margin:6px 0 12px 24px; }
+    li { margin:4px 0; }
+    hr { margin:24px 0; border:none; border-top:1px solid var(--hr-color); }
+    pre,code { font-family:var(--font-code); color:var(--accent-color); white-space:pre-wrap; margin:12px 0; }
+    .blue { color:var(--accent-color); }
+    .red { color:#f00; }
+    .maroon { color:#800000; }
+    .underline { text-decoration:underline; }
     .progress-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 4px;
-      background: var(--accent-color);
-      z-index: 1001;
-      transition: width 0.2s;
+      position:fixed;
+      top:0;
+      left:0;
+      width:0;
+      height:4px;
+      background:var(--accent-color);
+      z-index:1001;
+      transition:width 0.2s;
     }
-    section { transition: transform 0.3s, opacity 0.3s; }
-    section.active { transform: translateX(10px); border-left: 3px solid var(--accent-color); padding-left: 10px; }
-    details { margin: 10px 0; padding: 10px; border-radius: 4px; border: 1px solid var(--hr-color); transition: all 0.3s ease; }
-    details:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    details[open] { background: var(--bg-color); border-color: var(--accent-color); }
-    details > summary { padding: 8px; cursor: pointer; user-select: none; }
-    details > pre { margin-top: 10px; padding: 15px; border-radius: 4px; background: rgba(0,0,0,0.03); }
+    section { transition:transform 0.3s, opacity 0.3s; }
+    section.active { transform:translateX(10px); border-left:3px solid var(--accent-color); padding-left:10px; }
+    details { margin:10px 0; padding:10px; border-radius:4px; border:1px solid var(--hr-color); transition:all 0.3s ease; }
+    details:hover { box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+    details[open] { background:var(--bg-color); border-color:var(--accent-color); }
+    details > summary { padding:8px; cursor:pointer; user-select:none; }
+    details > pre { margin-top:10px; padding:15px; border-radius:4px; background:rgba(0,0,0,0.03); }
+    details summary { cursor:pointer; font-weight:bold; margin-bottom:6px; }
+    details[open]>summary::after { content:" ▲"; float:right; }
+    details>summary::after { content:" ▼"; float:right; }
     .toc-toggle {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: var(--bg-color);
-      border: 1px solid var(--hr-color);
-      border-radius: 4px;
-      padding: 4px 8px;
-      cursor: pointer;
-      color: var(--text-color);
-      font-family: var(--font-main);
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
+      position:absolute;
+      top:10px;
+      right:10px;
+      background:var(--bg-color);
+      border:1px solid var(--hr-color);
+      border-radius:4px;
+      padding:4px 8px;
+      cursor:pointer;
+      color:var(--text-color);
+      font-family:var(--font-main);
+      width:30px;
+      height:30px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:1000;
     }
     .toc-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 240px;
-      height: 100vh;
-      overflow-y: auto;
-      background: var(--bg-color);
-      border-right: 1px solid var(--hr-color);
-      padding: 20px 10px;
-      font-family: var(--font-main);
-      transition: width 0.3s ease;
+      position:fixed;
+      top:0;
+      left:0;
+      width:240px;
+      height:100vh;
+      overflow-y:auto;
+      background:var(--bg-color);
+      border-right:1px solid var(--hr-color);
+      padding:20px 10px;
+      font-family:var(--font-main);
+      transition:width 0.3s ease;
     }
-    .toc-container.collapsed { width: 50px; overflow: visible; }
+    .toc-container.collapsed { width:50px; overflow:visible; }
     .toc-container.collapsed .toc-section-title,
     .toc-container.collapsed .toc-link,
-    .toc-container.collapsed h2 { opacity: 0; visibility: hidden; position: absolute; pointer-events: none; }
-    .toc-container.collapsed .toc-toggle { right: -30px; position: absolute; top: 10px; }
-    .toc-section-title{text-align:center;margin:10px 0 8px;font-weight:bold;}
-    .toc-link{display:block;text-align:left;margin-bottom:6px;
-      color:var(--link-color);text-decoration:none;}
-    .toc-link:hover{text-decoration:underline;}
-    .toc-link.active{font-weight:700;background:var(--accent-color);color:#fff;border-radius:4px;}
-    .control-panel{
-      position:fixed;top:10px;right:20px;z-index:1000;
-      display:flex;flex-direction:column;align-items:center;gap:8px;
-      background:var(--bg-color);padding:10px 14px;
-      border:1px solid var(--hr-color);border-radius:6px;
+    .toc-container.collapsed h2 { opacity:0; visibility:hidden; position:absolute; pointer-events:none; }
+    .toc-container.collapsed .toc-toggle { right:-30px; position:absolute; top:10px; }
+    .toc-section-title { text-align:center; margin:10px 0 8px; font-weight:bold; }
+    .toc-link { display:block; text-align:left; margin-bottom:6px; color:var(--link-color); text-decoration:none; }
+    .toc-link:hover { text-decoration:underline; }
+    .toc-link.active { font-weight:700; background:var(--accent-color); color:#fff; border-radius:4px; }
+    .control-panel {
+      position:fixed;
+      top:10px;
+      right:20px;
+      z-index:1000;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+      background:var(--bg-color);
+      padding:10px 14px;
+      border:1px solid var(--hr-color);
+      border-radius:6px;
       box-shadow:0 2px 6px rgba(0,0,0,.08);
     }
-    .theme-toggle,.font-select{
-      background:var(--bg-color);color:var(--text-color);
-      border:1px solid var(--hr-color);border-radius:4px;
-      font-family:var(--font-main);transition:background .3s,color .3s;
+    .theme-toggle,.font-select {
+      background:var(--bg-color);
+      color:var(--text-color);
+      border:1px solid var(--hr-color);
+      border-radius:4px;
+      font-family:var(--font-main);
+      transition:background .3s,color .3s;
     }
-    .theme-toggle{padding:6px 12px;cursor:pointer;}
-    .font-select{padding:6px 8px;}
-    .back-to-top{text-align:right;margin-top:16px;}
-    details summary{cursor:pointer;font-weight:bold;margin-bottom:6px;}
-    details[open]>summary::after{content:" ▲";float:right;}
-    details>summary::after{content:" ▼";float:right;}
-    .technical-term { text-decoration: underline dotted; cursor: help; position: relative; }
+    .theme-toggle { padding:6px 12px; cursor:pointer; }
+    .font-select { padding:6px 8px; }
+    .back-to-top { text-align:right; margin-top:16px; }
+    .technical-term { text-decoration:underline dotted; cursor:help; position:relative; }
     .term-tooltip {
-      position: absolute;
-      bottom: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--accent-color);
-      color: white;
-      padding: 8px 12px;
-      border-radius: 4px;
-      font-size: 14px;
-      white-space: nowrap;
-      z-index: 1000;
-      animation: fadeIn 0.3s;
+      position:absolute;
+      bottom:100%;
+      left:50%;
+      transform:translateX(-50%);
+      background:var(--accent-color);
+      color:white;
+      padding:8px 12px;
+      border-radius:4px;
+      font-size:14px;
+      white-space:nowrap;
+      z-index:1000;
+      animation:fadeIn 0.3s;
     }
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+      from { opacity:0; transform:translateX(-50%) translateY(10px); }
+      to { opacity:1; transform:translateX(-50%) translateY(0); }
     }
-    #graph-legend { margin: 0 auto 16px; max-width: 900px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; }
-    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 14px; }
-    .legend-dot { width: 18px; height: 18px; border-radius: 50%; display: inline-block; border: 2px solid #333; }
-    #graph-search { margin: 0 auto 12px; display: flex; justify-content: center; gap: 8px; }
-    #graph-search input { font-size: 15px; padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc; }
-    #graph-search button { font-size: 15px; padding: 4px 10px; border-radius: 4px; border: 1px solid #ccc; background: #f5f5f5; cursor: pointer; }
-    #graph-export { margin: 0 auto 12px; display: flex; justify-content: center; gap: 8px; }
-    #graph-export button { font-size: 15px; padding: 4px 10px; border-radius: 4px; border: 1px solid #ccc; background: #f5f5f5; cursor: pointer; }
-    .vis-tooltip { font-size: 15px !important; }
-    #osintNetwork { width:100%;max-width:1400px;height:700px;border:1px solid #ccc;margin:0 auto 24px; background: #fafaff; }
+    #graph-legend { margin:0 auto 16px; max-width:900px; display:flex; flex-wrap:wrap; gap:16px; justify-content:center; }
+    .legend-item { display:flex; align-items:center; gap:6px; font-size:14px; }
+    .legend-dot { width:18px; height:18px; border-radius:50%; display:inline-block; border:2px solid #333; }
+    .stat-item {
+      font-size:14px;
+      padding:5px 10px;
+      background:#fff;
+      border-radius:4px;
+      box-shadow:0 1px 3px rgba(0,0,0,0.1);
+    }
+    body.dark .stat-item { background:#2a2a2a; }
+    .filter-checkbox {
+      display:flex;
+      align-items:center;
+      gap:4px;
+      cursor:pointer;
+      padding:4px 8px;
+      border-radius:4px;
+      background:#f5f5f5;
+      transition:all 0.2s;
+      user-select:none;
+      font-size:13px;
+    }
+    body.dark .filter-checkbox { background:#333; }
+    .filter-checkbox:hover { background:#e8e8e8; }
+    body.dark .filter-checkbox:hover { background:#444; }
+    .filter-checkbox input { cursor:pointer; }
+    #graph-search { margin:0 auto 12px; display:flex; justify-content:center; gap:8px; position:relative; flex-wrap:wrap; }
+    #graph-search input {
+      font-size:15px;
+      padding:8px 12px;
+      border-radius:4px;
+      border:1px solid #ccc;
+      width:220px;
+      transition:all 0.2s;
+    }
+    #graph-search input:focus { border-color:var(--accent-color); box-shadow:0 0 0 3px rgba(63,81,181,0.2); outline:none; }
+    #graph-search button, #graph-export button {
+      font-size:14px;
+      padding:6px 12px;
+      border-radius:4px;
+      border:1px solid #ccc;
+      background:linear-gradient(180deg,#fff,#f5f5f5);
+      cursor:pointer;
+      transition:all 0.2s;
+    }
+    body.dark #graph-search button, body.dark #graph-export button { background:linear-gradient(180deg,#3a3a3a,#2a2a2a); border-color:#555; color:#ccc; }
+    #graph-search button:hover, #graph-export button:hover { background:linear-gradient(180deg,#f0f0f0,#e5e5e5); border-color:#999; }
+    body.dark #graph-search button:hover, body.dark #graph-export button:hover { background:linear-gradient(180deg,#4a4a4a,#3a3a3a); }
+    #graph-export { margin:0 auto 12px; display:flex; justify-content:center; gap:8px; flex-wrap:wrap; }
+    #searchAutocomplete {
+      display:none;
+      position:absolute;
+      top:100%;
+      left:50%;
+      transform:translateX(-50%);
+      background:#fff;
+      border:1px solid #ccc;
+      border-radius:4px;
+      max-height:200px;
+      overflow-y:auto;
+      width:320px;
+      z-index:100;
+      box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    }
+    body.dark #searchAutocomplete { background:#2a2a2a; border-color:#555; }
+    .autocomplete-item {
+      padding:8px 12px;
+      cursor:pointer;
+      border-bottom:1px solid #eee;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    body.dark .autocomplete-item { border-color:#444; }
+    .autocomplete-item:hover, .autocomplete-item.selected { background:#e3f2fd; }
+    body.dark .autocomplete-item:hover, body.dark .autocomplete-item.selected { background:#3a4a5a; }
+    .autocomplete-item .node-type { font-size:11px; padding:2px 6px; border-radius:3px; color:#fff; }
+    .graph-control-btn {
+      padding:6px 12px;
+      border-radius:4px;
+      border:1px solid #ccc;
+      background:linear-gradient(180deg,#fff,#f5f5f5);
+      cursor:pointer;
+      transition:all 0.2s;
+      font-size:13px;
+    }
+    body.dark .graph-control-btn { background:linear-gradient(180deg,#3a3a3a,#2a2a2a); border-color:#555; color:#ccc; }
+    .graph-control-btn:hover { background:linear-gradient(180deg,#f0f0f0,#e5e5e5); border-color:#999; }
+    body.dark .graph-control-btn:hover { background:linear-gradient(180deg,#4a4a4a,#3a3a3a); }
+    .graph-control-btn:disabled { opacity:0.5; cursor:not-allowed; }
+    .ctx-item {
+      padding:10px 15px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      transition:background 0.15s;
+    }
+    .ctx-item:hover { background:#f0f4f8; }
+    body.dark .ctx-item:hover { background:#3a3a3a; }
+    .ctx-item i { width:16px; color:#666; }
+    body.dark .ctx-item i { color:#aaa; }
+    .ctx-divider { height:1px; background:#e0e0e0; margin:4px 0; }
+    body.dark .ctx-divider { background:#444; }
+    #nodeInfoPanel .info-row {
+      display:flex;
+      justify-content:space-between;
+      padding:6px 0;
+      border-bottom:1px dotted #ddd;
+    }
+    body.dark #nodeInfoPanel .info-row { border-color:#444; }
+    #nodeInfoPanel .info-label { font-weight:600; color:#555; }
+    body.dark #nodeInfoPanel .info-label { color:#aaa; }
+    #nodeInfoPanel .info-value { color:var(--accent-color); word-break:break-all; text-align:right; max-width:160px; }
+    .vis-tooltip { font-size:15px !important; }
+    #osintNetwork {
+      width:100%;
+      max-width:1100px;
+      height:700px;
+      border:1px solid #ccc;
+      border-radius:8px;
+      background:linear-gradient(135deg, #fafaff 0%, #f0f4ff 100%);
+    }
+    body.dark #osintNetwork { background:linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-color:#444; }
     #osintNetwork.fullscreen {
-      position: fixed !important;
-      top: 0; left: 0; right: 0; bottom: 0;
-      width: 100vw !important;
-      height: 100vh !important;
-      z-index: 2000;
-      background: #fafaff;
-      border: none;
-      margin: 0 !important;
-      box-shadow: none;
+      position:fixed !important;
+      top:0; left:0; right:0; bottom:0;
+      width:100vw !important;
+      height:100vh !important;
+      max-width:none !important;
+      z-index:2000;
+      border:none;
+      margin:0 !important;
+      border-radius:0;
     }
-    body.fullscreen-graph {
-      overflow: hidden;
-    }
+    body.fullscreen-graph { overflow:hidden; }
     #exitFullscreenBtn {
-      position: fixed;
-      top: 120px;
-      right: 32px;
-      z-index: 2100;
-      font-size: 20px;
-      background: #fff;
-      color: #333;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      padding: 6px 16px;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-      display: none;
+      position:fixed;
+      top:20px;
+      right:32px;
+      z-index:2100;
+      font-size:16px;
+      background:#fff;
+      color:#333;
+      border:1px solid #ccc;
+      border-radius:6px;
+      padding:8px 16px;
+      cursor:pointer;
+      box-shadow:0 2px 8px rgba(0,0,0,0.12);
+      display:none;
     }
-    #osintNetwork.fullscreen + #exitFullscreenBtn {
-      display: block;
+    body.dark #exitFullscreenBtn { background:#2a2a2a; color:#ccc; border-color:#555; }
+    #graphContextMenu {
+      display:none;
+      position:fixed;
+      background:#fff;
+      border:1px solid #ccc;
+      border-radius:6px;
+      box-shadow:0 4px 16px rgba(0,0,0,0.2);
+      z-index:3000;
+      min-width:200px;
+      overflow:hidden;
     }
+    body.dark #graphContextMenu { background:#2a2a2a; border-color:#555; }
+    #nodeInfoPanel {
+      width:280px;
+      min-width:280px;
+      border:1px solid #ccc;
+      border-radius:8px;
+      padding:15px;
+      background:linear-gradient(180deg,#fafbfc,#f0f4f8);
+      display:none;
+      flex-direction:column;
+      gap:10px;
+      max-height:700px;
+      overflow-y:auto;
+    }
+    body.dark #nodeInfoPanel { background:linear-gradient(180deg,#2a2a2a,#1e1e1e); border-color:#444; }
+    #nodeInfoPanel h4 { margin:0; border-bottom:2px solid var(--accent-color); padding-bottom:8px; }
+    #nodeInfoPanel button {
+      width:100%;
+      margin-bottom:5px;
+      padding:8px;
+      border-radius:4px;
+      border:1px solid #ccc;
+      background:#fff;
+      cursor:pointer;
+      transition:all 0.2s;
+    }
+    body.dark #nodeInfoPanel button { background:#3a3a3a; border-color:#555; color:#ccc; }
+    #nodeInfoPanel button:hover { background:#f0f0f0; }
+    body.dark #nodeInfoPanel button:hover { background:#4a4a4a; }
   </style>
 </head>
 <body id="top">
@@ -202,165 +371,61 @@
 <div class="progress-bar"></div>
 <div class="toc-container">
   <button class="toc-toggle" onclick="toggleToc()">≡</button>
-  <h2 class="underline"><i><style="color:#3F51B5;"></i> Table of contents</h2>
-  <a href="#general-scan-info" class="toc-link">
-    <i class="fas fa-info-circle" style="color:#2196F3;"></i> 1. General scan information
-  </a>
-  <a href="#general-scan-statistics" class="toc-link">
-    <i class="fas fa-chart-bar" style="color:#4CAF50;"></i> 2. General scan statistics
-  </a>
-  <a href="#domain-infrastructure-visualisation" class="toc-link">
-    <i class="fas fa-network-wired" style="color:#FF9800;"></i> 3. Domain infrastructure visualisation
-  </a>
+  <h2 class="underline">Table of contents</h2>
+  <a href="#general-scan-info" class="toc-link"><i class="fas fa-info-circle" style="color:#2196F3;"></i> 1. General scan information</a>
+  <a href="#general-scan-statistics" class="toc-link"><i class="fas fa-chart-bar" style="color:#4CAF50;"></i> 2. General scan statistics</a>
+  <a href="#domain-infrastructure-visualisation" class="toc-link"><i class="fas fa-network-wired" style="color:#FF9800;"></i> 3. Domain infrastructure visualisation</a>
   <p class="toc-section-title maroon underline">[BASIC SCAN INFO]</p>
-  <a href="#whois-info" class="toc-link">
-    <i class="fas fa-id-badge" style="color:#3F51B5;"></i> 4. WHOIS information
-  </a>
-  <a href="#social-media-links" class="toc-link">
-    <i class="fas fa-hashtag" style="color:#E91E63;"></i> 5. Social media links
-  </a>
-  <a href="#subdomains-info" class="toc-link">
-    <i class="fas fa-network-wired" style="color:#9C27B0;"></i> 6. Subdomains
-  </a>
-  <a href="#dns-ssl-info" class="toc-link">
-    <i class="fas fa-shield-alt" style="color:#607D8B;"></i> 7. DNS & SSL
-  </a>
-  <a href="#services-frameworks-info" class="toc-link">
-    <i class="fas fa-cogs" style="color:#F57C00;"></i> 8. Services & Frameworks
-  </a>
-  <a href="#pre-pentest-info" class="toc-link">
-    <i class="fas fa-bug" style="color:#F44336;"></i> 9. Pre-Pentest Info
-  </a>
-  <a href="#pre-pentest-info" class="toc-link">
-    <i class="fas fa-code" style="color:#795548;"></i> 10. Website configuration files
-  </a>
+  <a href="#whois-info" class="toc-link"><i class="fas fa-id-badge" style="color:#3F51B5;"></i> 4. WHOIS information</a>
+  <a href="#social-media-links" class="toc-link"><i class="fas fa-hashtag" style="color:#E91E63;"></i> 5. Social media links</a>
+  <a href="#subdomains-info" class="toc-link"><i class="fas fa-network-wired" style="color:#9C27B0;"></i> 6. Subdomains</a>
+  <a href="#dns-ssl-info" class="toc-link"><i class="fas fa-shield-alt" style="color:#607D8B;"></i> 7. DNS & SSL</a>
+  <a href="#services-frameworks-info" class="toc-link"><i class="fas fa-cogs" style="color:#F57C00;"></i> 8. Services & Frameworks</a>
+  <a href="#pre-pentest-info" class="toc-link"><i class="fas fa-bug" style="color:#F44336;"></i> 9. Pre-Pentest Info</a>
+  <a href="#technical-files" class="toc-link"><i class="fas fa-code" style="color:#795548;"></i> 10. Website configuration files</a>
   <p class="toc-section-title maroon underline">[DORKING SCAN INFO]</p>
-  <a href="#dorking-info" class="toc-link">
-    <i class="fas fa-search" style="color:#009688;"></i> 11. Dorking Results
-  </a>
+  <a href="#dorking-info" class="toc-link"><i class="fas fa-search" style="color:#009688;"></i> 11. Dorking Results</a>
   <p class="toc-section-title maroon underline">[PAGESEARCH SCAN INFO]</p>
-  <a href="#pagesearch-results" class="toc-link">
-    <i class="fas fa-file-alt" style="color:#3F51B5;"></i> 12. PageSearch Results
-  </a>
+  <a href="#pagesearch-results" class="toc-link"><i class="fas fa-file-alt" style="color:#3F51B5;"></i> 12. PageSearch Results</a>
   <p class="toc-section-title maroon underline">[API SCAN INFO]</p>
-  <a href="#virustotal-results" class="toc-link">
-    <i class="fas fa-viruses" style="color:#D32F2F;"></i> 13. VirusTotal
-  </a>
-  <a href="#securitytrails-results" class="toc-link">
-    <i class="fas fa-map-marked-alt" style="color:#0097A7;"></i> 14. SecurityTrails
-  </a>
-  <a href="#hudsonrock-results" class="toc-link">
-    <i class="fas fa-user-secret" style="color:#7B1FA2;"></i> 15. HudsonRock
-  </a>
+  <a href="#virustotal-results" class="toc-link"><i class="fas fa-viruses" style="color:#D32F2F;"></i> 13. VirusTotal</a>
+  <a href="#securitytrails-results" class="toc-link"><i class="fas fa-map-marked-alt" style="color:#0097A7;"></i> 14. SecurityTrails</a>
+  <a href="#hudsonrock-results" class="toc-link"><i class="fas fa-user-secret" style="color:#7B1FA2;"></i> 15. HudsonRock</a>
 </div>
 <h1>Open Source Information Research Report</h1>
 <h2>{{ org }}</h2>
 <hr>
 <h3 id="general-scan-info">GENERAL SCAN INFORMATION</h3>
-<p>
-  <strong>
-    <i class="fas fa-robot" style="color:#9C27B0;"></i> Status of robots.txt extraction:
-  </strong>
-  <span class="blue">{{ robots_txt_result }}</span>
-</p>
-<p>
-  <strong>
-    <i class="fas fa-sitemap" style="color:#4CAF50;"></i> Status of sitemap.xml extraction:
-  </strong>
-  <span class="blue">{{ sitemap_xml_result }}</span>
-</p>
-<p>
-  <strong>
-    <i class="fas fa-link" style="color:#2196F3;"></i> Status of sitemap.xml links extraction:
-  </strong>
-  <span class="blue">{{ sitemap_links }}</span>
-</p>
-<p>
-  <strong>
-    <i class="fas fa-search" style="color:#F57C00;"></i> Google Dorking status:
-  </strong>
-  <span class="blue">{{ dorking_status }}</span>
-</p>
-<p>
-  <strong>
-    <i class="fas fa-microscope" style="color:#E91E63;"></i> PageSearch conduction:
-  </strong>
-  <span class="blue">{{ pagesearch_ui_mark }}</span>
-</p>
-<p>
-  <strong>
-    <i class="fas fa-camera" style="color:#009688;"></i> Snapshotting conduction:
-  </strong>
-  <span class="blue">{{ snapshotting_ui_mark }}</span>
-</p>
-<p>
-  <strong>
-    <i class="fas fa-clock" style="color:#607D8B;"></i> Report creation time:
-  </strong>
-  <span class="blue">{{ ctime }}</span>
-</p>
+<p><strong><i class="fas fa-robot" style="color:#9C27B0;"></i> Status of robots.txt extraction:</strong> <span class="blue">{{ robots_txt_result }}</span></p>
+<p><strong><i class="fas fa-sitemap" style="color:#4CAF50;"></i> Status of sitemap.xml extraction:</strong> <span class="blue">{{ sitemap_xml_result }}</span></p>
+<p><strong><i class="fas fa-link" style="color:#2196F3;"></i> Status of sitemap.xml links extraction:</strong> <span class="blue">{{ sitemap_links }}</span></p>
+<p><strong><i class="fas fa-search" style="color:#F57C00;"></i> Google Dorking status:</strong> <span class="blue">{{ dorking_status }}</span></p>
+<p><strong><i class="fas fa-microscope" style="color:#E91E63;"></i> PageSearch conduction:</strong> <span class="blue">{{ pagesearch_ui_mark }}</span></p>
+<p><strong><i class="fas fa-camera" style="color:#009688;"></i> Snapshotting conduction:</strong> <span class="blue">{{ snapshotting_ui_mark }}</span></p>
+<p><strong><i class="fas fa-clock" style="color:#607D8B;"></i> Report creation time:</strong> <span class="blue">{{ ctime }}</span></p>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 <h3 id="general-scan-statistics">GENERAL SCAN STATISTICS</h3>
 <div>
-  <p>
-    <strong><i class="fas fa-network-wired" style="color:#3F51B5;"></i> Total subdomains found:</strong>
-    <span class="blue" id="a_tsf">{{ a_tsf }}</span>
-  </p>
-  <p>
-    <strong><i class="fas fa-hashtag" style="color:#E91E63;"></i> Total social media links found:</strong>
-    <span class="blue" id="a_tsm">{{ a_tsm }}</span>
-  </p>
-  <p>
-    <strong><i class="fas fa-envelope" style="color:#009688;"></i> Total emails found:</strong>
-    <span class="blue" id="a_temails">{{ a_temails }}</span>
-  </p>
-  <p>
-    <strong><i class="fas fa-globe" style="color:#2196F3;"></i> Total associated IP addresses found:</strong>
-    <span class="blue" id="a_tips">{{ a_tips }}</span>
-  </p>
-  <p>
-    <strong><i class="fas fa-door-open" style="color:#FB8C00;"></i> Total open ports found:</strong>
-    <span class="blue" id="a_tops">{{ a_tops }}</span>
-  </p>
-  <p>
-    <strong><i class="fas fa-bug" style="color:#F44336;"></i> Total potential vulnerabilities found:</strong>
-    <span class="blue" id="a_tpv">{{ a_tpv }}</span>
-  </p>
-  <p>
-    <strong><i class="fas fa-network-wired" style="color:#3F51B5;"></i> Accessible subdomains (PageSearch):</strong>
-    <span class="blue" id="ps_s">{{ ps_s }}</span>
-  </p>
-  <p>
-    <strong><i class="fas fa-envelope-open-text" style="color:#009688;"></i> Email addresses (PageSearch):</strong>
-    <span class="blue" id="ps_e">{{ ps_e }}</span>
-  </p>
-  <p>
-    <strong><i class="fas fa-file-alt" style="color:#607D8B;"></i> Found documents (PageSearch):</strong>
-    <span class="blue" id="ps_f">{{ ps_f }}</span>
-  </p>
-  <p>
-    <strong><i class="fas fa-cookie-bite" style="color:#6D4C41;"></i> Found cookies (PageSearch):</strong>
-    <span class="blue" id="ps_c">{{ ps_c }}</span>
-  </p>
-  <p>
-    <strong><i class="fas fa-key" style="color:#5E35B1;"></i> Found API keys (PageSearch):</strong>
-    <span class="blue" id="ps_a">{{ ps_a }}</span>
-  </p>
-  <p>
-    <strong><i class="fas fa-cube" style="color:#00ACC1;"></i> Found WEB elements (PageSearch):</strong>
-    <span class="blue" id="ps_w">{{ ps_w }}</span>
-  </p>
-  <p>
-    <strong><i class="fas fa-unlock-alt" style="color:#D32F2F;"></i> Exposed passwords (PageSearch):</strong>
-    <span class="blue" id="ps_p">{{ ps_p }}</span>
-  </p>
+  <p><strong><i class="fas fa-network-wired" style="color:#3F51B5;"></i> Total subdomains found:</strong> <span class="blue" id="a_tsf">{{ a_tsf }}</span></p>
+  <p><strong><i class="fas fa-hashtag" style="color:#E91E63;"></i> Total social media links found:</strong> <span class="blue" id="a_tsm">{{ a_tsm }}</span></p>
+  <p><strong><i class="fas fa-envelope" style="color:#009688;"></i> Total emails found:</strong> <span class="blue" id="a_temails">{{ a_temails }}</span></p>
+  <p><strong><i class="fas fa-globe" style="color:#2196F3;"></i> Total associated IP addresses found:</strong> <span class="blue" id="a_tips">{{ a_tips }}</span></p>
+  <p><strong><i class="fas fa-door-open" style="color:#FB8C00;"></i> Total open ports found:</strong> <span class="blue" id="a_tops">{{ a_tops }}</span></p>
+  <p><strong><i class="fas fa-bug" style="color:#F44336;"></i> Total potential vulnerabilities found:</strong> <span class="blue" id="a_tpv">{{ a_tpv }}</span></p>
+  <p><strong><i class="fas fa-network-wired" style="color:#3F51B5;"></i> Accessible subdomains (PageSearch):</strong> <span class="blue" id="ps_s">{{ ps_s }}</span></p>
+  <p><strong><i class="fas fa-envelope-open-text" style="color:#009688;"></i> Email addresses (PageSearch):</strong> <span class="blue" id="ps_e">{{ ps_e }}</span></p>
+  <p><strong><i class="fas fa-file-alt" style="color:#607D8B;"></i> Found documents (PageSearch):</strong> <span class="blue" id="ps_f">{{ ps_f }}</span></p>
+  <p><strong><i class="fas fa-cookie-bite" style="color:#6D4C41;"></i> Found cookies (PageSearch):</strong> <span class="blue" id="ps_c">{{ ps_c }}</span></p>
+  <p><strong><i class="fas fa-key" style="color:#5E35B1;"></i> Found API keys (PageSearch):</strong> <span class="blue" id="ps_a">{{ ps_a }}</span></p>
+  <p><strong><i class="fas fa-cube" style="color:#00ACC1;"></i> Found WEB elements (PageSearch):</strong> <span class="blue" id="ps_w">{{ ps_w }}</span></p>
+  <p><strong><i class="fas fa-unlock-alt" style="color:#D32F2F;"></i> Exposed passwords (PageSearch):</strong> <span class="blue" id="ps_p">{{ ps_p }}</span></p>
 </div>
-<div style="display: flex; align-items: flex-start; gap: 40px; margin-top: 40px; justify-content: flex-start;">
-  <div style="flex:1; max-width:500px; min-width:350px;">
+<div style="display:flex;align-items:flex-start;gap:40px;margin-top:40px;justify-content:flex-start;flex-wrap:wrap;">
+  <div style="flex:1;max-width:500px;min-width:350px;">
     <canvas id="statsChart" width="500" height="400"></canvas>
   </div>
-  <div style="flex:1; max-width:400px; min-width:300px;">
+  <div style="flex:1;max-width:400px;min-width:300px;">
     <canvas id="socialPie" width="400" height="400"></canvas>
     <div id="socialCounts"
          data-fb="{{ fb_links|length }}"
@@ -379,6 +444,13 @@
 </div>
 <hr>
 <h3 id="domain-infrastructure-visualisation">DOMAIN INFRASTRUCTURE VISUALISATION</h3>
+<div id="graph-stats" style="display:flex;justify-content:center;gap:20px;margin:10px auto;padding:10px;background:linear-gradient(135deg,#f5f7fa,#c3cfe2);border-radius:8px;max-width:900px;flex-wrap:wrap;">
+  <div class="stat-item"><i class="fas fa-circle" style="color:#3F51B5"></i> Nodes: <strong id="stat-nodes">0</strong></div>
+  <div class="stat-item"><i class="fas fa-link" style="color:#607D8B"></i> Edges: <strong id="stat-edges">0</strong></div>
+  <div class="stat-item"><i class="fas fa-layer-group" style="color:#009688"></i> Depth: <strong id="stat-depth">0</strong></div>
+  <div class="stat-item"><i class="fas fa-mouse-pointer" style="color:#E91E63"></i> Selected: <strong id="stat-selected">0</strong></div>
+  <div class="stat-item"><i class="fas fa-expand-arrows-alt" style="color:#FB8C00"></i> Expanded: <strong id="stat-expanded">0</strong></div>
+</div>
 <div id="graph-legend" aria-label="Graph legend">
   <span class="legend-item"><span class="legend-dot" style="background:#3F51B5"></span>Domain</span>
   <span class="legend-item"><span class="legend-dot" style="background:#607D8B"></span>Services</span>
@@ -388,365 +460,177 @@
   <span class="legend-item"><span class="legend-dot" style="background:#FB8C00"></span>Ports</span>
   <span class="legend-item"><span class="legend-dot" style="background:#F44336"></span>Vulnerabilities</span>
 </div>
+<div id="graph-filters" style="display:flex;justify-content:center;gap:12px;margin:10px auto;flex-wrap:wrap;max-width:1000px;">
+  <label class="filter-checkbox"><input type="checkbox" data-filter="services" checked><span style="color:#607D8B">⚙️ Services</span></label>
+  <label class="filter-checkbox"><input type="checkbox" data-filter="subdomains" checked><span style="color:#2196F3">🌐 Subdomains</span></label>
+  <label class="filter-checkbox"><input type="checkbox" data-filter="social" checked><span style="color:#E91E63">📱 Socials</span></label>
+  <label class="filter-checkbox"><input type="checkbox" data-filter="ip" checked><span style="color:#009688">🔢 IPs</span></label>
+  <label class="filter-checkbox"><input type="checkbox" data-filter="ports" checked><span style="color:#FB8C00">🚪 Ports</span></label>
+  <label class="filter-checkbox"><input type="checkbox" data-filter="vulns" checked><span style="color:#F44336">⚠️ Vulns</span></label>
+</div>
 <div id="graph-search">
-  <input type="text" id="graphSearchInput" placeholder="Search node..." aria-label="Search node">
+  <input type="text" id="graphSearchInput" placeholder="Search nodes..." autocomplete="off" aria-label="Search node">
+  <div id="searchAutocomplete"></div>
   <button id="graphSearchBtn" aria-label="Search">🔍</button>
+  <button id="graphPrevBtn" aria-label="Previous result" title="Previous">◀</button>
+  <button id="graphNextBtn" aria-label="Next result" title="Next">▶</button>
   <button id="graphClearBtn" aria-label="Clear search">✖</button>
+  <span id="searchCounter" style="font-size:13px;color:#666;margin-left:8px;">0/0</span>
 </div>
 <div id="graph-export">
-  <button id="exportPngBtn" aria-label="Export PNG">Export PNG</button>
-  <button id="fullscreenGraphBtn" aria-label="Enter full screen mode">Expanded mode</button>
+  <button id="exportPngBtn" aria-label="Export PNG">📷 PNG</button>
+  <button id="exportSvgBtn" aria-label="Export SVG">🎨 SVG</button>
+  <button id="exportJsonBtn" aria-label="Export JSON">📄 JSON</button>
+  <button id="fullscreenGraphBtn" aria-label="Fullscreen">⛶ Expanded</button>
 </div>
-<div style="text-align:left;max-width:1400px;margin:0 auto 8px;">
-  <button id="resetGraphBtn">Reset graph</button>
-  <button id="expandAllBtn">Expand all nodes</button>
-  <button id="collapseBtn" disabled>Collapse selected node</button>
-  <button id="clusterBtn">Cluster subdomains</button>
-  <button id="unclusterBtn">Uncluster all</button>
+<div style="text-align:left;max-width:1400px;margin:0 auto 8px;display:flex;flex-wrap:wrap;gap:6px;">
+  <button id="resetGraphBtn" class="graph-control-btn">🔄 Reset</button>
+  <button id="expandAllBtn" class="graph-control-btn">📂 Expand All</button>
+  <button id="collapseBtn" class="graph-control-btn" disabled>📁 Collapse</button>
+  <button id="clusterBtn" class="graph-control-btn">🗂️ Cluster Subdomains</button>
+  <button id="unclusterBtn" class="graph-control-btn">📤 Uncluster</button>
+  <button id="fitGraphBtn" class="graph-control-btn">🎯 Fit View</button>
+  <button id="physicsToggleBtn" class="graph-control-btn">⚡ Physics: ON</button>
 </div>
-<div id="osintNetwork" tabindex="0" aria-label="Domain infrastructure graph"></div>
-<button id="exitFullscreenBtn" style="display:none;">Exit graph expanded mode</button>
+<div style="display:flex;gap:10px;max-width:1400px;margin:0 auto;">
+  <div id="nodeInfoPanel">
+    <h4><i class="fas fa-info-circle"></i> Node Details</h4>
+    <div id="nodeInfoContent"><p style="color:#888;font-style:italic;">Click on a node to see details</p></div>
+    <div id="nodeActions" style="display:none;border-top:1px solid #ddd;padding-top:10px;">
+      <button id="copyNodeBtn">📋 Copy Label</button>
+      <button id="openNodeLinkBtn">🔗 Open Link</button>
+      <button id="highlightConnectedBtn">✨ Highlight Connected</button>
+    </div>
+  </div>
+  <div id="osintNetwork" tabindex="0" aria-label="Domain infrastructure graph"></div>
+</div>
+<button id="exitFullscreenBtn">✕ Exit Expanded Mode</button>
+<div id="graphContextMenu">
+  <div class="ctx-item" data-action="copy"><i class="fas fa-copy"></i> Copy Label</div>
+  <div class="ctx-item" data-action="copyAll"><i class="fas fa-clipboard-list"></i> Copy All Data</div>
+  <div class="ctx-item" data-action="open"><i class="fas fa-external-link-alt"></i> Open Link</div>
+  <div class="ctx-divider"></div>
+  <div class="ctx-item" data-action="expand"><i class="fas fa-expand"></i> Expand Node</div>
+  <div class="ctx-item" data-action="collapse"><i class="fas fa-compress"></i> Collapse Node</div>
+  <div class="ctx-item" data-action="highlight"><i class="fas fa-highlighter"></i> Highlight Connected</div>
+  <div class="ctx-divider"></div>
+  <div class="ctx-item" data-action="focus"><i class="fas fa-crosshairs"></i> Focus on Node</div>
+  <div class="ctx-item" data-action="hide"><i class="fas fa-eye-slash"></i> Hide Node</div>
+</div>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
-
 <h3 id="whois-info">WHOIS INFORMATION</h3>
-<p>
-  <strong><i class="fas fa-globe" style="color:#1E88E5;"></i> Domain:</strong>
-  <span class="blue">{{ sh_domain }}</span>
-</p>
-<p>
-  <strong><i class="fas fa-link" style="color:#43A047;"></i> Full URL:</strong>
-  <a href="{{ full_url }}" target="_blank" class="blue">{{ full_url }}</a>
-</p>
-<p>
-  <strong><i class="fas fa-network-wired" style="color:#E53935;"></i> IP address:</strong>
-  <span class="blue">{{ ip_address }}</span>
-</p>
-<p>
-  <strong><i class="fas fa-building" style="color:#6D4C41;"></i> Registrar:</strong>
-  <span class="blue">{{ registrar }}</span>
-</p>
-<p>
-  <strong><i class="fas fa-calendar-plus" style="color:#FB8C00;"></i> Creation date:</strong>
-  <span class="blue">{{ creation_date }}</span>
-</p>
-<p>
-  <strong><i class="fas fa-calendar-times" style="color:#D81B60;"></i> Expiration date:</strong>
-  <span class="blue">{{ expiration_date }}</span>
-</p>
-<p>
-  <strong><i class="fas fa-briefcase" style="color:#5E35B1;"></i> Organization name:</strong>
-  <span class="blue">{{ org }}</span>
-</p>
-<p>
-  <strong><i class="fas fa-envelope" style="color:#00897B;"></i> Contact e-mails:</strong>
-  <span class="blue">{{ mails }}</span>
-</p>
+<p><strong><i class="fas fa-globe" style="color:#1E88E5;"></i> Domain:</strong> <span class="blue">{{ sh_domain }}</span></p>
+<p><strong><i class="fas fa-link" style="color:#43A047;"></i> Full URL:</strong> <a href="{{ full_url }}" target="_blank" class="blue">{{ full_url }}</a></p>
+<p><strong><i class="fas fa-network-wired" style="color:#E53935;"></i> IP address:</strong> <span class="blue">{{ ip_address }}</span></p>
+<p><strong><i class="fas fa-building" style="color:#6D4C41;"></i> Registrar:</strong> <span class="blue">{{ registrar }}</span></p>
+<p><strong><i class="fas fa-calendar-plus" style="color:#FB8C00;"></i> Creation date:</strong> <span class="blue">{{ creation_date }}</span></p>
+<p><strong><i class="fas fa-calendar-times" style="color:#D81B60;"></i> Expiration date:</strong> <span class="blue">{{ expiration_date }}</span></p>
+<p><strong><i class="fas fa-briefcase" style="color:#5E35B1;"></i> Organization name:</strong> <span class="blue">{{ org }}</span></p>
+<p><strong><i class="fas fa-envelope" style="color:#00897B;"></i> Contact e-mails:</strong> <span class="blue">{{ mails }}</span></p>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
-
 <h3 id="social-media-links">SOCIAL MEDIA LINKS</h3>
 <p><strong><i class="fab fa-facebook-square" style="color:#1877f2;"></i> FACEBOOK:</strong></p>
-<ul>
-  {% for link in fb_links %}
-  <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
-  {% endfor %}
-</ul>
+<ul>{% for link in fb_links %}<li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>{% endfor %}</ul>
 <p><strong><i class="fab fa-twitter" style="color:#1da1f2;"></i> TWITTER (+ X.com):</strong></p>
-<ul>
-  {% for link in tw_links %}
-  <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
-  {% endfor %}
-  {% for link in xcom_links %}
-  <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
-  {% endfor %}
-</ul>
+<ul>{% for link in tw_links %}<li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>{% endfor %}{% for link in xcom_links %}<li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>{% endfor %}</ul>
 <p><strong><i class="fab fa-instagram" style="color:#e1306c;"></i> INSTAGRAM:</strong></p>
-<ul>
-  {% for link in inst_links %}
-  <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
-  {% endfor %}
-</ul>
+<ul>{% for link in inst_links %}<li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>{% endfor %}</ul>
 <p><strong><i class="fab fa-telegram" style="color:#0088cc;"></i> TELEGRAM:</strong></p>
-<ul>
-  {% for link in tg_links %}
-  <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
-  {% endfor %}
-</ul>
+<ul>{% for link in tg_links %}<li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>{% endfor %}</ul>
 <p><strong><i class="fab fa-tiktok" style="color:#111;"></i> TIKTOK:</strong></p>
-<ul>
-  {% for link in tt_links %}
-  <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
-  {% endfor %}
-</ul>
+<ul>{% for link in tt_links %}<li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>{% endfor %}</ul>
 <p><strong><i class="fab fa-linkedin" style="color:#0077b5;"></i> LINKEDIN:</strong></p>
-<ul>
-  {% for link in li_links %}
-  <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
-  {% endfor %}
-</ul>
+<ul>{% for link in li_links %}<li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>{% endfor %}</ul>
 <p><strong><i class="fab fa-vk" style="color:#4a76a8;"></i> VKONTAKTE:</strong></p>
-<ul>
-  {% for link in vk_links %}
-  <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
-  {% endfor %}
-</ul>
+<ul>{% for link in vk_links %}<li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>{% endfor %}</ul>
 <p><strong><i class="fab fa-youtube" style="color:#ff0000;"></i> YOUTUBE:</strong></p>
-<ul>
-  {% for link in yt_links %}
-  <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
-  {% endfor %}
-</ul>
+<ul>{% for link in yt_links %}<li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>{% endfor %}</ul>
 <p><strong><i class="fab fa-odnoklassniki" style="color:#ff8000;"></i> ODNOKLASSNIKI:</strong></p>
-<ul>
-  {% for link in ok_links %}
-  <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
-  {% endfor %}
-</ul>
+<ul>{% for link in ok_links %}<li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>{% endfor %}</ul>
 <p><strong><i class="fab fa-weixin" style="color:#7bb32e;"></i> WECHAT:</strong></p>
-<ul>
-  {% for link in wc_links %}
-  <li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>
-  {% endfor %}
-</ul>
+<ul>{% for link in wc_links %}<li>⇒ <a href="{{ link }}" target="_blank" class="blue">{{ link }}</a></li>{% endfor %}</ul>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
-
 <h3 id="dns-ssl-info">DNS & SSL INFORMATION</h3>
-<p>
-  <strong>
-    <i class="fas fa-server" style="color:#2196F3;"></i> (DNS) Name servers:
-  </strong>
-  <span class="blue">{{ name_servers }}</span>
-</p>
-<p>
-  <strong>
-    <i class="fas fa-envelope-open-text" style="color:#FF9800;"></i> (DNS) MX addresses:
-  </strong>
-  <span class="blue">{{ mx_records }}</span>
-</p>
-<p>
-  <strong>
-    <i class="fas fa-user-check" style="color:#5C6BC0;"></i> (SSL) Issuer:
-  </strong>
-  <span class="blue">{{ issuer }}</span>
-</p>
-<p>
-  <strong>
-    <i class="fas fa-user-lock" style="color:#9C27B0;"></i> (SSL) Subject:
-  </strong>
-  <span class="blue">{{ subject }}</span>
-</p>
-<p>
-  <strong>
-    <i class="fas fa-calendar-plus" style="color:#43A047;"></i> (SSL) Not before:
-  </strong>
-  <span class="blue">{{ notBefore }}</span>
-</p>
-<p>
-  <strong>
-    <i class="fas fa-calendar-times" style="color:#E53935;"></i> (SSL) Not after:
-  </strong>
-  <span class="blue">{{ notAfter }}</span>
-</p>
-<p>
-  <strong>
-    <i class="fas fa-certificate" style="color:#00ACC1;"></i> (SSL) Certificate name:
-  </strong>
-  <span class="blue">{{ commonName }}</span>
-</p>
-<p>
-  <strong>
-    <i class="fas fa-fingerprint" style="color:#FF5722;"></i> (SSL) Certificate serial number:
-  </strong>
-  <span class="blue">{{ serialNumber }}</span>
-</p>
-<div class="back-to-top">
-  <a href="#top" class="toc-link">↑ Back to top</a>
-</div>
+<p><strong><i class="fas fa-server" style="color:#2196F3;"></i> (DNS) Name servers:</strong> <span class="blue">{{ name_servers }}</span></p>
+<p><strong><i class="fas fa-envelope-open-text" style="color:#FF9800;"></i> (DNS) MX addresses:</strong> <span class="blue">{{ mx_records }}</span></p>
+<p><strong><i class="fas fa-user-check" style="color:#5C6BC0;"></i> (SSL) Issuer:</strong> <span class="blue">{{ issuer }}</span></p>
+<p><strong><i class="fas fa-user-lock" style="color:#9C27B0;"></i> (SSL) Subject:</strong> <span class="blue">{{ subject }}</span></p>
+<p><strong><i class="fas fa-calendar-plus" style="color:#43A047;"></i> (SSL) Not before:</strong> <span class="blue">{{ notBefore }}</span></p>
+<p><strong><i class="fas fa-calendar-times" style="color:#E53935;"></i> (SSL) Not after:</strong> <span class="blue">{{ notAfter }}</span></p>
+<p><strong><i class="fas fa-certificate" style="color:#00ACC1;"></i> (SSL) Certificate name:</strong> <span class="blue">{{ commonName }}</span></p>
+<p><strong><i class="fas fa-fingerprint" style="color:#FF5722;"></i> (SSL) Certificate serial number:</strong> <span class="blue">{{ serialNumber }}</span></p>
+<div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
-
 <h3 id="services-frameworks-info">SERVICES & FRAMEWORKS INFORMATION</h3>
-<p>
-  <strong><i class="fas fa-server" style="color:#1976D2;"></i> Web servers:</strong>
-</p>
-<ul>
-  {% for ws in web_servers %}
-  <li class="blue">⇒ {{ ws }}</li>
-  {% endfor %}
-</ul>
-<p>
-  <strong><i class="fas fa-tools" style="color:#F57C00;"></i> CMS:</strong>
-</p>
-<ul>
-  {% for cm in cms %}
-  <li class="blue">⇒ {{ cm }}</li>
-  {% endfor %}
-</ul>
-<p>
-  <strong><i class="fas fa-code" style="color:#43A047;"></i> Used programming languages:</strong>
-</p>
-<ul>
-  {% for pl in programming_languages %}
-  <li class="blue">⇒ {{ pl }}</li>
-  {% endfor %}
-</ul>
-<p>
-  <strong><i class="fas fa-layer-group" style="color:#7E57C2;"></i> Used web frameworks:</strong>
-</p>
-<ul>
-  {% for wf in web_frameworks %}
-  <li class="blue">⇒ {{ wf }}</li>
-  {% endfor %}
-</ul>
-<p>
-  <strong><i class="fas fa-chart-line" style="color:#00ACC1;"></i> Analytics service:</strong>
-</p>
-<ul>
-  {% for analytic in analytics %}
-  <li class="blue">⇒ {{ analytic }}</li>
-  {% endfor %}
-</ul>
-<p>
-  <strong><i class="fab fa-js-square" style="color:#F7DF1E;"></i> Used JavaScript frameworks:</strong>
-</p>
-<ul>
-  {% for jsf in javascript_frameworks %}
-  <li class="blue">⇒ {{ jsf }}</li>
-  {% endfor %}
-</ul>
-<p>
-  <strong><i class="fas fa-tags" style="color:#9E9E9E;"></i> Tags:</strong>
-</p>
-<ul>
-  {% for tag in tags %}
-  <li class="blue">⇒ {{ tag }}</li>
-  {% endfor %}
-</ul>
-<p>
-  <strong><i class="fas fa-boxes" style="color:#607D8B;"></i> Common Platform Enumeration:</strong>
-</p>
-<ul>
-  {% for cpe in cpes %}
-  <li class="blue">⇒ {{ cpe }}</li>
-  {% endfor %}
-</ul>
+<p><strong><i class="fas fa-server" style="color:#1976D2;"></i> Web servers:</strong></p>
+<ul>{% for ws in web_servers %}<li class="blue">⇒ {{ ws }}</li>{% endfor %}</ul>
+<p><strong><i class="fas fa-tools" style="color:#F57C00;"></i> CMS:</strong></p>
+<ul>{% for cm in cms %}<li class="blue">⇒ {{ cm }}</li>{% endfor %}</ul>
+<p><strong><i class="fas fa-code" style="color:#43A047;"></i> Used programming languages:</strong></p>
+<ul>{% for pl in programming_languages %}<li class="blue">⇒ {{ pl }}</li>{% endfor %}</ul>
+<p><strong><i class="fas fa-layer-group" style="color:#7E57C2;"></i> Used web frameworks:</strong></p>
+<ul>{% for wf in web_frameworks %}<li class="blue">⇒ {{ wf }}</li>{% endfor %}</ul>
+<p><strong><i class="fas fa-chart-line" style="color:#00ACC1;"></i> Analytics service:</strong></p>
+<ul>{% for analytic in analytics %}<li class="blue">⇒ {{ analytic }}</li>{% endfor %}</ul>
+<p><strong><i class="fab fa-js-square" style="color:#F7DF1E;"></i> Used JavaScript frameworks:</strong></p>
+<ul>{% for jsf in javascript_frameworks %}<li class="blue">⇒ {{ jsf }}</li>{% endfor %}</ul>
+<p><strong><i class="fas fa-tags" style="color:#9E9E9E;"></i> Tags:</strong></p>
+<ul>{% for tag in tags %}<li class="blue">⇒ {{ tag }}</li>{% endfor %}</ul>
+<p><strong><i class="fas fa-boxes" style="color:#607D8B;"></i> Common Platform Enumeration:</strong></p>
+<ul>{% for cpe in cpes %}<li class="blue">⇒ {{ cpe }}</li>{% endfor %}</ul>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
-
 <h3 id="pre-pentest-info">BASIC PRE-PENTEST INFORMATION</h3>
-<p>
-  <strong><i class="fas fa-door-open" style="color:#FB8C00;"></i> Open ports:</strong>
-</p>
-<ul>
-  {% for op in ports %}
-  <li class="blue">⇒ {{ op }}</li>
-  {% endfor %}
-</ul>
-<p>
-  <strong><i class="fas fa-globe" style="color:#1976D2;"></i> Hostnames:</strong>
-</p>
-<ul>
-  {% for hn in hostnames %}
-  <li class="blue">⇒ {{ hn }}</li>
-  {% endfor %}
-</ul>
-<p>
-  <strong><i class="fas fa-bug" style="color:#E53935;"></i> Potential vulnerabilities:</strong>
-</p>
-<ul>
-  {% for vuln in vulns %}
-  <li class="blue">⇒ {{ vuln }}</li>
-  {% endfor %}
-</ul>
+<p><strong><i class="fas fa-door-open" style="color:#FB8C00;"></i> Open ports:</strong></p>
+<ul>{% for op in ports %}<li class="blue">⇒ {{ op }}</li>{% endfor %}</ul>
+<p><strong><i class="fas fa-globe" style="color:#1976D2;"></i> Hostnames:</strong></p>
+<ul>{% for hn in hostnames %}<li class="blue">⇒ {{ hn }}</li>{% endfor %}</ul>
+<p><strong><i class="fas fa-bug" style="color:#E53935;"></i> Potential vulnerabilities:</strong></p>
+<ul>{% for vuln in vulns %}<li class="blue">⇒ {{ vuln }}</li>{% endfor %}</ul>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
-
 <h3 id="technical-files">WEBSITE TECHNICAL FILES</h3>
-<details>
-  <summary>
-    <i class="fas fa-robot" style="color:#9C27B0;"></i> robots.txt
-  </summary>
-  <pre>{{ robots_content | safe }}</pre>
-</details>
-<details>
-  <summary>
-    <i class="fas fa-sitemap" style="color:#4CAF50;"></i> sitemap.xml
-  </summary>
-  <pre>{{ sitemap_xml_content | safe }}</pre>
-</details>
-<details>
-  <summary>
-    <i class="fas fa-link" style="color:#2196F3;"></i> Sitemap links
-  </summary>
-  <pre>{{ sitemap_txt_content | safe }}</pre>
-</details>
+<details><summary><i class="fas fa-robot" style="color:#9C27B0;"></i> robots.txt</summary><pre>{{ robots_content | safe }}</pre></details>
+<details><summary><i class="fas fa-sitemap" style="color:#4CAF50;"></i> sitemap.xml</summary><pre>{{ sitemap_xml_content | safe }}</pre></details>
+<details><summary><i class="fas fa-link" style="color:#2196F3;"></i> Sitemap links</summary><pre>{{ sitemap_txt_content | safe }}</pre></details>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
-
 {% if add_dsi %}
 <h3 id="dorking-info">DORKING SCAN INFO</h3>
-<details>
-  <summary>
-    <i class="fas fa-search" style="color:#009688;"></i> Dorking Results
-  </summary>
-  <pre>{{ add_dsi | safe }}</pre>
-</details>
+<details><summary><i class="fas fa-search" style="color:#009688;"></i> Dorking Results</summary><pre>{{ add_dsi | safe }}</pre></details>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 {% endif %}
-
 {% if ps_string %}
 <h3 id="pagesearch-results">PAGESEARCH RESULTS</h3>
-<details>
-  <summary>
-    <i class="fas fa-file-alt" style="color:#3F51B5;"></i> PageSearch Process Listing
-  </summary>
-  <pre>{{ ps_string }}</pre>
-</details>
+<details><summary><i class="fas fa-file-alt" style="color:#3F51B5;"></i> PageSearch Process Listing</summary><pre>{{ ps_string }}</pre></details>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 {% endif %}
-
 {% if virustotal_output %}
 <h3 id="virustotal-results">VIRUSTOTAL API SCAN RESULTS</h3>
-<details>
-  <summary title="Results from VirusTotal malware analysis">
-    <i class="fas fa-viruses" style="color:#D32F2F;"></i> VirusTotal Output
-  </summary>
-  <pre>{{ virustotal_output | safe }}</pre>
-</details>
+<details><summary title="Results from VirusTotal malware analysis"><i class="fas fa-viruses" style="color:#D32F2F;"></i> VirusTotal Output</summary><pre>{{ virustotal_output | safe }}</pre></details>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 {% endif %}
-
 {% if securitytrails_output %}
 <h3 id="securitytrails-results">SECURITYTRAILS API SCAN RESULTS</h3>
-<details>
-  <summary>
-    <i class="fas fa-map-marked-alt" style="color:#0097A7;"></i> SecurityTrails Output
-  </summary>
-  <pre>{{ securitytrails_output | safe }}</pre>
-</details>
+<details><summary><i class="fas fa-map-marked-alt" style="color:#0097A7;"></i> SecurityTrails Output</summary><pre>{{ securitytrails_output | safe }}</pre></details>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 {% endif %}
-
 {% if hudsonrock_output %}
 <h3 id="hudsonrock-results">HUDSONROCK API SCAN RESULTS</h3>
-<details>
-  <summary>
-    <i class="fas fa-user-secret" style="color:#7B1FA2;"></i> HudsonRock Output
-  </summary>
-  <pre>{{ hudsonrock_output | safe }}</pre>
-</details>
+<details><summary><i class="fas fa-user-secret" style="color:#7B1FA2;"></i> HudsonRock Output</summary><pre>{{ hudsonrock_output | safe }}</pre></details>
 <div class="back-to-top"><a href="#top" class="toc-link">↑ Back to top</a></div>
 <hr>
 {% endif %}
-
-<h3 style="text-align:center; padding-top: 10px;">Created using DPULSE software by OSINT-TECHNOLOGIES</h3>
+<h3 style="text-align:center;padding-top:10px;">Created using DPULSE software by OSINT-TECHNOLOGIES</h3>
 <p style="text-align:center;">Visit our web-pages:</p>
-<ul style="text-align:center; list-style: none; padding-left: 0;">
+<ul style="text-align:center;list-style:none;padding-left:0;">
   <li><a href="https://github.com/OSINT-TECHNOLOGIES" target="_blank" class="blue">https://github.com/OSINT-TECHNOLOGIES</a></li>
   <li><a href="https://pypi.org/project/dpulse/" target="_blank" class="blue">https://pypi.org/project/dpulse/</a></li>
 </ul>
@@ -757,22 +641,26 @@
     fira: { main: "'Fira Sans', sans-serif", code: "'Fira Code', monospace" },
     grotesk: { main: "'Space Grotesk', sans-serif", code: "'Roboto Mono', monospace" }
   };
+
   function changeFont(val) {
     const c = fontMap[val] || fontMap.inter;
     document.documentElement.style.setProperty('--font-main', c.main);
     document.documentElement.style.setProperty('--font-code', c.code);
     localStorage.setItem('fontChoice', val);
   }
+
   function toggleTheme() {
     document.body.classList.toggle('dark');
     localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
   }
+
   function toggleToc() {
     const toc = document.querySelector('.toc-container');
     toc.classList.toggle('collapsed');
     document.body.style.paddingLeft = toc.classList.contains('collapsed') ? '60px' : '260px';
     localStorage.setItem('tocCollapsed', toc.classList.contains('collapsed'));
   }
+
   window.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
     const saved = localStorage.getItem('fontChoice') || 'inter';
@@ -783,6 +671,7 @@
       document.querySelector('.toc-container').classList.add('collapsed');
       document.body.style.paddingLeft = '60px';
     }
+
     const progressBar = document.querySelector('.progress-bar');
     window.addEventListener('scroll', () => {
       const winScroll = document.documentElement.scrollTop;
@@ -790,6 +679,7 @@
       const scrolled = (winScroll / height) * 100;
       progressBar.style.width = scrolled + '%';
     });
+
     const technicalTerms = {
       'Potential vulnerabilities': 'If you see vulnerabilities here, please, do a double check. Remember about "potential" word',
       'Subdomains IP addresses': 'This list is not correlated with "Found subdomains" list',
@@ -803,10 +693,12 @@
       'HUDSONROCK API SCAN RESULTS': 'See docs.hudsonrock.com for more details',
       'SECURITYTRAILS API SCAN RESULTS': 'See docs.securitytrails.com/reference for more details'
     };
+
     document.body.innerHTML = document.body.innerHTML.replace(
-            new RegExp(`\\b(${Object.keys(technicalTerms).join('|')})\\b`, 'g'),
-            match => `<span class="technical-term" data-term="${match}">${match}</span>`
+      new RegExp(`\\b(${Object.keys(technicalTerms).join('|')})\\b`, 'g'),
+      match => `<span class="technical-term" data-term="${match}">${match}</span>`
     );
+
     document.querySelectorAll('.technical-term').forEach(term => {
       term.addEventListener('click', () => {
         const definition = technicalTerms[term.dataset.term];
@@ -817,7 +709,9 @@
         setTimeout(() => tooltip.remove(), 3000);
       });
     });
+
     document.getElementById('printBtn').addEventListener('click', () => window.print());
+
     if (window.Chart) {
       const stats = [
         parseInt(document.getElementById('a_tsf')?.textContent) || 0,
@@ -835,19 +729,9 @@
         parseInt(document.getElementById('ps_p')?.textContent) || 0
       ];
       const labels = [
-        'Subdomains',
-        'Social Media',
-        'Emails',
-        'IP Addresses',
-        'Open Ports',
-        'Vulnerabilities',
-        'Accessible subdomains',
-        'Email addresses',
-        'Found documents',
-        'Found cookies',
-        'Found API keys',
-        'WEB elements',
-        'Exposed passwords'
+        'Subdomains', 'Social Media', 'Emails', 'IP Addresses', 'Open Ports', 'Vulnerabilities',
+        'Accessible subdomains', 'Email addresses', 'Found documents', 'Found cookies',
+        'Found API keys', 'WEB elements', 'Exposed passwords'
       ];
       const colors = [
         '#4caf50', '#2196f3', '#ff9800', '#9c27b0', '#f44336', '#607d8b',
@@ -857,26 +741,15 @@
       if (ctx) {
         new Chart(ctx, {
           type: 'bar',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: 'Count',
-              data: stats,
-              backgroundColor: colors
-            }]
-          },
+          data: { labels: labels, datasets: [{ label: 'Count', data: stats, backgroundColor: colors }] },
           options: {
             responsive: true,
-            plugins: {
-              legend: { display: false },
-              title: { display: false }
-            },
-            scales: {
-              y: { beginAtZero: true }
-            }
+            plugins: { legend: { display: false }, title: { display: false } },
+            scales: { y: { beginAtZero: true } }
           }
         });
       }
+
       const socialDiv = document.getElementById('socialCounts');
       const socialCounts = [
         parseInt(socialDiv?.dataset.fb) || 0,
@@ -890,17 +763,9 @@
         parseInt(socialDiv?.dataset.ok) || 0,
         parseInt(socialDiv?.dataset.wc) || 0
       ];
-      const socialLabels = [
-        'Facebook', 'Twitter/X', 'Instagram', 'Telegram', 'TikTok',
-        'LinkedIn', 'VK', 'YouTube', 'Odnoklassniki', 'WeChat'
-      ];
-      const socialColors = [
-        '#1877f2', '#1da1f2', '#e1306c', '#0088cc', '#111',
-        '#0077b5', '#4a76a8', '#ff0000', '#ff8000', '#7bb32e'
-      ];
-      let socialPieData = [];
-      let socialPieLabels = [];
-      let socialPieColors = [];
+      const socialLabels = ['Facebook', 'Twitter/X', 'Instagram', 'Telegram', 'TikTok', 'LinkedIn', 'VK', 'YouTube', 'Odnoklassniki', 'WeChat'];
+      const socialColors = ['#1877f2', '#1da1f2', '#e1306c', '#0088cc', '#111', '#0077b5', '#4a76a8', '#ff0000', '#ff8000', '#7bb32e'];
+      let socialPieData = [], socialPieLabels = [], socialPieColors = [];
       for (let i = 0; i < socialCounts.length; ++i) {
         if (socialCounts[i] > 0) {
           socialPieData.push(socialCounts[i]);
@@ -912,146 +777,222 @@
       if (ctxPie && socialPieData.length > 0) {
         new Chart(ctxPie, {
           type: 'pie',
-          data: {
-            labels: socialPieLabels,
-            datasets: [{
-              data: socialPieData,
-              backgroundColor: socialPieColors
-            }]
-          },
-          options: {
-            plugins: {
-              legend: { position: 'bottom' },
-              title: { display: true, text: 'Social Media Links Distribution' }
-            }
-          }
+          data: { labels: socialPieLabels, datasets: [{ data: socialPieData, backgroundColor: socialPieColors }] },
+          options: { plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Social Media Links Distribution' } } }
         });
       }
     }
+
     if (window.vis && document.getElementById('osintNetwork')) {
-      let nodes, edges, network, expanded, initialNodes, initialEdges, selectedNode = null, clusters = [];
       const domain = '{{ sh_domain }}';
       const services = [
         {name: 'Web servers', items: [{% for ws in web_servers %}'{{ ws }}',{% endfor %}]},
-      {name: 'CMS', items: [{% for cm in cms %}'{{ cm }}',{% endfor %}]},
-      {name: 'Used programming languages', items: [{% for pl in programming_languages %}'{{ pl }}',{% endfor %}]},
-      {name: 'Used web frameworks', items: [{% for wf in web_frameworks %}'{{ wf }}',{% endfor %}]},
-      {name: 'Analytics service', items: [{% for analytic in analytics %}'{{ analytic }}',{% endfor %}]},
-      {name: 'Used JavaScript frameworks', items: [{% for jsf in javascript_frameworks %}'{{ jsf }}',{% endfor %}]},
-      {name: 'Tags', items: [{% for tag in tags %}'{{ tag }}',{% endfor %}]},
-      {name: 'Common Platform Enumeration', items: [{% for cpe in cpes %}'{{ cpe }}',{% endfor %}]}
-    ];
+        {name: 'CMS', items: [{% for cm in cms %}'{{ cm }}',{% endfor %}]},
+        {name: 'Programming languages', items: [{% for pl in programming_languages %}'{{ pl }}',{% endfor %}]},
+        {name: 'Web frameworks', items: [{% for wf in web_frameworks %}'{{ wf }}',{% endfor %}]},
+        {name: 'Analytics', items: [{% for analytic in analytics %}'{{ analytic }}',{% endfor %}]},
+        {name: 'JS frameworks', items: [{% for jsf in javascript_frameworks %}'{{ jsf }}',{% endfor %}]},
+        {name: 'Tags', items: [{% for tag in tags %}'{{ tag }}',{% endfor %}]},
+        {name: 'CPE', items: [{% for cpe in cpes %}'{{ cpe }}',{% endfor %}]}
+      ];
       const subdomains = [{% for sub in subdomains %}'{{ sub }}',{% endfor %}];
       const subdomainIPs = [{% for ip in subdomain_ips %}'{{ ip }}',{% endfor %}];
       const socialGroups = [
         {name: 'Facebook', links: [{% for link in fb_links %}'{{ link }}',{% endfor %}]},
-      {name: 'Twitter/X', links: [{% for link in tw_links %}'{{ link }}',{% endfor %}{% for link in xcom_links %}'{{ link }}',{% endfor %}]},
-      {name: 'Instagram', links: [{% for link in inst_links %}'{{ link }}',{% endfor %}]},
-      {name: 'Telegram', links: [{% for link in tg_links %}'{{ link }}',{% endfor %}]},
-      {name: 'TikTok', links: [{% for link in tt_links %}'{{ link }}',{% endfor %}]},
-      {name: 'LinkedIn', links: [{% for link in li_links %}'{{ link }}',{% endfor %}]},
-      {name: 'VK', links: [{% for link in vk_links %}'{{ link }}',{% endfor %}]},
-      {name: 'YouTube', links: [{% for link in yt_links %}'{{ link }}',{% endfor %}]},
-      {name: 'Odnoklassniki', links: [{% for link in ok_links %}'{{ link }}',{% endfor %}]},
-      {name: 'WeChat', links: [{% for link in wc_links %}'{{ link }}',{% endfor %}]}
-    ];
+        {name: 'Twitter/X', links: [{% for link in tw_links %}'{{ link }}',{% endfor %}{% for link in xcom_links %}'{{ link }}',{% endfor %}]},
+        {name: 'Instagram', links: [{% for link in inst_links %}'{{ link }}',{% endfor %}]},
+        {name: 'Telegram', links: [{% for link in tg_links %}'{{ link }}',{% endfor %}]},
+        {name: 'TikTok', links: [{% for link in tt_links %}'{{ link }}',{% endfor %}]},
+        {name: 'LinkedIn', links: [{% for link in li_links %}'{{ link }}',{% endfor %}]},
+        {name: 'VK', links: [{% for link in vk_links %}'{{ link }}',{% endfor %}]},
+        {name: 'YouTube', links: [{% for link in yt_links %}'{{ link }}',{% endfor %}]},
+        {name: 'Odnoklassniki', links: [{% for link in ok_links %}'{{ link }}',{% endfor %}]},
+        {name: 'WeChat', links: [{% for link in wc_links %}'{{ link }}',{% endfor %}]}
+      ];
       const ipAddresses = [{% for ip in ip_addresses %}'{{ ip }}',{% endfor %}];
       const ports = [{% for op in ports %}'{{ op }}',{% endfor %}];
       const vulns = [{% for vuln in vulns %}'{{ vuln }}',{% endfor %}];
+
+      let nodes, edges, network, expanded = {}, hiddenNodes = new Set();
+      let selectedNode = null, contextNode = null;
+      let searchResults = [], searchIndex = 0;
+      let physicsEnabled = true;
+      let allNodesData = [], allEdgesData = [];
+      let filterState = { services: true, subdomains: true, social: true, ip: true, ports: true, vulns: true };
+
       function nodeExists(id) { return !!nodes.get(id); }
-      function edgeExists(from, to) {
-        return edges.get().some(e => e.from === from && e.to === to);
-      }
+      function edgeExists(from, to) { return edges.get().some(e => e.from === from && e.to === to); }
+
       function initGraph() {
         nodes = new vis.DataSet([
-          {id: 'domain', label: domain, group: 'domain', color:'#3F51B5', level:0, size:40, borderWidth:4, shape:'dot', title: 'Main domain'}
+          {id: 'domain', label: domain, group: 'domain', color: '#3F51B5', level: 0, size: 45, borderWidth: 4, shape: 'dot', title: 'Main domain', category: 'domain'}
         ]);
         edges = new vis.DataSet([]);
-        expanded = {};
+
         const firstLevel = [
-          {id: 'services', label: 'SERVICES', color:'#607D8B'},
-          {id: 'subdomains', label: `SUBDOMAINS (${subdomains.length})`, color:'#2196F3'},
-          {id: 'social', label: 'SOCIALS', color:'#E91E63'},
-          {id: 'ip', label: `IPs (${ipAddresses.length})`, color:'#009688'},
-          {id: 'ports', label: `PORTS (${ports.length})`, color:'#FB8C00'},
-          {id: 'vulns', label: `VULNERABILITIES (${vulns.length})`, color:'#F44336'}
+          {id: 'services', label: 'SERVICES', color: '#607D8B', category: 'services'},
+          {id: 'subdomains', label: 'SUBDOMAINS (' + subdomains.length + ')', color: '#2196F3', category: 'subdomains'},
+          {id: 'social', label: 'SOCIALS', color: '#E91E63', category: 'social'},
+          {id: 'ip', label: 'IPs (' + ipAddresses.length + ')', color: '#009688', category: 'ip'},
+          {id: 'ports', label: 'PORTS (' + ports.length + ')', color: '#FB8C00', category: 'ports'},
+          {id: 'vulns', label: 'VULNS (' + vulns.length + ')', color: '#F44336', category: 'vulns'}
         ];
+
         firstLevel.forEach(n => {
-          if (!nodeExists(n.id)) nodes.add({id: n.id, label: n.label, group: n.id, color: n.color, level:1, size:30, borderWidth:3, shape:'dot', title: n.label});
-          if (!edgeExists('domain', n.id)) edges.add({id: 'e_'+n.id, from: 'domain', to: n.id});
+          nodes.add({...n, level: 1, size: 32, borderWidth: 3, shape: 'dot', title: n.label});
+          edges.add({id: 'e_' + n.id, from: 'domain', to: n.id});
         });
-        initialNodes = nodes.get().map(n => Object.assign({}, n));
-        initialEdges = edges.get().map(e => Object.assign({}, e));
+
+        allNodesData = nodes.get().map(n => ({...n}));
+        allEdgesData = edges.get().map(e => ({...e}));
+        updateStats();
       }
+
+      function updateStats() {
+        const visibleNodes = nodes.get().filter(n => !hiddenNodes.has(n.id));
+        document.getElementById('stat-nodes').textContent = visibleNodes.length;
+        document.getElementById('stat-edges').textContent = edges.length;
+        document.getElementById('stat-depth').textContent = Math.max(...visibleNodes.map(n => n.level || 0), 0);
+        document.getElementById('stat-selected').textContent = network ? network.getSelectedNodes().length : 0;
+        document.getElementById('stat-expanded').textContent = Object.values(expanded).filter(Boolean).length;
+      }
+
       function expandNode(nodeId) {
         if (expanded[nodeId]) return;
         expanded[nodeId] = true;
+
         if (nodeId === 'services') {
           services.forEach((srv, i) => {
+            if (srv.items.length === 0) return;
             const sid = 'srv_' + i;
-            if (!nodeExists(sid)) nodes.add({id: sid, label: `${srv.name} (${srv.items.length})`, group:'service', color:'#90caf9', level:2, parent: nodeId, size:20, borderWidth:2, shape:'dot', title: srv.name});
-            if (!edgeExists('services', sid)) edges.add({id: 'e_services_'+sid, from: 'services', to: sid});
+            if (!nodeExists(sid)) {
+              nodes.add({id: sid, label: srv.name + ' (' + srv.items.length + ')', group: 'service', color: '#90caf9', level: 2, parent: nodeId, size: 22, borderWidth: 2, shape: 'dot', title: srv.name, category: 'services'});
+              allNodesData.push(nodes.get(sid));
+            }
+            if (!edgeExists('services', sid)) {
+              edges.add({id: 'e_services_' + sid, from: 'services', to: sid});
+              allEdgesData.push(edges.get('e_services_' + sid));
+            }
           });
         }
+
         if (nodeId.startsWith('srv_')) {
           const idx = parseInt(nodeId.split('_')[1]);
           services[idx].items.forEach((item, j) => {
             const iid = nodeId + '_item_' + j;
-            if (!nodeExists(iid)) nodes.add({id: iid, label: item.length>30?item.slice(0,27)+'...':item, group:'serviceitem', color:'#b3e5fc', level:3, parent: nodeId, size:12, borderWidth:1, shape:'box', title: item});
-            if (!edgeExists(nodeId, iid)) edges.add({id: 'e_'+nodeId+'_'+iid, from: nodeId, to: iid});
-          });
-        }
-        if (nodeId === 'subdomains') {
-          subdomains.forEach((sub, i) => {
-            const sid = 'sub_' + i;
-            if (!nodeExists(sid)) nodes.add({id: sid, label: sub, group:'subdomain', color:'#64b5f6', level:2, parent: nodeId, size:20, borderWidth:2, shape:'ellipse', title: sub});
-            if (!edgeExists('subdomains', sid)) edges.add({id: 'e_subdomains_'+sid, from: 'subdomains', to: sid});
-            if (subdomainIPs[i]) {
-              const ipid = 'ip_sub_' + i;
-              if (!nodeExists(ipid)) nodes.add({id: ipid, label: subdomainIPs[i], group:'ip', color:'#80cbc4', level:3, parent: sid, size:14, borderWidth:1, shape:'dot', title: subdomainIPs[i]});
-              if (!edgeExists(sid, ipid)) edges.add({id: 'e_'+sid+'_'+ipid, from: sid, to: ipid});
+            if (!nodeExists(iid)) {
+              nodes.add({id: iid, label: item.length > 25 ? item.slice(0, 22) + '...' : item, group: 'serviceitem', color: '#b3e5fc', level: 3, parent: nodeId, size: 14, borderWidth: 1, shape: 'box', title: item, fullData: item, category: 'services'});
+              allNodesData.push(nodes.get(iid));
+            }
+            if (!edgeExists(nodeId, iid)) {
+              edges.add({id: 'e_' + nodeId + '_' + iid, from: nodeId, to: iid});
+              allEdgesData.push(edges.get('e_' + nodeId + '_' + iid));
             }
           });
         }
+
+        if (nodeId === 'subdomains') {
+          subdomains.forEach((sub, i) => {
+            const sid = 'sub_' + i;
+            if (!nodeExists(sid)) {
+              nodes.add({id: sid, label: sub.length > 30 ? sub.slice(0, 27) + '...' : sub, group: 'subdomain', color: '#64b5f6', level: 2, parent: nodeId, size: 20, borderWidth: 2, shape: 'ellipse', title: sub, fullData: sub, category: 'subdomains'});
+              allNodesData.push(nodes.get(sid));
+            }
+            if (!edgeExists('subdomains', sid)) {
+              edges.add({id: 'e_subdomains_' + sid, from: 'subdomains', to: sid});
+              allEdgesData.push(edges.get('e_subdomains_' + sid));
+            }
+            if (subdomainIPs[i]) {
+              const ipid = 'ip_sub_' + i;
+              if (!nodeExists(ipid)) {
+                nodes.add({id: ipid, label: subdomainIPs[i], group: 'ip', color: '#80cbc4', level: 3, parent: sid, size: 14, borderWidth: 1, shape: 'dot', title: subdomainIPs[i], fullData: subdomainIPs[i], category: 'ip'});
+                allNodesData.push(nodes.get(ipid));
+              }
+              if (!edgeExists(sid, ipid)) {
+                edges.add({id: 'e_' + sid + '_' + ipid, from: sid, to: ipid});
+                allEdgesData.push(edges.get('e_' + sid + '_' + ipid));
+              }
+            }
+          });
+        }
+
         if (nodeId === 'social') {
           socialGroups.forEach((sg, i) => {
             if (sg.links.length > 0) {
               const gid = 'soc_' + i;
-              if (!nodeExists(gid)) nodes.add({id: gid, label: `${sg.name} (${sg.links.length})`, group:'socialgroup', color:'#f06292', level:2, parent: nodeId, size:20, borderWidth:2, shape:'dot', title: sg.name});
-              if (!edgeExists('social', gid)) edges.add({id: 'e_social_'+gid, from: 'social', to: gid});
+              if (!nodeExists(gid)) {
+                nodes.add({id: gid, label: sg.name + ' (' + sg.links.length + ')', group: 'socialgroup', color: '#f06292', level: 2, parent: nodeId, size: 22, borderWidth: 2, shape: 'dot', title: sg.name, category: 'social'});
+                allNodesData.push(nodes.get(gid));
+              }
+              if (!edgeExists('social', gid)) {
+                edges.add({id: 'e_social_' + gid, from: 'social', to: gid});
+                allEdgesData.push(edges.get('e_social_' + gid));
+              }
             }
           });
         }
+
         if (nodeId.startsWith('soc_')) {
           const idx = parseInt(nodeId.split('_')[1]);
           socialGroups[idx].links.forEach((link, j) => {
             const lid = nodeId + '_link_' + j;
-            if (!nodeExists(lid)) nodes.add({id: lid, label: '🔗', title: link, group:'sociallink', color:'#f8bbd0', level:3, shape:'icon', icon: {face: 'FontAwesome', code: '\uf0c1', size: 30, color: '#f8bbd0'}, parent: nodeId, size:12, borderWidth:1});
-            if (!edgeExists(nodeId, lid)) edges.add({id: 'e_'+nodeId+'_'+lid, from: nodeId, to: lid});
+            if (!nodeExists(lid)) {
+              nodes.add({id: lid, label: '🔗', title: link, group: 'sociallink', color: '#f8bbd0', level: 3, parent: nodeId, size: 16, borderWidth: 1, shape: 'dot', fullData: link, category: 'social'});
+              allNodesData.push(nodes.get(lid));
+            }
+            if (!edgeExists(nodeId, lid)) {
+              edges.add({id: 'e_' + nodeId + '_' + lid, from: nodeId, to: lid});
+              allEdgesData.push(edges.get('e_' + nodeId + '_' + lid));
+            }
           });
         }
+
         if (nodeId === 'ip') {
           ipAddresses.forEach((ip, i) => {
             const iid = 'ip_' + i;
-            if (!nodeExists(iid)) nodes.add({id: iid, label: ip, group:'ip', color:'#80cbc4', level:2, parent: nodeId, size:20, borderWidth:2, shape:'dot', title: ip});
-            if (!edgeExists('ip', iid)) edges.add({id: 'e_ip_'+iid, from: 'ip', to: iid});
+            if (!nodeExists(iid)) {
+              nodes.add({id: iid, label: ip, group: 'ip', color: '#80cbc4', level: 2, parent: nodeId, size: 20, borderWidth: 2, shape: 'dot', title: ip, fullData: ip, category: 'ip'});
+              allNodesData.push(nodes.get(iid));
+            }
+            if (!edgeExists('ip', iid)) {
+              edges.add({id: 'e_ip_' + iid, from: 'ip', to: iid});
+              allEdgesData.push(edges.get('e_ip_' + iid));
+            }
           });
         }
+
         if (nodeId === 'ports') {
           ports.forEach((port, i) => {
             const pid = 'port_' + i;
-            if (!nodeExists(pid)) nodes.add({id: pid, label: port, group:'port', color:'#ffe082', level:2, parent: nodeId, size:20, borderWidth:2, shape:'box', title: port});
-            if (!edgeExists('ports', pid)) edges.add({id: 'e_ports_'+pid, from: 'ports', to: pid});
+            if (!nodeExists(pid)) {
+              nodes.add({id: pid, label: port, group: 'port', color: '#ffe082', level: 2, parent: nodeId, size: 20, borderWidth: 2, shape: 'box', title: port, fullData: port, category: 'ports'});
+              allNodesData.push(nodes.get(pid));
+            }
+            if (!edgeExists('ports', pid)) {
+              edges.add({id: 'e_ports_' + pid, from: 'ports', to: pid});
+              allEdgesData.push(edges.get('e_ports_' + pid));
+            }
           });
         }
+
         if (nodeId === 'vulns') {
           vulns.forEach((vuln, i) => {
             const vid = 'vuln_' + i;
-            if (!nodeExists(vid)) nodes.add({id: vid, label: vuln.length>30?vuln.slice(0,27)+'...':vuln, group:'vuln', color:'#ef9a9a', level:2, parent: nodeId, size:20, borderWidth:2, shape:'box', title: vuln});
-            if (!edgeExists('vulns', vid)) edges.add({id: 'e_vulns_'+vid, from: 'vulns', to: vid});
+            if (!nodeExists(vid)) {
+              nodes.add({id: vid, label: vuln.length > 25 ? vuln.slice(0, 22) + '...' : vuln, group: 'vuln', color: '#ef9a9a', level: 2, parent: nodeId, size: 20, borderWidth: 2, shape: 'box', title: vuln, fullData: vuln, category: 'vulns'});
+              allNodesData.push(nodes.get(vid));
+            }
+            if (!edgeExists('vulns', vid)) {
+              edges.add({id: 'e_vulns_' + vid, from: 'vulns', to: vid});
+              allEdgesData.push(edges.get('e_vulns_' + vid));
+            }
           });
         }
+
+        applyFilters();
+        updateStats();
       }
+
       function collapseNode(nodeId) {
         let toRemove = [];
         nodes.get().forEach(n => {
@@ -1068,170 +1009,418 @@
           expanded[id] = false;
         });
         expanded[nodeId] = false;
+        updateStats();
       }
+
       function resetGraph() {
         nodes.clear();
         edges.clear();
-        initialNodes.forEach(n => nodes.add(Object.assign({}, n)));
-        initialEdges.forEach(e => edges.add(Object.assign({}, e)));
-        for (let k in expanded) expanded[k] = false;
-        selectedNode = null;
-        clusters = [];
-        document.getElementById('collapseBtn').disabled = true;
+        expanded = {};
+        hiddenNodes.clear();
+        searchResults = [];
+        searchIndex = 0;
+        allNodesData = [];
+        allEdgesData = [];
+        initGraph();
+        network.setData({nodes, edges});
+        network.fit();
+        updateStats();
+        updateNodeInfoPanel(null);
       }
+
       function expandAll() {
-        ['services','subdomains','social','ip','ports','vulns'].forEach(expandNode);
-        for (let i=0; i<services.length; ++i) expandNode('srv_'+i);
-        for (let i=0; i<socialGroups.length; ++i) expandNode('soc_'+i);
+        ['services', 'subdomains', 'social', 'ip', 'ports', 'vulns'].forEach(expandNode);
+        setTimeout(() => {
+          for (let i = 0; i < services.length; ++i) expandNode('srv_' + i);
+          for (let i = 0; i < socialGroups.length; ++i) expandNode('soc_' + i);
+          network.fit();
+        }, 100);
       }
-      function clusterSubdomains() {
-        if (!network) return;
-        network.cluster({
-          joinCondition: function(nodeOptions) {
-            return nodeOptions.group === 'subdomain';
-          },
-          clusterNodeProperties: {
-            id: 'cluster:subdomains',
-            label: `Subdomains (${subdomains.length})`,
-            borderWidth: 3,
-            color: '#2196F3',
-            shape: 'database',
-            font: {size: 18, color: '#fff'},
-            allowSingleNodeCluster: true
+
+      function applyFilters() {
+        nodes.get().forEach(n => {
+          if (n.category && n.category !== 'domain') {
+            if (!filterState[n.category]) {
+              hiddenNodes.add(n.id);
+              nodes.update({id: n.id, hidden: true});
+            } else {
+              hiddenNodes.delete(n.id);
+              nodes.update({id: n.id, hidden: false});
+            }
           }
         });
-        clusters.push('cluster:subdomains');
+        updateStats();
       }
-      function unclusterAll() {
-        if (!network) return;
-        network.openCluster('cluster:subdomains');
-        clusters = [];
-      }
-      function saveGraphState() {
-        localStorage.setItem('osintGraphNodes', JSON.stringify(nodes.get()));
-        localStorage.setItem('osintGraphEdges', JSON.stringify(edges.get()));
-        localStorage.setItem('osintGraphExpanded', JSON.stringify(expanded));
-      }
-      function loadGraphState() {
-        let n = localStorage.getItem('osintGraphNodes');
-        let e = localStorage.getItem('osintGraphEdges');
-        let ex = localStorage.getItem('osintGraphExpanded');
-        if (n && e && ex) {
-          nodes.clear(); edges.clear();
-          JSON.parse(n).forEach(x => nodes.add(x));
-          JSON.parse(e).forEach(x => edges.add(x));
-          expanded = JSON.parse(ex);
+
+      document.querySelectorAll('#graph-filters input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener('change', function() {
+          filterState[this.dataset.filter] = this.checked;
+          applyFilters();
+        });
+      });
+
+      function updateNodeInfoPanel(nodeData) {
+        const panel = document.getElementById('nodeInfoPanel');
+        const content = document.getElementById('nodeInfoContent');
+        const actions = document.getElementById('nodeActions');
+
+        if (!nodeData) {
+          panel.style.display = 'none';
+          return;
         }
+
+        panel.style.display = 'flex';
+        const data = nodeData.fullData || nodeData.title || nodeData.label;
+        const isLink = data && (data.startsWith('http://') || data.startsWith('https://'));
+
+        content.innerHTML = 
+          '<div class="info-row"><span class="info-label">ID:</span><span class="info-value">' + nodeData.id + '</span></div>' +
+          '<div class="info-row"><span class="info-label">Label:</span><span class="info-value">' + nodeData.label + '</span></div>' +
+          '<div class="info-row"><span class="info-label">Category:</span><span class="info-value">' + (nodeData.category || 'N/A') + '</span></div>' +
+          '<div class="info-row"><span class="info-label">Level:</span><span class="info-value">' + nodeData.level + '</span></div>' +
+          (nodeData.fullData ? '<div class="info-row"><span class="info-label">Full Data:</span><span class="info-value" style="font-size:12px;">' + nodeData.fullData + '</span></div>' : '') +
+          (nodeData.parent ? '<div class="info-row"><span class="info-label">Parent:</span><span class="info-value">' + nodeData.parent + '</span></div>' : '');
+
+        actions.style.display = 'block';
+        document.getElementById('openNodeLinkBtn').style.display = isLink ? 'block' : 'none';
       }
-      initGraph();
-      var container = document.getElementById('osintNetwork');
-      var data = { nodes: nodes, edges: edges };
-      var options = {
-        layout: { hierarchical: false },
-        nodes: { font: { size: 16 }, shape: 'dot' },
-        physics: { stabilization: true },
-        interaction: { hover: true, navigationButtons: true, keyboard: true, dragNodes: true }
+
+      const ctxMenu = document.getElementById('graphContextMenu');
+
+      function showContextMenu(x, y, nodeId) {
+        contextNode = nodeId;
+        ctxMenu.style.left = x + 'px';
+        ctxMenu.style.top = y + 'px';
+        ctxMenu.style.display = 'block';
+      }
+
+      function hideContextMenu() {
+        ctxMenu.style.display = 'none';
+      }
+
+      document.addEventListener('click', hideContextMenu);
+
+      function highlightConnected(nodeId) {
+        const connected = network.getConnectedNodes(nodeId);
+        connected.push(nodeId);
+        network.selectNodes(connected);
+        connected.forEach(id => {
+          nodes.update({id, borderWidth: 5, color: {border: '#ffeb3b'}});
+        });
+        setTimeout(() => {
+          connected.forEach(id => {
+            const orig = allNodesData.find(n => n.id === id);
+            if (orig) nodes.update({id, borderWidth: orig.borderWidth, color: orig.color});
+          });
+        }, 2000);
+      }
+
+      ctxMenu.querySelectorAll('.ctx-item').forEach(item => {
+        item.addEventListener('click', function() {
+          const action = this.dataset.action;
+          const node = nodes.get(contextNode);
+          if (!node) return;
+
+          switch(action) {
+            case 'copy':
+              navigator.clipboard.writeText(node.label);
+              break;
+            case 'copyAll':
+              navigator.clipboard.writeText(JSON.stringify(node, null, 2));
+              break;
+            case 'open':
+              const link = node.fullData || node.title;
+              if (link && link.startsWith('http')) window.open(link, '_blank');
+              break;
+            case 'expand':
+              expandNode(contextNode);
+              network.setData({nodes, edges});
+              break;
+            case 'collapse':
+              collapseNode(contextNode);
+              network.setData({nodes, edges});
+              break;
+            case 'highlight':
+              highlightConnected(contextNode);
+              break;
+            case 'focus':
+              network.focus(contextNode, {scale: 1.5, animation: true});
+              break;
+            case 'hide':
+              hiddenNodes.add(contextNode);
+              nodes.update({id: contextNode, hidden: true});
+              updateStats();
+              break;
+          }
+          hideContextMenu();
+        });
+      });
+
+      const searchInput = document.getElementById('graphSearchInput');
+      const autocomplete = document.getElementById('searchAutocomplete');
+      const searchCounter = document.getElementById('searchCounter');
+
+      searchInput.addEventListener('input', function() {
+        const val = this.value.trim().toLowerCase();
+        if (val.length < 2) {
+          autocomplete.style.display = 'none';
+          return;
+        }
+
+        const matches = nodes.get().filter(n =>
+          (n.label && n.label.toLowerCase().includes(val)) ||
+          (n.fullData && n.fullData.toLowerCase().includes(val)) ||
+          (n.title && n.title.toLowerCase().includes(val))
+        ).slice(0, 10);
+
+        if (matches.length === 0) {
+          autocomplete.style.display = 'none';
+          return;
+        }
+
+        autocomplete.innerHTML = matches.map(m => 
+          '<div class="autocomplete-item" data-id="' + m.id + '">' +
+          '<span class="node-type" style="background:' + m.color + '">' + (m.category || 'node') + '</span>' +
+          '<span>' + m.label + '</span>' +
+          '</div>'
+        ).join('');
+        autocomplete.style.display = 'block';
+
+        autocomplete.querySelectorAll('.autocomplete-item').forEach(item => {
+          item.addEventListener('click', function() {
+            const id = this.dataset.id;
+            network.selectNodes([id]);
+            network.focus(id, {scale: 1.2, animation: true});
+            updateNodeInfoPanel(nodes.get(id));
+            autocomplete.style.display = 'none';
+            searchInput.value = nodes.get(id).label;
+          });
+        });
+      });
+
+      function performSearch() {
+        const val = searchInput.value.trim().toLowerCase();
+        if (!val) return;
+        searchResults = nodes.get().filter(n =>
+          !hiddenNodes.has(n.id) && (
+            (n.label && n.label.toLowerCase().includes(val)) ||
+            (n.fullData && n.fullData.toLowerCase().includes(val))
+          )
+        );
+        searchIndex = 0;
+        navigateSearch(0);
+        autocomplete.style.display = 'none';
+      }
+
+      function navigateSearch(delta) {
+        if (searchResults.length === 0) {
+          searchCounter.textContent = '0/0';
+          return;
+        }
+        searchIndex = (searchIndex + delta + searchResults.length) % searchResults.length;
+        const node = searchResults[searchIndex];
+        network.selectNodes([node.id]);
+        network.focus(node.id, {scale: 1.2, animation: true});
+        updateNodeInfoPanel(node);
+        searchCounter.textContent = (searchIndex + 1) + '/' + searchResults.length;
+      }
+
+      document.getElementById('graphSearchBtn').onclick = performSearch;
+      document.getElementById('graphPrevBtn').onclick = function() { navigateSearch(-1); };
+      document.getElementById('graphNextBtn').onclick = function() { navigateSearch(1); };
+      document.getElementById('graphClearBtn').onclick = function() {
+        searchInput.value = '';
+        searchResults = [];
+        searchCounter.textContent = '0/0';
+        network.unselectAll();
+        autocomplete.style.display = 'none';
       };
-      network = new vis.Network(container, data, options);
+
+      searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') performSearch();
+      });
+
+      document.getElementById('exportPngBtn').onclick = function() {
+        const canvas = document.querySelector('#osintNetwork canvas');
+        if (!canvas) return;
+        const a = document.createElement('a');
+        a.href = canvas.toDataURL('image/png');
+        a.download = 'osint_graph_' + domain + '.png';
+        a.click();
+      };
+
+      document.getElementById('exportSvgBtn').onclick = function() {
+        const nodeCount = nodes.length;
+        const edgeCount = edges.length;
+        const svgData = '<?xml version="1.0" encoding="UTF-8"?>' +
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="700">' +
+          '<rect width="100%" height="100%" fill="#fafaff"/>' +
+          '<text x="50%" y="45%" text-anchor="middle" font-size="24" font-family="Inter, sans-serif">' +
+          'OSINT Graph Export - ' + domain + '</text>' +
+          '<text x="50%" y="52%" text-anchor="middle" font-size="16" font-family="Inter, sans-serif">' +
+          nodeCount + ' nodes, ' + edgeCount + ' edges</text>' +
+          '<text x="50%" y="58%" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" fill="#666">' +
+          'Subdomains: ' + subdomains.length + ' | IPs: ' + ipAddresses.length + ' | Ports: ' + ports.length + ' | Vulns: ' + vulns.length + '</text>' +
+          '</svg>';
+        const blob = new Blob([svgData], {type: 'image/svg+xml'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'osint_graph_' + domain + '.svg';
+        a.click();
+      };
+
+      document.getElementById('exportJsonBtn').onclick = function() {
+        const data = {
+          domain: domain,
+          exportDate: new Date().toISOString(),
+          nodes: nodes.get(),
+          edges: edges.get(),
+          stats: {
+            totalNodes: nodes.length,
+            totalEdges: edges.length,
+            subdomains: subdomains.length,
+            ips: ipAddresses.length,
+            ports: ports.length,
+            vulnerabilities: vulns.length,
+            socialLinks: socialGroups.reduce((sum, g) => sum + g.links.length, 0)
+          },
+          rawData: {
+            subdomains: subdomains,
+            subdomainIPs: subdomainIPs,
+            ipAddresses: ipAddresses,
+            ports: ports,
+            vulnerabilities: vulns,
+            services: services,
+            socialGroups: socialGroups
+          }
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'osint_graph_data_' + domain + '.json';
+        a.click();
+      };
+
+      document.getElementById('resetGraphBtn').onclick = resetGraph;
+      document.getElementById('expandAllBtn').onclick = expandAll;
+      document.getElementById('collapseBtn').onclick = function() {
+        if (selectedNode) {
+          collapseNode(selectedNode);
+          network.setData({nodes, edges});
+          this.disabled = true;
+        }
+      };
+      document.getElementById('fitGraphBtn').onclick = function() { network.fit({animation: true}); };
+      document.getElementById('physicsToggleBtn').onclick = function() {
+        physicsEnabled = !physicsEnabled;
+        network.setOptions({physics: {enabled: physicsEnabled}});
+        this.textContent = '⚡ Physics: ' + (physicsEnabled ? 'ON' : 'OFF');
+      };
+
+      document.getElementById('clusterBtn').onclick = function() {
+        network.cluster({
+          joinCondition: function(n) { return n.group === 'subdomain'; },
+          clusterNodeProperties: {
+            id: 'cluster:subdomains',
+            label: '📦 Subdomains (' + subdomains.length + ')',
+            color: '#2196F3',
+            shape: 'database',
+            size: 40
+          }
+        });
+      };
+
+      document.getElementById('unclusterBtn').onclick = function() {
+        try { network.openCluster('cluster:subdomains'); } catch(e) {}
+      };
+
+      document.getElementById('copyNodeBtn').onclick = function() {
+        if (selectedNode) {
+          const node = nodes.get(selectedNode);
+          navigator.clipboard.writeText(node.fullData || node.label);
+        }
+      };
+
+      document.getElementById('openNodeLinkBtn').onclick = function() {
+        if (selectedNode) {
+          const node = nodes.get(selectedNode);
+          const link = node.fullData || node.title;
+          if (link && link.startsWith('http')) window.open(link, '_blank');
+        }
+      };
+
+      document.getElementById('highlightConnectedBtn').onclick = function() {
+        if (selectedNode) highlightConnected(selectedNode);
+      };
+
+      const graphDiv = document.getElementById('osintNetwork');
+      const exitBtn = document.getElementById('exitFullscreenBtn');
+
+      document.getElementById('fullscreenGraphBtn').onclick = function() {
+        graphDiv.classList.add('fullscreen');
+        document.body.classList.add('fullscreen-graph');
+        exitBtn.style.display = 'block';
+        setTimeout(function() { network.fit(); }, 200);
+      };
+
+      exitBtn.onclick = function() {
+        graphDiv.classList.remove('fullscreen');
+        document.body.classList.remove('fullscreen-graph');
+        exitBtn.style.display = 'none';
+        setTimeout(function() { network.fit(); }, 200);
+      };
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && graphDiv.classList.contains('fullscreen')) {
+          exitBtn.click();
+        }
+      });
+
+      initGraph();
+
+      const container = document.getElementById('osintNetwork');
+      const options = {
+        layout: {hierarchical: false},
+        nodes: {font: {size: 14, face: 'Inter, sans-serif'}},
+        edges: {smooth: {type: 'cubicBezier'}, width: 2, color: {color: '#999', highlight: '#333'}},
+        physics: {stabilization: {iterations: 100}, barnesHut: {gravitationalConstant: -3000}},
+        interaction: {hover: true, navigationButtons: true, keyboard: true, multiselect: true, tooltipDelay: 200}
+      };
+
+      network = new vis.Network(container, {nodes, edges}, options);
       window.network = network;
-      network.on("click", function (params) {
+
+      network.on('click', function(params) {
         if (params.nodes.length === 1) {
           selectedNode = params.nodes[0];
           document.getElementById('collapseBtn').disabled = false;
           expandNode(selectedNode);
-          network.setData({nodes: nodes, edges: edges});
-          network.focus(selectedNode, {animation: {duration: 500, easingFunction: "easeInOutQuad"}});
-          saveGraphState();
+          updateNodeInfoPanel(nodes.get(selectedNode));
+          network.focus(selectedNode, {animation: true});
         } else {
           selectedNode = null;
           document.getElementById('collapseBtn').disabled = true;
+          updateNodeInfoPanel(null);
         }
+        updateStats();
       });
-      network.on("doubleClick", function(params) {
+
+      network.on('doubleClick', function(params) {
         if (params.nodes.length === 1) {
           collapseNode(params.nodes[0]);
-          network.setData({nodes: nodes, edges: edges});
-          saveGraphState();
+          network.setData({nodes, edges});
         }
       });
-      document.getElementById('resetGraphBtn').onclick = function() {
-        resetGraph();
-        network.setData({nodes: nodes, edges: edges});
-        network.fit({animation: {duration: 500, easingFunction: "easeInOutQuad"}});
-        saveGraphState();
-      };
-      document.getElementById('collapseBtn').onclick = function() {
-        if (selectedNode) {
-          collapseNode(selectedNode);
-          network.setData({nodes: nodes, edges: edges});
-          document.getElementById('collapseBtn').disabled = true;
-          network.fit({animation: {duration: 500, easingFunction: "easeInOutQuad"}});
-          saveGraphState();
+
+      network.on('oncontext', function(params) {
+        params.event.preventDefault();
+        if (params.nodes.length === 1) {
+          showContextMenu(params.event.pageX, params.event.pageY, params.nodes[0]);
         }
-      };
-      document.getElementById('expandAllBtn').onclick = function() {
-        expandAll();
-        network.setData({nodes: nodes, edges: edges});
-        network.fit({animation: {duration: 500, easingFunction: "easeInOutQuad"}});
-        saveGraphState();
-      };
-      document.getElementById('clusterBtn').onclick = function() {
-        clusterSubdomains();
-      };
-      document.getElementById('unclusterBtn').onclick = function() {
-        unclusterAll();
-      };
-      document.getElementById('graphSearchBtn').onclick = function() {
-        let val = document.getElementById('graphSearchInput').value.trim().toLowerCase();
-        if (!val) return;
-        let found = nodes.get().filter(n => n.label && n.label.toLowerCase().includes(val));
-        if (found.length > 0) {
-          network.selectNodes([found[0].id]);
-          network.focus(found[0].id, {animation: {duration: 500}});
-        }
-      };
-      document.getElementById('graphClearBtn').onclick = function() {
-        document.getElementById('graphSearchInput').value = '';
-        network.unselectAll();
-      };
-      document.getElementById('exportPngBtn').onclick = function() {
-        let canvas = document.querySelector('#osintNetwork canvas');
-        if (!canvas) return;
-        let url = canvas.toDataURL('image/png');
-        let a = document.createElement('a');
-        a.href = url;
-        a.download = 'dpulse_osint_graph.png';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      };
-      loadGraphState();
-      network.setData({nodes: nodes, edges: edges});
-      var graphDiv = document.getElementById('osintNetwork');
-      var btnFS = document.getElementById('fullscreenGraphBtn');
-      var btnExit = document.getElementById('exitFullscreenBtn');
-      if (graphDiv && btnFS && btnExit) {
-        btnFS.onclick = function() {
-          graphDiv.classList.add('fullscreen');
-          document.body.classList.add('fullscreen-graph');
-          btnExit.style.display = 'block';
-          if (window.network) setTimeout(() => window.network.fit(), 200);
-        };
-        btnExit.onclick = function() {
-          graphDiv.classList.remove('fullscreen');
-          document.body.classList.remove('fullscreen-graph');
-          btnExit.style.display = 'none';
-          if (window.network) setTimeout(() => window.network.fit(), 200);
-        };
-        document.addEventListener('keydown', function(e) {
-          if (e.key === 'Escape' && graphDiv.classList.contains('fullscreen')) {
-            graphDiv.classList.remove('fullscreen');
-            document.body.classList.remove('fullscreen-graph');
-            btnExit.style.display = 'none';
-            if (window.network) setTimeout(() => window.network.fit(), 200);
-          }
-        });
-      }
+      });
+
+      document.getElementById('nodeInfoPanel').style.display = 'flex';
+      updateStats();
     }
   });
 </script>
