@@ -149,13 +149,14 @@ class DataProcessing():
                     securitytrails_output = api_securitytrails_check(short_domain)
                     api_scan_db.append('SecurityTrails')
                 if '3' in used_api_flag:
-                    if username.lower() == 'n':
-                        username = None
-                        hudsonrock_output = api_hudsonrock_check(short_domain, ip, mails, username)
-                        api_scan_db.append('HudsonRock')
-                    else:
-                        hudsonrock_output = api_hudsonrock_check(short_domain, ip, mails, username)
-                        api_scan_db.append('HudsonRock')
+                    if '3' in used_api_flag:
+                        if username is None or (isinstance(username, str) and username.lower() == 'n'):
+                            username = None
+                            hudsonrock_output = api_hudsonrock_check(short_domain, ip, mails, username)
+                            api_scan_db.append('HudsonRock')
+                        else:
+                            hudsonrock_output = api_hudsonrock_check(short_domain, ip, mails, username)
+                            api_scan_db.append('HudsonRock')
                 if '1' not in used_api_flag:
                     virustotal_output = 'No results because user did not selected VirusTotal API scan'
                 if '2' not in used_api_flag:
@@ -246,7 +247,7 @@ class DataProcessing():
                     securitytrails_output = api_securitytrails_check(short_domain)
                     api_scan_db.append('SecurityTrails')
                 if '3' in used_api_flag:
-                    if username.lower() == 'n':
+                    if username is None or (isinstance(username, str) and username.lower() == 'n'):
                         username = None
                         hudsonrock_output = api_hudsonrock_check(short_domain, ip, mails, username)
                         api_scan_db.append('HudsonRock')
@@ -292,3 +293,4 @@ class DataProcessing():
         report_info_array = [casename, db_casename, db_creation_date, report_folder, ctime, report_file_type, report_ctime, api_scan_db, used_api_flag]
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} ENDS HERE')
         return data_array, report_info_array
+
