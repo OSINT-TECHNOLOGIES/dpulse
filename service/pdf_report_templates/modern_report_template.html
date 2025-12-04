@@ -1131,19 +1131,35 @@
     <div class="chart-card">
       <div class="chart-card-title">📱 Social Media Distribution</div>
       <canvas id="socialPie" height="300"></canvas>
-      <div id="socialCounts"
-           data-fb="{{ fb_links|length }}"
-           data-tw="{{ (tw_links|length) + (xcom_links|length) }}"
-           data-inst="{{ inst_links|length }}"
-           data-tg="{{ tg_links|length }}"
-           data-tt="{{ tt_links|length }}"
-           data-li="{{ li_links|length }}"
-           data-vk="{{ vk_links|length }}"
-           data-yt="{{ yt_links|length }}"
-           data-ok="{{ ok_links|length }}"
-           data-wc="{{ wc_links|length }}"
-           style="display:none;">
-      </div>
+		<div id="socialCounts"
+			 data-fb="{% if fb_links and fb_links|length == 1 and 'links were not found' in fb_links[0] %}0{% else %}{{ fb_links|length }}{% endif %}"
+			 data-tw="
+			   {# Twitter #}
+			   {% set tw_count = 0 %}
+			   {% if tw_links %}
+				 {% if not (tw_links|length == 1 and 'links were not found' in tw_links[0]) %}
+				   {% set tw_count = tw_links|length %}
+				 {% endif %}
+			   {% endif %}
+			   {# X.com #}
+			   {% set x_count = 0 %}
+			   {% if xcom_links %}
+				 {% if not (xcom_links|length == 1 and 'links were not found' in xcom_links[0]) %}
+				   {% set x_count = xcom_links|length %}
+				 {% endif %}
+			   {% endif %}
+			   {{ tw_count + x_count }}
+			 "
+			 data-inst="{% if inst_links and inst_links|length == 1 and 'links were not found' in inst_links[0] %}0{% else %}{{ inst_links|length }}{% endif %}"
+			 data-tg="{% if tg_links and tg_links|length == 1 and 'links were not found' in tg_links[0] %}0{% else %}{{ tg_links|length }}{% endif %}"
+			 data-tt="{% if tt_links and tt_links|length == 1 and 'links were not found' in tt_links[0] %}0{% else %}{{ tt_links|length }}{% endif %}"
+			 data-li="{% if li_links and li_links|length == 1 and 'links were not found' in li_links[0] %}0{% else %}{{ li_links|length }}{% endif %}"
+			 data-vk="{% if vk_links and vk_links|length == 1 and 'links were not found' in vk_links[0] %}0{% else %}{{ vk_links|length }}{% endif %}"
+			 data-yt="{% if yt_links and yt_links|length == 1 and 'links were not found' in yt_links[0] %}0{% else %}{{ yt_links|length }}{% endif %}"
+			 data-ok="{% if ok_links and ok_links|length == 1 and 'links were not found' in ok_links[0] %}0{% else %}{{ ok_links|length }}{% endif %}"
+			 data-wc="{% if wc_links and wc_links|length == 1 and 'links were not found' in wc_links[0] %}0{% else %}{{ wc_links|length }}{% endif %}"
+			 style="display:none;">
+		</div>
     </div>
   </div>
 </section>
@@ -2047,26 +2063,47 @@
     }
   };
 
-  const socialManager = {
-    table: null, links: [], selected: new Set(),
+	const socialManager = {
+	  table: null, links: [], selected: new Set(),
 
-    init() {
-      const platforms = [
-        { n: 'Facebook', i: 'fab fa-facebook', c: '#1877f2', l: [{% for l in fb_links %}'{{ l }}',{% endfor %}] },
-        { n: 'Twitter/X', i: 'fab fa-twitter', c: '#1da1f2', l: [{% for l in tw_links %}'{{ l }}',{% endfor %}{% for l in xcom_links %}'{{ l }}',{% endfor %}] },
-        { n: 'Instagram', i: 'fab fa-instagram', c: '#e1306c', l: [{% for l in inst_links %}'{{ l }}',{% endfor %}] },
-        { n: 'Telegram', i: 'fab fa-telegram', c: '#0088cc', l: [{% for l in tg_links %}'{{ l }}',{% endfor %}] },
-        { n: 'TikTok', i: 'fab fa-tiktok', c: '#000', l: [{% for l in tt_links %}'{{ l }}',{% endfor %}] },
-        { n: 'LinkedIn', i: 'fab fa-linkedin', c: '#0077b5', l: [{% for l in li_links %}'{{ l }}',{% endfor %}] },
-        { n: 'VK', i: 'fab fa-vk', c: '#4a76a8', l: [{% for l in vk_links %}'{{ l }}',{% endfor %}] },
-        { n: 'YouTube', i: 'fab fa-youtube', c: '#ff0000', l: [{% for l in yt_links %}'{{ l }}',{% endfor %}] },
-        { n: 'OK', i: 'fab fa-odnoklassniki', c: '#ff8000', l: [{% for l in ok_links %}'{{ l }}',{% endfor %}] },
-        { n: 'WeChat', i: 'fab fa-weixin', c: '#7bb32e', l: [{% for l in wc_links %}'{{ l }}',{% endfor %}] }
-      ];
-      platforms.forEach(p => p.l.forEach(url => { if (url) this.links.push({ name: p.n, icon: p.i, color: p.c, url }); }));
-      if (this.links.length === 0) { document.getElementById('socialTableContainer').innerHTML = '<p class="empty-state">🔍 No social media links found</p>'; return; }
-      this.createTable();
-    },
+	  init() {
+		  const platforms = [
+			{ n: 'Facebook', i: 'fab fa-facebook', c: '#1877f2',
+			  l: [{% for l in fb_links %}{% if 'links were not found' not in l %}'{{ l }}',{% endif %}{% endfor %}] },
+			{ n: 'Twitter/X', i: 'fab fa-twitter', c: '#1da1f2',
+			  l: [
+				{% for l in tw_links %}{% if 'links were not found' not in l %}'{{ l }}',{% endif %}{% endfor %}
+				{% for l in xcom_links %}{% if 'links were not found' not in l %}'{{ l }}',{% endif %}{% endfor %}
+			  ] },
+			{ n: 'Instagram', i: 'fab fa-instagram', c: '#e1306c',
+			  l: [{% for l in inst_links %}{% if 'links were not found' not in l %}'{{ l }}',{% endif %}{% endfor %}] },
+			{ n: 'Telegram', i: 'fab fa-telegram', c: '#0088cc',
+			  l: [{% for l in tg_links %}{% if 'links were not found' not in l %}'{{ l }}',{% endif %}{% endfor %}] },
+			{ n: 'TikTok', i: 'fab fa-tiktok', c: '#000',
+			  l: [{% for l in tt_links %}{% if 'links were not found' not in l %}'{{ l }}',{% endif %}{% endfor %}] },
+			{ n: 'LinkedIn', i: 'fab fa-linkedin', c: '#0077b5',
+			  l: [{% for l in li_links %}{% if 'links were not found' not in l %}'{{ l }}',{% endif %}{% endfor %}] },
+			{ n: 'VK', i: 'fab fa-vk', c: '#4a76a8',
+			  l: [{% for l in vk_links %}{% if 'links were not found' not in l %}'{{ l }}',{% endif %}{% endfor %}] },
+			{ n: 'YouTube', i: 'fab fa-youtube', c: '#ff0000',
+			  l: [{% for l in yt_links %}{% if 'links were not found' not in l %}'{{ l }}',{% endif %}{% endfor %}] },
+			{ n: 'OK', i: 'fab fa-odnoklassniki', c: '#ff8000',
+			  l: [{% for l in ok_links %}{% if 'links were not found' not in l %}'{{ l }}',{% endif %}{% endfor %}] },
+			{ n: 'WeChat', i: 'fab fa-weixin', c: '#7bb32e',
+			  l: [{% for l in wc_links %}{% if 'links were not found' not in l %}'{{ l }}',{% endif %}{% endfor %}] }
+		  ];
+		  platforms.forEach(p =>
+			p.l.forEach(url => {
+			  if (url) this.links.push({ name: p.n, icon: p.i, color: p.c, url });
+			})
+		  );
+		  if (this.links.length === 0) {
+			document.getElementById('socialTableContainer').innerHTML =
+			  '<p class="empty-state">🔍 No social media links found</p>';
+			return;
+		  }
+		  this.createTable();
+	  },
 
     createTable() {
       const tableHtml = `
