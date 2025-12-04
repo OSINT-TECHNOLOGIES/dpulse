@@ -38,7 +38,7 @@ cli = cli_init.Menu()
 
 class ReportType(str, Enum):
     HTML = "html"
-    XLSX = "xlsx"
+    #XLSX = "xlsx"
 
 class SnapshotMode(str, Enum):
     NONE = "n"
@@ -140,13 +140,7 @@ def process_report(options: ScanOptions):
         )
         end_time_str = time_processing(perf_counter() - start)
 
-    if options.report_type == ReportType.XLSX:
-        xlsx_rc.create_report(
-            options.short_domain, options.url, options.case_comment,
-            data_array, report_info_array,
-            options.pagesearch_ui_mark, end_time_str, options.snapshotting_ui_mark
-        )
-    else:
+    if options.report_type == ReportType.HTML:
         html_rc.report_assembling(
             options.short_domain, options.url, options.case_comment,
             data_array, report_info_array,
@@ -177,11 +171,7 @@ def handle_scan():
             return
 
     case_comment = input(Fore.YELLOW + "Enter case comment >> ").strip()
-    report_type = ask_choice(
-        Fore.YELLOW + "Enter report file extension [HTML/XLSX] >> ",
-        {"html": ReportType.HTML, "xlsx": ReportType.XLSX}
-    )
-
+    report_type = ReportType.HTML
     page_search = parse_bool(input(Fore.YELLOW + "Would you like to use PageSearch function? [Y/N] >> "))
     keywords = None
     pagesearch_ui_mark = 'No'
@@ -256,7 +246,6 @@ def handle_scan():
         snapshotting_ui_mark = "Yes, domain's main page snapshotting using Wayback Machine"
 
     dorking_ui_mark = compute_dorking_ui_mark(dorking_flag)
-
     cli_init.print_prescan_summary(
         short_domain, report_type.value.upper(), pagesearch_ui_mark,
         dorking_ui_mark, used_api_ui, case_comment, snapshotting_ui_mark
