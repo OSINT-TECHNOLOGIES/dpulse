@@ -113,12 +113,8 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         total_mails = len(subdomain_mails_cleaned)
         pdf_templates_path = 'service//pdf_report_templates'
         config_values = read_config()
-        selected_template = config_values['template']
         delete_txt_files = config_values['delete_txt_files']
-        if selected_template.lower() == 'modern':
-            template_path = pdf_templates_path + '//modern_report_template.html'
-        elif selected_template.lower() == 'legacy':
-            template_path = pdf_templates_path + '//legacy_report_template.html'
+        template_path = pdf_templates_path + '//modern_report_template.html'
         dorking_results_path = report_folder + '//04-dorking_results.txt'
         if os.path.isfile(dorking_results_path):
             with open(dorking_results_path, 'r') as f:
