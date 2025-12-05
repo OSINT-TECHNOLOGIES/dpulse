@@ -1,450 +1,415 @@
 import sys
+from datetime import datetime
 import os
-import re
-import shutil
-import webbrowser
-from dataclasses import dataclass
-from enum import Enum
-from pathlib import Path
-from time import perf_counter
-from typing import Callable, Dict, List, Optional
 from colorama import Fore, Style
-from rich.console import Console
+from urllib.parse import urlparse  # для проверки, что строка — реальный URL
 
-sys.path.append('datagather_modules')
-sys.path.append('service')
-sys.path.append('reporting_modules')
-sys.path.append('dorking')
-sys.path.append('apis')
-sys.path.append('snapshotting')
+sys.path.extend(['service', 'pagesearch', 'dorking', 'snapshotting'])
 
-from config_processing import create_config, check_cfg_presence, read_config, print_and_return_config
-import db_processing as db
-import cli_init
-from dorking_handler import dorks_files_check
-from data_assembler import DataProcessing
 from logs_processing import logging
-from db_creator import get_columns_amount, manage_dorks
-from misc import domain_precheck, time_processing
+from config_processing import read_config
+from db_creator import get_dorking_query
+import crawl_processor as cp
+import dorking_handler as dp
+import networking_processor as np
+from pagesearch_parsers import subdomains_parser
+from api_virustotal import api_virustotal_check
+from api_securitytrails import api_securitytrails_check
+from api_hudsonrock import api_hudsonrock_check
+from screen_snapshotting import take_screenshot
+from html_snapshotting import save_page_as_html
+from archive_snapshotting import download_snapshot
 
-console = Console()
-BASE_DIR = Path(__file__).resolve().parent
-CONFIG_PATH = BASE_DIR / 'service' / 'config.ini'
-DORKING_DIR = BASE_DIR / 'dorking'
-APIS_DIR = BASE_DIR / 'apis'
 
-data_processing = DataProcessing()
-cli = cli_init.Menu()
+SOCIAL_KEYS = [
+    'Facebook',
+    'Twitter',
+    'Instagram',
+    'Telegram',
+    'TikTok',
+    'LinkedIn',
+    'VKontakte',
+    'YouTube',
+    'Odnoklassniki',
+    'WeChat',
+    'X.com',
+]
 
-class ReportType(str, Enum):
-    HTML = "html"
-    #XLSX = "xlsx"
+def make_socials_dict(with_not_found: bool = False):
+    if with_not_found:
+        return {name: [f'{name} links were not found'] for name in SOCIAL_KEYS}
+    return {name: [] for name in SOCIAL_KEYS}
 
-class SnapshotMode(str, Enum):
-    NONE = "n"
-    SCREENSHOT = "s"
-    PAGE_COPY = "p"
-    WAYBACK = "w"
+def ensure_list(value):
+    if isinstance(value, list):
+        return value
+    if value is None:
+        return []
+    return [value]
 
-@dataclass
-class ScanOptions:
-    short_domain: str
-    url: str
-    case_comment: str
-    report_type: ReportType
-    page_search: bool
-    keywords: Optional[List[str]]
-    dorking_flag: str
-    used_api_ids: List[str]
-    snapshot_mode: SnapshotMode
-    username: Optional[str] = None
-    wb_from: str = 'N'
-    wb_to: str = 'N'
-    pagesearch_ui_mark: str = 'No'
-    snapshotting_ui_mark: str = 'No'
+def is_real_url(value: str) -> bool:
+    if not isinstance(value, str):
+        return False
+    parsed = urlparse(value)
+    return parsed.scheme in ('http', 'https') and bool(parsed.netloc)
 
-def parse_bool(value: str) -> bool:
-    return value.strip().lower() in {"y", "yes", "да", "si", "1", "true", "t"}
 
-def ask_choice(prompt: str, choices: Dict[str, object], default: Optional[str] = None):
-    while True:
-        raw = input(prompt).strip().lower()
-        if not raw and default is not None:
-            if default in choices:
-                return choices[default]
-        if raw in choices:
-            return choices[raw]
-        print(Fore.RED + f"Invalid choice. Available: {', '.join(choices.keys())}" + Style.RESET_ALL)
-
-def is_valid_domain(domain: str) -> bool:
-    pattern = r"^(?!-)(?:[a-zA-Z0-9-]{1,63}\.)+[a-zA-Z]{2,}$"
-    return bool(re.match(pattern, domain))
-
-def validate_yyyymmdd(s: str) -> bool:
-    return bool(re.fullmatch(r"\d{8}", s))
-
-def sanitize_db_filename(name: str) -> str:
-    safe = os.path.basename(name).split('.')[0]
-    if not re.fullmatch(r"[a-zA-Z0-9_\-]{1,50}", safe):
-        raise ValueError("Invalid DB name")
-    return safe
-
-def compute_dorking_ui_mark(dorking_flag: str) -> str:
-    try:
-        if dorking_flag == 'n':
-            return 'No'
-        if dorking_flag.startswith('custom+'):
-            db_name = dorking_flag.split('+', 1)[1]
-            rc = get_columns_amount(str(DORKING_DIR / db_name), 'dorks')
-            return f'Yes, Custom table dorking ({rc} dorks)'
-
-        mapping = {
-            'basic': 'basic_dorking.db',
-            'iot': 'iot_dorking.db',
-            'files': 'files_dorking.db',
-            'admins': 'adminpanels_dorking.db',
-            'web': 'webstructure_dorking.db'
-        }
-        if dorking_flag in mapping:
-            db_name = mapping[dorking_flag]
-            table = f'{dorking_flag}_dorks'
-            rc = get_columns_amount(str(DORKING_DIR / db_name), table)
-            return f'Yes, {dorking_flag} dorking ({rc} dorks)'
-    except Exception as e:
-        logging.error("Failed to compute dorking UI mark: %s", e, exc_info=True)
-        return 'Dorking info unavailable'
-    return 'No'
-
-def process_report(options: ScanOptions):
-    #import xlsx_report_creation as xlsx_rc
-    import html_report_creation as html_rc
-    with console.status("[magenta]Processing scan...[/magenta]", spinner="dots"):
-        start = perf_counter()
-        pagesearch_flag_str = 'y' if options.page_search else 'n'
-        keywords_flag = 1 if (options.page_search and options.keywords and len(options.keywords) > 0) else 0
-        keywords_payload = options.keywords if options.page_search else ''
-
-        data_array, report_info_array = data_processing.data_gathering(
-            options.short_domain,
-            options.url,
-            options.report_type.value,
-            pagesearch_flag_str,
-            keywords_payload,
-            keywords_flag,
-            options.dorking_flag,
-            options.used_api_ids if options.used_api_ids else ['Empty'],
-            options.snapshot_mode.value,
-            options.username,
-            options.wb_from,
-            options.wb_to
-        )
-        end_time_str = time_processing(perf_counter() - start)
-
-    if options.report_type == ReportType.HTML:
-        html_rc.report_assembling(
-            options.short_domain, options.url, options.case_comment,
-            data_array, report_info_array,
-            options.pagesearch_ui_mark, end_time_str, options.snapshotting_ui_mark
-        )
-
-def handle_scan():
-    print(Fore.GREEN + "\nImported and activated reporting modules" + Style.RESET_ALL)
-    while True:
-        short_domain = input(Fore.YELLOW + "\nEnter target's domain name (or 'back' to return to the menu) >> ").strip()
-        if short_domain.lower() == "back":
-            print(Fore.RED + "\nReturned to main menu" + Style.RESET_ALL)
-            return
-        if not short_domain:
-            print(Fore.RED + "\nEmpty domain names are not supported" + Style.RESET_ALL)
-            continue
-        if not is_valid_domain(short_domain):
-            print(Fore.RED + '\nYour string does not match domain pattern' + Style.RESET_ALL)
-            continue
-
-        url = f"http://{short_domain}/"
-        print(Fore.GREEN + 'Pinging domain...' + Style.RESET_ALL, end=' ')
-        if domain_precheck(short_domain):
-            print(Fore.GREEN + 'Entered domain is accessible. Continuation' + Style.RESET_ALL)
-            break
-        else:
-            print(Fore.RED + "Entered domain is not accessible. Scan is impossible" + Style.RESET_ALL)
-            return
-
-    case_comment = input(Fore.YELLOW + "Enter case comment >> ").strip()
-    report_type = ReportType.HTML
-    page_search = parse_bool(input(Fore.YELLOW + "Would you like to use PageSearch function? [Y/N] >> "))
-    keywords = None
-    pagesearch_ui_mark = 'No'
-    if page_search:
-        keywords_input = input(Fore.YELLOW + "Enter keywords (separate by comma) (or N) >> ").strip()
-        if keywords_input.lower() != 'n':
-            keywords_list = [k.strip() for k in keywords_input.split(',') if k.strip()]
-            if not keywords_list:
-                print(Fore.RED + "\nThis field must contain at least one keyword" + Style.RESET_ALL)
-                return
-            keywords = keywords_list
-            pagesearch_ui_mark = f'Yes, with {keywords_list} keywords search'
-        else:
-            pagesearch_ui_mark = 'Yes, without keywords search'
-
-    dorking_raw = input(Fore.YELLOW + "Select Dorking mode [Basic/IoT/Files/Admins/Web/Custom/N] >> ").strip().lower()
-    if dorking_raw in {'basic', 'iot', 'files', 'admins', 'web'}:
-        dorking_flag = dorking_raw
-    elif dorking_raw == 'custom':
-        try:
-            custom_db_name = sanitize_db_filename(input(Fore.YELLOW + "Enter your custom Dorking DB name (no extension) >> ").strip())
-        except ValueError as e:
-            print(Fore.RED + f"\n{e}" + Style.RESET_ALL)
-            return
-        dorking_flag = f'custom+{custom_db_name}.db'
-    elif dorking_raw == 'n':
-        dorking_flag = 'n'
+def establishing_dork_db_connection(dorking_flag):
+    dorking_db_paths = {
+        'basic': 'dorking//basic_dorking.db',
+        'iot': 'dorking//iot_dorking.db',
+        'files': 'dorking//files_dorking.db',
+        'admins': 'dorking//adminpanels_dorking.db',
+        'web': 'dorking//webstructure_dorking.db',
+    }
+    dorking_tables = {
+        'basic': 'basic_dorks',
+        'iot': 'iot_dorks',
+        'files': 'files_dorks',
+        'admins': 'admins_dorks',
+        'web': 'web_dorks',
+    }
+    if dorking_flag in dorking_db_paths:
+        dorking_db_path = dorking_db_paths[dorking_flag]
+        table = dorking_tables[dorking_flag]
+    elif dorking_flag.startswith('custom'):
+        lst = dorking_flag.split('+')
+        dorking_db_name = lst[1]
+        dorking_db_path = 'dorking//' + dorking_db_name
+        table = 'dorks'
     else:
-        print(Fore.RED + "\nInvalid Dorking mode. Please select mode among Basic/IoT/Files/Web/Admins/Custom or N" + Style.RESET_ALL)
-        return
+        raise ValueError(f"Invalid dorking flag: {dorking_flag}")
+    return dorking_db_path, table
 
-    api_yes = parse_bool(input(Fore.YELLOW + "Would you like to use 3rd party API in scan? [Y/N] >> "))
-    used_api_ids: List[str] = ['Empty']
-    username: Optional[str] = None
-    used_api_ui = 'No'
-    if api_yes:
-        print("\n")
-        db.select_api_keys('printing')
-        print(Fore.GREEN + "\nPay attention that APIs with red-colored API Key field are unable to use!\n" + Style.RESET_ALL)
-        to_use_api_flag = input(Fore.YELLOW + "Select APIs IDs you want to use in scan (separated by comma) >> ").strip()
-        used_api_ids = [item.strip() for item in to_use_api_flag.split(',') if item.strip().isdigit()]
-        if not used_api_ids:
-            print(Fore.RED + "\nNo valid API IDs selected" + Style.RESET_ALL)
-            return
-        if '3' in used_api_ids:
-            u = input(Fore.YELLOW + "If you know some username from this domain, please enter it here (or N if not) >> ").strip()
-            username = None if u.lower() == 'n' else u
-        if db.check_api_keys(used_api_ids):
-            print(Fore.GREEN + 'Found API key. Continuation' + Style.RESET_ALL)
-        else:
-            print(Fore.RED + "\nAPI key was not found. Check if you've entered valid API key in API Keys DB" + Style.RESET_ALL)
-            return
-        used_api_ui = f'Yes, using APIs with following IDs: {", ".join(used_api_ids)}'
 
-    snap_choice = ask_choice(
-        Fore.YELLOW + "Select Snapshotting mode [S(creenshot)/P(age Copy)/W(ayback Machine)/N] >> ",
-        {"s": SnapshotMode.SCREENSHOT, "p": SnapshotMode.PAGE_COPY, "w": SnapshotMode.WAYBACK, "n": SnapshotMode.NONE},
-        default="n"
-    )
-    snapshotting_ui_mark = 'No'
-    from_date = end_date = 'N'
-    if snap_choice == SnapshotMode.SCREENSHOT:
-        snapshotting_ui_mark = "Yes, domain's main page snapshotting as a screenshot"
-    elif snap_choice == SnapshotMode.PAGE_COPY:
-        snapshotting_ui_mark = "Yes, domain's main page snapshotting as a .HTML file"
-    elif snap_choice == SnapshotMode.WAYBACK:
-        from_date = input(Fore.YELLOW + 'Enter start date (YYYYMMDD format): ').strip()
-        end_date = input(Fore.YELLOW + 'Enter end date (YYYYMMDD format): ').strip()
-        if not (validate_yyyymmdd(from_date) and validate_yyyymmdd(end_date)):
-            print(Fore.RED + "\nInvalid date format" + Style.RESET_ALL)
-            return
-        snapshotting_ui_mark = "Yes, domain's main page snapshotting using Wayback Machine"
+class DataProcessing():
+    def report_preprocessing(self, short_domain, report_file_type):
+        report_ctime = datetime.now().strftime('%d-%m-%Y, %H:%M:%S')
+        files_ctime = datetime.now().strftime('(%d-%m-%Y, %Hh%Mm%Ss)')
+        files_body = short_domain.replace(".", "") + '_' + files_ctime
+        casename = f"{files_body}.{report_file_type}"
+        foldername = files_body
+        db_casename = short_domain.replace(".", "")
+        now = datetime.now()
+        db_creation_date = str(now.year) + str(now.month) + str(now.day)
+        report_folder = f"report_{foldername}"
+        robots_filepath = os.path.join(report_folder, '01-robots.txt')
+        sitemap_filepath = os.path.join(report_folder, '02-sitemap.txt')
+        sitemap_links_filepath = os.path.join(report_folder, '03-sitemap_links.txt')
+        os.makedirs(report_folder, exist_ok=True)
+        return (casename, db_casename, db_creation_date, robots_filepath,
+                sitemap_filepath, sitemap_links_filepath, report_file_type,
+                report_folder, files_ctime, report_ctime)
 
-    dorking_ui_mark = compute_dorking_ui_mark(dorking_flag)
-    cli_init.print_prescan_summary(
-        short_domain, report_type.value.upper(), pagesearch_ui_mark,
-        dorking_ui_mark, used_api_ui, case_comment, snapshotting_ui_mark
-    )
+    def data_gathering(self, short_domain, url, report_file_type, pagesearch_flag,
+                       keywords, keywords_flag, dorking_flag, used_api_flag,
+                       snapshotting_flag, username, from_date, end_date):
 
-    options = ScanOptions(
-        short_domain=short_domain,
-        url=url,
-        case_comment=case_comment,
-        report_type=report_type,
-        page_search=page_search,
-        keywords=keywords,
-        dorking_flag=dorking_flag,
-        used_api_ids=used_api_ids,
-        snapshot_mode=snap_choice,
-        username=username,
-        wb_from=from_date,
-        wb_to=end_date,
-        pagesearch_ui_mark=pagesearch_ui_mark,
-        snapshotting_ui_mark=snapshotting_ui_mark,
-    )
+        (casename, db_casename, db_creation_date, robots_filepath,
+         sitemap_filepath, sitemap_links_filepath, report_file_type,
+         report_folder, ctime, report_ctime) = self.report_preprocessing(short_domain, report_file_type)
 
-    try:
-        process_report(options)
-    except Exception as e:
-        print(Fore.RED + "Error appeared during report processing. See journal for details" + Style.RESET_ALL)
-        logging.error("PROCESS REPORT ERROR: %s", e, exc_info=True)
-
-def handle_settings():
-    cli.print_settings_menu()
-    choice_settings = input(Fore.YELLOW + "\nEnter your choice >> ").strip()
-    if choice_settings == '1':
-        print_and_return_config()
-    elif choice_settings == '2':
-        config = print_and_return_config()
-        section = input(Fore.YELLOW + "\nEnter the section you want to update >> ").strip()
-        if not config.has_section(section.upper()):
-            print(Fore.RED + "\nSection you've entered does not exist in config file. Please verify that section name is correct" + Style.RESET_ALL)
-            return
-        option = input(Fore.YELLOW + "Enter the option you want to update >> ").strip()
-        if not config.has_option(section.upper(), option):
-            print(Fore.RED + "\nOption you've entered does not exist in config file. Please verify that option name is correct" + Style.RESET_ALL)
-            return
-        value = input(Fore.YELLOW + "Enter the new value >> ").strip()
-        config.set(section.upper(), option, value)
-        with open(CONFIG_PATH, 'w') as configfile:
-            config.write(configfile)
-        print(Fore.GREEN + "\nConfiguration updated successfully" + Style.RESET_ALL)
-    elif choice_settings == '3':
-        with open('journal.log', 'w'):
-            print(Fore.GREEN + "Journal file was successfully cleared" + Style.RESET_ALL)
-    elif choice_settings == '4':
-        return
-
-def handle_dorking_db():
-    cli.dorking_db_manager()
-    choice_dorking = input(Fore.YELLOW + "\nEnter your choice >> ").strip()
-    if choice_dorking == '1':
-        cli_init.print_api_db_msg()
+        logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} STARTS HERE')
+        print(Fore.LIGHTMAGENTA_EX + "\n[STARTED BASIC DOMAIN SCAN]" + Style.RESET_ALL)
+        print(Fore.GREEN + "[1/11] Getting domain IP address" + Style.RESET_ALL)
+        ip = cp.ip_gather(short_domain)
+        print(Fore.GREEN + '[2/11] Gathering WHOIS information' + Style.RESET_ALL)
+        res = cp.whois_gather(short_domain)
+        print(Fore.GREEN + '[3/11] Processing e-mails gathering' + Style.RESET_ALL)
+        mails = cp.contact_mail_gather(url)
+        print(Fore.GREEN + '[4/11] Processing subdomain gathering' + Style.RESET_ALL)
+        subdomains, subdomains_amount = cp.subdomains_gather(url, short_domain)
+        print(Fore.GREEN + '[5/11] Processing social medias gathering' + Style.RESET_ALL)
         try:
-            ddb_name = sanitize_db_filename(input(Fore.YELLOW + "Enter a name for your custom Dorking DB (no extension) >> ").strip())
-        except ValueError as e:
-            print(Fore.RED + f"{e}" + Style.RESET_ALL)
-            return
-        manage_dorks(ddb_name)
-    elif choice_dorking == '2':
-        return
-
-def handle_db_menu():
-    cli.print_db_menu()
-    rsdb_presence = db.check_rsdb_presence('report_storage.db')
-    if rsdb_presence:
-        print(Fore.GREEN + "\nReport storage database presence: OK\n" + Style.RESET_ALL)
-    else:
-        db.db_creation('report_storage.db')
-        print(Fore.GREEN + "Successfully created report storage database" + Style.RESET_ALL)
-
-    choice_db = input(Fore.YELLOW + "Enter your choice >> ").strip()
-    if choice_db == "1":
-        db.db_select()
-    elif choice_db == "2":
-        cursor, sqlite_connection, data_presence_flag = db.db_select()
-        if data_presence_flag:
-            try:
-                id_to_extract_raw = input(Fore.YELLOW + "\nEnter report ID you want to extract >> ").strip()
-                if not id_to_extract_raw.isdigit():
-                    print(Fore.RED + "Report ID must be a number" + Style.RESET_ALL)
-                    return
-                id_to_extract = int(id_to_extract_raw)
-                extracted_folder_name = f'report_recreated_ID#{id_to_extract}'
-                os.makedirs(extracted_folder_name)
-                db.db_report_recreate(extracted_folder_name, id_to_extract)
-            except FileExistsError:
-                print(Fore.RED + "Report with the same recreated folder already exists. Please check its content or delete it and try again" + Style.RESET_ALL)
-            except Exception as e:
-                print(Fore.RED + "Error appeared when trying to recreate report from DB. See journal for details" + Style.RESET_ALL)
-                logging.error("REPORT RECREATE ERROR: %s", e, exc_info=True)
-        else:
-            pass
-    elif choice_db == "3":
-        print(Fore.GREEN + "\nDatabase connection is successfully closed" + Style.RESET_ALL)
-        return
-
-def handle_docs():
-    webbrowser.open('https://dpulse.readthedocs.io/en/latest/')
-
-def handle_api_manager():
-    cli.api_manager()
-    choice_api = input(Fore.YELLOW + "\nEnter your choice >> ").strip()
-    if choice_api == '1':
-        cursor, conn = db.select_api_keys('updating')
-        api_id_to_update = input(Fore.YELLOW + "\nEnter API's ID to update its key >> ").strip()
-        new_api_key = input(Fore.YELLOW + "Enter new API key >> ").strip()
-        try:
-            cursor.execute("UPDATE api_keys SET api_key = ? WHERE id = ?", (new_api_key, api_id_to_update))
-            conn.commit()
-            print(Fore.GREEN + "\nSuccessfully added new API key" + Style.RESET_ALL)
+            social_medias = cp.sm_gather(url)
         except Exception as e:
-            print(Fore.RED + "Something went wrong when adding new API key. See journal for details" + Style.RESET_ALL)
-            logging.error('API KEY ADDING: ERROR. REASON: %s', e, exc_info=True)
-        finally:
-            try:
-                conn.close()
-            except Exception:
-                pass
+            print(Fore.RED + "Social medias were not gathered because of error" + Style.RESET_ALL)
+            logging.exception("Error during social medias gathering")
+            social_medias = make_socials_dict(with_not_found=True)
 
-    elif choice_api == '2':
+        print(Fore.GREEN + '[6/11] Processing subdomain analysis' + Style.RESET_ALL)
+        if report_file_type == 'xlsx':
+            subdomain_urls, subdomain_mails, subdomain_ip, sd_socials = cp.domains_reverse_research(
+                subdomains, report_file_type
+            )
+        elif report_file_type == 'html':
+            subdomain_mails, sd_socials, subdomain_ip = cp.domains_reverse_research(
+                subdomains, report_file_type
+            )
+        else:
+            subdomain_urls = []
+            subdomain_mails = []
+            subdomain_ip = []
+            sd_socials = make_socials_dict()
+
+        print(Fore.GREEN + '[7/11] Processing SSL certificate gathering' + Style.RESET_ALL)
+        issuer, subject, notBefore, notAfter, commonName, serialNumber = np.get_ssl_certificate(short_domain)
+
+        print(Fore.GREEN + '[8/11] Processing DNS records gathering' + Style.RESET_ALL)
+        mx_records = np.get_dns_info(short_domain, report_file_type)
+
+        print(Fore.GREEN + '[9/11] Extracting robots.txt and sitemap.xml' + Style.RESET_ALL)
+        robots_txt_result = np.get_robots_txt(short_domain, robots_filepath)
+        sitemap_xml_result = np.get_sitemap_xml(short_domain, sitemap_filepath)
         try:
-            (APIS_DIR / 'api_keys.db').unlink(missing_ok=True)
-            print(Fore.GREEN + "Deleted old API Keys DB" + Style.RESET_ALL)
-        except Exception as e:
-            print(Fore.RED + "Failed to delete old API Keys DB" + Style.RESET_ALL)
-            logging.error("DELETE API DB ERROR: %s", e, exc_info=True)
-        try:
-            shutil.copyfile(APIS_DIR / 'api_keys_reference.db', APIS_DIR / 'api_keys.db')
-            print(Fore.GREEN + "Successfully restored reference API Keys DB" + Style.RESET_ALL)
-        except FileNotFoundError:
-            print(Fore.RED + "Reference API Keys DB was not found" + Style.RESET_ALL)
-        except Exception as e:
-            print(Fore.RED + "Failed to restore API Keys DB" + Style.RESET_ALL)
-            logging.error("RESTORE API DB ERROR: %s", e, exc_info=True)
-    else:
-        return
+            sitemap_links_status = np.extract_links_from_sitemap(sitemap_links_filepath, sitemap_filepath)
+        except Exception:
+            sitemap_links_status = 'Sitemap links were not parsed'
 
-def handle_exit():
-    print(Fore.RED + "Exiting the program." + Style.RESET_ALL)
-    raise SystemExit
+        print(Fore.GREEN + '[10/11] Gathering info about website technologies' + Style.RESET_ALL)
+        (web_servers, cms, programming_languages,
+         web_frameworks, analytics, javascript_frameworks) = np.get_technologies(url)
 
-HANDLERS: Dict[str, Callable[[], None]] = {
-    "1": handle_scan,
-    "2": handle_settings,
-    "3": handle_dorking_db,
-    "4": handle_db_menu,
-    "5": handle_api_manager,
-    "6": handle_docs,
-    "7": handle_exit,
-}
+        print(Fore.GREEN + '[11/11] Processing Shodan InternetDB search' + Style.RESET_ALL)
+        ports, hostnames, cpes, tags, vulns = np.query_internetdb(ip, report_file_type)
 
-def bootstrap():
-    cfg_presence = check_cfg_presence()
-    if cfg_presence:
-        print(Fore.GREEN + "Global config file presence: OK" + Style.RESET_ALL)
-    else:
-        print(Fore.RED + "Global config file presence: NOT OK" + Style.RESET_ALL)
-        create_config()
-        print(Fore.GREEN + "Successfully generated global config file" + Style.RESET_ALL)
+        if not isinstance(social_medias, dict):
+            logging.warning(f'social_medias is {type(social_medias)}, expected dict; replacing with empty socials dict')
+            social_medias = make_socials_dict()
 
-    rsdb_presence = db.check_rsdb_presence('report_storage.db')
-    if rsdb_presence:
-        print(Fore.GREEN + "Report storage database presence: OK" + Style.RESET_ALL)
-    else:
-        db.db_creation('report_storage.db')
-        print(Fore.GREEN + "Successfully created report storage database" + Style.RESET_ALL)
+        if not isinstance(sd_socials, dict):
+            logging.warning(f'sd_socials is {type(sd_socials)}, expected dict; replacing with empty socials dict')
+            sd_socials = make_socials_dict()
 
-    dorks_files_check()
+        all_social_keys = set(SOCIAL_KEYS) | set(social_medias.keys()) | set(sd_socials.keys())
 
-    try:
-        _ = read_config()
-        print('')
-    except Exception as e:
-        logging.error("CONFIG READ ERROR: %s", e, exc_info=True)
-        print(Fore.RED + "Failed to read config. See journal for details" + Style.RESET_ALL)
+        common_socials_raw = {}
+        for key in all_social_keys:
+            main_vals = ensure_list(social_medias.get(key, []))
+            sd_vals = ensure_list(sd_socials.get(key, []))
+            common_socials_raw[key] = main_vals + sd_vals
 
-    cli.welcome_menu()
+        common_socials = {}
+        total_socials = 0
 
-def run():
-    while True:
-        try:
-            cli.print_main_menu()
-            choice = input(Fore.YELLOW + "\nEnter your choice >> ").strip()
-            handler = HANDLERS.get(choice)
-            if handler:
-                handler()
+        for key, values in common_socials_raw.items():
+            seen = set()
+            deduped = []
+            for v in values:
+                if v not in seen:
+                    seen.add(v)
+                    deduped.append(v)
+
+            real_links = [v for v in deduped if is_real_url(v)]
+
+            if real_links:
+                common_socials[key] = real_links
+                total_socials += len(real_links)
             else:
-                print(Fore.RED + "\nInvalid menu item. Please select between existing menu items" + Style.RESET_ALL)
-        except KeyboardInterrupt:
-            print(Fore.RED + "\nDPULSE process was ended using keyboard" + Style.RESET_ALL)
-            sys.exit()
+                common_socials[key] = [f'{key} links were not found']
 
-if __name__ == "__main__":
-    bootstrap()
-    run()
+        total_ports = len(ports)
+        total_ips = len(subdomain_ip) + 1
+        total_vulns = len(vulns)
+
+        print(Fore.LIGHTMAGENTA_EX + "[ENDED BASIC DOMAIN SCAN]\n" + Style.RESET_ALL)
+
+        if report_file_type == 'xlsx':
+            if pagesearch_flag.lower() == 'y':
+                if subdomains and subdomains[0] != 'No subdomains were found':
+                    to_search_array = [subdomains, social_medias, sd_socials]
+                    print(Fore.LIGHTMAGENTA_EX + "[STARTED EXTENDED DOMAIN SCAN WITH PAGESEARCH]\n" + Style.RESET_ALL)
+                    (ps_emails_return, accessible_subdomains, emails_amount,
+                     files_counter, cookies_counter, api_keys_counter,
+                     website_elements_counter, exposed_passwords_counter,
+                     keywords_messages_list) = subdomains_parser(
+                        to_search_array[0], report_folder, keywords, keywords_flag
+                    )
+                    total_links_counter = accessed_links_counter = "No results because PageSearch does not gather these categories"
+                    print(Fore.LIGHTMAGENTA_EX + "[ENDED EXTENDED DOMAIN SCAN WITH PAGESEARCH]\n" + Style.RESET_ALL)
+                else:
+                    print(Fore.RED + "Cant start PageSearch because no subdomains were detected\n")
+                    accessible_subdomains = files_counter = cookies_counter = api_keys_counter = \
+                        website_elements_counter = exposed_passwords_counter = total_links_counter = \
+                        accessed_links_counter = emails_amount = 'No results because no subdomains were found'
+                    ps_emails_return = ""
+            elif pagesearch_flag.lower() == 'n':
+                ps_emails_return = ""
+                accessible_subdomains = files_counter = cookies_counter = api_keys_counter = \
+                    website_elements_counter = exposed_passwords_counter = total_links_counter = \
+                    accessed_links_counter = emails_amount = \
+                    "No results because user did not selected PageSearch for this scan"
+
+            if dorking_flag == 'n':
+                dorking_status = 'Google Dorking mode was not selected for this scan'
+                dorking_results = ['Google Dorking mode was not selected for this scan']
+            else:
+                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
+                print(Fore.LIGHTMAGENTA_EX + f"[STARTED EXTENDED DOMAIN SCAN WITH {dorking_flag.upper()} DORKING TABLE]\n" + Style.RESET_ALL)
+                dorking_status, dorking_results = dp.transfer_results_to_xlsx(
+                    table, get_dorking_query(short_domain, dorking_db_path, table)
+                )
+                print(Fore.LIGHTMAGENTA_EX + f"[ENDED EXTENDED DOMAIN SCAN WITH {dorking_flag.upper()} DORKING TABLE]\n" + Style.RESET_ALL)
+
+            api_scan_db = []
+            if used_api_flag != ['Empty']:
+                print(Fore.LIGHTMAGENTA_EX + f"[STARTED EXTENDED DOMAIN SCAN WITH 3RD PARTY API]\n" + Style.RESET_ALL)
+                if '1' in used_api_flag:
+                    virustotal_output = api_virustotal_check(short_domain)
+                    api_scan_db.append('VirusTotal')
+                else:
+                    virustotal_output = 'No results because user did not selected VirusTotal API scan'
+
+                if '2' in used_api_flag:
+                    securitytrails_output = api_securitytrails_check(short_domain)
+                    api_scan_db.append('SecurityTrails')
+                else:
+                    securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
+
+                if '3' in used_api_flag:
+                    if username is None or (isinstance(username, str) and username.lower() == 'n'):
+                        username = None
+                    hudsonrock_output = api_hudsonrock_check(short_domain, ip, mails, username)
+                    api_scan_db.append('HudsonRock')
+                else:
+                    hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
+
+                print(Fore.LIGHTMAGENTA_EX + f"[ENDED EXTENDED DOMAIN SCAN WITH 3RD PARTY API]\n" + Style.RESET_ALL)
+            else:
+                virustotal_output = 'No results because user did not selected VirusTotal API scan'
+                securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
+                hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
+                api_scan_db.append('No')
+
+            if snapshotting_flag.lower() in ['s', 'p', 'w']:
+                config_values = read_config()
+                installed_browser = config_values['installed_browser']
+                print(Fore.LIGHTMAGENTA_EX + f"[STARTED DOMAIN SNAPSHOTTING]\n" + Style.RESET_ALL)
+                if snapshotting_flag.lower() == 's':
+                    take_screenshot(installed_browser, url, report_folder + '//screensnapshot.png')
+                elif snapshotting_flag.lower() == 'p':
+                    save_page_as_html(url, report_folder + '//domain_html_copy.html')
+                elif snapshotting_flag.lower() == 'w':
+                    download_snapshot(short_domain, from_date, end_date, report_folder)
+                print(Fore.LIGHTMAGENTA_EX + f"[ENDED DOMAIN SNAPSHOTTING]\n" + Style.RESET_ALL)
+
+            cleaned_dorking = [item.strip() for item in dorking_results if item.strip()]
+
+            data_array = [
+                ip, res, mails, subdomains, subdomains_amount, social_medias,
+                subdomain_mails, sd_socials, subdomain_ip, issuer, subject,
+                notBefore, notAfter, commonName, serialNumber, mx_records,
+                robots_txt_result, sitemap_xml_result, sitemap_links_status,
+                web_servers, cms, programming_languages, web_frameworks,
+                analytics, javascript_frameworks, ports, hostnames, cpes, tags,
+                vulns, common_socials, total_socials, ps_emails_return,
+                accessible_subdomains, emails_amount, files_counter,
+                cookies_counter, api_keys_counter, website_elements_counter,
+                exposed_passwords_counter, total_links_counter,
+                accessed_links_counter, cleaned_dorking, virustotal_output,
+                securitytrails_output, hudsonrock_output
+            ]
+
+        elif report_file_type == 'html':
+            if pagesearch_flag.lower() == 'y':
+                if subdomains and subdomains[0] != 'No subdomains were found':
+                    to_search_array = [subdomains, social_medias, sd_socials]
+                    print(Fore.LIGHTMAGENTA_EX + "[STARTED EXTENDED DOMAIN SCAN WITH PAGESEARCH]" + Style.RESET_ALL)
+                    (
+                        ps_emails_return,
+                        accessible_subdomains,
+                        emails_amount,
+                        files_counter,
+                        cookies_counter,
+                        api_keys_counter,
+                        website_elements_counter,
+                        exposed_passwords_counter,
+                        keywords_messages_list
+                    ), ps_string = subdomains_parser(
+                        to_search_array[0], report_folder, keywords, keywords_flag
+                    )
+                    total_links_counter = accessed_links_counter = "No results because PageSearch does not gather these categories"
+                    if len(keywords_messages_list) == 0:
+                        keywords_messages_list = ['No keywords were found']
+                    print(Fore.LIGHTMAGENTA_EX + "[ENDED EXTENDED DOMAIN SCAN WITH PAGESEARCH]\n" + Style.RESET_ALL)
+                else:
+                    print(Fore.RED + "Cant start PageSearch because no subdomains were detected\n")
+                    ps_emails_return = ""
+                    accessible_subdomains = files_counter = cookies_counter = api_keys_counter = \
+                        website_elements_counter = exposed_passwords_counter = total_links_counter = \
+                        accessed_links_counter = emails_amount = 'No results because no subdomains were found'
+                    ps_string = 'No PageSearch listing provided because no subdomains were found'
+                    keywords_messages_list = ['No data was gathered because no subdomains were found']
+            elif pagesearch_flag.lower() == 'n':
+                accessible_subdomains = files_counter = cookies_counter = api_keys_counter = \
+                    website_elements_counter = exposed_passwords_counter = total_links_counter = \
+                    accessed_links_counter = emails_amount = keywords_messages_list = \
+                    "No results because user did not selected PageSearch for this scan"
+                ps_emails_return = ""
+                ps_string = 'No PageSearch listing provided because user did not selected PageSearch mode for this scan'
+
+            if dorking_flag == 'n':
+                dorking_status = 'Google Dorking mode was not selected for this scan'
+                dorking_file_path = 'Google Dorking mode was not selected for this scan'
+            else:
+                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
+                print(Fore.LIGHTMAGENTA_EX + f"[STARTED EXTENDED DOMAIN SCAN WITH {dorking_flag.upper()} DORKING TABLE]" + Style.RESET_ALL)
+                dorking_status, dorking_file_path = dp.save_results_to_txt(
+                    report_folder, table, get_dorking_query(short_domain, dorking_db_path, table)
+                )
+                print(Fore.LIGHTMAGENTA_EX + f"[ENDED EXTENDED DOMAIN SCAN WITH {dorking_flag.upper()} DORKING TABLE]\n" + Style.RESET_ALL)
+
+            api_scan_db = []
+            if used_api_flag != ['Empty']:
+                print(Fore.LIGHTMAGENTA_EX + f"[STARTED EXTENDED DOMAIN SCAN WITH 3RD PARTY API]" + Style.RESET_ALL)
+                if '1' in used_api_flag:
+                    virustotal_output = api_virustotal_check(short_domain)
+                    api_scan_db.append('VirusTotal')
+                else:
+                    virustotal_output = 'No results because user did not selected VirusTotal API scan'
+
+                if '2' in used_api_flag:
+                    securitytrails_output = api_securitytrails_check(short_domain)
+                    api_scan_db.append('SecurityTrails')
+                else:
+                    securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
+
+                if '3' in used_api_flag:
+                    if username is None or (isinstance(username, str) and username.lower() == 'n'):
+                        username = None
+                    hudsonrock_output = api_hudsonrock_check(short_domain, ip, mails, username)
+                    api_scan_db.append('HudsonRock')
+                else:
+                    hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
+
+                print(Fore.LIGHTMAGENTA_EX + f"[ENDED EXTENDED DOMAIN SCAN WITH 3RD PARTY API]\n" + Style.RESET_ALL)
+            else:
+                virustotal_output = 'No results because user did not selected VirusTotal API scan'
+                securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
+                hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
+                api_scan_db.append('No')
+
+            if snapshotting_flag.lower() in ['s', 'p', 'w']:
+                config_values = read_config()
+                installed_browser = config_values['installed_browser']
+                print(Fore.LIGHTMAGENTA_EX + f"[STARTED DOMAIN SNAPSHOTTING]" + Style.RESET_ALL)
+                if snapshotting_flag.lower() == 's':
+                    take_screenshot(installed_browser, url, report_folder + '//screensnapshot.png')
+                elif snapshotting_flag.lower() == 'p':
+                    save_page_as_html(url, report_folder + '//domain_html_copy.html')
+                elif snapshotting_flag.lower() == 'w':
+                    download_snapshot(short_domain, from_date, end_date, report_folder)
+                print(Fore.LIGHTMAGENTA_EX + f"[ENDED DOMAIN SNAPSHOTTING]\n" + Style.RESET_ALL)
+
+            data_array = [
+                ip, res, mails, subdomains, subdomains_amount, social_medias,
+                subdomain_mails, sd_socials, subdomain_ip, issuer, subject,
+                notBefore, notAfter, commonName, serialNumber, mx_records,
+                robots_txt_result, sitemap_xml_result, sitemap_links_status,
+                web_servers, cms, programming_languages, web_frameworks,
+                analytics, javascript_frameworks, ports, hostnames, cpes, tags,
+                vulns, common_socials, total_socials, ps_emails_return,
+                accessible_subdomains, emails_amount, files_counter,
+                cookies_counter, api_keys_counter, website_elements_counter,
+                exposed_passwords_counter, total_links_counter,
+                accessed_links_counter, keywords_messages_list, dorking_status,
+                dorking_file_path, virustotal_output, securitytrails_output,
+                hudsonrock_output, ps_string, total_ports, total_ips, total_vulns
+            ]
+
+        report_info_array = [
+            casename, db_casename, db_creation_date, report_folder,
+            ctime, report_file_type, report_ctime, api_scan_db, used_api_flag
+        ]
+        logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} ENDS HERE')
+        return data_array, report_info_array
