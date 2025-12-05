@@ -2,7 +2,7 @@ import sys
 from datetime import datetime
 import os
 from colorama import Fore, Style
-from urllib.parse import urlparse  # для проверки, что строка — реальный URL
+from urllib.parse import urlparse
 
 sys.path.extend(['service', 'pagesearch', 'dorking', 'snapshotting'])
 
@@ -21,8 +21,6 @@ from html_snapshotting import save_page_as_html
 from archive_snapshotting import download_snapshot
 
 
-# --- вспомогательные вещи для соцсетей ---
-
 SOCIAL_KEYS = [
     'Facebook',
     'Twitter',
@@ -37,25 +35,19 @@ SOCIAL_KEYS = [
     'X.com',
 ]
 
-
 def make_socials_dict(with_not_found: bool = False):
-    """Создаёт словарь соцсетей с пустыми списками или с сообщениями 'not found'."""
     if with_not_found:
         return {name: [f'{name} links were not found'] for name in SOCIAL_KEYS}
     return {name: [] for name in SOCIAL_KEYS}
 
-
 def ensure_list(value):
-    """Гарантирует, что значение — список."""
     if isinstance(value, list):
         return value
     if value is None:
         return []
     return [value]
 
-
 def is_real_url(value: str) -> bool:
-    """Считаем реальной ссылкой только нормальный http/https URL."""
     if not isinstance(value, str):
         return False
     parsed = urlparse(value)
@@ -119,26 +111,20 @@ class DataProcessing():
 
         logging.info(f'### THIS LOG PART FOR {casename} CASE, TIME: {ctime} STARTS HERE')
         print(Fore.LIGHTMAGENTA_EX + "\n[STARTED BASIC DOMAIN SCAN]" + Style.RESET_ALL)
-
         print(Fore.GREEN + "[1/11] Getting domain IP address" + Style.RESET_ALL)
         ip = cp.ip_gather(short_domain)
-
         print(Fore.GREEN + '[2/11] Gathering WHOIS information' + Style.RESET_ALL)
         res = cp.whois_gather(short_domain)
-
         print(Fore.GREEN + '[3/11] Processing e-mails gathering' + Style.RESET_ALL)
         mails = cp.contact_mail_gather(url)
-
         print(Fore.GREEN + '[4/11] Processing subdomain gathering' + Style.RESET_ALL)
         subdomains, subdomains_amount = cp.subdomains_gather(url, short_domain)
-
         print(Fore.GREEN + '[5/11] Processing social medias gathering' + Style.RESET_ALL)
         try:
             social_medias = cp.sm_gather(url)
         except Exception as e:
             print(Fore.RED + "Social medias were not gathered because of error" + Style.RESET_ALL)
             logging.exception("Error during social medias gathering")
-            # словарь с сообщениями "not found", чтобы структура не ломалась
             social_medias = make_socials_dict(with_not_found=True)
 
         print(Fore.GREEN + '[6/11] Processing subdomain analysis' + Style.RESET_ALL)
@@ -151,7 +137,6 @@ class DataProcessing():
                 subdomains, report_file_type
             )
         else:
-            # на всякий случай, если появится новый тип отчёта
             subdomain_urls = []
             subdomain_mails = []
             subdomain_ip = []
@@ -178,9 +163,6 @@ class DataProcessing():
         print(Fore.GREEN + '[11/11] Processing Shodan InternetDB search' + Style.RESET_ALL)
         ports, hostnames, cpes, tags, vulns = np.query_internetdb(ip, report_file_type)
 
-        # --- НОРМАЛИЗАЦИЯ И ОБЪЕДИНЕНИЕ СОЦСЕТЕЙ ---
-
-        # гарантируем, что оба объекта — словари
         if not isinstance(social_medias, dict):
             logging.warning(f'social_medias is {type(social_medias)}, expected dict; replacing with empty socials dict')
             social_medias = make_socials_dict()
@@ -189,22 +171,18 @@ class DataProcessing():
             logging.warning(f'sd_socials is {type(sd_socials)}, expected dict; replacing with empty socials dict')
             sd_socials = make_socials_dict()
 
-        # все возможные ключи: стандартный набор + то, что реально вернули функции
         all_social_keys = set(SOCIAL_KEYS) | set(social_medias.keys()) | set(sd_socials.keys())
 
-        # сырое объединение без фильтрации
         common_socials_raw = {}
         for key in all_social_keys:
             main_vals = ensure_list(social_medias.get(key, []))
             sd_vals = ensure_list(sd_socials.get(key, []))
             common_socials_raw[key] = main_vals + sd_vals
 
-        # чистим данные: убираем дубликаты и служебные строки, считаем только реальные ссылки
         common_socials = {}
         total_socials = 0
 
         for key, values in common_socials_raw.items():
-            # убираем дубликаты, сохраняя порядок
             seen = set()
             deduped = []
             for v in values:
@@ -212,15 +190,12 @@ class DataProcessing():
                     seen.add(v)
                     deduped.append(v)
 
-            # только реальные ссылки (http/https URL)
             real_links = [v for v in deduped if is_real_url(v)]
 
             if real_links:
-                # если есть реальные ссылки – только они и попадают в отчёт
                 common_socials[key] = real_links
                 total_socials += len(real_links)
             else:
-                # если реальных ссылок нет совсем – одно служебное сообщение
                 common_socials[key] = [f'{key} links were not found']
 
         total_ports = len(ports)
@@ -229,105 +204,7 @@ class DataProcessing():
 
         print(Fore.LIGHTMAGENTA_EX + "[ENDED BASIC DOMAIN SCAN]\n" + Style.RESET_ALL)
 
-        # --- ДАЛЬШЕ КОД ПО СТАРОЙ ЛОГИКЕ, ТОЛЬКО С УЖЕ ИСПРАВЛЕННЫМИ common_socials/total_socials ---
-
-        if report_file_type == 'xlsx':
-            if pagesearch_flag.lower() == 'y':
-                if subdomains and subdomains[0] != 'No subdomains were found':
-                    to_search_array = [subdomains, social_medias, sd_socials]
-                    print(Fore.LIGHTMAGENTA_EX + "[STARTED EXTENDED DOMAIN SCAN WITH PAGESEARCH]\n" + Style.RESET_ALL)
-                    (ps_emails_return, accessible_subdomains, emails_amount,
-                     files_counter, cookies_counter, api_keys_counter,
-                     website_elements_counter, exposed_passwords_counter,
-                     keywords_messages_list) = subdomains_parser(
-                        to_search_array[0], report_folder, keywords, keywords_flag
-                    )
-                    total_links_counter = accessed_links_counter = "No results because PageSearch does not gather these categories"
-                    print(Fore.LIGHTMAGENTA_EX + "[ENDED EXTENDED DOMAIN SCAN WITH PAGESEARCH]\n" + Style.RESET_ALL)
-                else:
-                    print(Fore.RED + "Cant start PageSearch because no subdomains were detected\n")
-                    accessible_subdomains = files_counter = cookies_counter = api_keys_counter = \
-                        website_elements_counter = exposed_passwords_counter = total_links_counter = \
-                        accessed_links_counter = emails_amount = 'No results because no subdomains were found'
-                    ps_emails_return = ""
-            elif pagesearch_flag.lower() == 'n':
-                ps_emails_return = ""
-                accessible_subdomains = files_counter = cookies_counter = api_keys_counter = \
-                    website_elements_counter = exposed_passwords_counter = total_links_counter = \
-                    accessed_links_counter = emails_amount = \
-                    "No results because user did not selected PageSearch for this scan"
-
-            if dorking_flag == 'n':
-                dorking_status = 'Google Dorking mode was not selected for this scan'
-                dorking_results = ['Google Dorking mode was not selected for this scan']
-            else:
-                dorking_db_path, table = establishing_dork_db_connection(dorking_flag.lower())
-                print(Fore.LIGHTMAGENTA_EX + f"[STARTED EXTENDED DOMAIN SCAN WITH {dorking_flag.upper()} DORKING TABLE]\n" + Style.RESET_ALL)
-                dorking_status, dorking_results = dp.transfer_results_to_xlsx(
-                    table, get_dorking_query(short_domain, dorking_db_path, table)
-                )
-                print(Fore.LIGHTMAGENTA_EX + f"[ENDED EXTENDED DOMAIN SCAN WITH {dorking_flag.upper()} DORKING TABLE]\n" + Style.RESET_ALL)
-
-            api_scan_db = []
-            if used_api_flag != ['Empty']:
-                print(Fore.LIGHTMAGENTA_EX + f"[STARTED EXTENDED DOMAIN SCAN WITH 3RD PARTY API]\n" + Style.RESET_ALL)
-                if '1' in used_api_flag:
-                    virustotal_output = api_virustotal_check(short_domain)
-                    api_scan_db.append('VirusTotal')
-                else:
-                    virustotal_output = 'No results because user did not selected VirusTotal API scan'
-
-                if '2' in used_api_flag:
-                    securitytrails_output = api_securitytrails_check(short_domain)
-                    api_scan_db.append('SecurityTrails')
-                else:
-                    securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
-
-                if '3' in used_api_flag:
-                    if username is None or (isinstance(username, str) and username.lower() == 'n'):
-                        username = None
-                    hudsonrock_output = api_hudsonrock_check(short_domain, ip, mails, username)
-                    api_scan_db.append('HudsonRock')
-                else:
-                    hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
-
-                print(Fore.LIGHTMAGENTA_EX + f"[ENDED EXTENDED DOMAIN SCAN WITH 3RD PARTY API]\n" + Style.RESET_ALL)
-            else:
-                virustotal_output = 'No results because user did not selected VirusTotal API scan'
-                securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
-                hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
-                api_scan_db.append('No')
-
-            if snapshotting_flag.lower() in ['s', 'p', 'w']:
-                config_values = read_config()
-                installed_browser = config_values['installed_browser']
-                print(Fore.LIGHTMAGENTA_EX + f"[STARTED DOMAIN SNAPSHOTTING]\n" + Style.RESET_ALL)
-                if snapshotting_flag.lower() == 's':
-                    take_screenshot(installed_browser, url, report_folder + '//screensnapshot.png')
-                elif snapshotting_flag.lower() == 'p':
-                    save_page_as_html(url, report_folder + '//domain_html_copy.html')
-                elif snapshotting_flag.lower() == 'w':
-                    download_snapshot(short_domain, from_date, end_date, report_folder)
-                print(Fore.LIGHTMAGENTA_EX + f"[ENDED DOMAIN SNAPSHOTTING]\n" + Style.RESET_ALL)
-
-            cleaned_dorking = [item.strip() for item in dorking_results if item.strip()]
-
-            data_array = [
-                ip, res, mails, subdomains, subdomains_amount, social_medias,
-                subdomain_mails, sd_socials, subdomain_ip, issuer, subject,
-                notBefore, notAfter, commonName, serialNumber, mx_records,
-                robots_txt_result, sitemap_xml_result, sitemap_links_status,
-                web_servers, cms, programming_languages, web_frameworks,
-                analytics, javascript_frameworks, ports, hostnames, cpes, tags,
-                vulns, common_socials, total_socials, ps_emails_return,
-                accessible_subdomains, emails_amount, files_counter,
-                cookies_counter, api_keys_counter, website_elements_counter,
-                exposed_passwords_counter, total_links_counter,
-                accessed_links_counter, cleaned_dorking, virustotal_output,
-                securitytrails_output, hudsonrock_output
-            ]
-
-        elif report_file_type == 'html':
+        if report_file_type == 'html':
             if pagesearch_flag.lower() == 'y':
                 if subdomains and subdomains[0] != 'No subdomains were found':
                     to_search_array = [subdomains, social_medias, sd_socials]
