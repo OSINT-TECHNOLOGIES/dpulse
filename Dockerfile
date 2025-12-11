@@ -1,24 +1,18 @@
-FROM python:3.13-slim
+FROM python:3.11-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
+ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
+    POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_CREATE=false \
-    POETRY_HOME="/opt/poetry" \
-    PATH="$POETRY_HOME/bin:$PATH" \
-    PYTHONIOENCODING=utf-8
+    POETRY_VERSION=1.8.3
 
 WORKDIR /app
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl && \
-    curl -sSL https://install.python-poetry.org | python - && \
-    apt-get purge -y curl && \
-    rm -rf /var/lib/apt/lists/*
+RUN pip install "poetry==${POETRY_VERSION}"
 
-COPY pyproject.toml poetry.lock ./
+COPY pyproject.toml poetry.lock* ./
 
-RUN poetry install --no-root 
+RUN poetry install --no-root
 
 COPY . .
 
