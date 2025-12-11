@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-<img alt="Static Badge" src="https://img.shields.io/badge/v1.3.3-CURRENT%20STABLE%20VERSION?style=for-the-badge&label=CURRENT%20STABLE%20VERSION&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/v1.3.4-red?style=for-the-badge&logo=f&label=CURRENT%20ROLLING%20VERSION">
+<img alt="Static Badge" src="https://img.shields.io/badge/v1.3.4-CURRENT%20STABLE%20VERSION?style=for-the-badge&label=CURRENT%20STABLE%20VERSION&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/v1.4-red?style=for-the-badge&logo=f&label=CURRENT%20ROLLING%20VERSION">
 <img alt="Static Badge" src="https://img.shields.io/badge/DOMAIN_OSINT-CATEGORY?style=for-the-badge&label=TOOL%20CATEGORY&color=red"> <img alt="Static Badge" src="https://img.shields.io/badge/CLI-CATEGORY?style=for-the-badge&label=interface%20type&color=red">
 </p>
 
@@ -89,11 +89,13 @@ Finally, DPULSE compiles all found data into an easy-to-read HTML or XLSX report
 
 ## _Recommended ways_
 
-Since DPULSE repository is using Poetry* to manage dependencies, it is higly recommended to install and start DPULSE using Poetry, especially on Linux systems where a lot of Python packages which DPULSE requires are preinstalled.
+DPULSE repository is using Poetry to manage dependencies and the tool itself integrated with Docker. So it's very easy to install and use DPULSE on every system without dependencies and software conflicts. 
 
-_* Poetry is a tool for dependency management and packaging in Python. It can be simply installed everywhere using `pip install poetry` command, but more instructions you can find on [Poetry official documentation page](https://python-poetry.org/docs/#ci-recommendations)_
+### <ins>First way (using Docker)</ins>
 
-### <ins>First way (recommended way, using Poetry)</ins>
+WIP
+
+### <ins>Second way (using Poetry)</ins>
 
 Use this set of commands to install DPULSE stable versions:
 
@@ -113,45 +115,27 @@ Use this set of commands to install DPULSE rolling versions:
 
 After installation, you simply start DPULSE using `poetry run python dpulse.py`
 
-### <ins>Second way (recommended way, without using Poetry)</ins>
+### <ins>Third way (old and classic, using pip)</ins>
 
-Just download DPULSE using fast-access links at the top of the README:
+Nowadays pip usage is a slightly outdated way of distributing dependencies and software itself. This way might be connected with dependencies and versioning conflicts, but you can try it.
 
-![image](https://github.com/user-attachments/assets/9ec2d2d7-706f-4385-9594-54e0cc72c695)
-
-Decide what version you want to download and use basing on your expectations like stability, support, functionality and so on
-
-Then just unpack downloaded archive, open terminal in DPULSE root folder and use `pip install -r requirements.txt` command to install requirements. Then type `python dpulse.py` in terminal, and that's where program starts.
-
-If `pip install -r requirements.txt` doesn't work, then just use `poetry install` command. After that, start DPULSE with `poetry run python dpulse.py`
-
-## _Other ways_
-
-### <ins>Third way (using pip manager)</ins>
-
-You also can install DPULSE using pip manager. It'll install DPULSE and necessery dependencies in one command: `pip install dpulse`. Then you just locate DPULSE root folder and type `python dpulse.py` to start program.
-
-## _Installers usage_
-
-DPULSE has two pre-written installation scripts, both for Windows (installer.bat) and for Linux (installer.sh). You can use them to clone repository and install dependencies or only for dependencies installation. Keep in mind that installer.bat (Windows installer) requires installed Git to clone repository.
-
-### <ins>Windows installer usage</ins>
-
-You can start installer.bat from terminal by typing `./installer.bat` in terminal. Then you choose menu item which you want to start.
-
-If you have problems with starting installer.bat, you should try to start it in admin terminal.
-
-### <ins>Linux installer usage</ins>
-
-To start installer.sh in Linux you should follow these steps in your terminal:
+Use this set of commands to install DPULSE stable versions:
 
   ```
-  sudo chmod +x installer.sh
-  sudo bash installer.sh
+  git clone https://github.com/OSINT-TECHNOLOGIES/dpulse
+  cd dpulse
+  pip install -r requirements.txt
   ```
-Then you choose menu item which you want to start.
 
-If you have problems with starting installer.sh, you should try to use `dos2unix installer.sh` or `sed -i 's/\r//' installer.sh` commands.
+Use this set of commands to install DPULSE rolling versions:
+
+  ```
+  git clone --branch rolling --single-branch https://github.com/OSINT-TECHNOLOGIES/dpulse.git
+  cd dpulse
+  pip install -r requirements.txt
+  ```
+
+After installation, you simply start DPULSE using `python dpulse.py`. Be adviced that as was said before, it's not guaranteed to work for your first try, but this method might work for you.
 
 # DPULSE demo and use-cases
 
