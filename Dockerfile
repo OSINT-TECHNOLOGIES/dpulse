@@ -8,6 +8,8 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
+ENV PYTHONPATH=/app:/app/service:/app/apis:/app/datagather_modules:/app/dorking:/app/pagesearch:/app/reporting_modules:/app/snapshotting:$PYTHONPATH
+
 RUN pip install "poetry==${POETRY_VERSION}"
 
 COPY pyproject.toml poetry.lock* ./
@@ -15,4 +17,7 @@ RUN poetry install --no-root
 
 COPY . .
 
-ENTRYPOINT ["python", "/app/dpulse.py"]
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
+
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
