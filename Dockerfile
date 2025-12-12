@@ -11,9 +11,8 @@ WORKDIR /app
 RUN pip install "poetry==${POETRY_VERSION}"
 
 COPY pyproject.toml poetry.lock* ./
-
 RUN poetry install --no-root
 
 COPY . .
 
-ENTRYPOINT ["python", "dpulse.py"]
+ENTRYPOINT ["python", "/app/dpulse.py"]
