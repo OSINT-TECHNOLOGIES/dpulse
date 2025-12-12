@@ -1,7 +1,6 @@
 #!/bin/sh
 set -e
 
-
 if [ ! -d service ]; then
     mkdir -p service
 fi
@@ -17,6 +16,19 @@ fi
 if ls /app/dorking/*.db >/dev/null 2>&1; then
   for dbfile in /app/dorking/*.db; do
     dest="dorking/$(basename "$dbfile")"
+    if [ ! -f "$dest" ]; then
+        cp "$dbfile" "$dest"
+    fi
+  done
+fi
+
+if [ ! -d apis ]; then
+    mkdir -p apis
+fi
+
+if ls /app/apis/*.db >/dev/null 2>&1; then
+  for dbfile in /app/apis/*.db; do
+    dest="apis/$(basename "$dbfile")"
     if [ ! -f "$dest" ]; then
         cp "$dbfile" "$dest"
     fi
