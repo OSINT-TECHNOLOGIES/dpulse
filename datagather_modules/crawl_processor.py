@@ -3,7 +3,7 @@ import socket
 import re
 import urllib
 from collections import defaultdict
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 import whois
 import requests
 from bs4 import BeautifulSoup
@@ -101,61 +101,54 @@ def subdomains_gather(url, short_domain):
         return ['No subdomains were found'], 0
 
 def sm_gather(url):
-    response = requests.get(url)
+    social_domains = {
+        'Facebook':       ('facebook.com',),
+        'Twitter':        ('twitter.com',),
+        'Instagram':      ('instagram.com',),
+        'Telegram':       ('t.me',),
+        'TikTok':         ('tiktok.com',),
+        'LinkedIn':       ('linkedin.com',),
+        'VKontakte':      ('vk.com',),
+        'YouTube':        ('youtube.com', 'youtu.be'),
+        'Odnoklassniki':  ('ok.ru',),
+        'WeChat':         ('wechat.com',),
+        'X.com':          ('x.com',),
+    }
+
+    categorized_links = {name: [] for name in social_domains.keys()}
+    parsed_input = urlparse(url)
+    host_input = (parsed_input.hostname or parsed_input.netloc or '').lower()
+
+    if host_input.startswith('www.'):
+        host_input = host_input[4:]
+
+    for name, domains in social_domains.items():
+        if any(host_input == d or host_input.endswith('.' + d) for d in domains):
+            categorized_links[name].append(unquote(url))
+            break
+
+    response = requests.get(url, timeout=10)
+    response.raise_for_status()
     soup = BeautifulSoup(response.text, 'html.parser')
-    links = [a['href'] for a in soup.find_all('a', href=True)]
-    categorized_links = {'Facebook': [], 'Twitter': [], 'Instagram': [],
-                         'Telegram': [], 'TikTok': [], 'LinkedIn': [],
-                         'VKontakte': [], 'YouTube': [], 'Odnoklassniki': [], 'WeChat': [], 'X.com': []}
+    for a in soup.find_all('a', href=True):
+        href = a['href']
+        parsed = urlparse(href)
+        host = parsed.hostname or parsed.netloc
+        if not host:
+            continue
 
-    for link in links:
-        parsed_url = urlparse(link)
-        hostname = parsed_url.hostname
-        if hostname and (hostname == 'facebook.com' or hostname.endswith('.facebook.com')):
-            categorized_links['Facebook'].append(urllib.parse.unquote(link))
-        elif hostname and (hostname == 'twitter.com' or hostname.endswith('.twitter.com')):
-            categorized_links['Twitter'].append(urllib.parse.unquote(link))
-        elif hostname and (hostname == 'instagram.com' or hostname.endswith('.instagram.com')):
-            categorized_links['Instagram'].append(urllib.parse.unquote(link))
-        elif hostname and (hostname == 't.me' or hostname.endswith('.t.me')):
-            categorized_links['Telegram'].append(urllib.parse.unquote(link))
-        elif hostname and (hostname == 'tiktok.com' or hostname.endswith('.tiktok.com')):
-            categorized_links['TikTok'].append(urllib.parse.unquote(link))
-        elif hostname and (hostname == 'linkedin.com' or hostname.endswith('.linkedin.com')):
-            categorized_links['LinkedIn'].append(urllib.parse.unquote(link))
-        elif hostname and (hostname == 'vk.com' or hostname.endswith('.vk.com')):
-            categorized_links['VKontakte'].append(urllib.parse.unquote(link))
-        elif hostname and (hostname == 'youtube.com' or hostname.endswith('.youtube.com')):
-            categorized_links['YouTube'].append(urllib.parse.unquote(link))
-        elif hostname and (hostname == 'wechat.com' or hostname.endswith('.wechat.com')):
-            categorized_links['WeChat'].append(urllib.parse.unquote(link))
-        elif hostname and (hostname == 'ok.ru' or hostname.endswith('.ok.ru')):
-            categorized_links['Odnoklassniki'].append(urllib.parse.unquote(link))
-        elif hostname and (hostname == 'x.com' or hostname.endswith('.x.com')):
-            categorized_links['X.com'].append(urllib.parse.unquote(link))
+        host = host.lower()
+        if host.startswith('www.'):
+            host = host[4:]
 
-    if not categorized_links['Odnoklassniki']:
-        categorized_links['Odnoklassniki'].append('Odnoklassniki links were not found')
-    if not categorized_links['WeChat']:
-        categorized_links['WeChat'].append('WeChat links were not found')
-    if not categorized_links['YouTube']:
-        categorized_links['YouTube'].append('YouTube links were not found')
-    if not categorized_links['LinkedIn']:
-        categorized_links['LinkedIn'].append('LinkedIn links were not found')
-    if not categorized_links['VKontakte']:
-        categorized_links['VKontakte'].append('VKontakte links were not found')
-    if not categorized_links['TikTok']:
-        categorized_links['TikTok'].append('TikTok links were not found')
-    if not categorized_links['Telegram']:
-        categorized_links['Telegram'].append('Telegram links were not found')
-    if not categorized_links['Instagram']:
-        categorized_links['Instagram'].append('Instagram links were not found')
-    if not categorized_links['Twitter']:
-        categorized_links['Twitter'].append('Twitter links were not found')
-    if not categorized_links['Facebook']:
-        categorized_links['Facebook'].append('Facebook links were not found')
-    if not categorized_links['X.com']:
-        categorized_links['X.com'].append('X.com links were not found')
+        for name, domains in social_domains.items():
+            if any(host == d or host.endswith('.' + d) for d in domains):
+                categorized_links[name].append(unquote(href))
+                break
+
+    for name, links in categorized_links.items():
+        if not links:
+            links.append(f'{name} links were not found')
 
     return categorized_links
 
