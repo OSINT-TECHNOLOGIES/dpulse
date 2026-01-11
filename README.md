@@ -7,8 +7,8 @@
 
 <br><br>
 
-[![Stable Version](https://img.shields.io/badge/v1.3.4-STABLE-success?style=for-the-badge)](https://github.com/OSINT-TECHNOLOGIES/dpulse/releases)
-[![Rolling Version](https://img.shields.io/badge/v1.4-DEV_BUILD-orange?style=for-the-badge)](https://github.com/OSINT-TECHNOLOGIES/dpulse/tree/rolling)
+[![Stable Version](https://img.shields.io/badge/v1.4-STABLE-success?style=for-the-badge)](https://github.com/OSINT-TECHNOLOGIES/dpulse/releases)
+[![Rolling Version](https://img.shields.io/badge/v1.4.1-DEV_BUILD-orange?style=for-the-badge)](https://github.com/OSINT-TECHNOLOGIES/dpulse/tree/rolling)
 [![Python](https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://hub.docker.com/r/osinttechnologies/dpulse)
 [![Documentation](https://img.shields.io/badge/Docs-ReadTheDocs-informational?style=for-the-badge&logo=readthedocs&logoColor=white)](https://dpulse.readthedocs.io)
