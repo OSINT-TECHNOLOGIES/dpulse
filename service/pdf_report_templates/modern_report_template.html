@@ -832,10 +832,18 @@
 
     .dataTable-info { color: var(--text-secondary); font-size: 13px; }
 
-    .dataTable-pagination { display: flex; gap: 4px; flex-wrap: wrap; }
-
-    .dataTable-pagination button,
-    .dataTable-pagination a {
+    .dataTable-pagination { display: flex; align-items: center; flex-wrap: wrap; }
+    .dataTable-pagination ul {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 4px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .dataTable-pagination ul li { display: flex; align-items: center; }
+    .dataTable-pagination li a {
       padding: 7px 12px;
       border: 1px solid var(--hr-color);
       background: var(--bg-secondary);
@@ -845,16 +853,15 @@
       text-decoration: none;
       font-size: 13px;
       font-weight: 500;
-      transition: background var(--transition-fast), color var(--transition-fast),
+      display: inline-flex;
+      align-items: center;
+      transition: background var(--transition-fast),
+                  color var(--transition-fast),
                   border-color var(--transition-fast);
     }
-
-    .dataTable-pagination button:hover,
-    .dataTable-pagination a:hover { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
-
-    .dataTable-pagination a.active { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
-    .dataTable-pagination button:disabled,
-    .dataTable-pagination a.disabled { opacity: .4; cursor: not-allowed; }
+    .dataTable-pagination li a:hover { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
+    .dataTable-pagination li.active a { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
+    .dataTable-pagination li.disabled a { opacity: .4; cursor: not-allowed; pointer-events: none; }
 
     .status-badge {
       display: inline-flex;
@@ -2779,15 +2786,14 @@ const subdomainManager = {
 
 const ipManager = {
   table: null,
-  ips:      [{% for ip in ip_addresses %}'{{ ip | e }}',{% endfor %}],
+  ips: [{% for ip in ip_addresses %}{{ ip | tojson }},{% endfor %}],
   selected: new Set(),
-  geoData:  {},
+  geoData: {},
 
   init() {
-    const container = document.getElementById('ipTableContainer');
-    if (!container) return;
-    if (!this.ips.length) {
-      container.innerHTML = '<p class="empty-state">🔍 No IP addresses found during scan</p>';
+    if (this.ips.length === 0) {
+      const el = document.getElementById('ipTableContainer');
+      if (el) el.innerHTML = '<p class="empty-state">🔍 No IP addresses found during scan</p>';
       return;
     }
     this.createTable();
@@ -2797,57 +2803,103 @@ const ipManager = {
     const rows = this.ips.map((ip, i) => this.createRow(ip, i)).join('');
     document.getElementById('ipTableContainer').innerHTML = `
       <table id="ipTable" class="dataTable-table">
-        <thead><tr>
-          <th style="width:50px;">
-            <input type="checkbox" class="table-checkbox" aria-label="Select all IPs"
-                   onchange="ipManager.toggleSelectAll(this.checked)">
-          </th>
-          <th>#</th><th>IP Address</th><th>Type</th><th>Location</th><th>ISP / ASN</th><th>Actions</th>
-        </tr></thead>
+        <thead>
+          <tr>
+            <th data-sortable="false" style="width:50px;">
+              <input type="checkbox" class="table-checkbox" aria-label="Select all IPs"
+                     onchange="ipManager.toggleSelectAll(this.checked)">
+            </th>
+            <th data-sortable="true">#</th>
+            <th data-sortable="true">IP Address</th>
+            <th data-sortable="true">Type</th>
+            <th data-sortable="false">Location</th>
+            <th data-sortable="false">ISP / ASN</th>
+            <th data-sortable="false">Actions</th>
+          </tr>
+        </thead>
         <tbody>${rows}</tbody>
       </table>`;
     if (window.simpleDatatables) {
-      try { this.table = new simpleDatatables.DataTable('#ipTable', { searchable: true, perPage: 25, labels: { placeholder: 'Search IPs…' } }); } catch {}
+      try {
+        this.table = new simpleDatatables.DataTable('#ipTable', {
+          searchable: true,
+          perPage: 25,
+          perPageSelect: [10, 25, 50, 100],
+          labels: { placeholder: 'Search IPs…' },
+          columns: [
+            { select: 0, sortable: false },
+            { select: 5, sortable: false },
+            { select: 6, sortable: false }
+          ]
+        });
+      } catch(e) { console.error('IP DataTable error:', e); }
     }
   },
 
   createRow(ip, i) {
-    const isV6  = ip.includes(':');
-    const badge = isV6
+    const isIPv6 = ip.includes(':');
+    const typeBadge = isIPv6
       ? '<span class="status-badge" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa);">IPv6</span>'
       : '<span class="status-badge" style="background:linear-gradient(135deg,#3b82f6,#60a5fa);">IPv4</span>';
     return `<tr id="ip-row-${i}">
-      <td><input type="checkbox" class="table-checkbox ip-checkbox" data-index="${i}"
-                 onchange="ipManager.toggleSelect(${i},this.checked)" aria-label="Select ${ip}"></td>
+      <td><input type="checkbox" class="table-checkbox ip-checkbox"
+                 data-index="${i}"
+                 onchange="ipManager.toggleSelect(${i}, this.checked)"
+                 aria-label="Select ${ip}"></td>
       <td><strong>${i + 1}</strong></td>
       <td><code class="code-cell">${ip}</code></td>
-      <td>${badge}</td>
+      <td>${typeBadge}</td>
       <td id="ip-geo-${i}"><span class="status-badge status-unknown">⏳ Unknown</span></td>
       <td id="ip-asn-${i}">—</td>
       <td><div class="table-actions">
-        <button class="action-btn" onclick="ipManager.geolocate(${i})"   title="Geolocate" aria-label="Geolocate ${ip}"><i class="fas fa-globe" aria-hidden="true"></i></button>
-        <button class="action-btn" onclick="copyToClipboard('${ip}')"    title="Copy"      aria-label="Copy ${ip}"><i class="fas fa-copy"  aria-hidden="true"></i></button>
-        <button class="action-btn" onclick="window.open('https://www.shodan.io/host/${ip}','_blank','noopener,noreferrer')"   title="Shodan"     aria-label="Shodan for ${ip}"><i class="fas fa-search"             aria-hidden="true"></i></button>
-        <button class="action-btn" onclick="window.open('https://www.virustotal.com/gui/ip-address/${ip}','_blank','noopener,noreferrer')" title="VirusTotal" aria-label="VirusTotal for ${ip}"><i class="fas fa-virus"               aria-hidden="true"></i></button>
-        <button class="action-btn" onclick="window.open('https://www.abuseipdb.com/check/${ip}','_blank','noopener,noreferrer')"          title="AbuseIPDB"  aria-label="AbuseIPDB for ${ip}"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></button>
+        <button class="action-btn" onclick="ipManager.geolocate(${i})"
+                aria-label="Geolocate ${ip}" title="Geolocate">
+          <i class="fas fa-globe" aria-hidden="true"></i></button>
+        <button class="action-btn" onclick="copyToClipboard('${ip}')"
+                aria-label="Copy ${ip}" title="Copy">
+          <i class="fas fa-copy" aria-hidden="true"></i></button>
+        <button class="action-btn"
+                onclick="window.open('https://www.shodan.io/host/${ip}','_blank','noopener,noreferrer')"
+                aria-label="Shodan for ${ip}" title="Shodan">
+          <i class="fas fa-search" aria-hidden="true"></i></button>
+        <button class="action-btn"
+                onclick="window.open('https://www.virustotal.com/gui/ip-address/${ip}','_blank','noopener,noreferrer')"
+                aria-label="VirusTotal for ${ip}" title="VirusTotal">
+          <i class="fas fa-virus" aria-hidden="true"></i></button>
+        <button class="action-btn"
+                onclick="window.open('https://www.abuseipdb.com/check/${ip}','_blank','noopener,noreferrer')"
+                aria-label="AbuseIPDB for ${ip}" title="AbuseIPDB">
+          <i class="fas fa-exclamation-triangle" aria-hidden="true"></i></button>
       </div></td>
     </tr>`;
   },
 
-  toggleSelect(i, checked) {
-    checked ? this.selected.add(i) : this.selected.delete(i);
-    document.getElementById(`ip-row-${i}`)?.classList.toggle('selected', checked);
+  toggleSelect(index, checked) {
+    checked ? this.selected.add(index) : this.selected.delete(index);
     this.updateSelectedCount();
+    document.getElementById(`ip-row-${index}`)?.classList.toggle('selected', checked);
   },
-  toggleSelectAll(checked) { document.querySelectorAll('.ip-checkbox').forEach(cb => { cb.checked = checked; this.toggleSelect(parseInt(cb.dataset.index), checked); }); },
-  selectAll()   { this.toggleSelectAll(true); },
-  deselectAll() { this.toggleSelectAll(false); },
-  updateSelectedCount() { const el = document.getElementById('ipSelectedCount'); if(el) el.textContent = `${this.selected.size} selected`; },
 
-  async geolocate(i) {
-    const ip    = this.ips[i];
-    const geoEl = document.getElementById(`ip-geo-${i}`);
-    const asnEl = document.getElementById(`ip-asn-${i}`);
+  toggleSelectAll(checked) {
+    document.querySelectorAll('.ip-checkbox').forEach(cb => {
+      const i = parseInt(cb.dataset.index);
+      cb.checked = checked;
+      this.toggleSelect(i, checked);
+    });
+  },
+
+  selectAll()   { this.toggleSelectAll(true);  },
+  deselectAll() { this.toggleSelectAll(false); },
+
+  updateSelectedCount() {
+    const el = document.getElementById('ipSelectedCount');
+    if (el) el.textContent = `${this.selected.size} selected`;
+  },
+
+  async geolocate(index) {
+    const ip    = this.ips[index];
+    const geoEl = document.getElementById(`ip-geo-${index}`);
+    const asnEl = document.getElementById(`ip-asn-${index}`);
     if (!geoEl) return;
     geoEl.innerHTML = '<span class="status-badge status-checking"><span class="loading-spinner"></span></span>';
     try {
@@ -2855,44 +2907,53 @@ const ipManager = {
       const data = await res.json();
       if (data.country_name) {
         geoEl.innerHTML = `<span title="${data.city || ''}, ${data.country_name}">🌍 ${data.country_code}</span>`;
-        if (asnEl) asnEl.innerHTML = `<code class="code-cell" style="font-size:11px;">${(data.org || '—').substring(0,30)}</code>`;
-        this.geoData[i] = data;
-      } else throw new Error('No country');
+        if (asnEl) asnEl.innerHTML = `<span class="code-cell" style="font-size:11px;">${(data.org||'N/A').substring(0,30)}</span>`;
+        this.geoData[index] = data;
+      } else throw new Error('No data');
     } catch {
-      if (geoEl) geoEl.innerHTML = `<a href="https://ipinfo.io/${ip}" target="_blank" rel="noopener noreferrer" class="status-badge status-unknown" style="cursor:pointer;">🔗 Lookup</a>`;
+      if (geoEl) geoEl.innerHTML = `<a href="https://ipinfo.io/${ip}" target="_blank" rel="noopener noreferrer"
+          class="status-badge status-unknown" style="cursor:pointer;">🔗 Lookup</a>`;
     }
   },
 
   geolocateSelected() {
-    if (!this.selected.size) { showToast('Please select at least one IP', 'warning'); return; }
+    if (this.selected.size === 0) { showToast('Please select at least one IP', 'warning'); return; }
     let i = 0;
-    this.selected.forEach(idx => { setTimeout(() => this.geolocate(idx), i++ * 800); });
+    this.selected.forEach(index => { setTimeout(() => this.geolocate(index), i * 700); i++; });
   },
 
   exportSelected() {
-    if (!this.selected.size) { showToast('Please select at least one IP', 'warning'); return; }
+    if (this.selected.size === 0) { showToast('Please select at least one IP', 'warning'); return; }
     const rows = [];
-    this.selected.forEach(i => {
-      const g = this.geoData[i] || {};
-      rows.push(`${this.ips[i]},${g.country_name||'Unknown'},${g.city||'Unknown'},"${g.org||'Unknown'}"`);
+    this.selected.forEach(index => {
+      const geo = this.geoData[index] || {};
+      rows.push({ ip: this.ips[index], country: geo.country_name||'Unknown', city: geo.city||'Unknown', isp: geo.org||'Unknown' });
     });
-    downloadFile('IP,Country,City,ISP\n' + rows.join('\n'), `ip_addresses_${_today()}.csv`, 'text/csv');
+    const csv = 'IP,Country,City,ISP\n' + rows.map(r => `${r.ip},${r.country},${r.city},"${r.isp}"`).join('\n');
+    downloadFile(csv, `ip_addresses_${_today()}.csv`, 'text/csv');
     showToast(`Exported ${this.selected.size} IPs`, 'success');
   },
 
   performBulkAction(action) {
-    const sel = document.getElementById('ipBulkAction');
     if (!action) return;
-    if (!this.selected.size) { showToast('Please select at least one IP','warning'); if(sel) sel.value=''; return; }
-    const map = {
-      shodan:     ip => `https://www.shodan.io/host/${ip}`,
-      virustotal: ip => `https://www.virustotal.com/gui/ip-address/${ip}`,
-      abuseipdb:  ip => `https://www.abuseipdb.com/check/${ip}`,
-      reversedns: ip => `https://mxtoolbox.com/SuperTool.aspx?action=ptr%3a${ip}`,
-      whois:      ip => `https://whois.domaintools.com/${ip}`
-    };
-    if (map[action]) this.selected.forEach(i => window.open(map[action](this.ips[i]), '_blank', 'noopener,noreferrer'));
-    if (sel) sel.value = '';
+    if (this.selected.size === 0) {
+      showToast('Please select at least one IP', 'warning');
+      const el = document.getElementById('ipBulkAction');
+      if (el) el.value = '';
+      return;
+    }
+    this.selected.forEach(index => {
+      const ip = this.ips[index];
+      switch (action) {
+        case 'shodan':     window.open(`https://www.shodan.io/host/${ip}`,              '_blank','noopener,noreferrer'); break;
+        case 'virustotal': window.open(`https://www.virustotal.com/gui/ip-address/${ip}`,'_blank','noopener,noreferrer'); break;
+        case 'abuseipdb':  window.open(`https://www.abuseipdb.com/check/${ip}`,          '_blank','noopener,noreferrer'); break;
+        case 'reversedns': window.open(`https://mxtoolbox.com/SuperTool.aspx?action=ptr%3a${ip}`,'_blank','noopener,noreferrer'); break;
+        case 'whois':      window.open(`https://whois.domaintools.com/${ip}`,            '_blank','noopener,noreferrer'); break;
+      }
+    });
+    const el = document.getElementById('ipBulkAction');
+    if (el) el.value = '';
   }
 };
 
