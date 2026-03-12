@@ -832,36 +832,55 @@
 
     .dataTable-info { color: var(--text-secondary); font-size: 13px; }
 
-    .dataTable-pagination { display: flex; align-items: center; flex-wrap: wrap; }
-    .dataTable-pagination ul {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: 4px;
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .dataTable-pagination ul li { display: flex; align-items: center; }
-    .dataTable-pagination li a {
-      padding: 7px 12px;
-      border: 1px solid var(--hr-color);
-      background: var(--bg-secondary);
-      color: var(--text-color);
-      cursor: pointer;
-      border-radius: var(--border-radius-sm);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      transition: background var(--transition-fast),
-                  color var(--transition-fast),
-                  border-color var(--transition-fast);
-    }
-    .dataTable-pagination li a:hover { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
-    .dataTable-pagination li.active a { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
-    .dataTable-pagination li.disabled a { opacity: .4; cursor: not-allowed; pointer-events: none; }
+	.dataTable-pagination {
+	  display: flex;
+	  align-items: center;
+	  flex-wrap: wrap;
+	}
+
+	.dataTable-pagination ul {
+	  display: flex !important;
+	  flex-direction: row !important;
+	  flex-wrap: wrap;
+	  gap: 4px;
+	  list-style: none;
+	  padding: 0;
+	  margin: 0;
+	}
+
+	.dataTable-pagination ul li {
+	  display: inline-flex !important;
+	  align-items: center;
+	  padding-left: 0 !important;   
+	  margin: 0 !important;          
+	  position: static !important;   
+	}
+
+	.dataTable-pagination li::before {
+	  display: none !important;     
+	}
+
+	.dataTable-pagination li a {
+	  padding: 7px 12px;
+	  border: 1px solid var(--hr-color);
+	  background: var(--bg-secondary);
+	  color: var(--text-color);
+	  cursor: pointer;
+	  border-radius: var(--border-radius-sm);
+	  text-decoration: none;
+	  font-size: 13px;
+	  font-weight: 500;
+	  display: inline-flex;
+	  align-items: center;
+	  white-space: nowrap;
+	  transition: background var(--transition-fast),
+				  color var(--transition-fast),
+				  border-color var(--transition-fast);
+	}
+
+	.dataTable-pagination li a:hover    { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
+	.dataTable-pagination li.active a   { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
+	.dataTable-pagination li.disabled a { opacity: .4; cursor: not-allowed; pointer-events: none; }
 
     .status-badge {
       display: inline-flex;
@@ -1405,6 +1424,68 @@
 
       h3 { font-size: 17px; }
     }
+
+	nav.datatable-pagination ul.datatable-pagination-list{
+	  display: flex !important;
+	  flex-direction: row !important;
+	  flex-wrap: wrap !important;
+	  gap: 6px !important;
+
+	  margin: 0 !important;
+	  padding: 0 !important;
+	  list-style: none !important;
+	}
+
+	nav.datatable-pagination li.datatable-pagination-list-item{
+	  display: inline-flex !important;
+	  align-items: center !important;
+
+	  margin: 0 !important;          
+	  padding-left: 0 !important;    
+	  position: static !important;   
+	}
+
+	nav.datatable-pagination li.datatable-pagination-list-item::before{
+	  content: none !important;      
+	  display: none !important;
+	}
+
+	nav.datatable-pagination button.datatable-pagination-list-item-link{
+	  display: inline-flex !important;
+	  align-items: center !important;
+	  justify-content: center !important;
+
+	  width: auto !important;
+	  margin: 0 !important;
+
+	  padding: 7px 12px !important;
+	  border: 1px solid var(--hr-color) !important;
+	  background: var(--bg-secondary) !important;
+	  color: var(--text-color) !important;
+	  cursor: pointer !important;
+	  border-radius: var(--border-radius-sm) !important;
+	  font-size: 13px !important;
+	  font-weight: 500 !important;
+	  white-space: nowrap !important;
+	}
+
+	nav.datatable-pagination li.datatable-active button.datatable-pagination-list-item-link{
+	  background: var(--accent-color) !important;
+	  color: #fff !important;
+	  border-color: var(--accent-color) !important;
+	}
+
+	nav.datatable-pagination button.datatable-pagination-list-item-link:hover{
+	  background: var(--accent-color) !important;
+	  color: #fff !important;
+	  border-color: var(--accent-color) !important;
+	}
+
+	nav.datatable-pagination li.datatable-disabled button.datatable-pagination-list-item-link{
+	  opacity: .4 !important;
+	  cursor: not-allowed !important;
+	  pointer-events: none !important;
+	}
   </style>
 </head>
 <body id="top">
@@ -1846,7 +1927,7 @@
         </div>
       </div>
     </div>
-  </section><!-- /#whois-info -->
+  </section>
   <div class="back-to-top"><a href="#top"><i class="fas fa-arrow-up" aria-hidden="true"></i> Back to top</a></div>
   <hr>
 
