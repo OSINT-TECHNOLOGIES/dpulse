@@ -15,6 +15,11 @@ from api_virustotal import virustotal_html_prep
 from api_securitytrails import securitytrails_html_prep
 from config_processing import read_config
 
+def ensure_list(val):
+    if isinstance(val, list): return val
+    if isinstance(val, str) and val.strip(): return [val.strip()]
+    return []
+
 def generate_report(data, output_file, template_path):
     env = Environment(loader=FileSystemLoader('.'))
     template = env.get_template(template_path)
@@ -122,6 +127,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         else:
             add_dsi = 'Dorking mode was not enabled so there is no results to see'
 
+        all_ips = ensure_list(subdomain_ip) + ensure_list(ip)
         robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
 
         context = {'sh_domain': short_domain, 'full_url': url, 'ip_address': ip, 'registrar': res['registrar'],
@@ -138,7 +144,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
                        'sitemap_xml_result': sitemap_xml_result,
                        'sitemap_links': sitemap_links_status, 'web_servers': web_servers, 'cms': cms,
                        'programming_languages': programming_languages, 'web_frameworks': web_frameworks,
-                       'analytics': analytics,
+                       'analytics': analytics, 'ip_addresses': all_ips,
                        'javascript_frameworks': javascript_frameworks,
                        'ctime': report_ctime, 'a_tsf': subdomains_amount, 'mx_records': mx_records, 'issuer': issuer,
                        'subject': subject, 'notBefore': notBefore, 'notAfter': notAfter,

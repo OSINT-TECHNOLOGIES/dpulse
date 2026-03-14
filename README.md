@@ -46,7 +46,7 @@ The fastest way to run DPULSE without worrying about dependencies.
 
 ```bash
 # 1. Pull the image
-docker pull osinttechnologies/dpulse:latest
+docker pull docker.io/osinttechnologies/dpulse:latest
 
 # 2. Run DPULSE (Linux/macOS)
 docker run --rm -it -v "$PWD":/data -w /data osinttechnologies/dpulse:latest
