@@ -54,6 +54,15 @@ docker run --rm -it -v "$PWD":/data -w /data osinttechnologies/dpulse:latest
 # 2. Run DPULSE (Windows PowerShell)
 docker run --rm -it -v "${PWD}:/data" -w /data osinttechnologies/dpulse:latest
 ```
+In case you are using Podman, which is Docker alternative in some OS:
+
+```bash
+# 1. Pull the image
+podman pull docker.io/osinttechnologies/dpulse:latest
+
+# 2. Run DPULSE (Linux/macOS)
+podman run --rm -it -v "$PWD":/data:Z -w /data osinttechnologies/dpulse:latest
+```
 
 ### Option 2: Local installation using uv
 Recommended local installation method for Windows, Linux, and macOS.
