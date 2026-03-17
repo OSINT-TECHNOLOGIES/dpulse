@@ -41,8 +41,8 @@ DPULSE automates the boring stuff in domain reconnaissance. It compiles data int
 
 ## ⚡ Quick Start
 
-### Option 1: Docker (Recommended)
-The fastest way to run DPULSE without worrying about dependencies.
+### Option 1: Docker Container (Recommended)
+The fastest way to run DPULSE without worrying about dependencies and local installations. Everything is isolated in Docker container!
 
 ```bash
 # 1. Pull the image
@@ -55,29 +55,32 @@ docker run --rm -it -v "$PWD":/data -w /data osinttechnologies/dpulse:latest
 docker run --rm -it -v "${PWD}:/data" -w /data osinttechnologies/dpulse:latest
 ```
 
-### Option 2: Source Code (Poetry)
-For developers or those who prefer a local environment.
+### Option 2: Local installation using uv
+Recommended local installation method for Windows, Linux, and macOS.
 
 ```bash
+# 1. Clone the repository
 git clone https://github.com/OSINT-TECHNOLOGIES/dpulse
 cd dpulse
-poetry install
-poetry run python dpulse.py
+
+# 2.1. Run Linux/macOS installer
+chmod +x install.sh
+./install.sh
+
+# 2.2. Run Windows installer
+powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-<details>
-<summary><b>Click to see Legacy Installation (pip)</b></summary>
-<br>
-If you don't use Poetry, you can use standard pip (might have conflicts):
+These installers will automatically:
+- install `uv` if it is missing
+- install Python 3.11 which is strongly required for running DPULSE
+- create a virtual environment
+- install all required dependencies
 
+After this procedure you can easily start DPULSE:
 ```bash
-git clone https://github.com/OSINT-TECHNOLOGIES/dpulse
-cd dpulse
-pip install -r requirements.txt
-python dpulse.py
+uv run dpulse
 ```
-</details>
-
 ---
 
 ## 🖥️ Interface & Reports
