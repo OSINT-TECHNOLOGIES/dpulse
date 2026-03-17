@@ -43,7 +43,7 @@ Homepage = "https://github.com/OSINT-TECHNOLOGIES/dpulse"
 Repository = "https://github.com/OSINT-TECHNOLOGIES/dpulse"
 
 [project.scripts]
-dpulse = "dpulse:run"
+dpulse = "dpulse:main"
 
 [dependency-groups]
 dev = [
