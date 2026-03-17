@@ -445,6 +445,9 @@ def run():
             print(Fore.RED + "\nDPULSE process was ended using keyboard" + Style.RESET_ALL)
             sys.exit()
 
-if __name__ == "__main__":
+def main():
     bootstrap()
-    run()
+    run() 
+
+if __name__ == "__main__":
+    main()
