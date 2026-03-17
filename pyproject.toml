@@ -43,12 +43,23 @@ Homepage = "https://github.com/OSINT-TECHNOLOGIES/dpulse"
 Repository = "https://github.com/OSINT-TECHNOLOGIES/dpulse"
 
 [project.scripts]
-dpulse = "dpulse.dpulse:run"
+dpulse = "dpulse:run"
 
 [dependency-groups]
 dev = [
   "deptry>=0.23.0,<0.24.0"
 ]
 
-[tool.hatch.build.targets.wheel]
-packages = ["dpulse"]
+[tool.hatch.build]
+include = [
+  "__init__.py",
+  "dpulse.py",
+  "apis/**/*",
+  "datagather_modules/**/*",
+  "dorking/**/*",
+  "pagesearch/**/*",
+  "reporting_modules/**/*",
+  "service/**/*",
+  "snapshotting/**/*",
+  "README.md"
+]
