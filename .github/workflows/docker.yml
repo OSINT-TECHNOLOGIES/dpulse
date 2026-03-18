@@ -1,0 +1,71 @@
+name: Docker Daily Check All Branches
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  discover-branches:
+    runs-on: ubuntu-latest
+    outputs:
+      branches: ${{ steps.branches.outputs.branches }}
+    steps:
+      - name: Get branch list
+        id: branches
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branches = await github.paginate(
+              github.rest.repos.listBranches,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                per_page: 100
+              }
+            );
+
+            const names = branches.map(branch => branch.name);
+            core.setOutput("branches", JSON.stringify(names));
+
+  docker-build-and-test:
+    needs: discover-branches
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        branch: ${{ fromJson(needs.discover-branches.outputs.branches) }}
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build multi-platform Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          platforms: linux/amd64,linux/arm64
+          tags: dpulse:${{ matrix.branch }}-daily
+
+      - name: Build local test image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: dpulse:${{ matrix.branch }}-local
+
+      - name: Smoke test Python
+        run: docker run --rm dpulse:${{ matrix.branch }}-local python --version
+
+      - name: Smoke test project import
+        run: docker run --rm dpulse:${{ matrix.branch }}-local python -c "import dpulse; print('dpulse import ok')"
