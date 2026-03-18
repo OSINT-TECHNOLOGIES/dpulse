@@ -14,10 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
-COPY pyproject.toml uv.lock* ./
+COPY pyproject.toml README.md uv.lock* ./
+COPY . .
 
 RUN uv sync --no-dev --frozen
-
-COPY . .
 
 ENTRYPOINT ["uv", "run", "dpulse"]
