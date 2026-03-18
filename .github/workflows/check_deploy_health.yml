@@ -93,9 +93,6 @@ jobs:
           load: true
           tags: dpulse:${{ matrix.branch }}-local
 
-      - name: Smoke test Python inside Docker
-        run: docker run --rm dpulse:${{ matrix.branch }}-local python --version
-
       - name: Smoke test project import inside Docker
         run: docker run --rm dpulse:${{ matrix.branch }}-local python -c "import dpulse; print('dpulse import ok')"
 
