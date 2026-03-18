@@ -228,7 +228,7 @@ def domains_reverse_research(subdomains, report_file_type):
             elif hostname and (hostname == 'ok.ru' or hostname.endswith('.ok.ru')):
                 sd_socials['Odnoklassniki'].append(urllib.parse.unquote(link))
             elif hostname and (hostname == 'x.com' or hostname.endswith('.x.com')):
-                sd_socials['Odnoklassniki'].append(urllib.parse.unquote(link))
+                sd_socials['X.com'].append(urllib.parse.unquote(link))
 
     sd_socials = {k: list(set(v)) for k, v in sd_socials.items()}
 
@@ -239,5 +239,3 @@ def domains_reverse_research(subdomains, report_file_type):
 
     if report_file_type == 'html':
         return subdomain_mails, sd_socials, subdomain_ip
-    elif report_file_type == 'xlsx':
-        return subdomain_urls, subdomain_mails, subdomain_ip, sd_socials
