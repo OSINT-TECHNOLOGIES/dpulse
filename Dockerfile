@@ -1,23 +1,23 @@
-FROM python:3.11-slim
+FROM python:3.11-slim AS base
 
 ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
-    POETRY_NO_INTERACTION=1 \
-    POETRY_VIRTUALENVS_CREATE=false \
-    POETRY_VERSION=1.8.3
+    UV_SYSTEM_PYTHON=1 \
+    PATH="/root/.local/bin:${PATH}"
 
 WORKDIR /app
 
-ENV PYTHONPATH=/app:/app/service:/app/apis:/app/datagather_modules:/app/dorking:/app/pagesearch:/app/reporting_modules:/app/snapshotting:$PYTHONPATH
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
 
-RUN pip install "poetry==${POETRY_VERSION}"
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
-COPY pyproject.toml poetry.lock* ./
-RUN poetry install --no-root
+COPY pyproject.toml uv.lock* ./
+
+RUN uv sync --no-dev --frozen
 
 COPY . .
 
-COPY docker-entrypoint.sh /app/docker-entrypoint.sh
-RUN chmod +x /app/docker-entrypoint.sh
-
-ENTRYPOINT ["/app/docker-entrypoint.sh"]
+ENTRYPOINT ["uv", "run", "dpulse"]
