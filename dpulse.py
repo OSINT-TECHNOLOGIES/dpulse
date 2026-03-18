@@ -13,23 +13,27 @@ from typing import Callable, Dict, List, Optional
 from colorama import Fore, Style
 from rich.console import Console
 
-from apis import api_hudsonrock, api_securitytrails, api_virustotal
-from datagather_modules.data_assembler import DataProcessing
-from dorking.db_creator import get_columns_amount, manage_dorks
-from dorking.dorking_handler import dorks_files_check
-from reporting_modules import html_report_creation
-from service import cli_init, db_processing as db
-from service.config_processing import (
-    check_cfg_presence,
-    create_config,
-    print_and_return_config,
-    read_config,
-)
-from service.logs_processing import logging
-from service.misc import domain_precheck, time_processing
+BASE_DIR = Path(__file__).resolve().parent
+
+sys.path.append(str(BASE_DIR / "datagather_modules"))
+sys.path.append(str(BASE_DIR / "service"))
+sys.path.append(str(BASE_DIR / "reporting_modules"))
+sys.path.append(str(BASE_DIR / "dorking"))
+sys.path.append(str(BASE_DIR / "apis"))
+sys.path.append(str(BASE_DIR / "snapshotting"))
+sys.path.append(str(BASE_DIR / "pagesearch"))
+
+from config_processing import create_config, check_cfg_presence, read_config, print_and_return_config
+import db_processing as db
+import cli_init
+from dorking_handler import dorks_files_check
+from data_assembler import DataProcessing
+from logs_processing import logging
+from db_creator import get_columns_amount, manage_dorks
+from misc import domain_precheck, time_processing
+import html_report_creation
 
 console = Console()
-BASE_DIR = Path(__file__).resolve().parent
 CONFIG_PATH = BASE_DIR / "service" / "config.ini"
 DORKING_DIR = BASE_DIR / "dorking"
 APIS_DIR = BASE_DIR / "apis"
