@@ -1,17 +1,48 @@
-# Automatic Google Dorking scan mode
+# Automatic Google Dorking Scan Mode
 
-Automatic Google Dorking scan is an extended domain research function with prepared Google Dorking databases for different purposes. 
+Automatic Google Dorking scan is an extended domain research function that uses prepared query databases to discover hidden resources, sensitive files, and exposed interfaces on the target domain.
 
-## Prepared Dorking databases description
+> **Note:** Dorking scan is optional — you can enable or disable it during pre-scan preparation steps.
 
-At the moment DPULSE offers the following prepared databases for automatic Google Dorking:
+---
 
-1. IoT dorking
-2. Files dorking
-3. Admin panels dorking
-4. Web elements dorking
+## How Dorking Scan Works
 
-IoT dorking table contains following 20 dorks:
+1. Takes the target domain
+2. Applies pre-built dork queries from selected database
+3. Searches Google for matches
+4. Returns discovered URLs and resources
+
+---
+
+## Prepared Dorking Databases
+
+DPULSE-CLI includes four specialized dorking databases:
+
+| Database | Dorks Count | Purpose |
+|----------|-------------|---------|
+| **IoT Dorking** | 20 | Find IoT devices, cameras, sensors |
+| **Files Dorking** | 30 | Discover documents and file types |
+| **Admin Panels Dorking** | 72 | Locate admin interfaces and login pages |
+| **Web Elements Dorking** | 25 | Find directories, configs, sensitive paths |
+
+---
+
+### 🔌 IoT Dorking (20 dorks)
+
+Discovers IoT devices, cameras, and network services:
+
+| Category | Examples |
+|----------|----------|
+| **Common IoT ports** | `:8080`, `:1883`, `:8883`, `:554`, `:81` |
+| **Service ports** | `:5000`, `:9000`, `:10000` |
+| **Device keywords** | `device`, `camera`, `sensor`, `firmware` |
+| **Interface keywords** | `control`, `status`, `monitor`, `stream` |
+| **Other** | `debug`, `service`, `api`, `video` |
+
+<details>
+<summary>View all IoT dorks</summary>
+
 ```
 inurl:":8080" site:{}
 inurl:":1883" site:{}
@@ -35,7 +66,26 @@ inurl:api site:{}
 inurl:firmware site:{}
 ```
 
-Files dorking table contains following 30 dorks:
+</details>
+
+---
+
+### 📁 Files Dorking (30 dorks)
+
+Discovers various file types indexed by search engines:
+
+| Category | File Types |
+|----------|------------|
+| **Documents** | `.pdf`, `.doc`, `.docx`, `.xlsx`, `.xls`, `.ppt`, `.pptx` |
+| **Data files** | `.txt`, `.csv`, `.xml`, `.json` |
+| **Web files** | `.html`, `.php`, `.asp`, `.aspx`, `.js`, `.css` |
+| **Media** | `.jpg`, `.jpeg`, `.png`, `.gif`, `.mp3`, `.mp4`, `.avi` |
+| **Archives** | `.zip`, `.rar` |
+| **Sensitive** | `.sql`, `.db`, `.conf`, `.ini` |
+
+<details>
+<summary>View all Files dorks</summary>
+
 ```
 filetype:pdf site:{}
 filetype:doc site:{}
@@ -69,7 +119,46 @@ filetype:conf site:{}
 filetype:ini site:{}
 ```
 
-Admin panels dorking table contains following 72 dorks:
+</details>
+
+---
+
+### 🔐 Admin Panels Dorking (72 dorks)
+
+Discovers admin interfaces for various CMS and frameworks:
+
+| Platform | Dorks Count |
+|----------|-------------|
+| WordPress | 4 |
+| Joomla | 3 |
+| Drupal | 3 |
+| phpMyAdmin | 3 |
+| Magento | 3 |
+| vBulletin | 3 |
+| osCommerce | 2 |
+| PrestaShop | 3 |
+| OpenCart | 2 |
+| Zen Cart | 2 |
+| MediaWiki | 2 |
+| Moodle | 2 |
+| Concrete5 | 2 |
+| TYPO3 | 2 |
+| Plone | 2 |
+| Django | 1 |
+| Ruby on Rails | 2 |
+| Craft CMS | 2 |
+| ExpressionEngine | 2 |
+| Kentico | 2 |
+| Umbraco | 2 |
+| Sitecore | 2 |
+| DotNetNuke | 2 |
+| SharePoint | 2 |
+| Plesk | 2 |
+| Generic admin | 15 |
+
+<details>
+<summary>View all Admin Panels dorks</summary>
+
 ```
 site:{} intitle:"WordPress Login"
 site:{} inurl:/wp-admin/
@@ -145,7 +234,28 @@ site:{} "administrator login" +password
 site:{} inurl:/plesk-login/
 ```
 
-Web elements dorking table contains following 25 dorks:
+</details>
+
+---
+
+### 🌐 Web Elements Dorking (25 dorks)
+
+Discovers sensitive directories and exposed paths:
+
+| Category | Keywords |
+|----------|----------|
+| **Directories** | `index of`, `backup`, `old`, `temp` |
+| **Upload/Download** | `upload`, `download` |
+| **Configuration** | `config`, `setup`, `install` |
+| **Data storage** | `database`, `log` |
+| **Debug & API** | `debug`, `api` |
+| **Sensitive** | `secret`, `private`, `secure`, `password` |
+| **Authentication** | `auth`, `token`, `session` |
+| **Admin** | `admin`, `login`, `dashboard`, `panel` |
+
+<details>
+<summary>View all Web Elements dorks</summary>
+
 ```
 site:{} intext:"index of"
 site:{} inurl:admin
@@ -174,25 +284,66 @@ site:{} inurl:session
 site:{} inurl:panel
 ```
 
-## Creating custom Dorking database
+</details>
 
-DPULSE allows you to create your own custom Google Dorking database. You can do it using DPULSE CLI by selecting menus as shown below:
+---
 
-![dorking_start](https://github.com/user-attachments/assets/fc8fe1ba-1845-46d1-a9b9-d09d3dc03ce6)
+## Creating Custom Dorking Database
 
-After you select this menu point you will be welcomed with custom Dorking DB generator. It's very simple to use. First you should enter your new custom Dorking DB name without any extensions. Then you'll be prompted to enter id of your first dork (first id in custom DB is always 1, and every next dork gives +1 to id) and dork itself. There's a rule DPULSE requires from you when inputting dorks: when it comes to define domain in dork, put {} instead of it so the program code will replace these brackets with actual domain you'll enter lately.
+DPULSE-CLI allows you to create your own custom Google Dorking database for specialized research needs.
 
-Example of custom Dorking DB generator interaction is shown below:
+---
 
-![customdork](https://github.com/user-attachments/assets/8f3e8ca5-feec-4bf5-add8-048f54931b67)
+### Step 1: Open Custom DB Generator
 
-In result, new .db file will appear in dorking folder, which can be selected later to use in scan:
+Navigate through DPULSE-CLI menus to access the custom Dorking DB generator:
 
-![dorking_customdbresult](https://github.com/user-attachments/assets/0cd4facc-215b-4e56-ab56-aa23cb5136db)
+![Dorking Menu](https://github.com/user-attachments/assets/fc8fe1ba-1845-46d1-a9b9-d09d3dc03ce6)
 
-And how it looks inside:
+---
 
-![look_inside](https://github.com/user-attachments/assets/023467c2-008b-451f-8e14-88b7e54a8c3c)
+### Step 2: Create Your Database
 
+Follow the interactive prompts:
 
+| Prompt | Description |
+|--------|-------------|
+| **Database name** | Enter name without extension (e.g., `my_custom_dorks`) |
+| **Dork ID** | Starts at 1, auto-increments |
+| **Dork query** | Your custom dork query |
 
+> **Important:** Use `{}` as a placeholder for the domain. DPULSE-CLI will replace it with the actual target domain during scan.
+
+**Example dork format:**
+```
+site:{} inurl:secret-endpoint
+```
+
+![Custom Dork Generator](https://github.com/user-attachments/assets/8f3e8ca5-feec-4bf5-add8-048f54931b67)
+
+---
+
+### Step 3: Use Your Database
+
+After creation, your new `.db` file appears in the `dorking` folder and can be selected for scans:
+
+![Custom DB Result](https://github.com/user-attachments/assets/0cd4facc-215b-4e56-ab56-aa23cb5136db)
+
+**Database structure preview:**
+
+![Database Inside](https://github.com/user-attachments/assets/023467c2-008b-451f-8e14-88b7e54a8c3c)
+
+---
+
+## When to Use Dorking Scan
+
+| Scenario | Recommendation |
+|----------|----------------|
+| Looking for exposed files | ✅ Use Files Dorking |
+| Finding admin panels | ✅ Use Admin Panels Dorking |
+| IoT device discovery | ✅ Use IoT Dorking |
+| General reconnaissance | ✅ Use Web Elements Dorking |
+| Quick scan | ❌ Skip Dorking (adds time) |
+| Stealth required | ❌ Skip Dorking (leaves traces in Google) |
+
+> **Warning:** Google may rate-limit or block requests if too many dork queries are executed quickly. DPULSE includes delays to minimize this risk.
