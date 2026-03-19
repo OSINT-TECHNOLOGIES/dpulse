@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main, rolling]
+  pull_request:
+    branches: [main, rolling]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install Python 3.11
+        run: uv python install 3.11
+
+      - name: Sync dependencies (including dev)
+        run: uv sync --group dev
+
+      - name: Run deptry
+        run: uv run --group dev deptry . --ignore-notebooks
+
+      - name: Compile all Python files
+        run: uv run python -m compileall .
+
+      - name: "Sanity check: dpulse import"
+        run: uv run python -c "import dpulse; print('dpulse import ok')"

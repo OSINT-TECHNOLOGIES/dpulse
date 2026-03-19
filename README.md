@@ -7,9 +7,9 @@
 
 <br><br>
 
-[![Stable Version](https://img.shields.io/badge/v1.4.1-STABLE-success?style=for-the-badge)](https://github.com/OSINT-TECHNOLOGIES/dpulse/releases)
-[![Rolling Version](https://img.shields.io/badge/v1.4.2-DEV_BUILD-orange?style=for-the-badge)](https://github.com/OSINT-TECHNOLOGIES/dpulse/tree/rolling)
-[![Python](https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Stable Version](https://img.shields.io/badge/v1.5-STABLE-success?style=for-the-badge)](https://github.com/OSINT-TECHNOLOGIES/dpulse/releases)
+[![Rolling Version](https://img.shields.io/badge/v2.0-DEV_BUILD-orange?style=for-the-badge)](https://github.com/OSINT-TECHNOLOGIES/dpulse/tree/rolling)
+[![Python](https://img.shields.io/badge/Python-3.11-blue?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://hub.docker.com/r/osinttechnologies/dpulse)
 [![Documentation](https://img.shields.io/badge/Docs-ReadTheDocs-informational?style=for-the-badge&logo=readthedocs&logoColor=white)](https://dpulse.readthedocs.io)
 
@@ -41,8 +41,8 @@ DPULSE automates the boring stuff in domain reconnaissance. It compiles data int
 
 ## ⚡ Quick Start
 
-### Option 1: Docker (Recommended)
-The fastest way to run DPULSE without worrying about dependencies.
+### Option 1: Docker Container (Recommended)
+The fastest way to run DPULSE without worrying about dependencies and local installations. Everything is isolated in Docker container!
 
 ```bash
 # 1. Pull the image
@@ -54,30 +54,42 @@ docker run --rm -it -v "$PWD":/data -w /data osinttechnologies/dpulse:latest
 # 2. Run DPULSE (Windows PowerShell)
 docker run --rm -it -v "${PWD}:/data" -w /data osinttechnologies/dpulse:latest
 ```
-
-### Option 2: Source Code (Poetry)
-For developers or those who prefer a local environment.
+In case you are using Podman, which is Docker alternative in some OS:
 
 ```bash
-git clone https://github.com/OSINT-TECHNOLOGIES/dpulse
-cd dpulse
-poetry install
-poetry run python dpulse.py
+# 1. Pull the image
+podman pull docker.io/osinttechnologies/dpulse:latest
+
+# 2. Run DPULSE (Linux/macOS)
+podman run --rm -it -v "$PWD":/data:Z -w /data osinttechnologies/dpulse:latest
 ```
 
-<details>
-<summary><b>Click to see Legacy Installation (pip)</b></summary>
-<br>
-If you don't use Poetry, you can use standard pip (might have conflicts):
+### Option 2: Local installation using uv
+Recommended local installation method for Windows, Linux, and macOS.
 
 ```bash
+# 1. Clone the repository
 git clone https://github.com/OSINT-TECHNOLOGIES/dpulse
 cd dpulse
-pip install -r requirements.txt
-python dpulse.py
-```
-</details>
 
+# 2.1. Run Linux/macOS installer
+chmod +x install.sh
+./install.sh
+
+# 2.2. Run Windows installer
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+These installers will automatically:
+- install `uv` if it is missing
+- install Python 3.11 which is strongly required for running DPULSE
+- create a virtual environment
+- install all required dependencies
+
+After this procedure you can easily start DPULSE:
+```bash
+uv run dpulse
+```
 ---
 
 ## 🖥️ Interface & Reports

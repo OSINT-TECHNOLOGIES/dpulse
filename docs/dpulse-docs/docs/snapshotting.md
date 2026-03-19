@@ -1,17 +1,166 @@
-# Snapshotting and screenshotting
+# Snapshotting and Screenshotting
 
-A website snapshot is a representation of a website at a specific point in time. Unlike a visual representation, a snapshot encapsulates the user interface elements, allowing you to open and navigate the website online or offline at a later date. Screenshots, on the other hand, lack this capacity for interactive navigation and are limited to visual inspection alone. In other words, it’s a capture of a device's point of view at a specific moment. DPULSE supports both of these methods to provide full capability for capturing target's contents. You will be prompted to select snapshotting mode during pre-scan interview:
+DPULSE provides multiple methods to capture and preserve target website content for analysis, documentation, and offline review.
 
-![snap](https://github.com/user-attachments/assets/c24d297d-d52e-45e1-9770-97229abcc2ce)
+---
 
-## Screenshotting 
+## Overview
 
-Screenshotting, as it says, is basically a process of taking screenshot of domain page. It uses selenium library and its headless browser mode in order to take screenshot. It is crucial to configrate its parameters correctly (read "Configuration file" paragraph, "Config file content" section). After scan ends, you will find screenshot of domain's main page in scan folder.
+| Method | Type | Output | Interactive |
+|--------|------|--------|-------------|
+| **Screenshot** | Visual capture | Image file | ❌ No |
+| **PageCopy** | Complete copy | HTML + assets | ✅ Yes |
+| **Wayback Snapshot** | Historical versions | Multiple HTML files | ✅ Yes |
 
-## Snapshotting: Web copy and Wayback Archive
+> **Note:** You will be prompted to select snapshotting mode during pre-scan configuration.
 
-There are two ways to make a snapshot of target domain using DPULSE. First way is a common snapshot: it saves web-page's copy as a HTML file, so it is fully interactive and contains all web elements like HTML code, DOM structure and so on. Second way is Wayback Archive snapshot. It uses Wayback Machine API in order to get all copies of a website within a certain period of time specified by user like shown below:
+![Snapshotting Selection](https://github.com/user-attachments/assets/c24d297d-d52e-45e1-9770-97229abcc2ce)
 
-![snap1](https://github.com/user-attachments/assets/dd82a133-95a8-4fa4-9dc7-ed18d2768d16)
+---
 
-After scan ends, you will find snapshots of domain's main page in scan folder (in case of Wayback snapshot, there'll be additional folder to store all snapshots).
+## Screenshot vs Snapshot
+
+| Feature | Screenshot | Snapshot |
+|---------|------------|----------|
+| **What it captures** | Visual appearance at a moment | Full page structure and content |
+| **File format** | Image (PNG/JPG) | HTML + assets |
+| **Interactive** | ❌ View only | ✅ Navigate, click, inspect |
+| **Offline use** | ✅ Yes | ✅ Yes |
+| **Use case** | Documentation, reports | Analysis, forensics |
+
+---
+
+## 📸 Screenshot Mode
+
+Takes a visual capture of the domain's main page using headless browser technology.
+
+### How It Works
+
+1. DPULSE launches a browser instance using Selenium
+2. Navigates to target domain
+3. Captures full-page screenshot
+4. Saves image to report folder
+
+### Configuration
+
+> **Important:** Proper configuration is required for screenshotting to work correctly. See [Configuration File](configuration.md) for details.
+
+### Output
+
+```
+reports/
+└── example.com_2024-01-15/
+    └── screenshot.png
+```
+
+---
+
+## 📄 HTML Snapshot (Web Copy)
+
+Saves the webpage as an HTML file, preserving structure and interactivity.
+
+### What It Captures
+
+| Element | Preserved |
+|---------|-----------|
+| HTML code | ✅ Yes |
+| DOM structure | ✅ Yes |
+| Text content | ✅ Yes |
+| Links | ✅ Yes |
+| Forms | ✅ Yes |
+| Inline styles | ✅ Yes |
+
+### Output
+
+```
+reports/
+└── example.com_2024-01-15/
+    └── snapshot.html
+```
+
+---
+
+## 📦 PageCopy Mode
+
+Creates a complete offline copy of the page including all assets.
+
+### What It Captures
+
+| Asset Type | Included |
+|------------|----------|
+| HTML | ✅ Yes |
+| CSS stylesheets | ✅ Yes |
+| JavaScript files | ✅ Yes |
+| Images | ✅ Yes |
+| Fonts | ✅ Yes |
+
+### Output
+
+```
+reports/
+└── example.com_2024-01-15/
+    └── pagecopy/
+        ├── index.html
+        ├── styles.css
+        ├── script.js
+        └── images/
+```
+
+---
+
+## 🕰️ Wayback Machine Snapshot
+
+Retrieves historical versions of the target domain from the Internet Archive.
+
+### How It Works
+
+1. Connects to Wayback Machine API
+2. Queries for available snapshots within specified time period
+3. Downloads selected historical versions
+4. Saves all versions to report folder
+
+### Configuration
+
+You specify the time period during scan setup:
+
+![Wayback Configuration](https://github.com/user-attachments/assets/dd82a133-95a8-4fa4-9dc7-ed18d2768d16)
+
+### Output
+
+```
+reports/
+└── example.com_2024-01-15/
+    └── wayback_snapshots/
+        ├── 2023-01-15_snapshot.html
+        ├── 2023-06-20_snapshot.html
+        └── 2024-01-01_snapshot.html
+```
+
+---
+
+## When to Use Each Method
+
+| Scenario | Recommended Method |
+|----------|-------------------|
+| Quick visual documentation | 📸 Screenshot |
+| Preserve page for analysis | 📄 HTML Snapshot |
+| Full offline copy with assets | 📦 PageCopy |
+| Track changes over time | 🕰️ Wayback Snapshot |
+| Legal/forensic evidence | 📸 Screenshot + 📄 HTML Snapshot |
+| Website no longer exists | 🕰️ Wayback Snapshot |
+
+---
+
+## Output Location
+
+All captures are saved in the scan report folder:
+
+```
+reports/
+└── example.com_2024-01-15/
+    ├── report.html
+    ├── screenshot.png
+    ├── snapshot.html
+    ├── pagecopy/
+    └── wayback_snapshots/
+```

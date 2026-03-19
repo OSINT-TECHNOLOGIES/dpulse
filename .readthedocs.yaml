@@ -8,9 +8,5 @@ build:
     pre_build:
       - pip install mkdocs mkdocs-material
 
-python:
-  install:
-    - requirements: requirements.txt
-
 mkdocs:
   configuration: docs/dpulse-docs/mkdocs.yml

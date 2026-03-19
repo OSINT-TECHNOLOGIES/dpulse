@@ -1,19 +1,89 @@
-# Welcome to DPULSE documentation
+# Welcome to DPULSE Documentation
 
-Convenient, fast and user-friendly collector of domain information from open-sources
- 
-## What is DPULSE
+**Convenient, fast and user-friendly domain intelligence collector from open sources**
 
-DPULSE is a software solution for conducting OSINT research in relation to a certain domain. In general, it provides you with a certain set of functions, such as:
+---
 
-1. ***Basic scan:*** extracts general information about domain such as WHOIS information, subdomains, e-mail addresses, IP addresses, social medias links/posts/profiles, SSL certificate info, possible vulnerabilities, open ports, CPEs, used web-technologies and so on. It also can download sitemap.xml and robots.txt files from a domain
-     
-2. ***PageSearch scan:*** extended subdomains deep search function, which starts in addition to basic scan and which can find more e-mail addresses, API keys, exposed passwords, cookies, hidden forms of data and other web page elements, documents, config files, databases files (and PageSearch can download them!), specified words by user in PDF files
+## What is DPULSE-CLI?
 
-3. ***Dorking scan:*** extended domain research function with prepared Google Dorking databases for different purposes, such as IoT dorking, files dorking, admin panels dorking, web elements dorking. Moreover, this mode allows you to create your own custom Google Dorking database
+DPULSE-CLI is a command-line OSINT tool designed for comprehensive domain reconnaissance. It automates the collection and analysis of publicly available information about any target domain.
 
-4. ***API scan:*** extended domain research function with prepared functions for 3rd party APIs usage. Currently DPULSE supports VirusTotal API (for brief domain information gathering) and SecurityTrails API (deep subdomains and DNS enumeration)
+---
 
-5. ***Snapshotting:*** extended domain research function which copys domain's home page content in various ways: by screenshotting it (screenshot snapshot), by HTML copying (HTML snapshot) and by finding and downloading previous versions (Wayback Machine snapshot)
+## Core Features
 
-Finally, DPULSE compiles all found data into an easy-to-read HTML or XLSX report by category. It also saves all information about scan in local report storage database, which can be restored later.
+### 🔍 Basic Scan
+
+Extracts fundamental domain intelligence:
+
+- **WHOIS data** — registration details, registrar, dates
+- **DNS records** — subdomains, IP addresses
+- **SSL/TLS certificates** — issuer, validity, SANs
+- **Email addresses** — discovered across the domain
+- **Social media** — links, posts, profiles
+- **Web technologies** — frameworks, CMS, libraries
+- **Security analysis** — open ports, CPEs, potential vulnerabilities
+- **Files extraction** — `sitemap.xml`, `robots.txt`
+
+---
+
+### 📄 PageSearch Scan
+
+Deep content analysis across all discovered subdomains:
+
+| Category | What it finds |
+|----------|---------------|
+| **Credentials** | Exposed passwords, API keys, tokens |
+| **Data elements** | Cookies, hidden forms, input fields |
+| **Files** | Documents, configs, database dumps |
+| **Custom search** | User-specified keywords in PDF files |
+
+> **Note:** PageSearch can automatically download discovered files for offline analysis.
+
+---
+
+### 🎯 Dorking Scan
+
+Automated Google Dorking with pre-built query databases:
+
+- **IoT devices** — cameras, routers, sensors
+- **Sensitive files** — backups, logs, configs
+- **Admin panels** — login pages, dashboards
+- **Web elements** — exposed directories, forms
+
+You can also create and use **custom dorking databases** for specific research needs.
+
+---
+
+### 🔌 API Scan
+
+Integration with third-party intelligence services:
+
+| Service | Capabilities |
+|---------|--------------|
+| **VirusTotal** | Domain reputation, malware analysis, brief intel |
+| **SecurityTrails** | Deep subdomain enumeration, historical DNS data |
+| **HudsonRock** | Compromised credentials, infostealer data, breach intelligence |
+
+---
+
+### 📸 Snapshotting
+
+Capture and preserve domain content:
+
+| Snapshot Type | Description |
+|---------------|-------------|
+| **Screenshot** | Visual capture of the homepage |
+| **PageCopy** | Complete page copy with all assets (CSS, JS, images) |
+| **Wayback Machine** | Historical versions from Internet Archive |
+
+---
+
+## Output & Reporting
+
+DPULSE-CLI generates:
+
+- **HTML reports** — clean, readable format for analysis and presentation
+- **Local database** — persistent storage for all scan results with restore capability
+
+---
