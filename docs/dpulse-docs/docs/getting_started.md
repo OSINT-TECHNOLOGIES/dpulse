@@ -4,7 +4,7 @@
 
 ## System Requirements
 
-DPULSE is built on Python and designed to run across various environments. To ensure stability and full functionality, your system must meet the following criteria:
+DPULSE-CLI is built on Python and designed to run across various environments. To ensure stability and full functionality, your system must meet the following criteria:
 
 | Requirement | Details |
 |-------------|---------|
@@ -24,7 +24,7 @@ DPULSE is built on Python and designed to run across various environments. To en
 
 ## Installation Methods
 
-We provide two methods to install DPULSE. **Docker is the recommended method** as it eliminates environment conflicts and uses containers for isolation. You can use **uv** installation method if you want to install DPULSE locally. This method provides installation with further virtual environment activation when you start DPULSE, so dependencies and versions conflicts won't appear.
+We provide two methods to install DPULSE-CLI. **Docker is the recommended method** as it eliminates environment conflicts and uses containers for isolation. You can use **uv** installation method if you want to install DPULSE-CLI locally. This method provides installation with further virtual environment activation when you start DPULSE-CLI, so dependencies and versions conflicts won't appear.
 
 ---
 
@@ -54,7 +54,7 @@ podman pull docker.io/osinttechnologies/dpulse:latest
 
 ### 📦 Method 2: uv
 
-If you prefer running DPULSE natively, use **uv** package. It handles virtual environments, correct Python version installation and dependency lock automatically.
+If you prefer running DPULSE-CLI natively, use **uv** package. It handles virtual environments, correct Python version installation and dependency lock automatically.
 
 ```
 # 1. Clone the repository
@@ -71,11 +71,11 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 
 These installers will automatically:
 - install `uv` if it is missing
-- install Python 3.11 which is strongly required for running DPULSE
+- install Python 3.11 which is strongly required for running DPULSE-CLI
 - create a virtual environment
 - install all required dependencies
 
-After this procedure you can easily start DPULSE:
+After this procedure you can easily start DPULSE-CLI:
 ```
 uv run dpulse
 ```
@@ -83,7 +83,7 @@ uv run dpulse
 
 ## Conducting Your First Scan
 
-Once DPULSE is running, follow this workflow to perform a reconnaissance task.
+Once DPULSE-CLI is running, follow this workflow to perform a reconnaissance task.
 
 ---
 
@@ -97,14 +97,14 @@ Upon launch, the CLI interface will appear. To start a standard investigation, s
 
 ### 2️⃣ Target Input
 
-DPULSE operates strictly with **domain names**, not full URLs.
+DPULSE-CLI operates strictly with **domain names**, not full URLs.
 
 | Input Type | Example | Valid? |
 |------------|---------|--------|
 | Domain name | `example.com` | ✅ Yes |
 | Full URL | `https://www.example.com/page` | ❌ No |
 
-> **Note:** If you accidentally enter a URL, DPULSE will attempt to extract the domain, but manual input is preferred for accuracy.
+> **Note:** If you accidentally enter a URL, DPULSE-CLI will attempt to extract the domain, but manual input is preferred for accuracy.
 
 ![Target Input](https://github.com/user-attachments/assets/cc5676d5-e11c-4aeb-b0b4-dd4c23fa228a)
 
@@ -129,7 +129,7 @@ You will be asked to configure the scan parameters. Available options:
 
 ### 4️⃣ Results
 
-Once the scan is complete, DPULSE will:
+Once the scan is complete, DPULSE-CLI will:
 
 - Generate a report and put it into a named folder (ex. "report_hackthissiteorg_(19-03-2026, 17h53m16s)"
 - Save case metadata to the local database
