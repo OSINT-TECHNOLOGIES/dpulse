@@ -38,7 +38,6 @@ cli = cli_init.Menu()
 
 class ReportType(str, Enum):
     HTML = "html"
-    #XLSX = "xlsx"
 
 class SnapshotMode(str, Enum):
     NONE = "n"
@@ -116,7 +115,6 @@ def compute_dorking_ui_mark(dorking_flag: str) -> str:
     return 'No'
 
 def process_report(options: ScanOptions):
-    #import xlsx_report_creation as xlsx_rc
     import html_report_creation as html_rc
     with console.status("[magenta]Processing scan...[/magenta]", spinner="dots"):
         start = perf_counter()
