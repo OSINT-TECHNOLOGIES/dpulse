@@ -48,4 +48,4 @@ if [ -d /app/service/pdf_report_templates ]; then
   done
 fi
 
-exec python /app/dpulse.py
+exec uv run dpulse "$@"
