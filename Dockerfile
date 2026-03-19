@@ -19,4 +19,6 @@ COPY . .
 
 RUN uv sync --no-dev --frozen
 
-ENTRYPOINT ["uv", "run", "dpulse"]
+RUN chmod +x /app/docker-entrypoint.sh
+
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
