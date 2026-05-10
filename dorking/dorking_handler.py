@@ -2,6 +2,9 @@ import sys
 import random
 import time
 import os
+import re
+import shutil
+import subprocess
 import logging
 from colorama import Fore, Style
 import undetected_chromedriver as uc
@@ -14,6 +17,88 @@ from ua_rotator import user_agent_rotator
 from proxies_rotator import proxies_rotator
 from config_processing import read_config
 
+
+GOOGLE_BLOCKED = '__GOOGLE_BLOCKED__'
+GOOGLE_BLOCK_WAIT_SECS = 300
+GOOGLE_BLOCK_POLL_SECS = 5
+
+
+def resolve_browser_binary(configured_path):
+    if configured_path:
+        normalized_path = configured_path.strip()
+        if normalized_path and normalized_path.lower() not in {'none', 'path\\to\\browser\\for\\dorking'} and os.path.isfile(normalized_path):
+            return normalized_path
+
+    for browser_name in ('google-chrome', 'google-chrome-stable', 'chromium', 'chromium-browser'):
+        browser_path = shutil.which(browser_name)
+        if browser_path:
+            return browser_path
+
+    return None
+
+
+def resolve_browser_major_version(browser_binary):
+    if not browser_binary:
+        return None
+
+    try:
+        version_output = subprocess.check_output([browser_binary, '--version'], text=True).strip()
+    except Exception:
+        return None
+
+    version_match = re.search(r'(\d+)\.', version_output)
+    if version_match:
+        return int(version_match.group(1))
+
+    return None
+
+
+def is_google_block_page(driver):
+    try:
+        current_url = (driver.current_url or '').lower()
+        page_source = (driver.page_source or '').lower()
+    except Exception:
+        return False
+
+    return (
+        '/sorry/' in current_url
+        or 'captcha-form' in page_source
+        or 'our systems have detected unusual traffic' in page_source
+        or 'detected unusual traffic from your computer network' in page_source
+    )
+
+
+def report_google_block(query):
+    logging.warning(f'DORKING PROCESSING: Google block page detected for query: {query}')
+    print(Fore.LIGHTYELLOW_EX + 'Google presented a bot-check / CAPTCHA page. Automated dorking was stopped for this run.' + Style.RESET_ALL)
+    return GOOGLE_BLOCKED
+
+
+def handle_google_block(driver, query, dorking_browser_mode):
+    if dorking_browser_mode.lower() != 'nonheadless':
+        return report_google_block(query)
+
+    logging.warning(f'DORKING PROCESSING: Google block page detected for query in manual mode: {query}')
+    print(Fore.LIGHTYELLOW_EX + 'Google presented a bot-check / CAPTCHA page.' + Style.RESET_ALL)
+    print(Fore.LIGHTYELLOW_EX + 'Solve it in the opened browser window. DPULSE will keep the browser open and resume automatically.' + Style.RESET_ALL)
+    print(Fore.LIGHTYELLOW_EX + f'Waiting up to {GOOGLE_BLOCK_WAIT_SECS} seconds. Press Ctrl+C to cancel dorking.' + Style.RESET_ALL)
+
+    deadline = time.time() + GOOGLE_BLOCK_WAIT_SECS
+    while time.time() < deadline:
+        time.sleep(GOOGLE_BLOCK_POLL_SECS)
+        try:
+            if not is_google_block_page(driver):
+                print(Fore.GREEN + 'Google challenge cleared. Resuming dorking...' + Style.RESET_ALL)
+                return None
+        except Exception:
+            return report_google_block(query)
+
+        remaining_seconds = max(0, int(deadline - time.time()))
+        print(Fore.LIGHTYELLOW_EX + f'Google challenge is still active. Waiting... ({remaining_seconds}s remaining)' + Style.RESET_ALL)
+
+    print(Fore.LIGHTYELLOW_EX + 'Timed out while waiting for the Google challenge to be solved.' + Style.RESET_ALL)
+    return report_google_block(query)
+
 def proxy_transfer():
     proxy_flag, proxies_list = proxies_rotator.get_proxies()
     if proxy_flag == 0:
@@ -23,32 +108,48 @@ def proxy_transfer():
         working_proxies = proxies_rotator.check_proxies(proxies_list)
         return proxy_flag, working_proxies
 
-def solid_google_dorking(query, proxy_flag, proxies_list, pages=1):
+
+def create_dorking_driver(proxy_flag, proxies_list):
+    config_values = read_config()
+    options = uc.ChromeOptions()
+    browser_binary = resolve_browser_binary(config_values['dorking_browser'])
+    browser_major_version = resolve_browser_major_version(browser_binary)
+    if browser_binary:
+        options.binary_location = browser_binary
+    dorking_browser_mode = config_values['dorking_browser_mode']
+    if dorking_browser_mode.lower() == 'headless':
+        options.add_argument("--headless=new")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--disable-infobars")
+    options.add_argument("--disable-extensions")
+    options.add_argument(f"user-agent={user_agent_rotator.get_random_user_agent()}")
+    if proxy_flag == 1:
+        proxy = proxies_rotator.get_random_proxy(proxies_list)
+        options.add_argument(f'--proxy-server={proxy["http"]}')
+    chrome_kwargs = {'options': options}
+    if browser_binary:
+        chrome_kwargs['browser_executable_path'] = browser_binary
+    if browser_major_version:
+        chrome_kwargs['version_main'] = browser_major_version
+    return uc.Chrome(**chrome_kwargs), dorking_browser_mode
+
+def solid_google_dorking(query, proxy_flag, proxies_list, pages=1, driver=None, dorking_browser_mode=None):
     result_query = []
     request_count = 0
+    own_driver = driver is None
     try:
-        config_values = read_config()
-        options = uc.ChromeOptions()
-        options.binary_location = r"{}".format(config_values['dorking_browser'])
-        dorking_browser_mode = config_values['dorking_browser_mode']
-        if dorking_browser_mode.lower() == 'headless':
-            options.add_argument("--headless=new")
-        elif dorking_browser_mode.lower() == 'nonheadless':
-            pass
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--disable-blink-features=AutomationControlled")
-        options.add_argument("--disable-infobars")
-        options.add_argument("--disable-extensions")
-        options.add_argument(f"user-agent={user_agent_rotator.get_random_user_agent()}")
-        if proxy_flag == 1:
-            proxy = proxies_rotator.get_random_proxy(proxies_list)
-            options.add_argument(f'--proxy-server={proxy["http"]}')
-        driver = uc.Chrome(options=options)
+        if own_driver:
+            driver, dorking_browser_mode = create_dorking_driver(proxy_flag, proxies_list)
         for page in range(pages):
             try:
                 driver.get("https://www.google.com")
                 time.sleep(random.uniform(2, 4))
+                if is_google_block_page(driver):
+                    block_result = handle_google_block(driver, query, dorking_browser_mode)
+                    if block_result == GOOGLE_BLOCKED:
+                        return block_result
                 try:
                     accepted = False
                     try:
@@ -88,6 +189,10 @@ def solid_google_dorking(query, proxy_flag, proxies_list, pages=1):
                 time.sleep(random.uniform(0.5, 1.2))
                 search_box.send_keys(Keys.RETURN)
                 time.sleep(random.uniform(2.5, 4))
+                if is_google_block_page(driver):
+                    block_result = handle_google_block(driver, query, dorking_browser_mode)
+                    if block_result == GOOGLE_BLOCKED:
+                        return block_result
                 links = driver.find_elements(By.CSS_SELECTOR, 'a')
                 for link in links:
                     href = link.get_attribute('href')
@@ -103,7 +208,6 @@ def solid_google_dorking(query, proxy_flag, proxies_list, pages=1):
             except Exception as e:
                 logging.error(f'DORKING PROCESSING (SELENIUM): ERROR. REASON: {e}')
                 continue
-        driver.quit()
         if len(result_query) >= 2:
             del result_query[-2:]
         return result_query
@@ -111,6 +215,9 @@ def solid_google_dorking(query, proxy_flag, proxies_list, pages=1):
         logging.error(f'DORKING PROCESSING: ERROR. REASON: {e}')
         print(Fore.RED + "Error while running Selenium dorking. See journal for details." + Style.RESET_ALL)
         return []
+    finally:
+        if own_driver and driver:
+            driver.quit()
 
 def save_results_to_txt(folderpath, table, queries, pages=1):
     try:
@@ -124,28 +231,39 @@ def save_results_to_txt(folderpath, table, queries, pages=1):
             print(Fore.GREEN + "Started Google Dorking. Please, be patient, it may take some time")
             print(Fore.GREEN + f"{dorking_delay} seconds delay after each {delay_step} dorking requests was configured" + Style.RESET_ALL)
             proxy_flag, proxies_list = proxy_transfer()
+            driver, dorking_browser_mode = create_dorking_driver(proxy_flag, proxies_list)
             dorked_query_counter = 0
-            for i, query in enumerate(queries, start=1):
-                f.write(f"QUERY #{i}: {query}\n")
-                try:
-                    results = solid_google_dorking(query, proxy_flag, proxies_list, pages)
-                    if not results:
-                        f.write("=> NO RESULT FOUND\n")
+            try:
+                for i, query in enumerate(queries, start=1):
+                    f.write(f"QUERY #{i}: {query}\n")
+                    try:
+                        results = solid_google_dorking(query, proxy_flag, proxies_list, pages, driver=driver, dorking_browser_mode=dorking_browser_mode)
+                        if results == GOOGLE_BLOCKED:
+                            f.write("=> GOOGLE BLOCK PAGE DETECTED. AUTOMATED DORKING STOPPED\n")
+                            total_results.append((query, 'blocked'))
+                            f.write("\n")
+                            break
+                        if not results:
+                            f.write("=> NO RESULT FOUND\n")
+                            total_results.append((query, 0))
+                        else:
+                            total_results.append((query, len(results)))
+                            for result in results:
+                                f.write(f"=> {result}\n")
+                    except Exception as e:
+                        logging.error(f"DORKING PROCESSING: ERROR. REASON: {e}")
                         total_results.append((query, 0))
-                    else:
-                        total_results.append((query, len(results)))
-                        for result in results:
-                            f.write(f"=> {result}\n")
-                except Exception as e:
-                    logging.error(f"DORKING PROCESSING: ERROR. REASON: {e}")
-                    total_results.append((query, 0))
-                f.write("\n")
-                dorked_query_counter += 1
-                print(Fore.GREEN + f"  Dorking with " + Style.RESET_ALL + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{dorked_query_counter}/{total_dorks_amount}" + Style.RESET_ALL + Fore.GREEN + " dork" + Style.RESET_ALL, end="\r")
+                    f.write("\n")
+                    dorked_query_counter += 1
+                    print(Fore.GREEN + f"  Dorking with " + Style.RESET_ALL + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{dorked_query_counter}/{total_dorks_amount}" + Style.RESET_ALL + Fore.GREEN + " dork" + Style.RESET_ALL, end="\r")
+            finally:
+                driver.quit()
         print(Fore.GREEN + "\nGoogle Dorking end. Results successfully saved in HTML report\n" + Style.RESET_ALL)
         print(Fore.GREEN + f"During Google Dorking with {table.upper()}:")
         for query, count in total_results:
-            if count == 0:
+            if count == 'blocked':
+                print(Fore.GREEN + f"[+] Google blocked automated dorking at query " + Fore.LIGHTCYAN_EX + f'{query}' + Fore.GREEN + '. ' + Fore.LIGHTYELLOW_EX + 'Scan stopped before continuing through the remaining dorks.' + Style.RESET_ALL)
+            elif count == 0:
                 count = 'no results'
                 print(Fore.GREEN + f"[+] Found results for " + Fore.LIGHTCYAN_EX + f'{query}' + Fore.GREEN + ' query: ' + Fore.LIGHTRED_EX + f'{count}' + Style.RESET_ALL)
             else:
@@ -163,20 +281,28 @@ def transfer_results_to_xlsx(table, queries, pages=10):
     print(Fore.GREEN + "Started Google Dorking. Please, be patient, it may take some time")
     print(Fore.GREEN + f"{dorking_delay} seconds delay after each {delay_step} dorking requests was configured" + Style.RESET_ALL)
     proxy_flag, proxies_list = proxy_transfer()
+    driver, dorking_browser_mode = create_dorking_driver(proxy_flag, proxies_list)
     dorked_query_counter = 0
     total_dorks_amount = len(queries)
     dorking_return_list = []
-    for i, query in enumerate(queries, start=1):
-        dorking_return_list.append(f"QUERY #{i}: {query}\n")
-        results = solid_google_dorking(query, dorking_delay, delay_step, proxy_flag, proxies_list)
-        if not results:
-            dorking_return_list.append("NO RESULT FOUND\n")
-        else:
-            for result in results:
-                dorking_return_list.append(f"{result}\n")
-        dorked_query_counter += 1
-        dorking_return_list.append("\n")
-        print(Fore.GREEN + f"  Dorking with " + Style.RESET_ALL + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{dorked_query_counter}/{total_dorks_amount}" + Style.RESET_ALL + Fore.GREEN + " dork" + Style.RESET_ALL, end="\r")
+    try:
+        for i, query in enumerate(queries, start=1):
+            dorking_return_list.append(f"QUERY #{i}: {query}\n")
+            results = solid_google_dorking(query, proxy_flag, proxies_list, pages, driver=driver, dorking_browser_mode=dorking_browser_mode)
+            if results == GOOGLE_BLOCKED:
+                dorking_return_list.append("GOOGLE BLOCK PAGE DETECTED. AUTOMATED DORKING STOPPED\n")
+                dorking_return_list.append("\n")
+                break
+            if not results:
+                dorking_return_list.append("NO RESULT FOUND\n")
+            else:
+                for result in results:
+                    dorking_return_list.append(f"{result}\n")
+            dorked_query_counter += 1
+            dorking_return_list.append("\n")
+            print(Fore.GREEN + f"  Dorking with " + Style.RESET_ALL + Fore.LIGHTCYAN_EX + Style.BRIGHT + f"{dorked_query_counter}/{total_dorks_amount}" + Style.RESET_ALL + Fore.GREEN + " dork" + Style.RESET_ALL, end="\r")
+    finally:
+        driver.quit()
     print(Fore.GREEN + "\nGoogle Dorking end. Results successfully saved in XLSX report\n" + Style.RESET_ALL)
     return f'Successfully dorked domain with {table.upper()} dorks table', dorking_return_list
 

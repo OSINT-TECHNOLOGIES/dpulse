@@ -54,6 +54,39 @@ def is_real_url(value: str) -> bool:
     return parsed.scheme in ('http', 'https') and bool(parsed.netloc)
 
 
+def run_pagesearch(report_folder, subdomains, keywords, keywords_flag):
+    print(Fore.LIGHTMAGENTA_EX + "[STARTED EXTENDED DOMAIN SCAN WITH PAGESEARCH]" + Style.RESET_ALL)
+    (
+        ps_emails_return,
+        accessible_subdomains,
+        emails_amount,
+        files_counter,
+        cookies_counter,
+        api_keys_counter,
+        website_elements_counter,
+        exposed_passwords_counter,
+        keywords_messages_list
+    ), ps_string = subdomains_parser(subdomains, report_folder, keywords, keywords_flag)
+    total_links_counter = accessed_links_counter = "No results because PageSearch does not gather these categories"
+    if len(keywords_messages_list) == 0:
+        keywords_messages_list = ['No keywords were found']
+    print(Fore.LIGHTMAGENTA_EX + "[ENDED EXTENDED DOMAIN SCAN WITH PAGESEARCH]\n" + Style.RESET_ALL)
+    return (
+        ps_emails_return,
+        accessible_subdomains,
+        emails_amount,
+        files_counter,
+        cookies_counter,
+        api_keys_counter,
+        website_elements_counter,
+        exposed_passwords_counter,
+        total_links_counter,
+        accessed_links_counter,
+        keywords_messages_list,
+        ps_string,
+    )
+
+
 def establishing_dork_db_connection(dorking_flag):
     dorking_db_paths = {
         'basic': 'dorking//basic_dorking.db',
@@ -205,10 +238,10 @@ class DataProcessing():
         print(Fore.LIGHTMAGENTA_EX + "[ENDED BASIC DOMAIN SCAN]\n" + Style.RESET_ALL)
 
         if report_file_type == 'html':
+            pending_pagesearch = False
+            securitytrails_subdomains = []
             if pagesearch_flag.lower() == 'y':
-                if subdomains and subdomains[0] != 'No subdomains were found':
-                    to_search_array = [subdomains, social_medias, sd_socials]
-                    print(Fore.LIGHTMAGENTA_EX + "[STARTED EXTENDED DOMAIN SCAN WITH PAGESEARCH]" + Style.RESET_ALL)
+                if subdomains:
                     (
                         ps_emails_return,
                         accessible_subdomains,
@@ -218,16 +251,13 @@ class DataProcessing():
                         api_keys_counter,
                         website_elements_counter,
                         exposed_passwords_counter,
-                        keywords_messages_list
-                    ), ps_string = subdomains_parser(
-                        to_search_array[0], report_folder, keywords, keywords_flag
-                    )
-                    total_links_counter = accessed_links_counter = "No results because PageSearch does not gather these categories"
-                    if len(keywords_messages_list) == 0:
-                        keywords_messages_list = ['No keywords were found']
-                    print(Fore.LIGHTMAGENTA_EX + "[ENDED EXTENDED DOMAIN SCAN WITH PAGESEARCH]\n" + Style.RESET_ALL)
+                        total_links_counter,
+                        accessed_links_counter,
+                        keywords_messages_list,
+                        ps_string,
+                    ) = run_pagesearch(report_folder, subdomains, keywords, keywords_flag)
                 else:
-                    print(Fore.RED + "Cant start PageSearch because no subdomains were detected\n")
+                    pending_pagesearch = True
                     ps_emails_return = ""
                     accessible_subdomains = files_counter = cookies_counter = api_keys_counter = \
                         website_elements_counter = exposed_passwords_counter = total_links_counter = \
@@ -263,7 +293,7 @@ class DataProcessing():
                     virustotal_output = 'No results because user did not selected VirusTotal API scan'
 
                 if '2' in used_api_flag:
-                    securitytrails_output = api_securitytrails_check(short_domain)
+                    securitytrails_output, securitytrails_subdomains = api_securitytrails_check(short_domain, return_subdomains=True)
                     api_scan_db.append('SecurityTrails')
                 else:
                     securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
@@ -282,6 +312,27 @@ class DataProcessing():
                 securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
                 hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
                 api_scan_db.append('No')
+
+            if pending_pagesearch and securitytrails_subdomains:
+                subdomains = securitytrails_subdomains
+                subdomains_amount = len(securitytrails_subdomains)
+                print(Fore.LIGHTMAGENTA_EX + "[PAGESEARCH FALLBACK] Using SecurityTrails subdomains because the initial crawl found none." + Style.RESET_ALL)
+                (
+                    ps_emails_return,
+                    accessible_subdomains,
+                    emails_amount,
+                    files_counter,
+                    cookies_counter,
+                    api_keys_counter,
+                    website_elements_counter,
+                    exposed_passwords_counter,
+                    total_links_counter,
+                    accessed_links_counter,
+                    keywords_messages_list,
+                    ps_string,
+                ) = run_pagesearch(report_folder, securitytrails_subdomains, keywords, keywords_flag)
+            elif pending_pagesearch:
+                print(Fore.RED + "Cant start PageSearch because no subdomains were detected\n")
 
             if snapshotting_flag.lower() in ['s', 'p', 'w']:
                 config_values = read_config()
