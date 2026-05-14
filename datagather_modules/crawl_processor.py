@@ -90,15 +90,11 @@ def subdomains_gather(url, short_domain):
         finder = short_domain
         subdomains = [urllib.parse.unquote(i) for i in linked_domains if finder in i]
         subdomains_amount = len(subdomains)
-        if not subdomains:
-            subdomains = ['No subdomains were found']
-            logging.info('SUBDOMAINS GATHERING: OK')
         return subdomains, subdomains_amount
     except Exception as e:
         print(Fore.RED + f"Cannot gather subdomains due to error. See journal for details" + Style.RESET_ALL)
         logging.error(f'SUBDOMAINS GATHERING: ERROR. REASON: {e}')
-        pass
-        return ['No subdomains were found'], 0
+        return [], 0
 
 def sm_gather(url):
     social_domains = {
@@ -158,35 +154,31 @@ def domains_reverse_research(subdomains, report_file_type):
     subdomain_socials = []
     subdomain_ip = []
 
-    try:
-        for subdomain in subdomains:
-            subdomain_url = "http://" + subdomain + "/"
-            subdomain_urls.append(subdomain_url)
-    except Exception as e:
-        print(Fore.RED + "Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error won't be included in report. See journal for details" + Style.RESET_ALL)
-        logging.error(f'SUBDOMAINS URL FORMING: ERROR. REASON: {e}')
-        pass
+    for subdomain in subdomains:
+        try:
+            subdomain_urls.append("http://" + subdomain + "/")
+        except Exception as e:
+            logging.warning(f'SUBDOMAINS URL FORMING: skipped invalid subdomain {subdomain}. REASON: {e}')
 
-    try:
-        for subdomain in subdomains:
+    for subdomain in subdomains:
+        try:
             subdomains_ip = ip_gather(subdomain)
             subdomain_ip.append(subdomains_ip)
-            subdomain_ip = list(set(subdomain_ip))
-    except Exception as e:
-        print(Fore.RED + "Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error won't be included in report. See journal for details" + Style.RESET_ALL)
-        logging.error(f'SUBDOMAINS IP GATHERING: ERROR. REASON: {e}')
-        pass
+        except Exception as e:
+            logging.warning(f'SUBDOMAINS IP GATHERING: skipped unreachable subdomain {subdomain}. REASON: {e}')
+    subdomain_ip = list(set(subdomain_ip))
 
-    try:
-        for subdomain_url in subdomain_urls:
+    for subdomain_url in subdomain_urls:
+        try:
             subdomain_mail = subdomains_mail_gather(subdomain_url)
             subdomain_mails.append(subdomain_mail)
+        except Exception as e:
+            logging.warning(f'SUBDOMAINS MAIL GATHERING: skipped unreachable subdomain URL {subdomain_url}. REASON: {e}')
+        try:
             subdomain_social = sm_gather(subdomain_url)
             subdomain_socials.append(subdomain_social)
-    except Exception as e:
-        print(Fore.RED + "Some URL seems unreachable! DPULSE will continue to work, but the URL causing the error won't be included in report. See journal for details" + Style.RESET_ALL)
-        logging.error(f'SUBDOMAINS MAIL/SOCIALS GATHERING: ERROR. REASON: {e}')
-        pass
+        except Exception as e:
+            logging.warning(f'SUBDOMAINS SOCIALS GATHERING: skipped unreachable subdomain URL {subdomain_url}. REASON: {e}')
 
     subdomain_mails = [sublist for sublist in subdomain_mails if sublist]
     subdomain_mails = [sublist for sublist in subdomain_mails if sublist != [None]]
