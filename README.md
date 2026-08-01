@@ -3,7 +3,7 @@
 # 🌐 DPULSE
 ### Advanced Domain OSINT & Reconnaissance Tool — Desktop Edition
 
-<img src="https://github.com/user-attachments/assets/949c332b-790e-49da-81a3-a7cf21e9ddf2" width="500">
+<img width="615" height="200" alt="image" src="https://github.com/user-attachments/assets/352c61ae-1dd1-4f12-a0cb-9bb41e0f08b6" />
 
 # [Visit DPULSE official page](https://osint-technologies.github.io/dpulse/)
 
