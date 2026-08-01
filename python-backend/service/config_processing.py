@@ -1,0 +1,113 @@
+import configparser
+import os
+from colorama import Fore, Style
+
+def create_config():
+    basic_user_agents = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+        'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'Mozilla/5.0 (Linux; Android 7.0; SM-G930F Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Mobile Safari/537.36',
+        'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
+        'Mozilla/5.0 (Linux; Android 8.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36',
+        'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
+        'Mozilla/5.0 (Linux; Android 7.1.2; SM-G955F Build/N2G48H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.125 Mobile Safari/537.36'
+    ]
+
+    os.makedirs('service', exist_ok=True)
+
+    config = configparser.ConfigParser()
+    config['HTML_REPORTING'] = {'template': 'modern', 'delete_txt_files': 'n'}
+    config['LOGGING'] = {'log_level': 'info'}
+    config['CLI VISUAL'] = {'preview_color': 'red', 'font': 'slant'}
+    config['DORKING'] = {'dorking_delay (secs)': '2', 'delay_step': '5',
+                         'full_path_to_browser': r'path\to\browser\for\dorking', 'browser_mode': 'nonheadless'}
+    config['SNAPSHOTTING'] = {'installed_browser': 'firefox', 'opera_browser_path': 'None', 'wayback_retries': '3',
+                              'wayback_req_pause': '2'}
+    config['USER-AGENTS'] = {}
+    for i, agent in enumerate(basic_user_agents):
+        config['USER-AGENTS'][f'agent_{i + 1}'] = agent
+    config['PROXIES'] = {'proxies_file_path': 'NONE'}
+
+    with open('service//config.ini', 'w') as configfile:
+        config.write(configfile)
+
+def check_cfg_presence():
+    cfg_presence = os.path.isfile('service//config.ini')
+    return cfg_presence
+
+def read_config():
+    if not check_cfg_presence():
+        create_config()
+
+    config = configparser.ConfigParser()
+    config.read('service//config.ini')
+
+    if not config.has_section('LOGGING'):
+        config.add_section('LOGGING')
+        config.set('LOGGING', 'log_level', 'info')
+        os.makedirs('service', exist_ok=True)
+        with open('service//config.ini', 'w') as configfile:
+            config.write(configfile)
+
+    log_level = config.get('LOGGING', 'log_level')
+    cli_preview_color = config.get('CLI VISUAL', 'preview_color')
+    wm_font = config.get('CLI VISUAL', 'font')
+    dorking_delay = config.get('DORKING', 'dorking_delay (secs)')
+    delay_step = config.get('DORKING', 'delay_step')
+    user_agents = [value for key, value in config['USER-AGENTS'].items()]
+    proxies_file_path = config.get('PROXIES', 'proxies_file_path')
+    installed_browser = config.get('SNAPSHOTTING', 'installed_browser')
+    opera_browser_path = config.get('SNAPSHOTTING', 'opera_browser_path')
+    wayback_retries_amount = config.get('SNAPSHOTTING', 'wayback_retries')
+    wayback_requests_pause = config.get('SNAPSHOTTING', 'wayback_req_pause')
+    html_report_template = config.get('HTML_REPORTING', 'template')
+    dorking_browser = config.get('DORKING', 'full_path_to_browser')
+    dorking_browser_mode = config.get('DORKING', 'browser_mode')
+    delete_txt_files = config.get('HTML_REPORTING', 'delete_txt_files')
+
+    config_values = {
+        'logging_level': log_level,
+        'preview_color': cli_preview_color,
+        'wm_font': wm_font,
+        'dorking_delay (secs)': dorking_delay,
+        'delay_step': delay_step,
+        'user_agents': user_agents,
+        'proxies_file_path': proxies_file_path,
+        'installed_browser': installed_browser,
+        'opera_browser_path': opera_browser_path,
+        'wayback_retries_amount': wayback_retries_amount,
+        'wayback_requests_pause': wayback_requests_pause,
+        'template': html_report_template,
+        'dorking_browser': dorking_browser,
+        'dorking_browser_mode': dorking_browser_mode,
+        'delete_txt_files': delete_txt_files
+    }
+
+    return config_values
+
+def print_and_return_config():
+    if not check_cfg_presence():
+        create_config()
+    config = configparser.ConfigParser()
+    config.read('service//config.ini')
+    print(Fore.LIGHTMAGENTA_EX + "\n[CURRENT CONFIG CONTENT START]" + Style.RESET_ALL)
+    for section in config.sections():
+        print('\n')
+        print(Fore.GREEN + f"[{section}]" + Style.RESET_ALL)
+        for key in config[section]:
+            print(Fore.GREEN + f"{key} = {config[section][key]}" + Style.RESET_ALL)
+    print(Fore.LIGHTMAGENTA_EX + "\n\n[CURRENT CONFIG CONTENT END]" + Style.RESET_ALL)
+    return config

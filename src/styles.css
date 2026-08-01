@@ -1,0 +1,287 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: #0f1115;
+  color: #e6e6e6;
+}
+
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  background: #14161c;
+  border-right: 1px solid #23262f;
+  padding: 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.logo {
+  color: #4ade80;
+  font-size: 20px;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-btn:hover {
+  background: #1e212b;
+  color: #fff;
+}
+
+.nav-btn.active {
+  background: #1e3a2b;
+  color: #4ade80;
+}
+
+.content {
+  flex: 1;
+  padding: 30px 40px;
+  overflow-y: auto;
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+h3 {
+  color: #4ade80;
+  font-size: 14px;
+  margin-bottom: 10px;
+  margin-top: 16px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 520px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #aaa;
+}
+
+.checkbox-row {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+input[type="text"],
+select {
+  background: #1a1d24;
+  border: 1px solid #2a2e38;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+input:disabled,
+select:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.fieldset {
+  border: 1px solid #23262f;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.fieldset legend {
+  color: #999;
+  font-size: 12px;
+  padding: 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-soon {
+  background: #2a2e38;
+  color: #999;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 6px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.api-options {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #23262f;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hint {
+  color: #666;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.primary-btn {
+  background: #4ade80;
+  color: #0f1115;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  align-self: flex-start;
+}
+
+.primary-btn:hover:not(:disabled) {
+  background: #3ec46f;
+}
+
+.primary-btn:disabled {
+  background: #2a2e38;
+  color: #777;
+  cursor: not-allowed;
+}
+
+.secondary-btn {
+  background: #1e212b;
+  color: #e6e6e6;
+  border: 1px solid #2a2e38;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 8px;
+  margin-top: 8px;
+}
+
+.secondary-btn:hover {
+  background: #23262f;
+}
+
+.small-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  margin-top: 0;
+}
+
+.result-box {
+  margin-top: 24px;
+  background: #14161c;
+  border: 1px solid #23262f;
+  border-radius: 8px;
+  padding: 16px;
+  max-width: 100%;
+}
+
+.result-box pre {
+  white-space: pre-wrap;
+  font-size: 12px;
+  color: #4ade80;
+}
+
+#report-frame,
+#report-view-frame {
+  width: 100%;
+  height: 70vh;
+  border: 1px solid #23262f;
+  border-radius: 8px;
+  background: #fff;
+  margin-top: 12px;
+}
+
+/* CONFIG EDITOR */
+.config-section {
+  background: #14161c;
+  border: 1px solid #23262f;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.config-row {
+  display: grid;
+  grid-template-columns: 200px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #1e212b;
+}
+
+.config-key {
+  font-size: 12px;
+  color: #999;
+}
+
+.config-input {
+  font-size: 12px;
+  padding: 6px 8px;
+}
+
+/* REPORTS TABLE */
+.reports-table,
+.api-table {
+  border-collapse: collapse;
+  margin: 16px 0;
+  width: 100%;
+}
+
+.reports-table th,
+.reports-table td,
+.api-table th,
+.api-table td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid #23262f;
+  font-size: 13px;
+}
+
+.reports-table th,
+.api-table th {
+  color: #999;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.ok { color: #4ade80; }
+.missing { color: #f87171; }
+.error-text { color: #f87171; }

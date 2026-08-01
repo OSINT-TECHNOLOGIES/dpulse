@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>DPULSE</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <nav class="sidebar">
+      <h1 class="logo">DPULSE</h1>
+      <button class="nav-btn active" data-view="scan">🔍 Scan</button>
+      <button class="nav-btn" data-view="settings">⚙️ Settings</button>
+      <button class="nav-btn" data-view="dorking">🗂️ Dorking DB</button>
+      <button class="nav-btn" data-view="db">💾 Reports DB</button>
+      <button class="nav-btn" data-view="api">🔑 API Manager</button>
+      <button class="nav-btn" data-view="docs">📖 Docs</button>
+    </nav>
+
+    <main class="content">
+
+      <!-- SCAN -->
+      <section id="view-scan" class="view active">
+        <h2>New Scan</h2>
+        <form id="scan-form">
+          <label>Target domain
+            <input type="text" id="domain" placeholder="example.com" required />
+          </label>
+
+          <label>Case comment
+            <input type="text" id="comment" placeholder="Investigation #1" />
+          </label>
+
+          <fieldset class="fieldset">
+            <legend>PageSearch <span class="badge-soon">Coming soon</span></legend>
+            <label class="checkbox-row">
+              <input type="checkbox" disabled />
+              Use PageSearch
+            </label>
+          </fieldset>
+
+          <fieldset class="fieldset">
+            <legend>Dorking <span class="badge-soon">Coming soon</span></legend>
+            <select disabled>
+              <option>None</option>
+            </select>
+          </fieldset>
+
+          <fieldset class="fieldset">
+            <legend>Third-party APIs</legend>
+            <label class="checkbox-row">
+              <input type="checkbox" id="use-api" />
+              Use 3rd-party APIs
+            </label>
+            <div id="api-options" class="hidden api-options">
+              <label class="checkbox-row">
+                <input type="checkbox" id="api-virustotal" />
+                VirusTotal
+              </label>
+              <label class="checkbox-row">
+                <input type="checkbox" id="api-securitytrails" />
+                SecurityTrails
+              </label>
+              <label class="checkbox-row">
+                <input type="checkbox" id="api-hudsonrock" />
+                HudsonRock
+              </label>
+              <label id="hudsonrock-username-wrap" class="hidden">Username (optional, for HudsonRock)
+                <input type="text" id="hudsonrock-username" placeholder="john_doe" />
+              </label>
+              <p class="hint">Make sure API keys are configured in the API Manager tab.</p>
+            </div>
+          </fieldset>
+
+          <fieldset class="fieldset">
+            <legend>Snapshotting <span class="badge-soon">Coming soon</span></legend>
+            <select disabled>
+              <option>None</option>
+            </select>
+          </fieldset>
+
+          <button type="submit" class="primary-btn">Start Scan</button>
+        </form>
+
+        <div id="scan-result" class="result-box hidden">
+          <h3 id="scan-result-title">Scanning...</h3>
+          <div id="scan-result-content"></div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section id="view-settings" class="view">
+        <h2>Settings</h2>
+        <div id="settings-container">
+          <p class="hint">Loading configuration...</p>
+        </div>
+        <button class="secondary-btn" id="clear-journal-btn">Clear journal log</button>
+      </section>
+
+      <!-- DORKING DB -->
+      <section id="view-dorking" class="view">
+        <h2>Dorking Database Manager <span class="badge-soon">Coming soon</span></h2>
+        <p class="hint">Dorking functionality is not yet available in this build.</p>
+        <label>New custom Dorking DB name
+          <input type="text" disabled placeholder="my_custom_dorks" />
+        </label>
+        <button class="primary-btn" disabled>Create</button>
+      </section>
+
+      <!-- DB -->
+      <section id="view-db" class="view">
+        <h2>Reports Database</h2>
+        <button class="secondary-btn" id="refresh-reports-btn">Refresh</button>
+        <table class="reports-table" id="reports-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Target</th><th>Comment</th><th>Created</th><th>API scan</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="reports-tbody">
+            <tr><td colspan="6" class="hint">Loading...</td></tr>
+          </tbody>
+        </table>
+        <div id="report-view-box" class="result-box hidden">
+          <h3 id="report-view-title">Report</h3>
+          <iframe id="report-view-frame"></iframe>
+        </div>
+      </section>
+
+      <!-- API MANAGER -->
+      <section id="view-api" class="view">
+        <h2>API Manager</h2>
+        <table class="api-table" id="api-keys-table">
+          <thead><tr><th>ID</th><th>Name</th><th>Key</th><th>Limitations</th><th>Actions</th></tr></thead>
+          <tbody id="api-keys-tbody">
+            <tr><td colspan="5" class="hint">Loading...</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- DOCS -->
+      <section id="view-docs" class="view">
+        <h2>Documentation</h2>
+        <p>Full documentation is available online.</p>
+        <button class="primary-btn" id="open-docs-btn">Open Docs</button>
+      </section>
+
+    </main>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

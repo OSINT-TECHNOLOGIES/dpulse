@@ -1,0 +1,230 @@
+from colorama import Fore, Style
+import os
+import sqlite3
+import sys
+from rich import box
+from rich.table import Table
+from rich.console import Console
+
+sys.path.append('apis//api_keys.db')
+
+console = Console()
+
+def db_connect():
+    sqlite_connection = sqlite3.connect('report_storage.db')
+    cursor = sqlite_connection.cursor()
+    return cursor, sqlite_connection
+
+def check_rsdb_presence(db_path):
+    if not os.path.exists(db_path):
+        print(Fore.RED + "Report storage database was not found. DPULSE will create it in a second" + Style.RESET_ALL)
+        return False
+    else:
+        return True
+
+def db_creation(db_path):
+    cursor, sqlite_connection = db_connect()
+    create_table_sql = """
+    CREATE TABLE "report_storage" (
+            "id" INTEGER NOT NULL UNIQUE,
+            "report_file_extension" TEXT NOT NULL, 
+            "report_content" BLOB NOT NULL,
+            "comment" TEXT NOT NULL,
+            "target" TEXT NOT NULL,
+            "creation_date" INTEGER NOT NULL,
+            "dorks_results" TEXT,
+            "robots_text" TEXT,
+            "sitemap_text" TEXT,
+            "sitemap_file" TEXT,
+            "api_scan" TEXT,
+            PRIMARY KEY("id" AUTOINCREMENT)
+        );
+        """
+    cursor.execute(create_table_sql)
+    sqlite_connection.commit()
+    sqlite_connection.close()
+
+def db_select():
+    cursor, sqlite_connection = db_connect()
+    if_rows = "SELECT * FROM report_storage"
+    cursor.execute(if_rows)
+    rows = cursor.fetchall()
+    data_presence_flag = False
+    if rows:
+        try:
+            select_query = "SELECT creation_date, report_file_extension, target, id, comment, dorks_results, robots_text, sitemap_text, sitemap_file, api_scan FROM report_storage;"
+            cursor.execute(select_query)
+            records = cursor.fetchall()
+            table = Table(title="[white on magenta]DATABASE CONTENT[/white on magenta]", show_lines=True, border_style="magenta", box=box.ROUNDED)
+            table.add_column("ID", style="cyan", justify="center")
+            table.add_column("Target", style="white", justify="center")
+            table.add_column("Extension", style="white", justify="center")
+            table.add_column("Comment", style="white", justify="center")
+            table.add_column("Created", style="white", justify="center")
+            table.add_column("Dorking", style="white", justify="center")
+            table.add_column("robots.txt", style="white", justify="center")
+            table.add_column("sitemap.xml", style="white", justify="center")
+            table.add_column("API scan", style="white", justify="center")
+
+            for row in records:
+                dorks_presence = "None"
+                robots_presence = "None"
+                sitemap_presence = "None"
+                if row[5] and len(str(row[5])) > 1:
+                    dorks_presence = "In DB"
+                if row[6] and len(str(row[6])) > 1:
+                    robots_presence = "In DB"
+                if row[7] and len(str(row[7])) > 1:
+                    sitemap_presence = "In DB"
+                table.add_row(
+                    str(row[3]),
+                    str(row[2]),
+                    str(row[1]),
+                    str(row[4]),
+                    str(row[0]),
+                    dorks_presence,
+                    robots_presence,
+                    sitemap_presence,
+                    str(row[9])
+                )
+                data_presence_flag = True
+            console.print(table)
+        except sqlite3.Error as e:
+            print(Fore.RED + "Failed to see storage database's content. Reason: {}".format(e))
+            sqlite_connection.close()
+            data_presence_flag = False
+    else:
+        print(Fore.RED + 'No data found in report storage database')
+        sqlite_connection.close()
+        data_presence_flag = False
+    return cursor, sqlite_connection, data_presence_flag
+
+def db_select_silent():
+    cursor, sqlite_connection = db_connect()
+    if_rows = "SELECT * FROM report_storage"
+    cursor.execute(if_rows)
+    rows = cursor.fetchall()
+    if rows:
+        try:
+            select_query = "SELECT creation_date, report_file_extension, target, id, comment, dorks_results, robots_text, sitemap_text, sitemap_file, api_scan FROM report_storage;"
+            cursor.execute(select_query)
+        except sqlite3.Error as e:
+            sqlite_connection.close()
+    else:
+        sqlite_connection.close()
+    return cursor, sqlite_connection
+
+def db_report_recreate(extracted_folder_name, id_to_extract):
+    os.makedirs(extracted_folder_name, exist_ok=True)
+    cursor, sqlite_connection = db_select_silent()
+    cursor.execute("SELECT report_content FROM report_storage WHERE id=?", (id_to_extract,))
+    try:
+        blob = cursor.fetchone()
+        if blob is not None:
+            blob_data = blob[0]
+            cursor.execute("SELECT report_file_extension FROM report_storage WHERE id=?", (id_to_extract,))
+            report_file_extension = (cursor.fetchone())[0]
+            if str(report_file_extension).upper() == 'XLSX':
+                with open(extracted_folder_name + '//report_extracted.xlsx', 'wb') as file:
+                    file.write(blob_data)
+            elif str(report_file_extension).upper() == 'HTML':
+                with open(extracted_folder_name + '//report_extracted.html', 'wb') as file:
+                    file.write(blob_data)
+        cursor.execute("SELECT dorks_results FROM report_storage WHERE id=?", (id_to_extract,))
+        dorks_results = (cursor.fetchone())[0]
+        with open(extracted_folder_name + '//dorks_extracted.txt', 'w') as file:
+            file.write(dorks_results)
+        cursor.execute("SELECT robots_text FROM report_storage WHERE id=?", (id_to_extract,))
+        robots_results = (cursor.fetchone())[0]
+        with open(extracted_folder_name + '//robots_extracted.txt', 'w') as file:
+            file.write(robots_results)
+        cursor.execute("SELECT sitemap_file FROM report_storage WHERE id=?", (id_to_extract,))
+        sitemap_results = (cursor.fetchone())[0]
+        with open(extracted_folder_name + '//sitemap_extracted.txt', 'w') as file:
+            file.write(sitemap_results)
+        cursor.execute("SELECT sitemap_text FROM report_storage WHERE id=?", (id_to_extract,))
+        sitemap_links_results = (cursor.fetchone())[0]
+        with open(extracted_folder_name + '//sitemap_links_extracted.txt', 'w') as file:
+            file.write(sitemap_links_results)
+        print(Fore.GREEN + "\nReport was successfully recreated from report storage database and saved in {} folder".format(extracted_folder_name))
+    except Exception as e:
+        print(Fore.RED + "Error appeared when recreating report from database. Reason: {}".format(e))
+
+def insert_blob(report_file_type, pdf_blob, db_casename, creation_date, case_comment, robots, sitemap_xml, sitemap_links, dorking_results, api_scan_db):
+    try:
+        sqlite_connection = sqlite3.connect('report_storage.db')
+        cursor = sqlite_connection.cursor()
+        print(Fore.GREEN + "Connected to report storage database")
+        apis = [api for api in ['VirusTotal', 'SecurityTrails', 'HudsonRock'] if api in api_scan_db]
+        if len(apis) == 0:
+            api_scan_insert = 'No'
+        elif len(apis) == 1:
+            api_scan_insert = apis[0]
+        else:
+            api_scan_insert = ', '.join(apis[:-1]) + ' and ' + apis[-1]
+
+        sqlite_insert_blob_query = """INSERT INTO report_storage
+                                  (report_file_extension, report_content, creation_date, target, comment, sitemap_file, robots_text, sitemap_text, dorks_results, api_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+
+        data_tuple = (report_file_type, pdf_blob, creation_date, db_casename, case_comment, sitemap_xml, robots, sitemap_links, dorking_results, api_scan_insert)
+        cursor.execute(sqlite_insert_blob_query, data_tuple)
+        sqlite_connection.commit()
+        print(Fore.GREEN + "Scanning results are successfully saved in report storage database")
+        cursor.close()
+    except sqlite3.Error as e:
+        print(Fore.RED + "Failed to insert scanning results in report storage database. Reason: {}".format(e))
+    finally:
+        if sqlite_connection:
+            sqlite_connection.close()
+            print(Fore.GREEN + "Database connection is successfully closed")
+
+def check_api_keys(used_api_flag):
+    os.makedirs('apis', exist_ok=True)
+    for key in used_api_flag:
+        conn = sqlite3.connect('apis//api_keys.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT api_key FROM api_keys WHERE id = ?", (key,))
+        result = cursor.fetchone()
+        if result[0] == 'YOUR_API_KEY':
+            return False
+    return True
+
+def select_api_keys(mode):
+    os.makedirs('apis', exist_ok=True)
+    conn = sqlite3.connect('apis//api_keys.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, api_name, api_key, limitations FROM api_keys")
+    rows = cursor.fetchall()
+    console = Console()
+    if rows:
+        try:
+            table = Table(
+                title="[white on magenta]SUPPORTED API AND YOUR KEYS[/white on magenta]",
+                show_lines=True,
+                border_style="magenta",
+                box=box.ROUNDED
+            )
+            table.add_column("ID", style="cyan", justify="center")
+            table.add_column("API Name", style="white", justify="center")
+            table.add_column("API Key", style="white", justify="center")
+            table.add_column("Limitations", style="white", justify="center")
+            for row in rows:
+                api_key = f"[red]{row[2]}[/red]" if row[2] == "YOUR_API_KEY" else str(row[2])
+                table.add_row(
+                    str(row[0]),
+                    str(row[1]),
+                    api_key,
+                    str(row[3])
+                )
+            console.print(table)
+        except sqlite3.Error as e:
+            print(Fore.RED + "Failed to see API keys database's content. Reason: {}".format(e))
+            conn.close()
+    else:
+        print(Fore.RED + 'No data found in API keys database')
+        conn.close()
+    if mode == 'printing':
+        conn.close()
+        return None
+    else:
+        return cursor, conn

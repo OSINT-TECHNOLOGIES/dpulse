@@ -1,0 +1,22 @@
+{
+  "productName": "DPULSE",
+  "version": "2.0.0-td1",
+  "identifier": "com.dpulse.app",
+  "build": {
+    "frontendDist": "../src"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "DPULSE",
+        "width": 1300,
+        "height": 850
+      }
+    ]
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis", "appimage", "deb"],
+    "externalBin": ["binaries/dpulse-backend"]
+  }
+}

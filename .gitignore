@@ -1,0 +1,30 @@
+# Node / Tauri frontend
+node_modules/
+dist/
+
+# Rust / Tauri backend
+src-tauri/target/
+src-tauri/binaries/
+
+# Python backend
+python-backend/venv/
+python-backend/__pycache__/
+python-backend/**/__pycache__/
+python-backend/build/
+python-backend/dist/
+python-backend/*.spec
+
+# Runtime-generated data
+python-backend/service/config.ini
+python-backend/report_storage.db
+python-backend/apis/api_keys.db
+python-backend/journal.log
+python-backend/report_*/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
