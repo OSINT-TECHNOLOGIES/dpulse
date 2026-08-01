@@ -1,0 +1,163 @@
+﻿name: Build and Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: "windows-latest"
+            target: "x86_64-pc-windows-msvc"
+          - platform: "ubuntu-22.04"
+            target: "x86_64-unknown-linux-gnu"
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Rust
+        uses: dtolnay/rust-action@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Linux system dependencies
+        if: matrix.platform == "ubuntu-22.04"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential libssl-dev libayatana-appindicator3-dev librsvg2-dev
+
+      - name: Install Python dependencies
+        working-directory: python-backend
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Locate builtwith data file (Windows)
+        if: matrix.platform == "windows-latest"
+        working-directory: python-backend
+        shell: pwsh
+        run: |
+          $path = python -c "import builtwith, os; print(os.path.dirname(builtwith.__file__))"
+          echo "BUILTWITH_PATH=$path" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Locate builtwith data file (Linux)
+        if: matrix.platform == "ubuntu-22.04"
+        working-directory: python-backend
+        run: |
+          BPATH=$(python -c "import builtwith, os; print(os.path.dirname(builtwith.__file__))")
+          echo "BUILTWITH_PATH=$BPATH" >> $GITHUB_ENV
+
+      - name: Build backend binary (Windows)
+        if: matrix.platform == "windows-latest"
+        working-directory: python-backend
+        shell: pwsh
+        run: |
+          pyinstaller --onefile --name dpulse-backend `
+            --add-data "service;service" `
+            --add-data "datagather_modules;datagather_modules" `
+            --add-data "reporting_modules;reporting_modules" `
+            --add-data "apis;apis" `
+            --add-data "dorking;dorking" `
+            --add-data "pagesearch;pagesearch" `
+            --add-data "snapshotting;snapshotting" `
+            --add-data "${{ env.BUILTWITH_PATH }}\apps.json.py;builtwith" `
+            --paths "." `
+            --paths "service" `
+            --paths "datagather_modules" `
+            --paths "reporting_modules" `
+            --paths "apis" `
+            --paths "dorking" `
+            --paths "pagesearch" `
+            --paths "snapshotting" `
+            --hidden-import=misc `
+            --hidden-import=files_processing `
+            --hidden-import=uvicorn.logging `
+            --hidden-import=uvicorn.loops `
+            --hidden-import=uvicorn.loops.auto `
+            --hidden-import=uvicorn.protocols `
+            --hidden-import=uvicorn.protocols.http `
+            --hidden-import=uvicorn.protocols.http.auto `
+            --hidden-import=uvicorn.protocols.websockets `
+            --hidden-import=uvicorn.protocols.websockets.auto `
+            --hidden-import=uvicorn.lifespan `
+            --hidden-import=uvicorn.lifespan.on `
+            main.py
+
+      - name: Build backend binary (Linux)
+        if: matrix.platform == "ubuntu-22.04"
+        working-directory: python-backend
+        run: |
+          pyinstaller --onefile --name dpulse-backend \
+            --add-data "service:service" \
+            --add-data "datagather_modules:datagather_modules" \
+            --add-data "reporting_modules:reporting_modules" \
+            --add-data "apis:apis" \
+            --add-data "dorking:dorking" \
+            --add-data "pagesearch:pagesearch" \
+            --add-data "snapshotting:snapshotting" \
+            --add-data "${BUILTWITH_PATH}/apps.json.py:builtwith" \
+            --paths "." \
+            --paths "service" \
+            --paths "datagather_modules" \
+            --paths "reporting_modules" \
+            --paths "apis" \
+            --paths "dorking" \
+            --paths "pagesearch" \
+            --paths "snapshotting" \
+            --hidden-import=misc \
+            --hidden-import=files_processing \
+            --hidden-import=uvicorn.logging \
+            --hidden-import=uvicorn.loops \
+            --hidden-import=uvicorn.loops.auto \
+            --hidden-import=uvicorn.protocols \
+            --hidden-import=uvicorn.protocols.http \
+            --hidden-import=uvicorn.protocols.http.auto \
+            --hidden-import=uvicorn.protocols.websockets \
+            --hidden-import=uvicorn.protocols.websockets.auto \
+            --hidden-import=uvicorn.lifespan \
+            --hidden-import=uvicorn.lifespan.on \
+            main.py
+
+      - name: Move backend binary into Tauri binaries folder (Windows)
+        if: matrix.platform == "windows-latest"
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path src-tauri\binaries | Out-Null
+          Copy-Item "python-backend\dist\dpulse-backend.exe" "src-tauri\binaries\dpulse-backend-${{ matrix.target }}.exe"
+
+      - name: Move backend binary into Tauri binaries folder (Linux)
+        if: matrix.platform == "ubuntu-22.04"
+        run: |
+          mkdir -p src-tauri/binaries
+          cp python-backend/dist/dpulse-backend "src-tauri/binaries/dpulse-backend-${{ matrix.target }}"
+          chmod +x "src-tauri/binaries/dpulse-backend-${{ matrix.target }}"
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Build Tauri app and create release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: "DPULSE ${{ github.ref_name }}"
+          releaseBody: "Download the installer for your operating system from the assets below, or use the download page: https://osint-technologies.github.io/dpulse/"
+          releaseDraft: true
+          prerelease: false
