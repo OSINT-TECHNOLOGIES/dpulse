@@ -48,10 +48,11 @@ jobs:
       - name: Add swap space (Linux)
         if: matrix.platform == 'ubuntu-22.04'
         run: |
-          sudo fallocate -l 4G /swapfile
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
+          free -h
+          sudo fallocate -l 4G /swapfile_dpulse
+          sudo chmod 600 /swapfile_dpulse
+          sudo mkswap /swapfile_dpulse
+          sudo swapon /swapfile_dpulse
           free -h
 
       - name: Install Linux system dependencies
