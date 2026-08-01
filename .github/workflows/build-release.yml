@@ -11,6 +11,9 @@ on:
         required: true
         default: "v1.0.0"
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
@@ -41,6 +44,15 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
+      - name: Add swap space (Linux)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo fallocate -l 4G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          free -h
 
       - name: Install Linux system dependencies
         if: matrix.platform == 'ubuntu-22.04'
