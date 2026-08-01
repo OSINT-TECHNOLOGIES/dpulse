@@ -16,7 +16,7 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["nsis", "appimage", "deb"],
+    "targets": ["nsis", "deb"],
     "externalBin": ["binaries/dpulse-backend"]
   }
 }
