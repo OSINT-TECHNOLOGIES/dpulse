@@ -1,9 +1,15 @@
-﻿name: Build and Release
+name: Build and Release
 
 on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to build and release (e.g. v1.0.0)"
+        required: true
+        default: "v1.0.0"
 
 jobs:
   build:
@@ -37,7 +43,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install Linux system dependencies
-        if: matrix.platform == "ubuntu-22.04"
+        if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential libssl-dev libayatana-appindicator3-dev librsvg2-dev
@@ -49,7 +55,7 @@ jobs:
           pip install pyinstaller
 
       - name: Locate builtwith data file (Windows)
-        if: matrix.platform == "windows-latest"
+        if: matrix.platform == 'windows-latest'
         working-directory: python-backend
         shell: pwsh
         run: |
@@ -57,14 +63,14 @@ jobs:
           echo "BUILTWITH_PATH=$path" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Locate builtwith data file (Linux)
-        if: matrix.platform == "ubuntu-22.04"
+        if: matrix.platform == 'ubuntu-22.04'
         working-directory: python-backend
         run: |
           BPATH=$(python -c "import builtwith, os; print(os.path.dirname(builtwith.__file__))")
           echo "BUILTWITH_PATH=$BPATH" >> $GITHUB_ENV
 
       - name: Build backend binary (Windows)
-        if: matrix.platform == "windows-latest"
+        if: matrix.platform == 'windows-latest'
         working-directory: python-backend
         shell: pwsh
         run: |
@@ -100,7 +106,7 @@ jobs:
             main.py
 
       - name: Build backend binary (Linux)
-        if: matrix.platform == "ubuntu-22.04"
+        if: matrix.platform == 'ubuntu-22.04'
         working-directory: python-backend
         run: |
           pyinstaller --onefile --name dpulse-backend \
@@ -135,14 +141,14 @@ jobs:
             main.py
 
       - name: Move backend binary into Tauri binaries folder (Windows)
-        if: matrix.platform == "windows-latest"
+        if: matrix.platform == 'windows-latest'
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path src-tauri\binaries | Out-Null
           Copy-Item "python-backend\dist\dpulse-backend.exe" "src-tauri\binaries\dpulse-backend-${{ matrix.target }}.exe"
 
       - name: Move backend binary into Tauri binaries folder (Linux)
-        if: matrix.platform == "ubuntu-22.04"
+        if: matrix.platform == 'ubuntu-22.04'
         run: |
           mkdir -p src-tauri/binaries
           cp python-backend/dist/dpulse-backend "src-tauri/binaries/dpulse-backend-${{ matrix.target }}"
@@ -156,8 +162,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: ${{ github.ref_name }}
-          releaseName: "DPULSE ${{ github.ref_name }}"
+          tagName: ${{ github.event.inputs.tag || github.ref_name }}
+          releaseName: "DPULSE ${{ github.event.inputs.tag || github.ref_name }}"
           releaseBody: "Download the installer for your operating system from the assets below, or use the download page: https://osint-technologies.github.io/dpulse/"
           releaseDraft: true
           prerelease: false
