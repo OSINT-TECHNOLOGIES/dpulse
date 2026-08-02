@@ -3,131 +3,515 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DPULSE — Download</title>
+<title>DPULSE — Domain OSINT Reconnaissance Tool</title>
+<meta name="description" content="A powerful desktop OSINT tool for domain reconnaissance. WHOIS, DNS, subdomains, social media, tech stack, and vulnerability analysis in one interactive report.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --bg: #08090c;
+    --bg-alt: #0d0f14;
+    --panel: #12141a;
+    --panel-hover: #171a22;
+    --border: #1f2229;
+    --border-hover: #2a2e38;
+    --text: #f0f1f3;
+    --text-dim: #8b8f9a;
+    --text-faint: #565a66;
+    --accent: #4ade80;
+    --accent-glow: rgba(74, 222, 128, 0.15);
+    --accent-dark: #22c55e;
+    --gradient: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
   body {
-    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
-    background: #0f1115; color: #e6e6e6;
-    min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    padding: 20px;
+    font-family: "Inter", -apple-system, sans-serif;
+    background: var(--bg); color: var(--text);
+    line-height: 1.65; overflow-x: hidden;
   }
-  .container { max-width: 640px; text-align: center; }
-  .logo { font-size: 42px; color: #4ade80; font-weight: 800; letter-spacing: 2px; margin-bottom: 8px; }
-  .tagline { color: #999; font-size: 15px; margin-bottom: 40px; }
-  .version-badge {
-    display: inline-block; background: #14161c; border: 1px solid #23262f;
-    color: #4ade80; padding: 4px 14px; border-radius: 20px; font-size: 12px; margin-bottom: 30px;
+
+  ::selection { background: var(--accent-glow); color: var(--accent); }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  .bg-glow {
+    position: fixed; top: -300px; left: 50%; transform: translateX(-50%);
+    width: 900px; height: 600px;
+    background: radial-gradient(ellipse, rgba(74,222,128,0.08) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
   }
-  .download-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(8,9,12,0.7); backdrop-filter: blur(16px) saturate(150%);
+    border-bottom: 1px solid var(--border);
+    transition: 0.3s;
+  }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto; padding: 16px 24px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .nav-logo {
+    font-size: 18px; font-weight: 800; letter-spacing: 0.5px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+  .nav-links { display: flex; gap: 32px; align-items: center; font-size: 13.5px; }
+  .nav-links a { color: var(--text-dim); text-decoration: none; transition: 0.2s; font-weight: 500; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--text); color: var(--bg); padding: 8px 18px; border-radius: 8px;
+    font-weight: 600; text-decoration: none; font-size: 13px; transition: 0.2s;
+  }
+  .nav-cta:hover { background: var(--accent); transform: translateY(-1px); }
+
+  .hero {
+    position: relative; text-align: center;
+    padding: 170px 24px 60px; z-index: 1;
+  }
+  .badge-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.6s ease forwards; }
+  .pill {
+    background: var(--panel); border: 1px solid var(--border); color: var(--text-dim);
+    padding: 5px 14px; border-radius: 20px; font-size: 11.5px; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .pill.success { color: var(--accent); border-color: rgba(74,222,128,0.25); background: var(--accent-glow); }
+  .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+
+  .hero h1 {
+    font-size: clamp(38px, 6vw, 64px); font-weight: 900; letter-spacing: -1.5px;
+    margin-bottom: 20px; line-height: 1.08;
+    opacity: 0; animation: fadeUp 0.7s ease 0.1s forwards;
+  }
+  .hero h1 .gradient-text {
+    background: var(--gradient); -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p.tagline {
+    font-size: clamp(15px, 2vw, 18px); color: var(--text-dim); max-width: 620px; margin: 0 auto 40px;
+    opacity: 0; animation: fadeUp 0.7s ease 0.2s forwards;
+  }
+
+  .download-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 540px; margin: 0 auto 14px;
+    opacity: 0; animation: fadeUp 0.7s ease 0.3s forwards;
+  }
   .download-btn {
-    background: #14161c; border: 1px solid #23262f; border-radius: 14px;
-    padding: 28px 20px; cursor: pointer; transition: 0.2s; text-decoration: none; color: inherit;
-    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+    padding: 22px 20px; cursor: pointer; transition: 0.25s cubic-bezier(.2,.8,.2,1);
+    text-decoration: none; color: inherit;
+    display: flex; align-items: center; gap: 14px; position: relative; overflow: hidden;
   }
-  .download-btn:hover { border-color: #4ade80; transform: translateY(-2px); background: #171a21; }
-  .download-btn.recommended { border-color: #4ade80; box-shadow: 0 0 0 1px #4ade80; }
-  .download-btn .icon { font-size: 36px; }
-  .download-btn .os-name { font-size: 16px; font-weight: 700; }
-  .download-btn .file-info { font-size: 11px; color: #999; }
+  .download-btn::before {
+    content: ''; position: absolute; inset: 0; opacity: 0; transition: 0.3s;
+    background: linear-gradient(135deg, rgba(74,222,128,0.08), transparent);
+  }
+  .download-btn:hover::before { opacity: 1; }
+  .download-btn:hover { border-color: var(--border-hover); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+  .download-btn.recommended { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 8px 24px var(--accent-glow); }
+  .download-btn .icon-box {
+    width: 42px; height: 42px; border-radius: 12px; background: rgba(255,255,255,0.04);
+    display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+  }
+  .download-btn .btn-text { text-align: left; }
+  .download-btn .os-name { font-size: 14.5px; font-weight: 700; }
+  .download-btn .file-info { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
   .recommended-tag {
-    background: #4ade80; color: #06210f; font-size: 10px; font-weight: 700;
-    padding: 2px 8px; border-radius: 10px; margin-top: -4px;
+    position: absolute; top: 8px; right: 8px;
+    background: var(--accent); color: #06210f; font-size: 8.5px; font-weight: 700;
+    padding: 3px 8px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.4px;
   }
-  .download-btn:disabled, .download-btn.disabled {
-    opacity: 0.4; cursor: not-allowed; pointer-events: none;
-  }
-  .status-msg { font-size: 13px; color: #999; margin-top: 20px; }
+  .download-btn.disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+
+  .status-msg { text-align: center; font-size: 12px; color: var(--text-faint); margin-bottom: 10px; }
   .status-msg.error { color: #f87171; }
-  .links-row { margin-top: 30px; font-size: 13px; }
-  .links-row a { color: #4ade80; text-decoration: none; margin: 0 10px; }
-  .links-row a:hover { text-decoration: underline; }
-  .disclaimer {
-    margin-top: 40px; font-size: 11px; color: #666; line-height: 1.6;
-    border-top: 1px solid #23262f; padding-top: 20px;
+  .secondary-links {
+    text-align: center; font-size: 12.5px; color: var(--text-faint);
+    opacity: 0; animation: fadeUp 0.7s ease 0.4s forwards;
+  }
+  .secondary-links a { color: var(--text-dim); text-decoration: none; border-bottom: 1px dotted var(--text-faint); transition: 0.2s; }
+  .secondary-links a:hover { color: var(--accent); border-color: var(--accent); }
+
+  .screenshot-section { position: relative; padding: 60px 24px 100px; text-align: center; z-index: 1; }
+  .screenshot-wrap {
+    max-width: 950px; margin: 0 auto; border-radius: 18px; overflow: hidden;
+    border: 1px solid var(--border); position: relative;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.02);
+    opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(.2,.8,.2,1);
+  }
+  .screenshot-wrap.visible { opacity: 1; transform: translateY(0); }
+  .screenshot-wrap img { width: 100%; display: block; }
+  .browser-chrome {
+    background: #1a1c22; padding: 12px 16px; display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .browser-dot:nth-child(1) { background: #ff5f57; }
+  .browser-dot:nth-child(2) { background: #febc2e; }
+  .browser-dot:nth-child(3) { background: #28c840; }
+
+  section.block { position: relative; padding: 110px 24px; z-index: 1; }
+  .section-eyebrow {
+    text-align: center; color: var(--accent); font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px;
+  }
+  .section-title {
+    text-align: center; margin-bottom: 16px; font-size: clamp(28px, 4vw, 40px); font-weight: 800; letter-spacing: -1px;
+  }
+  .section-subtitle {
+    text-align: center; color: var(--text-dim); font-size: 16px; margin-bottom: 60px;
+    max-width: 580px; margin-left: auto; margin-right: auto;
+  }
+  .reveal { opacity: 0; transform: translateY(24px); transition: 0.7s cubic-bezier(.2,.8,.2,1); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .feature-card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 18px; padding: 28px;
+    transition: 0.3s cubic-bezier(.2,.8,.2,1); position: relative; overflow: hidden;
+  }
+  .feature-card::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--gradient); transform: scaleX(0); transform-origin: left; transition: 0.4s;
+  }
+  .feature-card:hover::after { transform: scaleX(1); }
+  .feature-card:hover { border-color: var(--border-hover); transform: translateY(-5px); background: var(--panel-hover); }
+  .feature-card .f-icon {
+    width: 46px; height: 46px; border-radius: 12px; background: var(--accent-glow);
+    display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 18px;
+  }
+  .feature-card h3 { font-size: 16px; margin-bottom: 10px; font-weight: 700; }
+  .feature-card p { font-size: 13.5px; color: var(--text-dim); }
+
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; position: relative; }
+  .steps::before {
+    content: ''; position: absolute; top: 22px; left: 15%; right: 15%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+  .step { text-align: center; position: relative; }
+  .step .step-num {
+    width: 46px; height: 46px; border-radius: 50%; background: var(--bg-alt); border: 1px solid var(--border);
+    color: var(--accent); display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 17px; margin: 0 auto 20px; position: relative; z-index: 1;
+    transition: 0.3s;
+  }
+  .step:hover .step-num { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: scale(1.08); }
+  .step h3 { font-size: 16px; margin-bottom: 8px; font-weight: 700; }
+  .step p { font-size: 13.5px; color: var(--text-dim); max-width: 240px; margin: 0 auto; }
+
+  .cli-callout {
+    background: linear-gradient(135deg, var(--panel), var(--bg-alt));
+    border: 1px solid var(--border); border-radius: 22px;
+    padding: 36px 40px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap;
+    position: relative; overflow: hidden;
+  }
+  .cli-callout::before {
+    content: '>_'; position: absolute; right: 30px; top: 50%; transform: translateY(-50%);
+    font-family: "JetBrains Mono", monospace; font-size: 80px; color: rgba(255,255,255,0.03); font-weight: 700;
+  }
+  .cli-text h3 { font-size: 18px; margin-bottom: 8px; font-weight: 700; }
+  .cli-text p { font-size: 13.5px; color: var(--text-dim); max-width: 460px; }
+  .btn-outline {
+    border: 1px solid var(--accent); color: var(--accent); padding: 11px 24px; border-radius: 10px;
+    text-decoration: none; font-size: 13.5px; font-weight: 600; white-space: nowrap; transition: 0.25s;
+    position: relative; z-index: 1;
+  }
+  .btn-outline:hover { background: var(--accent); color: #06210f; box-shadow: 0 8px 20px var(--accent-glow); }
+
+  .mentions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+  .mention-card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 24px;
+    transition: 0.3s;
+  }
+  .mention-card:hover { border-color: var(--border-hover); transform: translateY(-3px); }
+  .mention-card .quote-mark { font-size: 32px; color: var(--accent); opacity: 0.4; font-family: Georgia, serif; line-height: 1; }
+  .mention-card p { font-size: 13.5px; color: var(--text-dim); margin: 10px 0 14px; }
+  .mention-card a { color: var(--accent); text-decoration: none; font-size: 12.5px; font-weight: 600; }
+  .mention-card a:hover { text-decoration: underline; }
+
+  .stats-bar {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 20px; padding: 36px 24px;
+  }
+  .stat-item { text-align: center; }
+  .stat-item .num {
+    font-size: clamp(26px, 4vw, 36px); font-weight: 900;
+    background: var(--gradient); -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .stat-item .label { font-size: 12px; color: var(--text-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  footer { position: relative; padding: 60px 24px 40px; text-align: center; border-top: 1px solid var(--border); z-index: 1; }
+  .footer-logo { font-size: 16px; font-weight: 800; margin-bottom: 20px; color: var(--text-dim); }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; font-size: 13px; }
+  .footer-links a { color: var(--text-dim); text-decoration: none; transition: 0.2s; }
+  .footer-links a:hover { color: var(--accent); }
+  .disclaimer { font-size: 11px; color: var(--text-faint); max-width: 620px; margin: 0 auto; line-height: 1.8; }
+  .footer-bottom { margin-top: 24px; font-size: 11px; color: var(--text-faint); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%,100% { opacity: 1; box-shadow: 0 0 0 0 var(--accent-glow); } 50% { opacity: 0.6; box-shadow: 0 0 0 6px transparent; } }
+
+  @media (max-width: 780px) {
+    .steps { grid-template-columns: 1fr; gap: 40px; }
+    .steps::before { display: none; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .cli-callout { flex-direction: column; text-align: center; }
+    .cli-callout::before { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+    .download-grid { grid-template-columns: 1fr; }
+    .hero { padding: 130px 20px 40px; }
+    section.block { padding: 70px 20px; }
   }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="logo">DPULSE</div>
-  <div class="tagline">OSINT Domain Reconnaissance Tool</div>
-  <div class="version-badge" id="version-badge">Loading latest version...</div>
+<div class="bg-glow"></div>
 
-  <div class="download-grid" id="download-grid">
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo"><span class="dot"></span>DPULSE</div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How it works</a>
+      <a href="#mentions">Community</a>
+      <a href="https://dpulse.readthedocs.io" target="_blank">Docs</a>
+      <a href="https://github.com/OSINT-TECHNOLOGIES/dpulse" class="nav-cta" target="_blank">GitHub →</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="badge-row">
+    <span class="pill success" id="version-badge"><span class="pulse-dot"></span>Loading version...</span>
+    <span class="pill">🪟 Windows · 🐧 Linux</span>
+    <span class="pill">Free & Open Source</span>
+  </div>
+  <h1>Domain OSINT,<br><span class="gradient-text">done right.</span></h1>
+  <p class="tagline">A fast, native desktop application that automates domain reconnaissance — WHOIS, DNS, subdomains, social media, tech stack, and vulnerabilities — compiled into one interactive report.</p>
+
+  <div class="download-grid">
     <a href="#" class="download-btn disabled" id="btn-windows">
-      <div class="icon">🪟</div>
-      <div class="os-name">Windows</div>
-      <div class="file-info" id="info-windows">Checking...</div>
+      <div class="icon-box">🪟</div>
+      <div class="btn-text">
+        <div class="os-name">Windows</div>
+        <div class="file-info" id="info-windows">Checking...</div>
+      </div>
     </a>
     <a href="#" class="download-btn disabled" id="btn-linux">
-      <div class="icon">🐧</div>
-      <div class="os-name">Linux</div>
-      <div class="file-info" id="info-linux">Checking...</div>
+      <div class="icon-box">🐧</div>
+      <div class="btn-text">
+        <div class="os-name">Linux</div>
+        <div class="file-info" id="info-linux">Checking...</div>
+      </div>
     </a>
   </div>
-
   <div class="status-msg" id="status-msg"></div>
-
-  <div class="links-row">
-    <a href="https://github.com/OSINT-TECHNOLOGIES/dpulse" target="_blank">View Source Code</a>
-    <a href="https://github.com/OSINT-TECHNOLOGIES/dpulse/releases" target="_blank">All Releases</a>
-  </div>
-
-  <div class="disclaimer">
-    DPULSE is intended for authorized security research and educational purposes only.
-    Users are solely responsible for ensuring proper authorization before scanning any domain.
+  <div class="secondary-links">
+    <a href="https://github.com/OSINT-TECHNOLOGIES/dpulse/releases" target="_blank">All releases</a>
+    &nbsp;&nbsp;·&nbsp;&nbsp;
+    <a href="https://github.com/OSINT-TECHNOLOGIES/dpulse" target="_blank">Source code</a>
   </div>
 </div>
+
+<div class="screenshot-section">
+  <div class="screenshot-wrap" id="screenshot-wrap">
+    <div class="browser-chrome">
+      <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+    </div>
+    <img src="https://github.com/user-attachments/assets/949c332b-790e-49da-81a3-a7cf21e9ddf2" alt="DPULSE report preview">
+  </div>
+</div>
+
+<section class="block" id="features">
+  <div class="container">
+    <div class="section-eyebrow reveal">Capabilities</div>
+    <div class="section-title reveal">Everything you need, in one report</div>
+    <div class="section-subtitle reveal">DPULSE automates the boring parts of domain reconnaissance so you can focus on analysis, not data collection.</div>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="f-icon">🕸️</div>
+        <h3>Interactive Infrastructure Graph</h3>
+        <p>Explore the relationship between the domain, subdomains, IPs, services, and vulnerabilities as a live, filterable network graph.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="f-icon">🔍</div>
+        <h3>Core Reconnaissance</h3>
+        <p>WHOIS, DNS records, SSL certificates, subdomain enumeration, email harvesting, and social media discovery — fully automated.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="f-icon">🛡️</div>
+        <h3>Security Analysis</h3>
+        <p>Open ports and known vulnerabilities via Shodan InternetDB, with on-demand CVE severity lookup through the NVD API.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="f-icon">🔗</div>
+        <h3>Third-Party API Integration</h3>
+        <p>Native support for VirusTotal, SecurityTrails, and HudsonRock — bring your own free-tier API keys for deeper insights.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="f-icon">💾</div>
+        <h3>Local Scan History</h3>
+        <p>Every scan is saved locally in SQLite. Browse, reopen, or delete past investigations anytime — no cloud, no accounts.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="f-icon">📊</div>
+        <h3>Live Charts & Smart Tables</h3>
+        <p>Searchable, sortable, exportable tables for every data category, plus real-time statistics visualizations.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="how-it-works">
+  <div class="container">
+    <div class="section-eyebrow reveal">Getting Started</div>
+    <div class="section-title reveal">Up and running in under a minute</div>
+    <div class="section-subtitle reveal">No Python installation, no dependency management, no terminal commands.</div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <h3>Download</h3>
+        <p>Grab the installer for your operating system above.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <h3>Install</h3>
+        <p>Run the installer like any other desktop application.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <h3>Scan</h3>
+        <p>Enter a domain, click Start Scan, and explore your report.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="container">
+    <div class="stats-bar reveal">
+      <div class="stat-item">
+        <div class="num">10+</div>
+        <div class="label">Data Sources</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">11</div>
+        <div class="label">Social Platforms</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">3</div>
+        <div class="label">API Integrations</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">100%</div>
+        <div class="label">Local & Private</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="container">
+    <div class="cli-callout reveal">
+      <div class="cli-text">
+        <h3>Prefer the terminal?</h3>
+        <p>DPULSE-CLI is still available and maintained for security fixes — perfect for scripted or automated environments.</p>
+      </div>
+      <a href="https://github.com/OSINT-TECHNOLOGIES/dpulse/tree/cli" class="btn-outline" target="_blank">View DPULSE-CLI</a>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="mentions">
+  <div class="container">
+    <div class="section-eyebrow reveal">Recognition</div>
+    <div class="section-title reveal">Trusted by the community</div>
+    <div class="section-subtitle reveal">Featured by industry leaders in cybersecurity and OSINT.</div>
+    <div class="mentions-grid">
+      <div class="mention-card reveal">
+        <div class="quote-mark">"</div>
+        <p>What excites us, even more, is when a project like DPusle takes full advantage of ALL our available endpoints—empowering its users with infostealer intelligence on email addresses, usernames, domains, and IP addresses</p>
+        <a href="https://www.linkedin.com/feed/update/urn:li:share:7294336938495385600/" target="_blank">HudsonRock →</a>
+      </div>
+      <div class="mention-card reveal">
+        <div class="quote-mark">"</div>
+        <p>A tool for complex approach to domain OSINT — comprehensive coverage in a single package.</p>
+        <a href="https://darkwebinformer.com/dpulse-tool-for-complex-approach-to-domain-osint/" target="_blank">DarkWebInformer →</a>
+      </div>
+      <div class="mention-card reveal">
+        <div class="quote-mark">"</div>
+        <p>Published a full, in-depth tool review covering DPULSE's reconnaissance capabilities.</p>
+        <a href="https://ethicalhacksacademy.com/blogs/cyber-security-tools/dpulse" target="_blank">Ethical Hackers Academy →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">DPULSE</div>
+  <div class="footer-links">
+    <a href="https://github.com/OSINT-TECHNOLOGIES/dpulse" target="_blank">GitHub</a>
+    <a href="https://dpulse.readthedocs.io" target="_blank">Documentation</a>
+    <a href="https://github.com/OSINT-TECHNOLOGIES/dpulse/issues" target="_blank">Report a Bug</a>
+    <a href="https://github.com/OSINT-TECHNOLOGIES/dpulse/releases" target="_blank">Releases</a>
+    <a href="https://github.com/OSINT-TECHNOLOGIES/dpulse/blob/main/LICENSE" target="_blank">License</a>
+  </div>
+  <div class="disclaimer">
+    DPULSE is a research tool intended for authorized OSINT and security research purposes only.
+    It is not intended for criminal activities. The developers are not responsible for any misuse of this tool.
+    Use strictly on domains you own or have explicit permission to test.
+  </div>
+  <div class="footer-bottom">© 2026 OSINT-TECHNOLOGIES. Built with Tauri, Python & FastAPI.</div>
+</footer>
 
 <script>
 const GITHUB_OWNER = "OSINT-TECHNOLOGIES";
 const GITHUB_REPO = "dpulse";
 
-const userAgent = navigator.userAgent.toLowerCase();
-const detectedOS = userAgent.includes('win') ? 'windows'
-  : (userAgent.includes('linux') && !userAgent.includes('android')) ? 'linux'
+const ua = navigator.userAgent.toLowerCase();
+const detectedOS = ua.includes("win") ? "windows"
+  : (ua.includes("linux") && !ua.includes("android")) ? "linux"
   : null;
 
 async function loadLatestRelease() {
-  const statusMsg = document.getElementById('status-msg');
-  const versionBadge = document.getElementById('version-badge');
+  const statusMsg = document.getElementById("status-msg");
+  const versionBadge = document.getElementById("version-badge");
 
   try {
     const response = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`);
     if (!response.ok) throw new Error(`GitHub API returned ${response.status}`);
     const release = await response.json();
 
-    versionBadge.textContent = `Latest version: ${release.tag_name}`;
-
+    versionBadge.innerHTML = `<span class="pulse-dot"></span>Latest: ${release.tag_name}`;
     const assets = release.assets || [];
 
-    const windowsAsset = assets.find(a => a.name.toLowerCase().endsWith('.exe'))
-      || assets.find(a => a.name.toLowerCase().endsWith('.msi'));
+    const windowsAsset = assets.find(a => a.name.toLowerCase().endsWith(".exe"));
+    const linuxAsset = assets.find(a => a.name.toLowerCase().endsWith(".appimage"))
+      || assets.find(a => a.name.toLowerCase().endsWith(".deb"));
 
-    const linuxAsset = assets.find(a => a.name.toLowerCase().endsWith('.appimage'))
-      || assets.find(a => a.name.toLowerCase().endsWith('.deb'));
-
-    setupButton('windows', windowsAsset);
-    setupButton('linux', linuxAsset);
+    setupButton("windows", windowsAsset);
+    setupButton("linux", linuxAsset);
 
     if (!windowsAsset && !linuxAsset) {
-      statusMsg.textContent = 'No installers found in the latest release yet.';
-      statusMsg.classList.add('error');
+      statusMsg.textContent = "No installers found in the latest release yet.";
+      statusMsg.classList.add("error");
     }
-
   } catch (err) {
-    versionBadge.textContent = 'Unable to load release info';
-    statusMsg.textContent = `Error: ${err.message}. You can browse releases manually below.`;
-    statusMsg.classList.add('error');
+    versionBadge.textContent = "Unable to load release info";
+    statusMsg.textContent = `Error: ${err.message}. Browse releases manually below.`;
+    statusMsg.classList.add("error");
   }
 }
 
 function formatSize(bytes) {
-  if (!bytes) return '';
-  const mb = bytes / (1024 * 1024);
-  return `${mb.toFixed(1)} MB`;
+  if (!bytes) return "";
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function setupButton(os, asset) {
@@ -135,24 +519,36 @@ function setupButton(os, asset) {
   const info = document.getElementById(`info-${os}`);
 
   if (!asset) {
-    info.textContent = 'Not available yet';
+    info.textContent = "Not available yet";
     return;
   }
 
   btn.href = asset.browser_download_url;
-  btn.classList.remove('disabled');
+  btn.classList.remove("disabled");
   info.textContent = `${asset.name} · ${formatSize(asset.size)}`;
 
   if (os === detectedOS) {
-    btn.classList.add('recommended');
-    const tag = document.createElement('div');
-    tag.className = 'recommended-tag';
-    tag.textContent = 'Recommended for your system';
+    btn.classList.add("recommended");
+    const tag = document.createElement("div");
+    tag.className = "recommended-tag";
+    tag.textContent = "For you";
     btn.appendChild(tag);
   }
 }
 
 loadLatestRelease();
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("visible");
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+document.querySelectorAll(".reveal, #screenshot-wrap").forEach(el => observer.observe(el));
 </script>
+
 </body>
 </html>
