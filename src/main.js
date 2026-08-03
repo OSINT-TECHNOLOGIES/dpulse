@@ -1,6 +1,5 @@
-import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
-
 const API_BASE = "http://127.0.0.1:8000";
+
 
 async function waitForBackend(maxAttempts = 40) {
   for (let i = 0; i < maxAttempts; i++) {
@@ -31,8 +30,10 @@ async function waitForBackend(maxAttempts = 40) {
 let snapshotWindowCounter = 0;
 
 async function openMiniBrowser(url, title) {
-  const label = `snapshot-viewer-${snapshotWindowCounter++}`;
   try {
+    const module = await import("@tauri-apps/api/webviewWindow");
+    const WebviewWindow = module.WebviewWindow;
+    const label = `snapshot-viewer-${snapshotWindowCounter++}`;
     const win = new WebviewWindow(label, {
       url,
       title: title || "DPULSE Snapshot Viewer",
@@ -44,7 +45,7 @@ async function openMiniBrowser(url, title) {
       window.open(url, "_blank");
     });
   } catch (e) {
-    console.error("WebviewWindow creation threw, falling back to system browser", e);
+    console.warn("WebviewWindow module unavailable, opening in system browser instead:", e);
     window.open(url, "_blank");
   }
 }
