@@ -19,7 +19,6 @@
 
     <main class="content">
 
-      <!-- SCAN -->
       <section id="view-scan" class="view active">
         <h2>New Scan</h2>
         <form id="scan-form">
@@ -73,10 +72,22 @@
           </fieldset>
 
           <fieldset class="fieldset">
-            <legend>Snapshotting <span class="badge-soon">Coming soon</span></legend>
-            <select disabled>
-              <option>None</option>
+            <legend>Snapshotting</legend>
+            <select id="snapshot-mode">
+              <option value="n">None</option>
+              <option value="s">Screenshot</option>
+              <option value="p">Page Copy (HTML)</option>
+              <option value="w">Wayback Machine</option>
             </select>
+            <div id="wayback-dates-wrap" class="hidden two-cols" style="margin-top:10px;">
+              <label>From (YYYYMMDD)
+                <input type="text" id="wayback-from" placeholder="20200101" />
+              </label>
+              <label>To (YYYYMMDD)
+                <input type="text" id="wayback-to" placeholder="20231231" />
+              </label>
+            </div>
+            <p class="hint">Screenshot/Page Copy use the browser configured in Settings → SNAPSHOTTING → installed_browser. Screenshot mode requires that browser to be installed on this machine.</p>
           </fieldset>
 
           <button type="submit" class="primary-btn">Start Scan</button>
@@ -86,9 +97,13 @@
           <h3 id="scan-result-title">Scanning...</h3>
           <div id="scan-result-content"></div>
         </div>
+
+        <div id="snapshot-panel" class="result-box hidden">
+          <h3>📸 Snapshot</h3>
+          <div id="snapshot-content"></div>
+        </div>
       </section>
 
-      <!-- SETTINGS -->
       <section id="view-settings" class="view">
         <h2>Settings</h2>
         <div id="settings-container">
@@ -97,7 +112,6 @@
         <button class="secondary-btn" id="clear-journal-btn">Clear journal log</button>
       </section>
 
-      <!-- DORKING DB -->
       <section id="view-dorking" class="view">
         <h2>Dorking Database Manager <span class="badge-soon">Coming soon</span></h2>
         <p class="hint">Dorking functionality is not yet available in this build.</p>
@@ -107,7 +121,6 @@
         <button class="primary-btn" disabled>Create</button>
       </section>
 
-      <!-- DB -->
       <section id="view-db" class="view">
         <h2>Reports Database</h2>
         <button class="secondary-btn" id="refresh-reports-btn">Refresh</button>
@@ -127,7 +140,6 @@
         </div>
       </section>
 
-      <!-- API MANAGER -->
       <section id="view-api" class="view">
         <h2>API Manager</h2>
         <table class="api-table" id="api-keys-table">
@@ -138,7 +150,6 @@
         </table>
       </section>
 
-      <!-- DOCS -->
       <section id="view-docs" class="view">
         <h2>Documentation</h2>
         <p>Full documentation is available online.</p>
