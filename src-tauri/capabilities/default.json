@@ -5,6 +5,9 @@
   "windows": ["main"],
   "permissions": [
     "core:default",
+    "core:window:default",
+    "core:webview:default",
+    "core:webview:allow-create-webview-window",
     {
       "identifier": "shell:allow-execute",
       "allow": [{ "name": "binaries/dpulse-backend", "sidecar": true }]
