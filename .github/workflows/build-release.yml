@@ -65,7 +65,7 @@ jobs:
         working-directory: python-backend
         run: |
           pip install -r requirements.txt
-          pip install pyinstaller
+          pip install pyinstaller pyinstaller-hooks-contrib
 
       - name: Locate builtwith data file (Windows)
         if: matrix.platform == 'windows-latest'
