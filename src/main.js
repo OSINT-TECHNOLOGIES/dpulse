@@ -31,25 +31,22 @@ let snapshotWindowCounter = 0;
 
 async function openMiniBrowser(url, title) {
   try {
-    const module = await import("@tauri-apps/api/webviewWindow");
-    const WebviewWindow = module.WebviewWindow;
-    const label = `snapshot-viewer-${snapshotWindowCounter++}`;
-    const win = new WebviewWindow(label, {
-      url,
-      title: title || "DPULSE Snapshot Viewer",
-      width: 1100,
-      height: 750,
-    });
-    win.once("tauri://error", (e) => {
-      console.error("Failed to open snapshot window, falling back to system browser", e);
-      window.open(url, "_blank");
-    });
+    if (window.__TAURI__ && window.__TAURI__.core) {
+      await window.__TAURI__.core.invoke("open_url", { url });
+      return;
+    }
+    throw new Error("Tauri global API not available");
   } catch (e) {
-    console.warn("WebviewWindow module unavailable, opening in system browser instead:", e);
+    console.warn("Native open_url failed, falling back to window.open:", e);
     window.open(url, "_blank");
   }
 }
 
+window.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "dpulse-open-external" && event.data.url) {
+    openMiniBrowser(event.data.url, "DPULSE External Link");
+  }
+});
 
 const navButtons = document.querySelectorAll(".nav-btn");
 const views = document.querySelectorAll(".view");
