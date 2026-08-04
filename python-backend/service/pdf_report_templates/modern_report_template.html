@@ -183,7 +183,6 @@ pre.code-block {
     </div>
   </div>
 
-  <!-- ================= GENERAL INFO ================= -->
   <section class="view-section" id="section-general">
     <div class="panel">
       <h2>ℹ️ General Information</h2>
@@ -203,7 +202,6 @@ pre.code-block {
     </div>
   </section>
 
-  <!-- ================= STATS ================= -->
   <section class="view-section" id="section-stats">
     <div class="panel">
       <h2>📊 Scan Statistics</h2>
@@ -211,9 +209,9 @@ pre.code-block {
         <div class="stat-box"><div class="num">{{ a_tsf }}</div><div class="label">Subdomains</div></div>
         <div class="stat-box"><div class="num">{{ a_tsm }}</div><div class="label">Social Links</div></div>
         <div class="stat-box"><div class="num">{{ a_temails }}</div><div class="label">Emails</div></div>
-		<div class="stat-box"><div class="num">{{ ip_table_rows|length }}</div><div class="label">IP Addresses</div></div>
-		<div class="stat-box"><div class="num">{{ ports|length }}</div><div class="label">Open Ports</div></div>
-		<div class="stat-box"><div class="num">{{ vulns|length }}</div><div class="label">Vulnerabilities</div></div>
+        <div class="stat-box"><div class="num">{{ ip_table_rows|length }}</div><div class="label">IP Addresses</div></div>
+        <div class="stat-box"><div class="num">{{ ports|length }}</div><div class="label">Open Ports</div></div>
+        <div class="stat-box"><div class="num">{{ vulns|length }}</div><div class="label">Vulnerabilities</div></div>
       </div>
       <div class="charts-row">
         <div class="chart-box"><h3>Overall Statistics</h3><canvas id="bar-chart" class="chart-canvas"></canvas></div>
@@ -236,7 +234,7 @@ pre.code-block {
     </div>
     {% endif %}
   </section>
-    <!-- ================= GRAPH ================= -->
+
   <section class="view-section" id="section-graph">
     <div class="panel">
       <h2>🕸️ Domain Infrastructure Graph</h2>
@@ -261,7 +259,6 @@ pre.code-block {
     </div>
   </section>
 
-  <!-- ================= WHOIS ================= -->
   <section class="view-section hidden-section" id="section-whois">
     <div class="panel">
       <h2>🪪 WHOIS Information</h2>
@@ -276,12 +273,11 @@ pre.code-block {
         <div class="info-item"><div class="label">Contacts</div><div class="value">{{ mails }}</div></div>
       </div>
       <div class="top-bar-actions no-print" style="margin-top:14px;">
-        <button class="btn btn-sm" onclick="window.open('https://who.is/whois/{{ sh_domain }}','_blank')">🔗 Full WHOIS on who.is</button>
+        <button class="btn btn-sm" data-external-url="https://who.is/whois/{{ sh_domain }}">🔗 Full WHOIS on who.is</button>
       </div>
     </div>
   </section>
 
-  <!-- ================= DNS & SSL ================= -->
   <section class="view-section hidden-section" id="section-dns">
     <div class="panel">
       <h2>🔐 DNS Records</h2>
@@ -307,7 +303,6 @@ pre.code-block {
     </div>
   </section>
 
-  <!-- ================= SOCIAL ================= -->
   <section class="view-section hidden-section" id="section-social">
     <div class="panel">
       <h2>📱 Social Media Analysis</h2>
@@ -343,7 +338,7 @@ pre.code-block {
             <td>{{ row.platform }}</td>
             <td style="word-break:break-all;">{{ row.link }}</td>
             <td class="status-cell">—</td>
-            <td><button class="btn btn-sm" onclick="window.open('{{ row.link }}','_blank')">Open</button></td>
+            <td><button class="btn btn-sm" data-external-url="{{ row.link }}">Open</button></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -355,7 +350,6 @@ pre.code-block {
     </div>
   </section>
 
-  <!-- ================= SUBDOMAINS ================= -->
   <section class="view-section hidden-section" id="section-subdomains">
     <div class="panel">
       <h2>🌐 Subdomains ({{ a_tsf }})</h2>
@@ -397,7 +391,6 @@ pre.code-block {
     </div>
   </section>
 
-  <!-- ================= IPs ================= -->
   <section class="view-section hidden-section" id="section-ips">
     <div class="panel">
       <h2>🔢 IP Addresses</h2>
@@ -423,9 +416,9 @@ pre.code-block {
             <td class="geo-cell">—</td>
             <td class="rdns-cell">—</td>
             <td>
-              <button class="btn btn-sm" onclick="window.open('https://www.shodan.io/host/{{ row.ip }}','_blank')">Shodan</button>
-              <button class="btn btn-sm" onclick="window.open('https://www.virustotal.com/gui/ip-address/{{ row.ip }}','_blank')">VT</button>
-              <button class="btn btn-sm" onclick="window.open('https://www.abuseipdb.com/check/{{ row.ip }}','_blank')">AbuseIPDB</button>
+              <button class="btn btn-sm" data-external-url="https://www.shodan.io/host/{{ row.ip }}">Shodan</button>
+              <button class="btn btn-sm" data-external-url="https://www.virustotal.com/gui/ip-address/{{ row.ip }}">VT</button>
+              <button class="btn btn-sm" data-external-url="https://www.abuseipdb.com/check/{{ row.ip }}">AbuseIPDB</button>
             </td>
           </tr>
           {% endfor %}
@@ -438,7 +431,6 @@ pre.code-block {
     </div>
   </section>
 
-  <!-- ================= TECH ================= -->
   <section class="view-section hidden-section" id="section-tech">
     <div class="panel">
       <h2>⚙️ Technology Stack</h2>
@@ -481,7 +473,6 @@ pre.code-block {
     </div>
   </section>
 
-  <!-- ================= SECURITY ================= -->
   <section class="view-section hidden-section" id="section-security">
     <div class="panel">
       <h2>🛡️ Open Ports</h2>
@@ -542,7 +533,7 @@ pre.code-block {
           {% for v in vulns %}
           <tr>
             <td class="checkbox-cell"><input type="checkbox" class="vuln-row-check" value="{{ v }}"></td>
-            <td><a href="https://nvd.nist.gov/vuln/detail/{{ v }}" target="_blank" style="color:var(--accent);">{{ v }}</a></td>
+            <td><a href="#" data-external-url="https://nvd.nist.gov/vuln/detail/{{ v }}" style="color:var(--accent);">{{ v }}</a></td>
             <td class="severity-cell"><span class="badge badge-unknown">Unknown</span></td>
             <td class="desc-cell">—</td>
           </tr>
@@ -560,7 +551,6 @@ pre.code-block {
     </div>
   </section>
 
-  <!-- ================= FILES ================= -->
   <section class="view-section hidden-section" id="section-files">
     <div class="panel">
       <h2>📄 Technical Files</h2>
@@ -611,11 +601,39 @@ pre.code-block {
 
 <div class="toast-container"></div>
 <div id="graph-context-menu"></div>
-
 <script>
-// ============================================================
-// НАВИГАЦИЯ
-// ============================================================
+
+function openExternalLink(url) {
+  if (!url) return;
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'dpulse-open-external', url: url }, '*');
+    } else {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+  } catch (e) {
+    console.warn('postMessage to parent failed, trying window.open directly:', e);
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+}
+
+
+document.addEventListener('click', function (event) {
+  const target = event.target.closest('[data-external-url]');
+  if (target) {
+    event.preventDefault();
+    openExternalLink(target.getAttribute('data-external-url'));
+    return;
+  }
+
+  const link = event.target.closest('a[target="_blank"]');
+  if (link && link.href) {
+    event.preventDefault();
+    openExternalLink(link.href);
+  }
+});
+
+
 document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', () => {
     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -627,9 +645,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
   });
 });
 
-// ============================================================
-// THEME + PRINT
-// ============================================================
+
 try {
   const saved = localStorage.getItem('dpulse-theme');
   if (saved) document.documentElement.setAttribute('data-theme', saved);
@@ -644,9 +660,7 @@ document.getElementById('theme-toggle-btn')?.addEventListener('click', () => {
 
 document.getElementById('print-btn')?.addEventListener('click', () => window.print());
 
-// ============================================================
-// TOAST
-// ============================================================
+
 function showToast(message) {
   const container = document.querySelector('.toast-container');
   const toast = document.createElement('div');
@@ -660,9 +674,7 @@ function copyToClipboard(text) {
   navigator.clipboard?.writeText(text).then(() => showToast('Copied to clipboard')).catch(() => showToast('Copy failed'));
 }
 
-// ============================================================
-// COLLAPSIBLE
-// ============================================================
+
 document.querySelectorAll('.collapsible-header').forEach(header => {
   header.addEventListener('click', () => {
     header.classList.toggle('open');
@@ -670,9 +682,7 @@ document.querySelectorAll('.collapsible-header').forEach(header => {
   });
 });
 
-// ============================================================
-// GENERIC TABLE: SEARCH + SORT + PAGINATION
-// ============================================================
+
 function initTable(tableId, searchInputId, paginationId, pageSize, extraFilterFn) {
   const table = document.getElementById(tableId);
   if (!table) return null;
@@ -782,9 +792,7 @@ function getSelected(rowClass) {
   return Array.from(document.querySelectorAll('.' + rowClass)).filter(cb => cb.checked);
 }
 
-// ============================================================
-// LIVE NETWORK HELPERS (real requests, CORS-aware, best-effort)
-// ============================================================
+
 function checkReachable(url, timeoutMs) {
   timeoutMs = timeoutMs || 4000;
   return new Promise((resolve) => {
@@ -870,9 +878,7 @@ function serviceCategory(name) {
   return '';
 }
 
-// ============================================================
-// CHARTS
-// ============================================================
+
 function initCharts() {
   const barCtx = document.getElementById('bar-chart');
   if (barCtx) {
@@ -917,9 +923,7 @@ function initCharts() {
 }
 initCharts();
 
-// ============================================================
-// INFRASTRUCTURE GRAPH (vis-network)
-// ============================================================
+
 const GROUP_COLORS = { domain: '#a855f7', service: '#6b7280', subdomain: '#3b82f6', social: '#ec4899', ip: '#14b8a6', port: '#f97316', vuln: '#ef4444' };
 const GROUP_LABELS = { domain: 'Domain', service: 'Services', subdomain: 'Subdomains', social: 'Socials', ip: 'IPs', port: 'Ports', vuln: 'Vulnerabilities' };
 
@@ -1076,7 +1080,7 @@ function initGraph(graphData) {
       { label: '📋 Copy Label', fn: () => copyToClipboard(node.full_label) },
       { label: '📋 Copy All Data', fn: () => copyToClipboard(JSON.stringify(node, null, 2)) },
     ];
-    if (node.url) actions.push({ label: '↗️ Open Link', fn: () => window.open(node.url, '_blank') });
+    if (node.url) actions.push({ label: '↗️ Open Link', fn: () => openExternalLink(node.url) });
     actions.push({ label: '🔗 Highlight Connected', fn: () => highlightConnected(node.id) });
     actions.push({ label: '🎯 Focus on Node', fn: () => network.focus(node.id, { scale: 1.8, animation: true }) });
     actions.push({ label: '🙈 Hide Node', fn: () => allNodes.remove(node.id) });
@@ -1105,9 +1109,6 @@ function initGraph(graphData) {
 }
 initGraph({{ graph_data|tojson }});
 
-// ============================================================
-// DNS LOOKUP BUTTON
-// ============================================================
 document.getElementById('dns-lookup-btn')?.addEventListener('click', async () => {
   const resultDiv = document.getElementById('dns-lookup-result');
   resultDiv.innerHTML = 'Querying Cloudflare DoH...';
@@ -1126,9 +1127,6 @@ document.getElementById('dns-lookup-btn')?.addEventListener('click', async () =>
   }
 });
 
-// ============================================================
-// SOCIAL MEDIA TABLE
-// ============================================================
 wireSelectAll('social-check-all-header', 'social-row-check');
 document.getElementById('social-select-all')?.addEventListener('click', () => document.querySelectorAll('.social-row-check').forEach(cb => cb.checked = true));
 document.getElementById('social-verify-btn')?.addEventListener('click', async () => {
@@ -1147,8 +1145,8 @@ document.getElementById('social-archive-btn')?.addEventListener('click', async (
     const link = cb.closest('tr').children[2].textContent.trim();
     try {
       const snap = await checkWayback(link);
-      if (snap) window.open(snap, '_blank'); else showToast(`No archive found for ${link}`);
-    } catch (e) { showToast('Wayback check failed'); }
+      if (snap) openExternalLink(snap); else showToast(`No archive found for ${link}`);
+    } catch (e) { showToast('Wayback check failed (CORS or network restriction)'); }
   }
 });
 document.getElementById('social-export-btn')?.addEventListener('click', () => exportTableToCSV('social-table', 'social_media.csv', '.social-row-check'));
@@ -1157,10 +1155,6 @@ const socialTableApi = initTable('social-table', 'social-search', 'social-pagina
   return !val || row.dataset.platform === val;
 });
 document.getElementById('social-platform-filter')?.addEventListener('change', () => socialTableApi?.render());
-
-// ============================================================
-// SUBDOMAINS TABLE
-// ============================================================
 wireSelectAll('subdomains-check-all-header', 'subdomain-row-check');
 document.getElementById('subdomains-select-all')?.addEventListener('click', () => document.querySelectorAll('.subdomain-row-check').forEach(cb => cb.checked = true));
 document.getElementById('subdomains-check-btn')?.addEventListener('click', async () => {
@@ -1175,7 +1169,7 @@ document.getElementById('subdomains-check-btn')?.addEventListener('click', async
 document.getElementById('subdomains-open-btn')?.addEventListener('click', () => {
   const selected = getSelected('subdomain-row-check');
   if (!selected.length) return showToast('No subdomains selected');
-  selected.forEach(cb => window.open('http://' + cb.value + '/', '_blank'));
+  selected.forEach(cb => openExternalLink('http://' + cb.value + '/'));
 });
 document.getElementById('subdomains-ssl-btn')?.addEventListener('click', async () => {
   const selected = getSelected('subdomain-row-check');
@@ -1188,7 +1182,7 @@ document.getElementById('subdomains-ssl-btn')?.addEventListener('click', async (
 document.getElementById('subdomains-headers-btn')?.addEventListener('click', () => {
   const selected = getSelected('subdomain-row-check');
   if (!selected.length) return showToast('No subdomains selected');
-  selected.forEach(cb => window.open(`https://securityheaders.com/?q=${encodeURIComponent(cb.value)}`, '_blank'));
+  selected.forEach(cb => openExternalLink(`https://securityheaders.com/?q=${encodeURIComponent(cb.value)}`));
   showToast('Opened securityheaders.com (browsers block reading headers cross-origin)');
 });
 document.getElementById('subdomains-dns-btn')?.addEventListener('click', async () => {
@@ -1203,15 +1197,11 @@ document.getElementById('subdomains-dns-btn')?.addEventListener('click', async (
 document.getElementById('subdomains-whois-btn')?.addEventListener('click', () => {
   const selected = getSelected('subdomain-row-check');
   if (!selected.length) return showToast('No subdomains selected');
-  selected.slice(0, 5).forEach(cb => window.open(`https://who.is/whois/${cb.value}`, '_blank'));
-  if (selected.length > 5) showToast('Opened first 5 (popup blocker limits)');
+  selected.slice(0, 5).forEach(cb => openExternalLink(`https://who.is/whois/${cb.value}`));
+  if (selected.length > 5) showToast('Opened first 5 (to avoid overwhelming pop-ups)');
 });
 document.getElementById('subdomains-export-btn')?.addEventListener('click', () => exportTableToCSV('subdomains-table', 'subdomains.csv', '.subdomain-row-check'));
 initTable('subdomains-table', 'subdomains-search', 'subdomains-pagination', 15);
-
-// ============================================================
-// IPs TABLE
-// ============================================================
 wireSelectAll('ips-check-all-header', 'ip-row-check');
 document.getElementById('ips-select-all')?.addEventListener('click', () => document.querySelectorAll('.ip-row-check').forEach(cb => cb.checked = true));
 document.getElementById('ips-geolocate-btn')?.addEventListener('click', async () => {
@@ -1233,10 +1223,6 @@ document.getElementById('ips-rdns-btn')?.addEventListener('click', async () => {
 });
 document.getElementById('ips-export-btn')?.addEventListener('click', () => exportTableToCSV('ips-table', 'ip_addresses.csv', '.ip-row-check'));
 initTable('ips-table', 'ips-search', 'ips-pagination', 10);
-
-// ============================================================
-// TECH TABLE
-// ============================================================
 wireSelectAll('tech-check-all-header', 'tech-row-check');
 document.getElementById('tech-select-all')?.addEventListener('click', () => document.querySelectorAll('.tech-row-check').forEach(cb => cb.checked = true));
 document.getElementById('tech-cve-btn')?.addEventListener('click', async () => {
@@ -1246,7 +1232,7 @@ document.getElementById('tech-cve-btn')?.addEventListener('click', async () => {
     const cell = cb.closest('tr').querySelector('.cve-cell'); cell.textContent = 'searching...';
     try {
       const results = await nvdSearchByKeyword(cb.value);
-      cell.innerHTML = results.length ? results.slice(0, 3).map(r => `<a href="https://nvd.nist.gov/vuln/detail/${r.cve.id}" target="_blank" style="color:var(--accent);">${r.cve.id}</a>`).join(', ') : 'No known CVEs found';
+      cell.innerHTML = results.length ? results.slice(0, 3).map(r => `<a href="#" data-external-url="https://nvd.nist.gov/vuln/detail/${r.cve.id}" style="color:var(--accent);">${r.cve.id}</a>`).join(', ') : 'No known CVEs found';
     } catch (e) { cell.textContent = 'NVD lookup failed/rate-limited'; }
     await new Promise(r => setTimeout(r, 500));
   }
@@ -1257,10 +1243,6 @@ const techTableApi = initTable('tech-table', 'tech-search', 'tech-pagination', 1
   return !val || row.dataset.category === val;
 });
 document.getElementById('tech-category-filter')?.addEventListener('change', () => techTableApi?.render());
-
-// ============================================================
-// PORTS TABLE
-// ============================================================
 document.querySelectorAll('#ports-table tbody tr').forEach(row => {
   const cb = row.querySelector('.port-row-check');
   if (!cb) return;
@@ -1285,10 +1267,6 @@ const portsTableApi = initTable('ports-table', 'ports-search', null, 1000, (row)
   return !val || row.dataset.category === val;
 });
 document.getElementById('ports-service-filter')?.addEventListener('change', () => portsTableApi?.render());
-
-// ============================================================
-// VULNS TABLE
-// ============================================================
 wireSelectAll('vulns-check-all-header', 'vuln-row-check');
 document.getElementById('vulns-select-all')?.addEventListener('click', () => document.querySelectorAll('.vuln-row-check').forEach(cb => cb.checked = true));
 document.getElementById('vulns-lookup-btn')?.addEventListener('click', async () => {
@@ -1325,6 +1303,5 @@ const vulnsTableApi = initTable('vulns-table', 'vulns-search', null, 1000, (row)
 });
 document.getElementById('vulns-severity-filter')?.addEventListener('change', () => vulnsTableApi?.render());
 </script>
-
 </body>
 </html>
