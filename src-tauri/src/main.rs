@@ -5,10 +5,16 @@ use std::sync::Mutex;
 
 struct BackendProcess(Mutex<Option<CommandChild>>);
 
+#[tauri::command]
+fn open_url(url: String) -> Result<(), String> {
+    open::that(url).map_err(|e| e.to_string())
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
         .manage(BackendProcess(Mutex::new(None)))
+        .invoke_handler(tauri::generate_handler![open_url])
         .setup(|app| {
             let sidecar_command = app
                 .shell()
