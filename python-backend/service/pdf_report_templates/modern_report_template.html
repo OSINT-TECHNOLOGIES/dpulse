@@ -149,6 +149,96 @@ pre.code-block {
   .report-main { max-width: 100%; padding: 0; }
   .panel { break-inside: avoid; }
 }
+
+.hr-section-wrap {
+  --hr-red: #dc2626; --hr-dark: #1a0a0a; --hr-panel: #1c1010;
+}
+.hr-panel {
+  background: linear-gradient(180deg, #1c1010, #14161c);
+  border: 1px solid #3a1a1a;
+}
+.hr-panel h2 { color: #ef4444; }
+
+.risk-hero { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.risk-score-circle {
+  width: 96px; height: 96px; border-radius: 50%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; font-size: 28px; font-weight: 800;
+  flex-shrink: 0; border: 4px solid; position: relative;
+}
+.risk-score-circle .risk-max { font-size: 10px; opacity: 0.6; font-weight: 500; }
+.risk-none { border-color: var(--gray); color: var(--gray); }
+.risk-low { border-color: var(--accent); color: var(--accent); }
+.risk-medium { border-color: #eab308; color: #eab308; }
+.risk-high { border-color: var(--orange); color: var(--orange); }
+.risk-critical { border-color: var(--red); color: var(--red); animation: pulse 1.5s infinite; }
+.risk-summary-text { font-size: 13.5px; color: var(--text-dim); max-width: 600px; line-height: 1.6; }
+.risk-level-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 6px; }
+
+.trend-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 6px 12px; border-radius: 8px; margin-top: 14px; }
+.trend-increasing { background: rgba(239,68,68,0.12); color: var(--red); }
+.trend-decreasing { background: rgba(74,222,128,0.12); color: var(--accent); }
+.trend-stable { background: rgba(107,114,128,0.12); color: var(--gray); }
+.trend-unknown { background: rgba(107,114,128,0.08); color: var(--text-dim); }
+
+.vip-alert-box {
+  background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); border-radius: 10px;
+  padding: 14px 16px; margin-top: 16px;
+}
+.vip-alert-box h4 { color: var(--red); font-size: 13px; margin-bottom: 8px; }
+.vip-item { font-size: 12.5px; padding: 4px 0; border-bottom: 1px solid rgba(239,68,68,0.15); }
+.vip-item:last-child { border-bottom: none; }
+
+.criticality-badge { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+.crit-critical { background: rgba(239,68,68,0.15); color: var(--red); }
+.crit-high { background: rgba(249,115,22,0.15); color: var(--orange); }
+.crit-medium { background: rgba(234,179,8,0.15); color: #eab308; }
+.crit-low { background: rgba(107,114,128,0.15); color: var(--gray); }
+
+.pwd-blur { cursor: pointer; filter: blur(4px); transition: filter 0.15s; padding: 1px 5px; background: var(--input-bg); border-radius: 4px; font-family: monospace; }
+.pwd-blur.revealed { filter: none; }
+.hr-source-tag { font-size: 10px; padding: 2px 6px; background: var(--input-bg); border-radius: 4px; color: var(--text-dim); }
+
+.hygiene-score-bar-wrap { background: var(--input-bg); border-radius: 20px; height: 22px; overflow: hidden; margin: 10px 0; position: relative; }
+.hygiene-score-bar { height: 100%; background: linear-gradient(90deg, var(--red), #eab308, var(--accent)); border-radius: 20px; transition: width 0.6s ease; }
+.hygiene-score-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+
+.stealer-profile-card { background: var(--input-bg); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; border-left: 3px solid var(--red); }
+.stealer-profile-card h4 { font-size: 13px; color: var(--red); margin-bottom: 6px; }
+.stealer-profile-card p { font-size: 12px; color: var(--text-dim); margin-bottom: 4px; }
+.stealer-profile-card .meta-row { display: flex; gap: 16px; margin-top: 8px; font-size: 11px; }
+.stealer-profile-card .meta-row strong { color: var(--text); }
+
+.geo-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 12.5px; }
+.geo-bar-row .geo-label { width: 140px; flex-shrink: 0; color: var(--text-dim); }
+.geo-bar-track { flex: 1; background: var(--input-bg); border-radius: 6px; height: 16px; overflow: hidden; }
+.geo-bar-fill { height: 100%; background: var(--red); border-radius: 6px; }
+.geo-bar-count { width: 30px; text-align: right; color: var(--text-dim); }
+
+.remediation-list { list-style: none; }
+.remediation-list li {
+  display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+}
+.remediation-list li:last-child { border-bottom: none; }
+.remediation-list .rem-check {
+  width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--red); flex-shrink: 0; margin-top: 1px;
+}
+
+.cross-verified-item {
+  background: rgba(74,222,128,0.06); border: 1px solid rgba(74,222,128,0.2); border-radius: 8px;
+  padding: 10px 14px; margin-bottom: 8px; font-size: 12.5px;
+}
+.cross-verified-item .cv-badge { color: var(--accent); font-weight: 700; font-size: 10px; text-transform: uppercase; }
+
+.hr-partner-footer {
+  text-align: center; padding: 24px; margin-top: 10px; border-top: 1px dashed var(--border);
+  font-size: 12.5px; color: var(--text-dim);
+}
+.hr-partner-footer a { color: var(--red); text-decoration: none; font-weight: 600; }
+.hr-partner-footer a:hover { text-decoration: underline; }
+.hr-partner-footer .hr-badge {
+  display: inline-block; margin-top: 8px; padding: 6px 16px; border-radius: 20px;
+  background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: var(--red); font-size: 11px; font-weight: 600;
+}
 </style>
 </head>
 <body>
@@ -167,6 +257,7 @@ pre.code-block {
   <div class="nav-item" data-section="ips"><span class="icon">🔢</span> IP Addresses</div>
   <div class="nav-item" data-section="tech"><span class="icon">⚙️</span> Technology Stack</div>
   <div class="nav-item" data-section="security"><span class="icon">🛡️</span> Security Analysis</div>
+  <div class="nav-item" data-section="hudsonrock"><span class="icon">🩸</span> Infostealer Intel</div>
   <div class="nav-item" data-section="files"><span class="icon">📄</span> Technical Files</div>
   {% if dorking_enabled %}<div class="nav-item" data-section="dorking"><span class="icon">🔍</span> Dorking Results</div>{% endif %}
   {% if pagesearch_enabled %}<div class="nav-item" data-section="pagesearch"><span class="icon">📑</span> PageSearch Results</div>{% endif %}
@@ -550,6 +641,78 @@ pre.code-block {
       <p style="font-size:12.5px;">{{ hostnames }}</p>
     </div>
   </section>
+  
+  <section class="view-section hidden-section hr-section-wrap" id="section-hudsonrock">
+
+  <div class="panel hr-panel" id="hr-risk-panel"></div>
+
+  <div class="panel hr-panel">
+    <h2>📈 Infection Timeline & Stealer Breakdown</h2>
+    <div class="charts-row">
+      <div class="chart-box"><h3>Timeline (by month)</h3><canvas id="hr-timeline-chart" class="chart-canvas"></canvas></div>
+      <div class="chart-box"><h3>Stealer Family Distribution</h3><canvas id="hr-family-chart" class="chart-canvas"></canvas></div>
+    </div>
+    <div id="hr-trend-container"></div>
+  </div>
+
+  <div class="panel hr-panel">
+    <h2>🧬 Stealer Threat Profiles</h2>
+    <div id="hr-profiles-container"></div>
+  </div>
+
+  <div class="panel hr-panel">
+    <h2>🔑 Password Hygiene Analysis</h2>
+    <div id="hr-hygiene-container"></div>
+  </div>
+
+  <div class="panel hr-panel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h2 style="margin:0;">🖥️ Compromised Records</h2>
+      <button class="btn btn-sm no-print" id="hr-reveal-all-btn">👁️ Reveal All Passwords</button>
+    </div>
+    <div id="hr-records-container"></div>
+  </div>
+
+  <div class="panel hr-panel">
+    <h2>🌐 Attack Surface — Classified by Criticality</h2>
+    <div id="hr-attack-surface-container"></div>
+  </div>
+
+  <div class="panel hr-panel">
+    <h2>🗺️ Geographic Distribution of Infected Machines</h2>
+    <div id="hr-geo-container"></div>
+  </div>
+
+  <div class="panel hr-panel">
+    <h2>🔗 Cross-Verified Findings</h2>
+    <p class="hint-note">Findings independently confirmed by correlating HudsonRock data with DPULSE's own technology stack detection.</p>
+    <div id="hr-crossverify-container"></div>
+  </div>
+
+  <div class="panel hr-panel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h2 style="margin:0;">📋 Auto-Generated Remediation Plan</h2>
+      <button class="btn btn-sm no-print" id="hr-export-remediation-btn">⬇️ Export Plan</button>
+    </div>
+    <ul class="remediation-list" id="hr-remediation-list"></ul>
+  </div>
+
+  <div class="panel hr-panel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h2 style="margin:0;">📧 Checked Contacts</h2>
+      <button class="btn btn-sm no-print" id="hr-export-summary-btn">⬇️ Export Executive Summary</button>
+    </div>
+    <div id="hr-emails-container"></div>
+  </div>
+
+  <div class="hr-partner-footer no-print">
+    <div>Deep threat intelligence analysis powered by our official technology partner</div>
+    <a href="#" data-external-url="https://www.hudsonrock.com/">
+      <span class="hr-badge">🩸 In partnership with HudsonRock</span>
+    </a>
+  </div>
+
+</section>
 
   <section class="view-section hidden-section" id="section-files">
     <div class="panel">
@@ -593,7 +756,6 @@ pre.code-block {
   <section class="view-section hidden-section" id="section-api">
     <div class="panel"><h2>🔌 VirusTotal Results</h2><pre class="code-block">{{ virustotal_output }}</pre></div>
     <div class="panel"><h2>🔌 SecurityTrails Results</h2><pre class="code-block">{{ securitytrails_output }}</pre></div>
-    <div class="panel"><h2>🔌 HudsonRock Results</h2><pre class="code-block">{{ hudsonrock_output }}</pre></div>
   </section>
   {% endif %}
 
@@ -924,8 +1086,8 @@ function initCharts() {
 initCharts();
 
 
-const GROUP_COLORS = { domain: '#a855f7', service: '#6b7280', subdomain: '#3b82f6', social: '#ec4899', ip: '#14b8a6', port: '#f97316', vuln: '#ef4444' };
-const GROUP_LABELS = { domain: 'Domain', service: 'Services', subdomain: 'Subdomains', social: 'Socials', ip: 'IPs', port: 'Ports', vuln: 'Vulnerabilities' };
+const GROUP_COLORS = { domain: '#a855f7', service: '#6b7280', subdomain: '#3b82f6', social: '#ec4899', ip: '#14b8a6', port: '#f97316', vuln: '#ef4444', compromised_employee: '#dc2626', exposed_service: '#7c2d12' };
+const GROUP_LABELS = { domain: 'Domain', service: 'Services', subdomain: 'Subdomains', social: 'Socials', ip: 'IPs', port: 'Ports', vuln: 'Vulnerabilities', compromised_employee: 'Compromised Employees', exposed_service: 'Exposed Critical Services' };
 
 function initGraph(graphData) {
   const container = document.getElementById('network-graph');
@@ -1302,6 +1464,250 @@ const vulnsTableApi = initTable('vulns-table', 'vulns-search', null, 1000, (row)
   return !val || row.dataset.severity === val;
 });
 document.getElementById('vulns-severity-filter')?.addEventListener('change', () => vulnsTableApi?.render());
+
+const HR_DATA = {{ hudsonrock_intel|tojson }};
+
+function hrEscapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function renderHudsonRockDashboard(data) {
+  if (!data) return;
+  const level = data.risk_level || 'none';
+
+	document.getElementById('hr-risk-panel').innerHTML = `
+    <h2>🩸 Infostealer Intelligence — Corporate Exposure Analysis</h2>
+    <div class="risk-hero">
+      <div class="risk-score-circle risk-${level}">${data.risk_score ?? 0}<span class="risk-max">/ 100</span></div>
+      <div>
+        <div class="risk-level-label risk-${level}">${level} risk</div>
+        <div class="risk-summary-text">${hrEscapeHtml(data.summary_text || '')}</div>
+      </div>
+    </div>
+    <div class="stats-grid" style="margin-top:18px;">
+      <div class="stat-box"><div class="num">${data.domain_summary?.total_stealers ?? 0}</div><div class="label">Domain-wide Infections</div></div>
+      <div class="stat-box"><div class="num">${(data.email_checks||[]).filter(c=>c.compromised).length}</div><div class="label">Compromised Contacts</div></div>
+      <div class="stat-box"><div class="num">${(data.ip_checks||[]).filter(c=>c.compromised).length}</div><div class="label">Compromised IPs</div></div>
+      <div class="stat-box"><div class="num">${data.total_employee_urls ?? 0}</div><div class="label">Employee URLs</div></div>
+      <div class="stat-box"><div class="num">${data.total_client_urls ?? 0}</div><div class="label">Client URLs</div></div>
+      <div class="stat-box"><div class="num">${(data.vip_records||[]).length}</div><div class="label">High-Value Assets Flagged</div></div>
+    </div>
+    ${(data.vip_records && data.vip_records.length > 0) ? `
+      <div class="vip-alert-box">
+        <h4>⚠️ Potential High-Value Targets Detected</h4>
+        ${data.vip_records.map(r => `<div class="vip-item"><strong>${hrEscapeHtml(r.computer_name)}</strong> — ${hrEscapeHtml(r.vip_reason)}</div>`).join('')}
+      </div>` : ''}
+  `;
+
+  const timeline = data.timeline || [];
+  const timelineCtx = document.getElementById('hr-timeline-chart');
+  if (timelineCtx && timeline.length > 0) {
+    const buckets = {};
+    timeline.forEach(e => { const m = e.date ? e.date.slice(0,7) : 'Unknown'; buckets[m] = (buckets[m]||0)+1; });
+    const months = Object.keys(buckets).sort();
+    new Chart(timelineCtx, {
+      type: 'bar',
+      data: { labels: months, datasets: [{ label: 'Infections', data: months.map(m=>buckets[m]), backgroundColor: '#ef4444' }] },
+      options: { responsive:true, plugins:{legend:{display:false}},
+        scales: { y:{beginAtZero:true, ticks:{color:'#999', stepSize:1}, grid:{color:'rgba(255,255,255,0.05)'}}, x:{ticks:{color:'#999'}, grid:{display:false}} } }
+    });
+  } else if (timelineCtx) {
+    timelineCtx.parentElement.innerHTML = '<h3>Timeline</h3><div class="hint-note">No dated infection records available.</div>';
+  }
+
+  const familyData = data.stealer_family_breakdown || {};
+  const familyCtx = document.getElementById('hr-family-chart');
+  if (familyCtx && Object.keys(familyData).length > 0) {
+    new Chart(familyCtx, {
+      type: 'doughnut',
+      data: { labels: Object.keys(familyData), datasets: [{ data: Object.values(familyData), backgroundColor: ['#ef4444','#f97316','#eab308','#a855f7','#3b82f6','#14b8a6','#ec4899','#dc2626'] }] },
+      options: { responsive:true, plugins:{legend:{position:'bottom', labels:{color:'#999', font:{size:10}}}} }
+    });
+  } else if (familyCtx) {
+    familyCtx.parentElement.innerHTML = '<h3>Stealer Family Distribution</h3><div class="hint-note">No stealer family data available.</div>';
+  }
+
+  const trend = data.trend || {};
+  const trendDir = trend.direction || 'unknown';
+  const trendIcons = { increasing: '📈', decreasing: '📉', stable: '➡️', unknown: '❓' };
+  document.getElementById('hr-trend-container').innerHTML = `
+    <div class="trend-badge trend-${trendDir}">${trendIcons[trendDir] || '❓'} ${hrEscapeHtml(trend.description || 'No trend data available.')}</div>
+  `;
+
+  const profiles = data.stealer_profiles_used || {};
+  const profilesContainer = document.getElementById('hr-profiles-container');
+  const profileKeys = Object.keys(profiles);
+  if (profileKeys.length > 0) {
+    profilesContainer.innerHTML = profileKeys.map(family => {
+      const p = profiles[family];
+      return `
+        <div class="stealer-profile-card">
+          <h4>${hrEscapeHtml(p.display_name)} <span class="hint" style="font-weight:400;">(${familyData[family] || 0} record(s))</span></h4>
+          <p>${hrEscapeHtml(p.description)}</p>
+          <div class="meta-row">
+            <span><strong>Typical vector:</strong> ${hrEscapeHtml(p.typical_vector)}</span>
+          </div>
+          <div class="meta-row">
+            <span><strong>Data targeted:</strong> ${hrEscapeHtml(p.data_targeted)}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } else {
+    profilesContainer.innerHTML = '<div class="hint-note">No specific stealer families identified in the analyzed records.</div>';
+  }
+
+  const hygiene = data.password_hygiene || {};
+  const hygieneContainer = document.getElementById('hr-hygiene-container');
+  const uniqueScore = hygiene.unique_score ?? 100;
+  hygieneContainer.innerHTML = `
+    <p class="hint-note">Score reflects the percentage of analyzed passwords that are not common/weak patterns. This is independent of whether a breach occurred — it measures overall password quality among compromised credentials.</p>
+    <div class="hygiene-score-bar-wrap">
+      <div class="hygiene-score-bar" style="width:${uniqueScore}%;"></div>
+      <div class="hygiene-score-label">${uniqueScore}/100 Password Quality Score</div>
+    </div>
+    <div class="stats-grid" style="margin-top:14px;">
+      <div class="stat-box"><div class="num">${hygiene.total_passwords_analyzed ?? 0}</div><div class="label">Passwords Analyzed</div></div>
+      <div class="stat-box"><div class="num">${hygiene.weak_count ?? 0}</div><div class="label">Weak/Common Passwords</div></div>
+      <div class="stat-box"><div class="num">${(hygiene.reuse_groups||[]).length}</div><div class="label">Reused Password Groups</div></div>
+    </div>
+    ${(hygiene.reuse_groups && hygiene.reuse_groups.length > 0) ? `
+      <h3 style="margin-top:16px;">Detected Password Reuse</h3>
+      <table><thead><tr><th>Masked Password</th><th>Used In</th></tr></thead><tbody>
+        ${hygiene.reuse_groups.map(g => `<tr><td><span class="pwd-blur" onclick="this.classList.toggle('revealed')">${hrEscapeHtml(g.password_masked)}</span></td><td>${g.sources.map(s=>hrEscapeHtml(s)).join(', ')}</td></tr>`).join('')}
+      </tbody></table>
+    ` : ''}
+  `;
+
+  const recordsContainer = document.getElementById('hr-records-container');
+  const allRecords = data.all_records || [];
+  if (allRecords.length > 0) {
+    const vipNames = new Set((data.vip_records||[]).map(r=>r.computer_name));
+    const rows = allRecords.map(r => {
+      const isVip = vipNames.has(r.computer_name);
+      const passwordsHtml = (r.top_passwords||[]).map(p => `<span class="pwd-blur" onclick="this.classList.toggle('revealed')">${hrEscapeHtml(p)}</span>`).join(' ') || '<span class="hint">None</span>';
+      const loginsHtml = (r.top_logins||[]).map(l=>hrEscapeHtml(l)).join(', ') || '—';
+      return `
+        <tr>
+          <td><span class="hr-source-tag">${hrEscapeHtml(r.source)}</span></td>
+          <td>${hrEscapeHtml(r.computer_name)} ${isVip ? '⚠️' : ''}</td>
+          <td>${hrEscapeHtml(r.operating_system)}</td>
+          <td>${hrEscapeHtml(r.date_compromised || 'Unknown')}</td>
+          <td>${hrEscapeHtml(r.stealer_family)}</td>
+          <td>${hrEscapeHtml(r.ip)}</td>
+          <td>${loginsHtml}</td>
+          <td>${passwordsHtml}</td>
+        </tr>`;
+    }).join('');
+    recordsContainer.innerHTML = `
+      <div class="hint-note">Passwords are blurred by default. Click a password (or "Reveal All") to view it.</div>
+      <table id="hr-records-table"><thead><tr><th>Source</th><th>Computer</th><th>OS</th><th>Date</th><th>Stealer</th><th>IP</th><th>Logins</th><th>Passwords</th></tr></thead>
+      <tbody>${rows}</tbody></table>
+    `;
+    document.getElementById('hr-reveal-all-btn')?.addEventListener('click', () => {
+      document.querySelectorAll('#hr-records-table .pwd-blur').forEach(el => el.classList.add('revealed'));
+    });
+  } else {
+    recordsContainer.innerHTML = '<div class="hint-note">No compromised device records found for the checked contacts, IPs, or username.</div>';
+  }
+
+  const attackContainer = document.getElementById('hr-attack-surface-container');
+  const classifiedUrls = data.classified_urls || [];
+  const critBreakdown = data.criticality_breakdown || {};
+  if (classifiedUrls.length > 0) {
+    attackContainer.innerHTML = `
+      <div class="stats-grid" style="margin-bottom:16px;">
+        <div class="stat-box"><div class="num">${critBreakdown.critical||0}</div><div class="label">Critical</div></div>
+        <div class="stat-box"><div class="num">${critBreakdown.high||0}</div><div class="label">High</div></div>
+        <div class="stat-box"><div class="num">${critBreakdown.medium||0}</div><div class="label">Medium</div></div>
+        <div class="stat-box"><div class="num">${critBreakdown.low||0}</div><div class="label">Low</div></div>
+      </div>
+      <table><thead><tr><th>Criticality</th><th>Category</th><th>Audience</th><th>URL</th><th>Actions</th></tr></thead><tbody>
+      ${classifiedUrls.map(u => `
+        <tr>
+          <td><span class="criticality-badge crit-${u.criticality}">${u.criticality}</span></td>
+          <td>${hrEscapeHtml(u.category_label)}</td>
+          <td>${hrEscapeHtml(u.audience)}</td>
+          <td style="word-break:break-all;">${hrEscapeHtml(u.url || 'N/A')}</td>
+          <td><button class="btn btn-sm" data-external-url="${hrEscapeHtml(u.url||'')}">Open</button></td>
+        </tr>`).join('')}
+      </tbody></table>
+    `;
+  } else {
+    attackContainer.innerHTML = '<div class="hint-note">No employee or client exposure URLs found.</div>';
+  }
+
+  const geoContainer = document.getElementById('hr-geo-container');
+  const geoData = data.geo_distribution || [];
+  if (geoData.length > 0) {
+    const maxCount = Math.max(...geoData.map(g => g.count));
+    geoContainer.innerHTML = geoData.map(g => `
+      <div class="geo-bar-row">
+        <div class="geo-label">${hrEscapeHtml(g.city)}, ${hrEscapeHtml(g.country)}</div>
+        <div class="geo-bar-track"><div class="geo-bar-fill" style="width:${(g.count/maxCount)*100}%;"></div></div>
+        <div class="geo-bar-count">${g.count}</div>
+      </div>
+    `).join('');
+  } else {
+    geoContainer.innerHTML = '<div class="hint-note">No geolocation data available for infected machine IPs.</div>';
+  }
+
+  const crossContainer = document.getElementById('hr-crossverify-container');
+  const crossFindings = data.cross_verified_findings || [];
+  if (crossFindings.length > 0) {
+    crossContainer.innerHTML = crossFindings.map(f => `
+      <div class="cross-verified-item">
+        <span class="cv-badge">✓ Cross-Verified</span> — ${hrEscapeHtml(f.note)}<br>
+        <span style="word-break:break-all; color:var(--text-dim);">${hrEscapeHtml(f.url)}</span>
+      </div>
+    `).join('');
+  } else {
+    crossContainer.innerHTML = '<div class="hint-note">No cross-verified findings between HudsonRock data and the site\'s detected technology stack.</div>';
+  }
+
+  const remediationList = document.getElementById('hr-remediation-list');
+  const plan = data.remediation_plan || [];
+  remediationList.innerHTML = plan.map(item => `<li><span class="rem-check"></span>${hrEscapeHtml(item)}</li>`).join('');
+
+  document.getElementById('hr-export-remediation-btn')?.addEventListener('click', () => {
+    let text = `EXECUTIVE SUMMARY — Infostealer Intelligence Report\n`;\nDomain: {{ sh_domain }}\nGenerated: ${new Date().toISOString()}\n\n`;
+    plan.forEach((item, i) => { text += `${i+1}. ${item}\n`; });
+    text += `\n---\nAnalysis powered by HudsonRock Cavalier Threat Intelligence (https://www.hudsonrock.com/)\n`;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'hudsonrock_remediation_plan.txt'; link.click();
+  });
+
+  document.getElementById('hr-export-summary-btn')?.addEventListener('click', () => {
+    let text = `EXECUTIVE SUMMARY — Threat Intelligence Report\n`;
+    text += `Domain: {{ sh_domain }}\nGenerated: ${new Date().toISOString()}\n\n`;
+    text += `Risk Level: ${(data.risk_level||'none').toUpperCase()} (${data.risk_score ?? 0}/100)\n\n`;
+    text += `${data.summary_text || ''}\n\n`;
+    text += `Trend: ${data.trend?.description || 'N/A'}\n\n`;
+    text += `Key figures:\n`;
+    text += `- Domain-wide historical infections: ${data.domain_summary?.total_stealers ?? 0}\n`;
+    text += `- Compromised contacts identified: ${(data.email_checks||[]).filter(c=>c.compromised).length}\n`;
+    text += `- Critical/High exposed services: ${(data.criticality_breakdown?.critical||0) + (data.criticality_breakdown?.high||0)}\n`;
+    text += `- Password quality score: ${data.password_hygiene?.unique_score ?? 100}/100\n\n`;
+    text += `This analysis was conducted in partnership with HudsonRock (https://www.hudsonrock.com/), leveraging their Cavalier Infostealer intelligence platform.\n`;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'executive_summary.txt'; link.click();
+  });
+
+  const emailsContainer = document.getElementById('hr-emails-container');
+  const emailChecks = data.email_checks || [];
+  if (emailChecks.length > 0) {
+    emailsContainer.innerHTML = `
+      <table><thead><tr><th>Email</th><th>Status</th><th>Records Found</th></tr></thead><tbody>
+      ${emailChecks.map(c => `<tr><td>${hrEscapeHtml(c.target)}</td><td>${c.compromised ? '<span class="badge badge-critical">Compromised</span>' : '<span class="badge badge-low">Clean</span>'}</td><td>${(c.records||[]).length}</td></tr>`).join('')}
+      </tbody></table>
+    `;
+  } else {
+    emailsContainer.innerHTML = '<div class="hint-note">No contact emails were discovered during the scan to cross-reference.</div>';
+  }
+}
+
+renderHudsonRockDashboard(HR_DATA);
 </script>
 </body>
 </html>
