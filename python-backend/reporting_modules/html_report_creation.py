@@ -11,7 +11,6 @@ sys.path.append('apis')
 from logs_processing import logging
 import db_processing as db
 import files_processing as fp
-from api_hudsonrock import hudsonrock_html_prep
 from api_virustotal import virustotal_html_prep
 from api_securitytrails import securitytrails_html_prep
 from config_processing import read_config
@@ -47,7 +46,8 @@ def tojson_filter(obj):
 
 def build_graph_data(short_domain, ip, subdomains, subdomain_ip, common_socials,
                       ports, vulns, web_servers, cms, programming_languages,
-                      web_frameworks, analytics, javascript_frameworks):
+                      web_frameworks, analytics, javascript_frameworks,
+                      hudsonrock_intel=None):
     nodes = []
     edges = []
     counter = {'n': 0}
@@ -103,6 +103,29 @@ def build_graph_data(short_domain, ip, subdomains, subdomain_ip, common_socials,
             for link in clean_list(links):
                 sid = add_node(platform, 'social', {'url': link})
                 edges.append({'from': domain_id, 'to': sid})
+
+    # --- HudsonRock: compromised employees + exposed critical services ---
+    if hudsonrock_intel and isinstance(hudsonrock_intel, dict):
+        seen_computers = set()
+        for record in hudsonrock_intel.get('all_records', []):
+            computer = record.get('computer_name', 'Unknown')
+            if computer in seen_computers or computer == 'Unknown':
+                continue
+            seen_computers.add(computer)
+            cid = add_node(computer, 'compromised_employee', {
+                'stealer_family': record.get('stealer_family'),
+                'date': record.get('date_compromised'),
+            })
+            edges.append({'from': domain_id, 'to': cid})
+
+        for url_item in hudsonrock_intel.get('classified_urls', []):
+            if url_item.get('criticality') in ('critical', 'high'):
+                url_val = url_item.get('url', 'Unknown URL')
+                eid = add_node(url_val, 'exposed_service', {
+                    'url': url_val,
+                    'criticality': url_item.get('criticality'),
+                })
+                edges.append({'from': domain_id, 'to': eid})
 
     return {'nodes': nodes, 'edges': edges}
 
@@ -180,7 +203,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         dorking_file_path = data_array[44]
         virustotal_output = data_array[45]
         securitytrails_output = data_array[46]
-        hudsonrock_output = data_array[47]
+        hudsonrock_intel = data_array[47]
         ps_string = data_array[48]
         total_ports = data_array[49]
         total_ips = data_array[50]
@@ -193,7 +216,6 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         api_scan_db = report_info_array[7]
         used_api_flag = report_info_array[8]
 
-        hudsonrock_output = hudsonrock_html_prep(hudsonrock_output)
         virustotal_output = virustotal_html_prep(virustotal_output)
         securitytrails_output = securitytrails_html_prep(securitytrails_output)
 
@@ -234,14 +256,11 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         all_ips = ensure_list(subdomain_ip) + ensure_list(ip)
         robots_content, sitemap_content, sitemap_links_content, dorking_content = fp.get_db_columns(report_folder)
 
-        # ==========================================================
-        # НОВЫЕ ВЫЧИСЛЯЕМЫЕ ДАННЫЕ ДЛЯ ПОЛНОЦЕННОГО ОТЧЁТА
-        # ==========================================================
-
         graph_data = build_graph_data(
             short_domain, ip, subdomains, subdomain_ip, common_socials,
             ports, vulns, web_servers, cms, programming_languages,
-            web_frameworks, analytics, javascript_frameworks
+            web_frameworks, analytics, javascript_frameworks,
+            hudsonrock_intel=hudsonrock_intel
         )
 
         social_counts = compute_social_counts(common_socials)
@@ -316,14 +335,13 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
             'add_dsi': add_dsi, 'ps_s': accessible_subdomains, 'ps_e': emails_amount, 'ps_f': files_counter,
             'ps_c': cookies_counter, 'ps_a': api_keys_counter,
             'ps_w': website_elements_counter, 'ps_p': exposed_passwords_counter, 'ss_l': total_links_counter,
-            'ss_a': accessed_links_counter, 'hudsonrock_output': hudsonrock_output,
+            'ss_a': accessed_links_counter,
             "snapshotting_ui_mark": snapshotting_ui_mark,
             'virustotal_output': virustotal_output, 'securitytrails_output': securitytrails_output,
             'ps_string': ps_string, 'a_tops': total_ports,
             'a_temails': total_mails, 'a_tips': total_ips, 'a_tpv': total_vulns, 'robots_content': robots_content,
             'sitemap_xml_content': sitemap_content, 'sitemap_txt_content': sitemap_links_content,
 
-            # новые поля
             'graph_data': graph_data,
             'social_counts': social_counts,
             'dorking_enabled': dorking_enabled,
@@ -336,6 +354,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
             'ip_table_rows': ip_table_rows,
             'tech_table_rows': tech_table_rows,
             'social_table_rows': social_table_rows,
+            'hudsonrock_intel': hudsonrock_intel,
         }
 
         html_report_name = report_folder + '//' + casename
@@ -346,12 +365,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         db.insert_blob('HTML', pdf_blob, db_casename, db_creation_date, case_comment, robots_content, sitemap_content, sitemap_links_content, dorking_content, api_scan_db)
 
         if delete_txt_files.lower() == 'y':
-            files_to_remove = [
-                '04-dorking_results.txt',
-                '03-sitemap_links.txt',
-                '02-sitemap.txt',
-                '01-robots.txt'
-            ]
+            files_to_remove = ['04-dorking_results.txt', '03-sitemap_links.txt', '02-sitemap.txt', '01-robots.txt']
             for file in files_to_remove:
                 file_path = os.path.join(report_folder, file)
                 if os.path.exists(file_path):
