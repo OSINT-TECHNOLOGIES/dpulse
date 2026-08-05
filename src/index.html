@@ -45,31 +45,32 @@
             </select>
           </fieldset>
 
-          <fieldset class="fieldset">
-            <legend>Third-party APIs</legend>
-            <label class="checkbox-row">
-              <input type="checkbox" id="use-api" />
-              Use 3rd-party APIs
-            </label>
-            <div id="api-options" class="hidden api-options">
-              <label class="checkbox-row">
-                <input type="checkbox" id="api-virustotal" />
-                VirusTotal
-              </label>
-              <label class="checkbox-row">
-                <input type="checkbox" id="api-securitytrails" />
-                SecurityTrails
-              </label>
-              <label class="checkbox-row">
-                <input type="checkbox" id="api-hudsonrock" />
-                HudsonRock
-              </label>
-              <label id="hudsonrock-username-wrap" class="hidden">Username (optional, for HudsonRock)
-                <input type="text" id="hudsonrock-username" placeholder="john_doe" />
-              </label>
-              <p class="hint">Make sure API keys are configured in the API Manager tab.</p>
-            </div>
-          </fieldset>
+		<fieldset class="fieldset">
+		  <legend>Third-party APIs</legend>
+		  <label class="checkbox-row">
+			<input type="checkbox" id="use-api" />
+			Use 3rd-party APIs
+		  </label>
+		  <div id="api-options" class="hidden api-options">
+			<label class="checkbox-row">
+			  <input type="checkbox" id="api-virustotal" />
+			  VirusTotal
+			</label>
+			<label class="checkbox-row">
+			  <input type="checkbox" id="api-securitytrails" />
+			  SecurityTrails
+			</label>
+			<p class="hint">Make sure API keys are configured in the API Manager tab.</p>
+		  </div>
+		</fieldset>
+
+		<fieldset class="fieldset">
+		  <legend>Threat Intelligence</legend>
+		  <p class="hint">HudsonRock Cavalier threat intelligence runs automatically on every scan, cross-referencing discovered emails and IPs against known Infostealer infections.</p>
+		  <label>Optional: known username to check
+			<input type="text" id="hudsonrock-username" placeholder="john_doe" />
+		  </label>
+		</fieldset>
 
           <fieldset class="fieldset">
             <legend>Snapshotting</legend>
