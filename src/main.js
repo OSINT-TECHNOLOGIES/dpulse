@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "http://127.0.0.1:8142";
 
 
 async function waitForBackend(maxAttempts = 40) {
@@ -27,8 +27,6 @@ async function waitForBackend(maxAttempts = 40) {
 })();
 
 
-let snapshotWindowCounter = 0;
-
 async function openMiniBrowser(url, title) {
   try {
     if (window.__TAURI__ && window.__TAURI__.core) {
@@ -47,6 +45,7 @@ window.addEventListener("message", (event) => {
     openMiniBrowser(event.data.url, "DPULSE External Link");
   }
 });
+
 
 const navButtons = document.querySelectorAll(".nav-btn");
 const views = document.querySelectorAll(".view");
@@ -75,15 +74,9 @@ const submitBtn = scanForm.querySelector("button[type='submit']");
 
 const useApiCb = document.getElementById("use-api");
 const apiOptions = document.getElementById("api-options");
-const hudsonrockCb = document.getElementById("api-hudsonrock");
-const hudsonrockUsernameWrap = document.getElementById("hudsonrock-username-wrap");
 
 useApiCb.addEventListener("change", () => {
   apiOptions.classList.toggle("hidden", !useApiCb.checked);
-});
-
-hudsonrockCb.addEventListener("change", () => {
-  hudsonrockUsernameWrap.classList.toggle("hidden", !hudsonrockCb.checked);
 });
 
 const snapshotModeSelect = document.getElementById("snapshot-mode");
@@ -175,10 +168,7 @@ scanForm.addEventListener("submit", async (e) => {
     comment,
     use_virustotal: useApiCb.checked && document.getElementById("api-virustotal").checked,
     use_securitytrails: useApiCb.checked && document.getElementById("api-securitytrails").checked,
-    use_hudsonrock: useApiCb.checked && hudsonrockCb.checked,
-    hudsonrock_username: hudsonrockCb.checked
-      ? document.getElementById("hudsonrock-username").value.trim() || null
-      : null,
+    hudsonrock_username: document.getElementById("hudsonrock-username").value.trim() || null,
     snapshot_mode: snapshotMode,
     wayback_from: snapshotMode === "w" ? document.getElementById("wayback-from").value.trim() : null,
     wayback_to: snapshotMode === "w" ? document.getElementById("wayback-to").value.trim() : null,
