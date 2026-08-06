@@ -65,7 +65,7 @@ jobs:
         working-directory: python-backend
         run: |
           pip install -r requirements.txt
-          pip install pyinstaller
+          pip install pyinstaller pyinstaller-hooks-contrib
 
       - name: Locate builtwith data file (Windows)
         if: matrix.platform == 'windows-latest'
@@ -116,6 +116,31 @@ jobs:
             --hidden-import=uvicorn.protocols.websockets.auto `
             --hidden-import=uvicorn.lifespan `
             --hidden-import=uvicorn.lifespan.on `
+            --hidden-import=selenium `
+            --hidden-import=selenium.webdriver `
+            --hidden-import=selenium.webdriver.chrome `
+            --hidden-import=selenium.webdriver.chrome.service `
+            --hidden-import=selenium.webdriver.chrome.options `
+            --hidden-import=selenium.webdriver.firefox `
+            --hidden-import=selenium.webdriver.firefox.service `
+            --hidden-import=selenium.webdriver.firefox.options `
+            --hidden-import=selenium.webdriver.edge `
+            --hidden-import=selenium.webdriver.edge.service `
+            --hidden-import=selenium.webdriver.edge.options `
+            --hidden-import=selenium.webdriver.common `
+            --hidden-import=selenium.webdriver.common.by `
+            --hidden-import=selenium.webdriver.support `
+            --hidden-import=selenium.webdriver.remote `
+            --hidden-import=selenium.webdriver.remote.webdriver `
+            --hidden-import=webdriver_manager `
+            --hidden-import=webdriver_manager.chrome `
+            --hidden-import=webdriver_manager.firefox `
+            --hidden-import=webdriver_manager.microsoft `
+            --hidden-import=webdriver_manager.core `
+            --hidden-import=webdriver_manager.core.download_manager `
+            --hidden-import=webdriver_manager.core.driver_cache `
+            --hidden-import=webdriver_manager.core.os_manager `
+            --collect-data=webdriver_manager `
             main.py
 
       - name: Build backend binary (Linux)
@@ -151,6 +176,31 @@ jobs:
             --hidden-import=uvicorn.protocols.websockets.auto \
             --hidden-import=uvicorn.lifespan \
             --hidden-import=uvicorn.lifespan.on \
+            --hidden-import=selenium \
+            --hidden-import=selenium.webdriver \
+            --hidden-import=selenium.webdriver.chrome \
+            --hidden-import=selenium.webdriver.chrome.service \
+            --hidden-import=selenium.webdriver.chrome.options \
+            --hidden-import=selenium.webdriver.firefox \
+            --hidden-import=selenium.webdriver.firefox.service \
+            --hidden-import=selenium.webdriver.firefox.options \
+            --hidden-import=selenium.webdriver.edge \
+            --hidden-import=selenium.webdriver.edge.service \
+            --hidden-import=selenium.webdriver.edge.options \
+            --hidden-import=selenium.webdriver.common \
+            --hidden-import=selenium.webdriver.common.by \
+            --hidden-import=selenium.webdriver.support \
+            --hidden-import=selenium.webdriver.remote \
+            --hidden-import=selenium.webdriver.remote.webdriver \
+            --hidden-import=webdriver_manager \
+            --hidden-import=webdriver_manager.chrome \
+            --hidden-import=webdriver_manager.firefox \
+            --hidden-import=webdriver_manager.microsoft \
+            --hidden-import=webdriver_manager.core \
+            --hidden-import=webdriver_manager.core.download_manager \
+            --hidden-import=webdriver_manager.core.driver_cache \
+            --hidden-import=webdriver_manager.core.os_manager \
+            --collect-data=webdriver_manager \
             main.py
 
       - name: Move backend binary into Tauri binaries folder (Windows)

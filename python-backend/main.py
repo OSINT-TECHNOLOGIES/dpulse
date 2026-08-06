@@ -13,6 +13,7 @@ from typing import Optional, List
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel, Field
 
 if getattr(sys, 'frozen', False):
@@ -53,6 +54,10 @@ app.add_middleware(
 data_processing = DataProcessing()
 
 DOMAIN_PATTERN = re.compile(r"^(?!-)(?:[a-zA-Z0-9-]{1,63}\.)+[a-zA-Z]{2,}$")
+YYYYMMDD_PATTERN = re.compile(r"^\d{8}$")
+SAFE_FOLDER_PATTERN = re.compile(r'^report_[\w\-.,() ]+$')
+SAFE_FILENAME_PATTERN = re.compile(r'^[A-Za-z0-9_\-.]+\.html$')
+
 CONFIG_PATH = BASE_DIR / 'service' / 'config.ini'
 REPORT_STORAGE_DB = BASE_DIR / 'report_storage.db'
 API_KEYS_DB = BASE_DIR / 'apis' / 'api_keys.db'
@@ -62,6 +67,31 @@ API_ID_TO_NAME = {'1': 'VirusTotal', '2': 'SecurityTrails', '3': 'HudsonRock'}
 
 def is_valid_domain(domain: str) -> bool:
     return bool(DOMAIN_PATTERN.match(domain))
+
+
+def is_valid_yyyymmdd(value: str) -> bool:
+    return bool(YYYYMMDD_PATTERN.match(value or ''))
+
+
+def validate_report_folder(folder: str) -> Path:
+    if not folder or '..' in folder or not SAFE_FOLDER_PATTERN.match(folder):
+        raise HTTPException(status_code=400, detail="Invalid folder name")
+    full_path = (BASE_DIR / folder).resolve()
+    if not str(full_path).startswith(str(BASE_DIR.resolve())):
+        raise HTTPException(status_code=400, detail="Invalid path")
+    if not full_path.exists():
+        raise HTTPException(status_code=404, detail="Report folder not found")
+    return full_path
+
+
+def inject_base_tag(html_text: str, base_url: str) -> str:
+    base_tag = f'<base href="{base_url}">'
+    if re.search(r'<head[^>]*>', html_text, re.IGNORECASE):
+        return re.sub(r'(<head[^>]*>)', r'\1' + base_tag, html_text, count=1, flags=re.IGNORECASE)
+    elif re.search(r'<html[^>]*>', html_text, re.IGNORECASE):
+        return re.sub(r'(<html[^>]*>)', r'\1<head>' + base_tag + '</head>', html_text, count=1, flags=re.IGNORECASE)
+    else:
+        return base_tag + html_text
 
 
 def bootstrap():
@@ -105,6 +135,9 @@ class ScanRequest(BaseModel):
     use_securitytrails: bool = False
     use_hudsonrock: bool = False
     hudsonrock_username: Optional[str] = None
+    snapshot_mode: str = Field(default="n", description="n=none, s=screenshot, p=page copy, w=wayback")
+    wayback_from: Optional[str] = None
+    wayback_to: Optional[str] = None
 
 
 class ScanResponse(BaseModel):
@@ -115,6 +148,10 @@ class ScanResponse(BaseModel):
     report_file: Optional[str] = None
     report_html: Optional[str] = None
     elapsed: Optional[str] = None
+    snapshot_type: Optional[str] = None
+    has_screenshot: bool = False
+    has_html_copy: bool = False
+    wayback_files: List[str] = []
 
 
 @app.post("/scan", response_model=ScanResponse)
@@ -132,6 +169,18 @@ def run_scan(request: ScanRequest):
     if not domain_precheck(short_domain):
         raise HTTPException(status_code=422, detail="Domain is not accessible")
 
+    snapshot_mode = (request.snapshot_mode or 'n').lower()
+    if snapshot_mode not in ('n', 's', 'p', 'w'):
+        raise HTTPException(status_code=400, detail="Invalid snapshot_mode, must be one of: n, s, p, w")
+
+    wayback_from = 'N'
+    wayback_to = 'N'
+    if snapshot_mode == 'w':
+        wayback_from = (request.wayback_from or '').strip()
+        wayback_to = (request.wayback_to or '').strip()
+        if not is_valid_yyyymmdd(wayback_from) or not is_valid_yyyymmdd(wayback_to):
+            raise HTTPException(status_code=400, detail="Wayback dates must be in YYYYMMDD format")
+
     used_api_ids: List[str] = []
     if request.use_virustotal:
         used_api_ids.append('1')
@@ -142,6 +191,14 @@ def run_scan(request: ScanRequest):
 
     used_api_flag = used_api_ids if used_api_ids else ['Empty']
     username = request.hudsonrock_username if (request.use_hudsonrock and request.hudsonrock_username) else None
+
+    snapshotting_ui_mark = 'No'
+    if snapshot_mode == 's':
+        snapshotting_ui_mark = "Yes, domain's main page snapshotting as a screenshot"
+    elif snapshot_mode == 'p':
+        snapshotting_ui_mark = "Yes, domain's main page snapshotting as a .HTML file"
+    elif snapshot_mode == 'w':
+        snapshotting_ui_mark = "Yes, domain's main page snapshotting using Wayback Machine"
 
     try:
         start = perf_counter()
@@ -155,10 +212,10 @@ def run_scan(request: ScanRequest):
             0,
             'n',
             used_api_flag,
-            'n',
+            snapshot_mode,
             username,
-            'N',
-            'N',
+            wayback_from,
+            wayback_to,
         )
 
         end_time_str = time_processing(perf_counter() - start)
@@ -166,16 +223,17 @@ def run_scan(request: ScanRequest):
         html_rc.report_assembling(
             short_domain, url, case_comment,
             data_array, report_info_array,
-            'No', end_time_str, 'No'
+            'No', end_time_str, snapshotting_ui_mark
         )
 
         report_folder = report_info_array[3]
         casename = report_info_array[0]
-        report_path = BASE_DIR / report_folder / casename
+        report_path = BASE_DIR / report_folder
+        report_file_path = report_path / casename
 
         html_content = None
-        if report_path.exists():
-            html_content = report_path.read_text(encoding='utf-8')
+        if report_file_path.exists():
+            html_content = report_file_path.read_text(encoding='utf-8')
 
         report_id = None
         conn = sqlite3.connect(REPORT_STORAGE_DB)
@@ -186,18 +244,82 @@ def run_scan(request: ScanRequest):
             report_id = row[0]
         conn.close()
 
+        has_screenshot = (report_path / "screensnapshot.png").exists()
+        has_html_copy = (report_path / "domain_html_copy.html").exists()
+        wayback_files: List[str] = []
+        wb_dir = report_path / "wayback_snapshots"
+        if wb_dir.exists():
+            wayback_files = sorted([f.name for f in wb_dir.iterdir() if f.is_file()])
+
         return ScanResponse(
             status="success",
             domain=short_domain,
             report_id=report_id,
             report_folder=str(report_folder),
-            report_file=str(report_path),
+            report_file=str(report_file_path),
             report_html=html_content,
             elapsed=end_time_str,
+            snapshot_type=None if snapshot_mode == 'n' else snapshot_mode,
+            has_screenshot=has_screenshot,
+            has_html_copy=has_html_copy,
+            wayback_files=wayback_files,
         )
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Scan failed: {e}")
+
+
+@app.get("/snapshot/screenshot")
+def get_screenshot(folder: str):
+    folder_path = validate_report_folder(folder)
+    screenshot_path = folder_path / "screensnapshot.png"
+    if not screenshot_path.exists():
+        raise HTTPException(status_code=404, detail="Screenshot not found")
+    return FileResponse(screenshot_path, media_type="image/png")
+
+
+@app.get("/snapshot/html", response_class=HTMLResponse)
+def get_html_copy(folder: str):
+    folder_path = validate_report_folder(folder)
+    html_path = folder_path / "domain_html_copy.html"
+    if not html_path.exists():
+        raise HTTPException(status_code=404, detail="HTML copy not found")
+
+    content = html_path.read_text(encoding='utf-8', errors='replace')
+
+    meta_path = folder_path / "domain_html_copy.html.meta.json"
+    if meta_path.exists():
+        try:
+            import json
+            meta = json.loads(meta_path.read_text(encoding='utf-8'))
+            source_url = meta.get('source_url')
+            if source_url:
+                content = inject_base_tag(content, source_url)
+        except Exception:
+            pass
+
+    return content
+
+
+@app.get("/snapshot/wayback/list")
+def list_wayback_snapshots(folder: str):
+    folder_path = validate_report_folder(folder)
+    wayback_dir = folder_path / "wayback_snapshots"
+    if not wayback_dir.exists():
+        return {"files": []}
+    files = sorted([f.name for f in wayback_dir.iterdir() if f.is_file()])
+    return {"files": files}
+
+
+@app.get("/snapshot/wayback/file", response_class=HTMLResponse)
+def get_wayback_file(folder: str, filename: str):
+    folder_path = validate_report_folder(folder)
+    if not filename or '..' in filename or not SAFE_FILENAME_PATTERN.match(filename):
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    file_path = folder_path / "wayback_snapshots" / filename
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Snapshot file not found")
+    return file_path.read_text(encoding='utf-8', errors='replace')
 
 
 class ReportSummary(BaseModel):
@@ -503,4 +625,4 @@ def utils_cve_info(cve: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8142)

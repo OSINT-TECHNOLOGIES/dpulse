@@ -15,24 +15,15 @@ import networking_processor as np
 from pagesearch_parsers import subdomains_parser
 from api_virustotal import api_virustotal_check
 from api_securitytrails import api_securitytrails_check
-from api_hudsonrock import api_hudsonrock_check
+import api_hudsonrock
 from screen_snapshotting import take_screenshot
 from html_snapshotting import save_page_as_html
 from archive_snapshotting import download_snapshot
 
 
 SOCIAL_KEYS = [
-    'Facebook',
-    'Twitter',
-    'Instagram',
-    'Telegram',
-    'TikTok',
-    'LinkedIn',
-    'VKontakte',
-    'YouTube',
-    'Odnoklassniki',
-    'WeChat',
-    'X.com',
+    'Facebook', 'Twitter', 'Instagram', 'Telegram', 'TikTok', 'LinkedIn',
+    'VKontakte', 'YouTube', 'Odnoklassniki', 'WeChat', 'X.com',
 ]
 
 def make_socials_dict(with_not_found: bool = False):
@@ -57,50 +48,31 @@ def is_real_url(value: str) -> bool:
 def run_pagesearch(report_folder, subdomains, keywords, keywords_flag):
     print(Fore.LIGHTMAGENTA_EX + "[STARTED EXTENDED DOMAIN SCAN WITH PAGESEARCH]" + Style.RESET_ALL)
     (
-        ps_emails_return,
-        accessible_subdomains,
-        emails_amount,
-        files_counter,
-        cookies_counter,
-        api_keys_counter,
-        website_elements_counter,
-        exposed_passwords_counter,
-        keywords_messages_list
+        ps_emails_return, accessible_subdomains, emails_amount, files_counter,
+        cookies_counter, api_keys_counter, website_elements_counter,
+        exposed_passwords_counter, keywords_messages_list
     ), ps_string = subdomains_parser(subdomains, report_folder, keywords, keywords_flag)
     total_links_counter = accessed_links_counter = "No results because PageSearch does not gather these categories"
     if len(keywords_messages_list) == 0:
         keywords_messages_list = ['No keywords were found']
     print(Fore.LIGHTMAGENTA_EX + "[ENDED EXTENDED DOMAIN SCAN WITH PAGESEARCH]\n" + Style.RESET_ALL)
     return (
-        ps_emails_return,
-        accessible_subdomains,
-        emails_amount,
-        files_counter,
-        cookies_counter,
-        api_keys_counter,
-        website_elements_counter,
-        exposed_passwords_counter,
-        total_links_counter,
-        accessed_links_counter,
-        keywords_messages_list,
-        ps_string,
+        ps_emails_return, accessible_subdomains, emails_amount, files_counter,
+        cookies_counter, api_keys_counter, website_elements_counter,
+        exposed_passwords_counter, total_links_counter, accessed_links_counter,
+        keywords_messages_list, ps_string,
     )
 
 
 def establishing_dork_db_connection(dorking_flag):
     dorking_db_paths = {
-        'basic': 'dorking//basic_dorking.db',
-        'iot': 'dorking//iot_dorking.db',
-        'files': 'dorking//files_dorking.db',
-        'admins': 'dorking//adminpanels_dorking.db',
+        'basic': 'dorking//basic_dorking.db', 'iot': 'dorking//iot_dorking.db',
+        'files': 'dorking//files_dorking.db', 'admins': 'dorking//adminpanels_dorking.db',
         'web': 'dorking//webstructure_dorking.db',
     }
     dorking_tables = {
-        'basic': 'basic_dorks',
-        'iot': 'iot_dorks',
-        'files': 'files_dorks',
-        'admins': 'admins_dorks',
-        'web': 'web_dorks',
+        'basic': 'basic_dorks', 'iot': 'iot_dorks', 'files': 'files_dorks',
+        'admins': 'admins_dorks', 'web': 'web_dorks',
     }
     if dorking_flag in dorking_db_paths:
         dorking_db_path = dorking_db_paths[dorking_flag]
@@ -243,18 +215,10 @@ class DataProcessing():
             if pagesearch_flag.lower() == 'y':
                 if subdomains:
                     (
-                        ps_emails_return,
-                        accessible_subdomains,
-                        emails_amount,
-                        files_counter,
-                        cookies_counter,
-                        api_keys_counter,
-                        website_elements_counter,
-                        exposed_passwords_counter,
-                        total_links_counter,
-                        accessed_links_counter,
-                        keywords_messages_list,
-                        ps_string,
+                        ps_emails_return, accessible_subdomains, emails_amount, files_counter,
+                        cookies_counter, api_keys_counter, website_elements_counter,
+                        exposed_passwords_counter, total_links_counter, accessed_links_counter,
+                        keywords_messages_list, ps_string,
                     ) = run_pagesearch(report_folder, subdomains, keywords, keywords_flag)
                 else:
                     pending_pagesearch = True
@@ -298,38 +262,60 @@ class DataProcessing():
                 else:
                     securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
 
-                if '3' in used_api_flag:
-                    if username is None or (isinstance(username, str) and username.lower() == 'n'):
-                        username = None
-                    hudsonrock_output = api_hudsonrock_check(short_domain, ip, mails, username)
-                    api_scan_db.append('HudsonRock')
-                else:
-                    hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
-
                 print(Fore.LIGHTMAGENTA_EX + f"[ENDED EXTENDED DOMAIN SCAN WITH 3RD PARTY API]\n" + Style.RESET_ALL)
             else:
                 virustotal_output = 'No results because user did not selected VirusTotal API scan'
                 securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
-                hudsonrock_output = 'No results because user did not selected HudsonRock API scan'
-                api_scan_db.append('No')
+
+            # ================================================================
+            # HUDSONROCK THREAT INTELLIGENCE — always runs, deep cross-referenced analysis
+            # ================================================================
+            print(Fore.LIGHTMAGENTA_EX + "[STARTED HUDSONROCK THREAT INTELLIGENCE ANALYSIS]" + Style.RESET_ALL)
+            try:
+                clean_username = username if (username and str(username).lower() != 'n') else None
+                tech_keywords_for_crossref = []
+                for lst in [web_servers, cms, programming_languages, web_frameworks, analytics, javascript_frameworks]:
+                    if isinstance(lst, list):
+                        tech_keywords_for_crossref.extend([t for t in lst if isinstance(t, str)])
+
+                hudsonrock_intel = api_hudsonrock.build_hudsonrock_intelligence(
+                    domain=short_domain,
+                    ip=ip if isinstance(ip, str) else None,
+                    subdomain_ips=subdomain_ip if isinstance(subdomain_ip, list) else [],
+                    site_emails=[mails] + (subdomain_mails if isinstance(subdomain_mails, list) else []),
+                    username=clean_username,
+                    tech_keywords=tech_keywords_for_crossref,
+                )
+                api_scan_db.append('HudsonRock')
+                print(Fore.GREEN + f"Risk score: {hudsonrock_intel['risk_score']} ({hudsonrock_intel['risk_level']})" + Style.RESET_ALL)
+            except Exception as e:
+                logging.error(f"HudsonRock intelligence gathering failed: {e}", exc_info=True)
+                hudsonrock_intel = {
+                    "queried_domain": short_domain,
+                    "domain_summary": {"available": False, "total_entries": 0, "total_stealers": 0},
+                    "attack_surface": {"available": False, "employees_urls": [], "clients_urls": []},
+                    "candidate_emails_checked": [], "email_checks": [], "candidate_ips_checked": [], "ip_checks": [],
+                    "username_check": None, "all_records": [], "stealer_family_breakdown": {},
+                    "stealer_profiles_used": {}, "timeline": [], "risk_score": 0, "risk_level": "none",
+                    "summary_text": f"HudsonRock analysis failed due to an error: {e}",
+                    "matched_emails": [], "total_employee_urls": 0, "total_client_urls": 0,
+                    "classified_urls": [], "criticality_breakdown": {"critical": 0, "high": 0, "medium": 0, "low": 0},
+                    "password_hygiene": {"total_passwords_analyzed": 0, "weak_count": 0, "unique_score": 100, "weak_samples": [], "reuse_groups": []},
+                    "vip_records": [], "cross_verified_findings": [], "geo_distribution": [],
+                    "remediation_plan": ["HudsonRock analysis could not be completed for this scan."],
+                    "trend": {"direction": "unknown", "description": "Analysis unavailable."},
+                }
+            print(Fore.LIGHTMAGENTA_EX + "[ENDED HUDSONROCK THREAT INTELLIGENCE ANALYSIS]\n" + Style.RESET_ALL)
 
             if pending_pagesearch and securitytrails_subdomains:
                 subdomains = securitytrails_subdomains
                 subdomains_amount = len(securitytrails_subdomains)
                 print(Fore.LIGHTMAGENTA_EX + "[PAGESEARCH FALLBACK] Using SecurityTrails subdomains because the initial crawl found none." + Style.RESET_ALL)
                 (
-                    ps_emails_return,
-                    accessible_subdomains,
-                    emails_amount,
-                    files_counter,
-                    cookies_counter,
-                    api_keys_counter,
-                    website_elements_counter,
-                    exposed_passwords_counter,
-                    total_links_counter,
-                    accessed_links_counter,
-                    keywords_messages_list,
-                    ps_string,
+                    ps_emails_return, accessible_subdomains, emails_amount, files_counter,
+                    cookies_counter, api_keys_counter, website_elements_counter,
+                    exposed_passwords_counter, total_links_counter, accessed_links_counter,
+                    keywords_messages_list, ps_string,
                 ) = run_pagesearch(report_folder, securitytrails_subdomains, keywords, keywords_flag)
             elif pending_pagesearch:
                 print(Fore.RED + "Cant start PageSearch because no subdomains were detected\n")
@@ -359,7 +345,7 @@ class DataProcessing():
                 exposed_passwords_counter, total_links_counter,
                 accessed_links_counter, keywords_messages_list, dorking_status,
                 dorking_file_path, virustotal_output, securitytrails_output,
-                hudsonrock_output, ps_string, total_ports, total_ips, total_vulns
+                hudsonrock_intel, ps_string, total_ports, total_ips, total_vulns
             ]
 
         report_info_array = [
