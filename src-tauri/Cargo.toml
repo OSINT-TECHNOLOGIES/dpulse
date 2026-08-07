@@ -1,6 +1,6 @@
 [package]
 name = "DPULSE_Browser"
-version = "2.0.0-td1"
+version = "2.0.0-td2"
 description = "DPULSE Browser"
 authors = ["OSINT-TECHNOLOGIES"]
 edition = "2021"
