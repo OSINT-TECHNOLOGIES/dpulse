@@ -16,6 +16,7 @@ from pagesearch_parsers import subdomains_parser
 from api_virustotal import api_virustotal_check
 from api_securitytrails import api_securitytrails_check
 import api_hudsonrock
+import api_lunarcyber
 from screen_snapshotting import take_screenshot
 from html_snapshotting import save_page_as_html
 from archive_snapshotting import download_snapshot
@@ -266,10 +267,6 @@ class DataProcessing():
             else:
                 virustotal_output = 'No results because user did not selected VirusTotal API scan'
                 securitytrails_output = 'No results because user did not selected SecurityTrails API scan'
-
-            # ================================================================
-            # HUDSONROCK THREAT INTELLIGENCE — always runs, deep cross-referenced analysis
-            # ================================================================
             print(Fore.LIGHTMAGENTA_EX + "[STARTED HUDSONROCK THREAT INTELLIGENCE ANALYSIS]" + Style.RESET_ALL)
             try:
                 clean_username = username if (username and str(username).lower() != 'n') else None
@@ -306,6 +303,17 @@ class DataProcessing():
                     "trend": {"direction": "unknown", "description": "Analysis unavailable."},
                 }
             print(Fore.LIGHTMAGENTA_EX + "[ENDED HUDSONROCK THREAT INTELLIGENCE ANALYSIS]\n" + Style.RESET_ALL)
+            print(Fore.LIGHTMAGENTA_EX + "[STARTED LUNAR DOMAIN EXPOSURE ANALYSIS]" + Style.RESET_ALL)
+            try:
+                lunarcyber_intel = api_lunarcyber.build_lunarcyber_intelligence(short_domain)
+                api_scan_db.append('Lunar Domain Exposure')
+                lunar_status = lunarcyber_intel.get('status', 'UNKNOWN')
+                print(Fore.GREEN + f"Lunar status: {lunar_status}" + Style.RESET_ALL)
+            except Exception as e:
+                logging.error(f"Lunar Domain Exposure gathering failed: {e}", exc_info=True)
+                lunarcyber_intel = api_lunarcyber.unavailable_result(short_domain, str(e))
+                api_scan_db.append('Lunar Domain Exposure')
+            print(Fore.LIGHTMAGENTA_EX + "[ENDED LUNAR DOMAIN EXPOSURE ANALYSIS]\n" + Style.RESET_ALL)
 
             if pending_pagesearch and securitytrails_subdomains:
                 subdomains = securitytrails_subdomains
@@ -345,7 +353,8 @@ class DataProcessing():
                 exposed_passwords_counter, total_links_counter,
                 accessed_links_counter, keywords_messages_list, dorking_status,
                 dorking_file_path, virustotal_output, securitytrails_output,
-                hudsonrock_intel, ps_string, total_ports, total_ips, total_vulns
+                hudsonrock_intel, ps_string, total_ports, total_ips, total_vulns,
+                lunarcyber_intel
             ]
 
         report_info_array = [
