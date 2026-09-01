@@ -7,7 +7,6 @@
 
 # [Visit DPULSE official page](https://osint-technologies.github.io/dpulse/)
 
-
 [![Latest Release](https://img.shields.io/github/v/release/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=success)](https://github.com/OSINT-TECHNOLOGIES/dpulse/releases)
 [![Downloads](https://img.shields.io/github/downloads/OSINT-TECHNOLOGIES/dpulse/total?style=for-the-badge&color=blue)](https://github.com/OSINT-TECHNOLOGIES/dpulse/releases)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/OSINT-TECHNOLOGIES/dpulse/build-release.yml?style=for-the-badge&label=Build)](https://github.com/OSINT-TECHNOLOGIES/dpulse/actions)
@@ -17,6 +16,8 @@
 **A powerful, fast, and user-friendly desktop application for collecting domain intelligence from open sources — now with zero setup required.**
 
 [**📥 Download**](https://osint-technologies.github.io/dpulse/) • [Report Bug](https://github.com/OSINT-TECHNOLOGIES/dpulse/issues) • [Request Feature](https://github.com/OSINT-TECHNOLOGIES/dpulse/issues) • [Roadmap](https://github.com/users/OSINT-TECHNOLOGIES/projects/1)
+
+**Don't forget to star this repository if you liked DPULSE ☺️**
 
 </div>
 
