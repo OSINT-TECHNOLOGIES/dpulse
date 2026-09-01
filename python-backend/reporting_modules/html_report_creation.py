@@ -104,7 +104,6 @@ def build_graph_data(short_domain, ip, subdomains, subdomain_ip, common_socials,
                 sid = add_node(platform, 'social', {'url': link})
                 edges.append({'from': domain_id, 'to': sid})
 
-    # --- HudsonRock: compromised employees + exposed critical services ---
     if hudsonrock_intel and isinstance(hudsonrock_intel, dict):
         seen_computers = set()
         for record in hudsonrock_intel.get('all_records', []):
@@ -208,6 +207,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         total_ports = data_array[49]
         total_ips = data_array[50]
         total_vulns = data_array[51]
+        lunarcyber_intel = data_array[52]
         casename = report_info_array[0]
         db_casename = report_info_array[1]
         db_creation_date = report_info_array[2]
@@ -268,7 +268,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
         dorking_enabled = dorking_status != 'Google Dorking mode was not selected for this scan'
         pagesearch_enabled = isinstance(pagesearch_ui_mark, str) and pagesearch_ui_mark.strip().lower().startswith('yes')
         snapshotting_enabled = isinstance(snapshotting_ui_mark, str) and snapshotting_ui_mark.strip().lower().startswith('yes')
-        api_enabled = used_api_flag != ['Empty']
+        api_enabled = used_api_flag != ['Empty'] or bool(hudsonrock_intel) or bool(lunarcyber_intel)
 
         robots_found = isinstance(robots_txt_result, str) and 'was extracted' in robots_txt_result
         sitemap_found = isinstance(sitemap_xml_result, str) and 'was extracted' in sitemap_xml_result
@@ -355,6 +355,7 @@ def report_assembling(short_domain, url, case_comment, data_array, report_info_a
             'tech_table_rows': tech_table_rows,
             'social_table_rows': social_table_rows,
             'hudsonrock_intel': hudsonrock_intel,
+            'lunarcyber_intel': lunarcyber_intel,
         }
 
         html_report_name = report_folder + '//' + casename
