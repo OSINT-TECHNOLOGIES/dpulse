@@ -258,6 +258,7 @@ pre.code-block {
   <div class="nav-item" data-section="tech"><span class="icon">⚙️</span> Technology Stack</div>
   <div class="nav-item" data-section="security"><span class="icon">🛡️</span> Security Analysis</div>
   <div class="nav-item" data-section="hudsonrock"><span class="icon">🩸</span> Infostealer Intel</div>
+  <div class="nav-item" data-section="lunarcyber"><span class="icon">🌙</span> Lunar Domain Exposure</div>
   <div class="nav-item" data-section="files"><span class="icon">📄</span> Technical Files</div>
   {% if dorking_enabled %}<div class="nav-item" data-section="dorking"><span class="icon">🔍</span> Dorking Results</div>{% endif %}
   {% if pagesearch_enabled %}<div class="nav-item" data-section="pagesearch"><span class="icon">📑</span> PageSearch Results</div>{% endif %}
@@ -713,6 +714,28 @@ pre.code-block {
   </div>
 
 </section>
+
+  <section class="view-section hidden-section hr-section-wrap" id="section-lunarcyber">
+    <div class="panel hr-panel" id="lunar-risk-panel"></div>
+    <div class="panel hr-panel">
+      <h2>🍩 Lunar Event Source Mix</h2>
+      <div class="chart-box" style="max-width:440px;height:280px;margin:0 auto;">
+        <h3>Infostealer vs Data Breach</h3>
+        <canvas id="lunar-family-chart" class="chart-canvas"></canvas>
+      </div>
+    </div>
+    <div class="panel hr-panel" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <button class="btn btn-primary" id="lunar-export-json-btn">⬇️ Export Complete Lunar JSON</button>
+      <span class="hint-note">Exports the complete aggregate response, including fields not shown in the dashboard.</span>
+    </div>
+    <div class="panel hr-panel"><h2>🗓️ Reporting Period and Monthly Timeline</h2><div id="lunar-timeline-container"></div></div>
+    <div class="panel hr-panel"><h2>🧾 Event Families and Detailed Summaries</h2><div id="lunar-family-container"></div><div id="lunar-infostealer-container"></div><div id="lunar-breach-summary-container"></div></div>
+    <div class="panel hr-panel"><h2>👥 Employee and Client Exposure</h2><div id="lunar-subject-container"></div></div>
+    <div class="panel hr-panel"><h2>🧬 Malware, Operating System & Antivirus</h2><div id="lunar-malware-container"></div><div id="lunar-os-container"></div><div id="lunar-antivirus-container"></div></div>
+    <div class="panel hr-panel"><h2>🔐 Services and Login URLs</h2><div id="lunar-services-container"></div><div id="lunar-login-container"></div></div>
+    <div class="panel hr-panel"><h2>🌍 Geography and Breach Sources</h2><div id="lunar-country-container"></div><div id="lunar-breach-container"></div></div>
+    <div class="hr-partner-footer no-print"><div>Aggregate domain exposure intelligence provided by Lunar Cyber</div><a href="#" data-external-url="https://lunarcyber.com/"><span class="hr-badge">🌙 Lunar Domain Exposure</span></a></div>
+  </section>
 
   <section class="view-section hidden-section" id="section-files">
     <div class="panel">
@@ -1671,7 +1694,7 @@ function renderHudsonRockDashboard(data) {
   remediationList.innerHTML = plan.map(item => `<li><span class="rem-check"></span>${hrEscapeHtml(item)}</li>`).join('');
 
   document.getElementById('hr-export-remediation-btn')?.addEventListener('click', () => {
-    let text = `EXECUTIVE SUMMARY — Infostealer Intelligence Report\n`;\nDomain: {{ sh_domain }}\nGenerated: ${new Date().toISOString()}\n\n`;
+    let text = `EXECUTIVE SUMMARY — Infostealer Intelligence Report\nDomain: {{ sh_domain }}\nGenerated: ${new Date().toISOString()}\n\n`;
     plan.forEach((item, i) => { text += `${i+1}. ${item}\n`; });
     text += `\n---\nAnalysis powered by HudsonRock Cavalier Threat Intelligence (https://www.hudsonrock.com/)\n`;
     const blob = new Blob([text], { type: 'text/plain' });
@@ -1707,7 +1730,133 @@ function renderHudsonRockDashboard(data) {
   }
 }
 
+const LUNAR_DATA = {{ lunarcyber_intel|tojson }};
+
+function lunarFormatNumber(value) {
+  return Number(value || 0).toLocaleString();
+}
+
+function lunarRenderTable(containerId, title, columns, rows, emptyText) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  if (!rows || rows.length === 0) {
+    container.innerHTML = '<h3>' + title + '</h3><div class="hint-note">' + emptyText + '</div>';
+    return;
+  }
+  const head = columns.map(c => '<th>' + hrEscapeHtml(c.label) + '</th>').join('');
+  const body = rows.map(row => '<tr>' + columns.map(c => '<td>' + hrEscapeHtml(row[c.key] === undefined || row[c.key] === null ? '—' : String(row[c.key])) + '</td>').join('') + '</tr>').join('');
+  container.innerHTML = '<h3>' + title + '</h3><table><thead><tr>' + head + '</tr></thead><tbody>' + body + '</tbody></table>';
+}
+
+function renderLunarCyberDashboard(data) {
+  const panel = document.getElementById('lunar-risk-panel');
+  if (!panel) return;
+  if (!data || !data.available) {
+    const status = data?.status || 'UNAVAILABLE';
+    panel.innerHTML = '<h2>🌙 Lunar Domain Exposure</h2><div class="hint-note">' + hrEscapeHtml(data?.summary_text || 'Lunar report unavailable.') + ' <strong>Status: ' + hrEscapeHtml(status) + '</strong></div>';
+    return;
+  }
+  const report = data.report || {};
+  const summary = report.summary || {};
+  const period = data.period || {};
+  const indicator = data.exposure_indicator || {};
+  const level = indicator.level || 'none';
+  const subject = report.exposure_subject_breakdown || {};
+  const family = report.event_family_breakdown || {};
+  const breach = report.data_breach_summary || {};
+  panel.innerHTML = '<h2>🌙 Lunar Domain Exposure — Aggregate Risk Analysis</h2>' +
+    '<div class="risk-hero"><div class="risk-score-circle risk-' + hrEscapeHtml(level) + '">' + lunarFormatNumber(indicator.score) + '<span class="risk-max">/ 100</span></div>' +
+    '<div><div class="risk-level-label risk-' + hrEscapeHtml(level) + '">' + hrEscapeHtml(level) + ' DPULSE indicator</div><div class="risk-summary-text">' + hrEscapeHtml(data.summary_text || '') + '</div><div class="hint-note">Calculated by DPULSE from Lunar aggregate counts and recency; Lunar does not publish this numeric score.</div></div></div>' +
+    '<div class="stats-grid" style="margin-top:18px;"><div class="stat-box"><div class="num">' + lunarFormatNumber(summary.total_events) + '</div><div class="label">Total Events</div></div><div class="stat-box"><div class="num">' + lunarFormatNumber(summary.infostealer_events) + '</div><div class="label">Infostealer Events</div></div><div class="stat-box"><div class="num">' + lunarFormatNumber(summary.employee_events) + '</div><div class="label">Employee Events</div></div><div class="stat-box"><div class="num">' + lunarFormatNumber(summary.client_events) + '</div><div class="label">Client Events</div></div></div>' +
+    '<div class="hint-note" style="margin-top:14px;">Analyzed period: ' + hrEscapeHtml((period.from || 'unknown') + ' — ' + (period.to || 'unknown')) + ' · First seen: ' + hrEscapeHtml(summary.first_seen || 'unknown') + ' · Last seen: ' + hrEscapeHtml(summary.last_seen || 'unknown') + ' · Generated: ' + hrEscapeHtml(data.generated_at || 'unknown') + '</div>';
+
+  const familyCanvas = document.getElementById('lunar-family-chart');
+  if (familyCanvas && typeof Chart !== 'undefined') {
+    new Chart(familyCanvas, {
+      type: 'doughnut',
+      data: {
+        labels: ['Infostealer', 'Data breach'],
+        datasets: [{
+          data: [family.infostealer?.events || 0, family.data_breach?.events || 0],
+          backgroundColor: ['#dc2626', '#3b82f6']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+  }
+
+  const timelineRows = (report.monthly_timeline || []).map(item => ({
+    month: item.month || '—',
+    total_events: lunarFormatNumber(item.total_events),
+    infostealer_events: lunarFormatNumber(item.infostealer_events),
+    data_breach_events: lunarFormatNumber(item.data_breach_events),
+    employee_events: lunarFormatNumber(item.employee?.total_events),
+    client_events: lunarFormatNumber(item.client?.total_events)
+  }));
+  lunarRenderTable('lunar-timeline-container', 'Monthly Exposure Timeline', [{key:'month',label:'Month'},{key:'total_events',label:'Total'},{key:'infostealer_events',label:'Infostealer'},{key:'data_breach_events',label:'Data Breach'},{key:'employee_events',label:'Employees'},{key:'client_events',label:'Clients'}], timelineRows, 'No monthly timeline was returned.');
+
+  const familyRows = Object.entries(family).map(([name, item]) => ({
+    family: name,
+    events: lunarFormatNumber(item.events),
+    share_of_total_percent: item.share_of_total_percent === undefined ? '—' : item.share_of_total_percent + '%',
+    employee_events: lunarFormatNumber(item.employee_events),
+    client_events: lunarFormatNumber(item.client_events),
+    first_seen: item.first_seen || '—',
+    last_seen: item.last_seen || '—'
+  }));
+  lunarRenderTable('lunar-family-container', 'Event Family Breakdown', [{key:'family',label:'Family'},{key:'events',label:'Events'},{key:'share_of_total_percent',label:'Share %'},{key:'employee_events',label:'Employees'},{key:'client_events',label:'Clients'},{key:'first_seen',label:'First Seen'},{key:'last_seen',label:'Last Seen'}], familyRows, 'No event-family breakdown was returned.');
+
+  const infostealer = report.infostealer_summary || {};
+  const infostealerRows = Object.keys(infostealer).length ? [{
+    total_events: lunarFormatNumber(infostealer.total_events),
+    employee_events: lunarFormatNumber(infostealer.employee_events),
+    client_events: lunarFormatNumber(infostealer.client_events),
+    malware_families_observed: lunarFormatNumber(infostealer.malware_families_observed),
+    events_with_os_context: lunarFormatNumber(infostealer.events_with_os_context),
+    first_seen: infostealer.first_seen || '—',
+    last_seen: infostealer.last_seen || '—'
+  }] : [];
+  lunarRenderTable('lunar-infostealer-container', 'Infostealer Summary', [{key:'total_events',label:'Total'},{key:'employee_events',label:'Employees'},{key:'client_events',label:'Clients'},{key:'malware_families_observed',label:'Malware Families'},{key:'events_with_os_context',label:'Events With OS'},{key:'first_seen',label:'First Seen'},{key:'last_seen',label:'Last Seen'}], infostealerRows, 'No infostealer summary was returned.');
+
+  const breachRows = Object.keys(breach).length ? [{
+    total_events: lunarFormatNumber(breach.total_events),
+    employee_events: lunarFormatNumber(breach.employee_events),
+    client_events: lunarFormatNumber(breach.client_events),
+    known_breach_sources_count: lunarFormatNumber(breach.known_breach_sources_count),
+    events_from_known_breach_sources: lunarFormatNumber(breach.events_from_known_breach_sources),
+    events_from_combolist_sources: lunarFormatNumber(breach.events_from_combolist_sources),
+    first_seen: breach.first_seen || '—',
+    last_seen: breach.last_seen || '—'
+  }] : [];
+  lunarRenderTable('lunar-breach-summary-container', 'Data Breach Summary', [{key:'total_events',label:'Total'},{key:'employee_events',label:'Employees'},{key:'client_events',label:'Clients'},{key:'known_breach_sources_count',label:'Known Sources'},{key:'events_from_known_breach_sources',label:'Known-Source Events'},{key:'events_from_combolist_sources',label:'Combolist Events'},{key:'first_seen',label:'First Seen'},{key:'last_seen',label:'Last Seen'}], breachRows, 'No data-breach summary was returned.');
+
+  const subjectRows = ['employee', 'client'].map(key => { const x = subject[key] || {}; return { subject: key, total_events: lunarFormatNumber(x.total_events), infostealer_events: lunarFormatNumber(x.infostealer_events), data_breach_events: lunarFormatNumber(x.data_breach_events), first_seen: x.first_seen || '—', last_seen: x.last_seen || '—' }; });
+  lunarRenderTable('lunar-subject-container', 'Exposure Subject Breakdown', [{key:'subject',label:'Subject'},{key:'total_events',label:'Total Events'},{key:'infostealer_events',label:'Infostealer'},{key:'data_breach_events',label:'Data Breach'},{key:'first_seen',label:'First Seen'},{key:'last_seen',label:'Last Seen'}], subjectRows, 'No employee or client breakdown was returned.');
+  lunarRenderTable('lunar-malware-container', 'Malware Families', [{key:'family',label:'Family'},{key:'events',label:'Events'},{key:'employee_events',label:'Employees'},{key:'client_events',label:'Clients'},{key:'share_of_infostealer_events_percent',label:'Share %'}], report.malware_family_breakdown || [], 'No malware-family context was available.');
+  lunarRenderTable('lunar-os-container', 'Operating Systems', [{key:'os_family',label:'Operating System'},{key:'infostealer_events',label:'Infostealer Events'},{key:'employee_events',label:'Employees'},{key:'client_events',label:'Clients'},{key:'share_of_infostealer_events_percent',label:'Share %'}], report.os_breakdown || [], 'No operating-system context was available.');
+  lunarRenderTable('lunar-antivirus-container', 'Antivirus', [{key:'antivirus',label:'Antivirus'},{key:'events',label:'Events'},{key:'employee_events',label:'Employees'},{key:'client_events',label:'Clients'},{key:'share_of_infostealer_events_percent',label:'Share %'}], report.antivirus_breakdown || [], 'No antivirus context was available.');
+  lunarRenderTable('lunar-services-container', 'Service Classification', [{key:'service',label:'Service'},{key:'events',label:'Events'},{key:'employee_events',label:'Employees'},{key:'client_events',label:'Clients'},{key:'share_of_total_events_percent',label:'Share %'}], report.service_classification_breakdown || [], 'No service context was available.');
+  lunarRenderTable('lunar-login-container', 'Top Login URLs', [{key:'url',label:'Login URL'},{key:'events',label:'Events'},{key:'employee_events',label:'Employees'},{key:'client_events',label:'Clients'}], report.top_login_urls || [], 'No login URL context was available.');
+  lunarRenderTable('lunar-country-container', 'Country Breakdown', [{key:'country',label:'Country'},{key:'events',label:'Events'}], report.country_breakdown || [], 'No country context was available.');
+
+  const sourceRows = Object.entries(report.data_breach_source_type_breakdown || {}).map(([source, value]) => ({ source, events: lunarFormatNumber(value.events), employee_events: lunarFormatNumber(value.employee_events), client_events: lunarFormatNumber(value.client_events), share: value.share_of_data_breach_events_percent === undefined ? '—' : value.share_of_data_breach_events_percent + '%' }));
+  lunarRenderTable('lunar-breach-container', 'Data Breach Sources — ' + lunarFormatNumber(breach.total_events) + ' total events', [{key:'source',label:'Source Type'},{key:'events',label:'Events'},{key:'employee_events',label:'Employees'},{key:'client_events',label:'Clients'},{key:'share',label:'Share %'}], sourceRows, 'No data-breach source breakdown was available.');
+}
+
 renderHudsonRockDashboard(HR_DATA);
+renderLunarCyberDashboard(LUNAR_DATA);
+document.getElementById('lunar-export-json-btn')?.addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(LUNAR_DATA, null, 2)], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `lunar-domain-exposure-${LUNAR_DATA?.queried_domain || 'report'}.json`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+});
 </script>
 </body>
 </html>
