@@ -1,7 +1,7 @@
 {
   "name": "dpulse-browser",
   "private": true,
-  "version": "2.0.0td2",
+  "version": "2.0.1",
   "type": "module",
   "scripts": {
     "tauri": "tauri"
