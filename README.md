@@ -207,6 +207,8 @@ We are proud to be mentioned by industry leaders and the cybersecurity community
 
 * **HudsonRock:** [Featured in cybercrime intelligence update](https://www.linkedin.com/feed/update/urn:li:share:7294336938495385600/)
 * **HudsonRock:** [Second mention from our best partner](https://www.linkedin.com/posts/darkwebexpert_osint-dpulse-windows-ugcPost-7492086039981842432-X2I4/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAK4ZNoBAEBudTDJhJ9IECAJytCxKFa9_aQ)
+* **Webz.io Lunar:** [Featured in lunarcyber.com blog](https://lunarcyber.com/blog/dpulse-integrates-lunar-domain-exposure-api-for-infostealer-and-breach-intelligence/)
+* **Mention by Ran Geva:** [Mention from Webz.io CEO and Co-Founder - Ran Geva](https://www.linkedin.com/feed/update/urn:li:activity:7501997939695988737/)
 * **DarkWebInformer:** [Tool for complex approach to domain OSINT](https://darkwebinformer.com/dpulse-tool-for-complex-approach-to-domain-osint/)
 * **Ethical Hackers Academy:** [Tool Review](https://ethicalhacksacademy.com/blogs/cyber-security-tools/dpulse)
 
