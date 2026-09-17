@@ -5,7 +5,6 @@
 
 <img width="615" height="200" alt="image" src="https://github.com/user-attachments/assets/352c61ae-1dd1-4f12-a0cb-9bb41e0f08b6" />
 
-# [Visit DPULSE official page](https://osint-technologies.github.io/dpulse/)
 
 [![Latest Release](https://img.shields.io/github/v/release/OSINT-TECHNOLOGIES/dpulse?style=for-the-badge&color=success)](https://github.com/OSINT-TECHNOLOGIES/dpulse/releases)
 [![Downloads](https://img.shields.io/github/downloads/OSINT-TECHNOLOGIES/dpulse/total?style=for-the-badge&color=blue)](https://github.com/OSINT-TECHNOLOGIES/dpulse/releases)
@@ -15,7 +14,7 @@
 
 **A powerful, fast, and user-friendly desktop application for collecting domain intelligence from open sources — now with zero setup required.**
 
-[**📥 Download**](https://osint-technologies.github.io/dpulse/) • [Report Bug](https://github.com/OSINT-TECHNOLOGIES/dpulse/issues) • [Request Feature](https://github.com/OSINT-TECHNOLOGIES/dpulse/issues) • [Roadmap](https://github.com/users/OSINT-TECHNOLOGIES/projects/1)
+[**📥 Download**](https://osint-technologies.github.io/dpulse/) • [**Visit DPULSE live demo page**](https://osint-technologies.github.io/DPULSE_Showcase/#hackthissite) • [Report Bug](https://github.com/OSINT-TECHNOLOGIES/dpulse/issues) • [Request Feature](https://github.com/OSINT-TECHNOLOGIES/dpulse/issues) • [Roadmap](https://github.com/users/OSINT-TECHNOLOGIES/projects/1)
 
 **Don't forget to star this repository if you liked DPULSE ☺️**
 
