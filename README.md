@@ -121,8 +121,9 @@ The generated report is a full single-page application with sidebar navigation:
 | **VirusTotal** | 4 requests/minute | [virustotal.com/gui/join-us](https://www.virustotal.com/gui/join-us) |
 | **SecurityTrails** | 50 requests/month | [securitytrails.com/app/signup](https://securitytrails.com/app/signup) |
 | **HudsonRock** | No key required | Works out of the box |
+| **Lunar Domain Exposure** | No key required | Works out of the box |
 
-API scanning is entirely optional — DPULSE performs its full core reconnaissance using only free, keyless public sources by default.
+API scanning is entirely optional — DPULSE performs its full core reconnaissance using only free, keyless public sources by default. Moreover, keyless API like HudsonRock and Lunar are enabled in basic scan by default!
 
 ---
 
